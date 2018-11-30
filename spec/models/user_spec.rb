@@ -14,11 +14,11 @@ describe User, organization_workspace: :test do
   end
   describe '#transfer_progress_to!' do
 
-    let(:codeorga) { create :organization, name: 'code.orga' }
-    let(:prologschool) { create :organization, name: 'prologschool' }
+    let(:codeorga) { build :organization, name: 'code.orga' }
+    let(:prologschool) { build :organization, name: 'prologschool' }
 
-    let(:your_first_program) { create(:exercise, name: 'Your First Program') }
-    let(:more_clauses) { create(:exercise, name: 'More Clauses') }
+    let(:your_first_program) { build(:exercise, name: 'Your First Program') }
+    let(:more_clauses) { build(:exercise, name: 'More Clauses') }
 
     let(:two_hours_ago) { 2.hours.ago }
 
@@ -140,7 +140,7 @@ describe User, organization_workspace: :test do
   end
 
   describe '#visit!' do
-    let(:user) { create(:user) }
+    let(:user) { build(:user) }
 
     before { user.visit! Organization.current }
 
@@ -148,8 +148,8 @@ describe User, organization_workspace: :test do
   end
 
   describe 'roles' do
-    let(:other) { create(:organization, name: 'pdep') }
-    let(:user) { create :user, permissions: {student: 'pdep/k2001', teacher: 'test/all'} }
+    let(:other) { build(:organization, name: 'pdep') }
+    let(:user) { build :user, permissions: {student: 'pdep/k2001', teacher: 'test/all'} }
 
     it { expect(user.student? 'test/all').to be true }
     it { expect(user.student? 'pdep/k2001').to be true }
@@ -159,9 +159,9 @@ describe User, organization_workspace: :test do
   end
 
   describe '#submissions_count' do
-    let!(:exercise_1) { create(:exercise) }
-    let!(:exercise_2) { create(:exercise) }
-    let!(:exercise_3) { create(:exercise) }
+    let!(:exercise_1) { build(:exercise) }
+    let!(:exercise_2) { build(:exercise) }
+    let!(:exercise_3) { build(:exercise) }
 
     let(:user) { create(:user) }
     context 'when there are no submissions' do
@@ -197,7 +197,7 @@ describe User, organization_workspace: :test do
 
 
     context 'when there are only failed submissions' do
-      let!(:exercise_4) { create(:exercise) }
+      let!(:exercise_4) { build(:exercise) }
 
       let!(:assignment_for) do
         exercise_4.submit_solution!(user, content: '').failed!
@@ -219,7 +219,7 @@ describe User, organization_workspace: :test do
     it{ expect(User.find(user.id).last_name).to eq 'some other last name' }
 
     describe 'notification' do
-      let(:user) { create(:user) }
+      let(:user) { build(:user) }
 
       context 'no changes' do
         before { expect_any_instance_of(Mumukit::Nuntius::NotificationMode::Deaf).to_not receive(:notify_event!) }
@@ -240,8 +240,8 @@ describe User, organization_workspace: :test do
     let(:exercises) { FactoryBot.create_list(:exercise, 5) }
 
     let!(:chapter) {
-      create(:chapter, lessons: [
-        create(:lesson, exercises: exercises)]) }
+      build(:chapter, lessons: [
+        build(:lesson, exercises: exercises)]) }
 
     before { reindex_current_organization! }
 
@@ -254,16 +254,16 @@ describe User, organization_workspace: :test do
   end
 
   describe '#accept_invitation!' do
-    let(:student) { create :user }
-    let(:invitation) { create :invitation, course: 'some_orga/some_course' }
+    let(:student) { build :user }
+    let(:invitation) { build :invitation, course: 'some_orga/some_course' }
     before { student.accept_invitation! invitation }
     it { expect(student.student? invitation.course).to be true }
     it { expect(student.student? 'foo/bar').to be false }
   end
 
   describe '#currently_in_exam?' do
-    let(:student_not_in_exam) { create :user }
-    let(:student_in_exam) { create :user }
+    let(:student_not_in_exam) { build :user }
+    let(:student_in_exam) { build :user }
     let(:exam) { create :exam }
 
     before { exam.authorize! student_in_exam }

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Reading, organization_workspace: :test do
+describe Reading do
   let!(:reading) { create(:reading) }
   let!(:user) { create(:user) }
 

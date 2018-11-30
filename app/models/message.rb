@@ -9,7 +9,7 @@ class Message < ApplicationRecord
   markdown_on :content
 
   def notify!
-    Mumukit::Nuntius.notify! 'student-messages', to_resource_h
+    Mumukit::Nuntius.notify! 'student-messages', to_resource_h unless Organization.silenced?
   end
 
   def from_initiator?

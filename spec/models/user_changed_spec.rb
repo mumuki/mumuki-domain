@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe User, organization_workspace: :test do
+describe User do
   let(:user) { User.find_by(uid: 'foo@bar.com') }
   let(:user_json) { {
     uid: 'foo@bar.com',
@@ -14,7 +14,6 @@ describe User, organization_workspace: :test do
     before { User.import_from_resource_h! user_json }
     it { expect(user.uid).to eq 'foo@bar.com' }
     it { expect(user.name).to eq 'Foo Bar' }
-    it { expect(user.student_here?).to be true }
   end
 
   context 'when user exists' do
@@ -28,7 +27,6 @@ describe User, organization_workspace: :test do
     before { User.import_from_resource_h! user_json }
     before { User.import_from_resource_h! new_json }
     it { expect(user.name).to eq 'Foo Baz' }
-    it { expect(user.student_here?).to be true }
     it { expect(user.student? 'test/example2').to be true }
     it { expect(user.student? 'test/example').to be false }
   end
