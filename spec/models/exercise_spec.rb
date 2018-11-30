@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Exercise, organization_workspace: :test do
+describe Exercise do
   let(:exercise) { create(:exercise) }
   let(:user) { create(:user, first_name: 'Orlo') }
 
@@ -170,7 +170,7 @@ describe Exercise, organization_workspace: :test do
 
   end
 
-  describe '#previous_solution_for' do
+  describe '#previous_solution_for', organization_workspace: :test do
     context 'when user has a single submission for the exercise' do
       let!(:assignment) { exercise.submit_solution!(user, content: 'foo') }
 
@@ -434,12 +434,12 @@ describe Exercise, organization_workspace: :test do
     end
   end
 
-  describe '#friendly_name' do
+  describe '#friendly_name', organization_workspace: :test do
     it { expect(Exercise.find(exercise.friendly_name)).to eq exercise }
     it { expect(Problem.find(exercise.friendly_name)).to eq exercise }
   end
 
-  describe 'messages_path_for' do
+  describe 'messages_path_for', organization_workspace: :test do
     let(:haskell) { create(:haskell) }
     let(:problem) { create(:problem, bibliotheca_id: 32, guide: guide, language: haskell) }
     let(:guide) { create(:guide, slug: 'mumuki/myguide') }

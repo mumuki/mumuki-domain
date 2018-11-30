@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Discussion, organization_workspace: :test do
+describe Discussion do
 
   context 'when created' do
     let(:initiator) { create(:user) }

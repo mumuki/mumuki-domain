@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Problem, organization_workspace: :test do
+describe Problem do
 
   context 'when no manual evaluation and' do
     before { problem.manual_evaluation = false }
