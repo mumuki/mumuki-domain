@@ -126,7 +126,7 @@ class Organization < ApplicationRecord
     end
 
     def silenced?
-      Thread.current[:organization].nil? || current.silent?
+      !Mumukit::Platform::Organization.current? || current.silent?
     end
   end
 end
