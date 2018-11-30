@@ -8,12 +8,6 @@ common: &common
 
 test:
   <<: *common
-  database: mumuki_test
-  pool: 5
-  timeout: 5000
-
-development:
-  <<: *common
-  database: mumuki_development
+  database: mumuki_domain_test
   pool: 5
   timeout: 5000

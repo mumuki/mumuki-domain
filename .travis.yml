@@ -18,11 +18,10 @@ env:
   global:
   - secure: IW65qMjgbuuj4kUsBwaY+iV+jaIedgf2V3W7bTLj1SjaNdc8hC9SXBiNWQrT9Ygu5Q67mKzXuu5GTyAvAGftF02UKgT+yDE43p+a9w2+Onx5dGTIXCCREIE9fgmQhAkqgt9+1E99fRWsQzqkpEVINOMvumk+HM/Rxg8B9e5jvB8=
 deploy:
-  - provider: rubygems
-    api_key:
-      secure: Xtu9wRywQXA+J+hhunUC8vUpbXZRJac06dFuEcb7QDmr19Fzrik92vlGTWn17VMIMGLQ5NJhjwfgjWgNJKD6EZbWMx+iwkADvPBJsBGD5AV9A9Tw1SnoiSaXfGH6KqlvPd8HlRWrL49ZUKkMpMhsvQHp3z/qcKM/PUpbcE+nC44=
-    gem: mumuki-laboratory
-    gemspec: mumuki-laboratory.gemspec
-    on:
-      tags: true
-      repo: mumuki/mumuki-laboratory
+  provider: rubygems
+  api_key:
+    secure: IzZjQhoW85n7qf5eYMTe8W1bp9yTLdCeEMtdrHSK4opCEkdpFI/Yg0h0P454HnyFR3OsPzzHoBJUYvsDcEJFs5nILTj3+XKl6qZ2n6dU9/Ud61wn1MF8aiCxjx/ZIX4snka85NIYUAI5F2x195bauyHdvujyJewNzolj3wASrVgkf+tL7zmEIOcgcWcrVvKnUU5zsrnslFcrNBzyBq0Ll/2ZfJbP+1Tegts7XEZ2VJ2P9/gEOFq/WyrPJ0OmryEh8E8j7q9O2T7zNiko58JdB2zeTKEntaiEXl4pc27GSPR9V1l2kIkVrmH4HF1w8+/Umq09DSfvJFGTlabuYnVxVtS3plk4GNdW8KVjmZjTb6uncU0SKlaHDa6rBxNAwQtfAdxwJ2TeZKjAg9WWoknWzGSO5QYbuOEXdhBCjz7SVTT3oki8OWGhKfZrebvedmSS4h4OZEouD2sYtHQAOOu5OzUneqYRM5h4Q6OhHUx/PeLu6Hsznd7PNvzHJ4HsQoxj8eVh+JVZ9gsPh9Xki9swgFmiyFATyRiAXoPyoHH78QDm0OJ1+KkwpIq2QGWi0Q2ltJuXpTgjHDcLhG2w8Jr79rHDswDXI5DZ9MLMKYg4SpYn6innoGFUVRb+hG8/6OR25l+eufu1y0LD/kK0RopnLXhljdWSqkDHvIXJOe/FS0Q=
+  gem: mumuki-domain
+  on:
+    tags: true
+    repo: mumuki/mumuki-domain

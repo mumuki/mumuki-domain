@@ -6,46 +6,29 @@ require 'rspec/rails'
 require 'codeclimate-test-reporter'
 require 'mumukit/core/rspec'
 require 'factory_bot_rails'
+require 'mumukit/login'
 
-Dir["#{__dir__}/factories/**/*.rb"].each { |f| require f }
+require 'mumuki/domain/factories'
 
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
-
   config.use_transactional_fixtures = true
-
   config.infer_base_class_for_anonymous_controllers = false
-
   config.order = '1'
-
   config.include FactoryBot::Syntax::Methods
-
-  config.infer_spec_type_from_file_location!
-
 end
 
-require_relative './capybara_helper'
-require_relative './api_helper'
 require_relative './evaluation_helper'
-require_relative './login_helper'
 
 RSpec.configure do |config|
   config.before(:each) { I18n.locale = :en }
 
   config.before(:each) do
     if RSpec.current_example.metadata[:organization_workspace] == :test
-      set_subdomain_host! 'test'
       create(:public_organization,
           name: 'test',
           book: create(:book, name: 'test', slug: 'mumuki/mumuki-the-book')).switch!
-    elsif RSpec.current_example.metadata[:organization_workspace] == :base
-      set_subdomain_host! 'base'
-      create(:organization, name: 'base',
-                            logo_url: 'http://mumuki.io/logo-alt-large.png',
-                            terms_of_service: 'Default terms of service',
-                            theme_stylesheet: '.defaultCssFromBase { css: red }',
-                            extension_javascript: 'function jsFromBase() {}').switch!
     end
   end
 

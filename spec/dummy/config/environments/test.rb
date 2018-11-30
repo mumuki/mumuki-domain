@@ -42,13 +42,6 @@ Rails.application.configure do
 
   config.i18n.default_locale = :en
 
-  OmniAuth.config.test_mode = true
-  OmniAuth.config.mock_auth[:developer] =
-    OmniAuth::AuthHash.new provider: 'developer',
-                           uid: 'johndoe@test.com',
-                           credentials: {},
-                           info: {first_name: 'John', last_name: 'Doe', name: 'John Doe', nickname: 'johndoe'}
-
   config.reminder_sender_email = 'support@mumuki.org'
   config.reminder_frequency = 7
 end
