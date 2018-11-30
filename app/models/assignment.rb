@@ -49,7 +49,7 @@ class Assignment < ApplicationRecord
   end
 
   def notify!
-    Mumukit::Nuntius.notify! 'submissions', to_resource_h unless Organization.current.silent?
+    Mumukit::Nuntius.notify! 'submissions', to_resource_h unless Organization.silenced?
   end
 
   def notify_to_accessible_organizations!

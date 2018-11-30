@@ -124,5 +124,9 @@ class Organization < ApplicationRecord
     def base
       find_by name: 'base'
     end
+
+    def silenced?
+      Thread.current[:organization].nil? || current.silent?
+    end
   end
 end
