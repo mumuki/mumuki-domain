@@ -1,5 +1,6 @@
 class Language < ApplicationRecord
   include WithCaseInsensitiveSearch
+  include Syncable
 
   enum output_content_type: [:plain, :html, :markdown]
 
@@ -59,10 +60,6 @@ class Language < ApplicationRecord
     interpolate(field, assignment.submitter.interpolations, lambda { |content| replace_content_reference(assignment, content) })
   end
 
-  def self.locate_resource(runner_url)
-    find_or_initialize_by(runner_url: runner_url).tap { |it| it.save(validate: false) }
-  end
-
   def to_embedded_resource_h
     as_json(only: [:name, :extension, :test_extension]).symbolize_keys
   end
@@ -100,5 +97,9 @@ class Language < ApplicationRecord
 
   def directives_comment_type
     Mumukit::Directives::CommentType.parse comment_type
+  end
+
+  def self.sync_key_id_field
+    :runner_url
   end
 end

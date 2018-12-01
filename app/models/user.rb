@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  include Syncable
   include WithProfile,
           WithUserNavigation,
           WithReminders,
@@ -95,18 +96,14 @@ class User < ApplicationRecord
     reload
   end
 
-  def self.import_from_resource_h!(json)
-    json = Mumukit::Platform::User::Helpers.slice_platform_json json
-    User.where(uid: json[:uid]).update_or_create!(json)
+  def import_from_resource_h!(json)
+    update! Mumukit::Platform::User::Helpers.slice_platform_json json
   end
 
   def unsubscribe_from_reminders!
     update! accepts_reminders: false
   end
 
-  def self.unsubscription_verifier
-    Rails.application.message_verifier(:unsubscribe)
-  end
 
   def attach!(role, course)
     add_permission! role, course.slug
@@ -116,11 +113,6 @@ class User < ApplicationRecord
   def detach!(role, course)
     remove_permission! role, course.slug
     save_and_notify!
-  end
-
-  def self.create_if_necessary(user)
-    user[:uid] ||= user[:email]
-    where(uid: user[:uid]).first_or_create(user)
   end
 
   def interpolations
@@ -149,5 +141,18 @@ class User < ApplicationRecord
 
   def init
     self.image_url ||= "user_shape.png"
+  end
+
+  def self.sync_key_id_field
+    :uid
+  end
+
+  def self.unsubscription_verifier
+    Rails.application.message_verifier(:unsubscribe)
+  end
+
+  def self.create_if_necessary(user)
+    user[:uid] ||= user[:email]
+    where(uid: user[:uid]).first_or_create(user)
   end
 end
