@@ -12,12 +12,6 @@ module WithSlug
     {organization: org, repository: repo}
   end
 
-  ## Resource Protocol
-
-  def sync_key
-    Mumukit::Sync.key self.class, slug
-  end
-
   ## Copy and Rebase
 
   def rebase!(organization)
@@ -30,7 +24,7 @@ module WithSlug
 
   ## Filtering
 
-  module ClassMethods
+  class_methods do
 
     def allowed(permissions)
       all.select { |it| permissions&.writer?(it.slug) }
@@ -43,6 +37,12 @@ module WithSlug
 
     def by_slug_parts!(args)
       find_by!(slug: "#{args[:organization]}/#{args[:repository]}")
+    end
+
+    ## Resource Protocol
+
+    def sync_key_id_field
+      :slug
     end
 
     def locate_resource(key)

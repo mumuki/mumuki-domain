@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Book, organization_workspace: :test do
+describe Book do
   let!(:haskell) { create(:haskell) }
   let!(:gobstones) { create(:gobstones) }
 
@@ -10,19 +10,34 @@ describe Book, organization_workspace: :test do
   let!(:topic_1) { create(:topic, name: 'a topic') }
   let!(:topic_2) { create(:topic, name: 'other topic') }
 
-  let(:book) { Organization.current.book }
 
   let(:book_resource_h) do
     {name: 'sample book',
-     description: 'a sample book description',
-     slug: 'mumuki/mumuki-sample-book',
-     locale: 'en',
-     chapters: [topic_1.slug, topic_2.slug],
-     complements: complement_slugs,
+      description: 'a sample book description',
+      slug: 'mumuki/a-book',
+      locale: 'en',
+      chapters: [topic_1.slug, topic_2.slug],
+      complements: complement_slugs,
     }
   end
 
-  describe '#import_from_resource_h!' do
+  let(:complement_slugs) { [] }
+
+  describe '#sync_key' do
+    let(:book) { create(:book, slug: 'mumuki/a-book') }
+
+    it { expect(book.sync_key).to eq Mumukit::Sync.key(Book, 'mumuki/a-book')}
+  end
+
+  describe '.import_from_resource_h!' do
+    let(:book) { Book.import_from_resource_h! book_resource_h }
+
+    it { expect(book.sync_key).to eq Mumukit::Sync.key(Book, 'mumuki/a-book') }
+  end
+
+  describe '#import_from_resource_h!', organization_workspace: :test do
+    let(:book) { Organization.current.book }
+
     context 'when complements are present' do
       let(:complement_slugs) { [guide_2.slug, guide_1.slug] }
 
@@ -36,6 +51,8 @@ describe Book, organization_workspace: :test do
 
       it { expect(topic_2.reload.usage_in_organization).to be_a Chapter }
       it { expect(guide_2.reload.usage_in_organization).to be_a Complement }
+
+      it { expect(book.sync_key).to eq Mumukit::Sync.key(Book, 'mumuki/a-book') }
     end
 
     context 'when complements are not present' do
