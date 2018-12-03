@@ -7,7 +7,7 @@ module Syncable
   #
   # :warning: This method is required by `Mumukit::Sync::Syncer#import!`
   def sync_key
-    Mumukit::Sync.key sync_key_kind, RID
+    Mumukit::Sync.key sync_key_kind, sync_key_id
   end
 
   # Updates this object with the provided
