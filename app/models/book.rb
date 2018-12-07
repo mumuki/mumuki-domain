@@ -22,14 +22,14 @@ class Book < Content
     user.try(:last_lesson)|| first_lesson
   end
 
+  after_save :reindex_usages!
+
   def import_from_resource_h!(resource_h)
     self.assign_attributes resource_h.except(:chapters, :complements, :id, :description)
     self.description = resource_h[:description]&.squeeze(' ')
 
     rebuild! resource_h[:chapters].map { |it| Topic.find_by!(slug: it).as_chapter_of(self) }
     rebuild_complements! resource_h[:complements].to_a.map { |it| Guide.find_by(slug: it)&.as_complement_of(self) }.compact
-
-    Organization.where(book: self).each { |org| org.reindex_usages! }
   end
 
   def to_resource_h
@@ -49,6 +49,10 @@ class Book < Content
 
   def index_usage!(organization)
     [chapters, complements].flatten.each { |item| item.index_usage! organization }
+  end
+
+  def reindex_usages!
+    Organization.where(book: self).each &:reindex_usages!
   end
 
   ## Forking

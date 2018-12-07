@@ -9,6 +9,8 @@ class Topic < Content
 
   markdown_on :appendix
 
+  after_save :reindex_usages!
+
   def pending_lessons(user)
     guides.
         joins('left join public.exercises exercises
@@ -29,7 +31,6 @@ class Topic < Content
     self.assign_attributes resource_h.except(:lessons, :description)
     self.description = resource_h[:description].squeeze(' ')
     rebuild! resource_h[:lessons].to_a.map { |it| lesson_for(it) }
-    Organization.all.each { |org| org.reindex_usages! }
   end
 
   def to_resource_h
@@ -38,6 +39,10 @@ class Topic < Content
 
   def as_chapter_of(book)
     book.chapters.find_by(topic_id: id) || Chapter.new(topic: self, book: book)
+  end
+
+  def reindex_usages!
+    Chapter.where(topic: self).map(&:book).each(&:reindex_usages!)
   end
 
   ## Forking

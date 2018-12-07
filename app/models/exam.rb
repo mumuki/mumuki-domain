@@ -11,6 +11,7 @@ class Exam < ApplicationRecord
   has_many :users, through: :authorizations
 
   after_destroy { |record| Usage.destroy_usages_for record }
+  after_save :reindex_usages!
 
   include TerminalNavigation
 
@@ -100,6 +101,10 @@ class Exam < ApplicationRecord
     authorizations.all_except(authorizations_for(users)).destroy_all
   end
 
+  def reindex_usages!
+    index_usage! organization
+  end
+
   def self.import_from_resource_h!(json)
     exam_data = json.with_indifferent_access
     organization = Organization.find_by!(name: exam_data[:organization])
@@ -108,7 +113,6 @@ class Exam < ApplicationRecord
     remove_previous_version exam_data[:eid], exam_data[:guide_id]
     exam = where(classroom_id: exam_data[:eid]).update_or_create!(whitelist_attributes(exam_data))
     exam.process_users exam_data[:users]
-    exam.index_usage! organization
     exam
   end
 
