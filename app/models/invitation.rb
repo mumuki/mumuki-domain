@@ -1,8 +1,3 @@
-# invitation:
-#   course
-#   code
-#   expiration_date
-
 class Invitation < ApplicationRecord
   include Syncable
 
@@ -14,7 +9,7 @@ class Invitation < ApplicationRecord
   end
 
   def import_from_resource_h!(json)
-    update! json
+    update! json.merge(course: Course.locate(json[:course]))
   end
 
   def organization

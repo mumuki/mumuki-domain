@@ -6,7 +6,11 @@ class Course < ApplicationRecord
   validates_uniqueness_of :slug
   belongs_to :organization
 
-  has_one :invitation
+  has_many :invitations
+
+  def current_invitation
+    invitations.where('expiration_date > ?', Time.now).take
+  end
 
   def import_from_resource_h!(resource_h)
     update! Mumukit::Platform::Course::Helpers.slice_platform_json(resource_h)
@@ -21,19 +25,21 @@ class Course < ApplicationRecord
   end
 
   def invite!(expiration_date)
-    generate_invitation! expiration_date if closed?
-    invitation
+    if closed?
+      generate_invitation! expiration_date
+    else
+      current_invitation
+    end
   end
 
   def closed?
-    invitation.blank? || invitation.expired?
+    current_invitation.blank? || current_invitation.expired?
   end
 
   def generate_invitation!(expiration_date)
-    invitation = build_invitation expiration_date: expiration_date, course: self
+    invitation = invitations.build expiration_date: expiration_date, course: self
     invitation.save_and_notify!
   end
-
 
   def self.sync_key_id_field
     :slug

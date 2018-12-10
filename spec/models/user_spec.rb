@@ -255,7 +255,7 @@ describe User, organization_workspace: :test do
 
   describe '#accept_invitation!' do
     let(:student) { build :user }
-    let(:invitation) { build :invitation, course: 'some_orga/some_course' }
+    let(:invitation) { build :invitation, course: build(:course) }
     before { student.accept_invitation! invitation }
     it { expect(student.student? invitation.course).to be true }
     it { expect(student.student? 'foo/bar').to be false }
