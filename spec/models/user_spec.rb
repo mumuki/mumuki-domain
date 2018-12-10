@@ -255,9 +255,10 @@ describe User, organization_workspace: :test do
 
   describe '#accept_invitation!' do
     let(:student) { build :user }
-    let(:invitation) { build :invitation, course: build(:course) }
+    let(:course) { create(:course, slug: 'test/an-awesome-2019-course') }
+    let(:invitation) { create :invitation, course: course  }
     before { student.accept_invitation! invitation }
-    it { expect(student.student? invitation.course).to be true }
+    it { expect(student.student? 'test/an-awesome-2019-course').to be true }
     it { expect(student.student? 'foo/bar').to be false }
   end
 

@@ -81,7 +81,7 @@ class User < ApplicationRecord
   end
 
   def accept_invitation!(invitation)
-    make_student_of! invitation.course
+    make_student_of! invitation.course.slug
   end
 
   def copy_progress_to!(another)
