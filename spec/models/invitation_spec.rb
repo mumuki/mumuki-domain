@@ -5,6 +5,6 @@ describe Invitation, organization_workspace: :test do
 
     it { expect(invitation).to_not be nil }
     it { expect(invitation.code).to eq 'eZNvuQ' }
-    it { expect(invitation.course.slug).to eq 'test/bar' }
+    it { expect(invitation.course_slug).to eq 'test/bar' }
   end
 end

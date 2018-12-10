@@ -16,12 +16,16 @@ class Invitation < ApplicationRecord
     course.organization
   end
 
+  def course_slug
+    course.slug
+  end
+
   def navigable_name
     I18n.t(:invitation_for, course: course_name)
   end
 
   def to_resource_h(*)
-    { code: code, course: course.slug, expiration_date: expiration_date }
+    { code: code, course: course_slug, expiration_date: expiration_date }
   end
 
   def navigation_end?
