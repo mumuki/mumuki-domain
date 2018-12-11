@@ -9,7 +9,7 @@ class Invitation < ApplicationRecord
   end
 
   def import_from_resource_h!(json)
-    update! json.merge(course: Course.locate(json[:course]))
+    update! json.merge(course: Course.locate!(json[:course]))
   end
 
   def organization

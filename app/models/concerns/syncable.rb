@@ -48,13 +48,19 @@ module Syncable
     # * `Mumukit::Sync::Syncer#locate_and_import!`
     # * `Mumukit::Sync::Syncer#locate_and_export!`
     def locate_resource(sync_key_id)
-      find_or_initialize_by(sync_key_id_field => sync_key_id)
+      find_or_initialize_by sync_key_id_field => sync_key_id
     end
 
     # `locate_resource` is a helpful method that can be used
     # outside the `Mumukit::Sync` context, thus this mixin provide
     # a shorter alias
     alias_method :locate, :locate_resource
+
+    def locate!(sync_key_id)
+      find_by! sync_key_id_field => sync_key_id
+    rescue ActiveRecord::RecordNotFound
+      raise ActiveRecord::RecordNotFound, "Coudn't find #{self.name} with #{sync_key_id_field}:  #{sync_key_id}"
+    end
 
     # Locates and imports a resource, extracting
     # its key directly from the resource-hash.

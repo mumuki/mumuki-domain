@@ -21,7 +21,7 @@ class Course < ApplicationRecord
 
     self[:slug] = slug
     self[:code] = s.course
-    self[:organization_id] = Organization.find_by!(name: s.organization).id
+    self[:organization_id] = Organization.locate!(s.organization).id
   end
 
   def invite!(expiration_date)
