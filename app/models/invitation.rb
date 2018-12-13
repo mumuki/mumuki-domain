@@ -5,7 +5,7 @@ class Invitation < ApplicationRecord
   validates_uniqueness_of :code
 
   defaults do
-    self.code = self.class.generate_code
+    self.code ||= self.class.generate_code
   end
 
   def import_from_resource_h!(json)
