@@ -8,6 +8,8 @@ class Course < ApplicationRecord
 
   has_many :invitations
 
+  alias_attribute :name, :code
+
   def current_invitation
     invitations.where('expiration_date > ?', Time.now).take
   end
