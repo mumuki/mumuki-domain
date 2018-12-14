@@ -1,7 +1,10 @@
 # Mixin for objects that may
 # be treated as `Mumukit::Sync` resources
+#
+# `Syncable` objects also get `Mumukit::Platform::Notifiable` by free
 module Syncable
   extend ActiveSupport::Concern
+  include Mumukit::Platform::Notifiable
 
   # Generates a sync key
   #
@@ -27,6 +30,11 @@ module Syncable
   # * `Mumukit::Sync::Syncer#export!`
   # * `Mumukit::Sync::Syncer#locate_and_export!`
   required :to_resource_h
+
+  # :warning: This method is required by `Mumukit::Platform::Notifiable#notify!`
+  def platform_class_name
+    sync_key_kind.as_module_name
+  end
 
   private
 
@@ -56,6 +64,10 @@ module Syncable
     # a shorter alias
     alias_method :locate, :locate_resource
 
+    # `locate!` is similar to `locate`, but fails instead of creating a
+    # a new object when not found
+    #
+    # This method is not required by `Mumukit::Sync`
     def locate!(sync_key_id)
       find_by! sync_key_id_field => sync_key_id
     rescue ActiveRecord::RecordNotFound

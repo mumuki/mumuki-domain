@@ -24,7 +24,7 @@ class Invitation < ApplicationRecord
     I18n.t(:invitation_for, course: course_name)
   end
 
-  def to_resource_h(*)
+  def to_resource_h
     { code: code, course: course_slug, expiration_date: expiration_date }
   end
 
@@ -47,10 +47,6 @@ class Invitation < ApplicationRecord
 
   def self.generate_code
     SecureRandom.urlsafe_base64 4
-  end
-
-  def notify!
-    Mumukit::Nuntius.notify_event! 'InvitationChanged', invitation: to_resource_h
   end
 
   private
