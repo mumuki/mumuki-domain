@@ -8,7 +8,8 @@ class Exercise < ApplicationRecord
           WithLanguage,
           Assistable,
           WithRandomizations,
-          WithDiscussions
+          WithDiscussions,
+          WithEditionMode
 
   include Submittable,
           Questionable
@@ -25,6 +26,8 @@ class Exercise < ApplicationRecord
 
   randomize :description, :hint, :extra, :test, :default_content
   delegate :timed?, to: :navigable_parent
+
+  editable :description, :hint, :test, :default_content
 
   def console?
     queriable?

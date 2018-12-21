@@ -16,6 +16,8 @@ class Challenge < Exercise
       .ensure_newline
   end
 
+  editable :extra
+
   private
 
   def defaults
