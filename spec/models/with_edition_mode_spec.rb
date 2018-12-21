@@ -11,7 +11,7 @@ describe WithEditionMode do
   end
 
   context 'with edition_mode on it simply returns the field as is' do
-    before { exercise.editable! }
+    before { exercise.edit! }
 
     it { expect(exercise.extra).to eq 'some exercise extra code' }
     it { expect(exercise.description).to eq '$some_string'}

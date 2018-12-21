@@ -3,7 +3,7 @@ module WithEditionMode
 
   attr_accessor :edition_mode
 
-  def editable!
+  def edit!
     self.edition_mode = true
   end
 
