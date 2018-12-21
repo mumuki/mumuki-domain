@@ -25,6 +25,8 @@ class Problem < QueriableChallenge
     own_expectations + guide_expectations
   end
 
+  editable :expectations
+
   def guide_expectations
     guide.expectations
   end
