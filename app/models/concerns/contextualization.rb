@@ -29,6 +29,15 @@ module Contextualization
     delegate :inspection_keywords, to: :exercise
   end
 
+  # Althoug `Contextualization`s represent
+  # an exercise in a user's context, it is designed to include only
+  # read-only information visible to students. Thus,
+  # this is the only actually required method for implementors
+  # to properly display them.
+  #
+  # See `WithExerciseCustomizations#extra_preview` and `Discussion#extra_preview_html`
+  required :extra_preview_html
+
   def queries_with_results
     queries.zip(query_results).map do |query, result|
       {query: query, status: result&.dig(:status).defaulting(:pending), result: result&.dig(:result)}

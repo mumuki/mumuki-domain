@@ -95,26 +95,29 @@ describe Exercise do
 
   describe '#extra' do
     context 'when exercise has no extra code' do
-      it { expect(exercise.extra).to eq '' }
+      it { expect(exercise.extra).to be nil }
+      it { expect(exercise.accumulated_extra).to eq '' }
     end
 
     context 'when exercise has extra code and has no guide' do
       let!(:exercise_with_extra) { create(:exercise, extra: 'exercise extra code') }
 
-      it { expect(exercise_with_extra.extra).to eq "exercise extra code\n" }
+      it { expect(exercise_with_extra.extra).to eq "exercise extra code" }
+      it { expect(exercise_with_extra.accumulated_extra).to eq "exercise extra code\n" }
     end
 
     context 'when exercise has extra code and ends with new line and has no guide' do
       let!(:exercise_with_extra) { create(:exercise, extra: "exercise extra code\n") }
 
       it { expect(exercise_with_extra.extra).to eq "exercise extra code\n" }
+      it { expect(exercise_with_extra.accumulated_extra).to eq "exercise extra code\n" }
     end
 
     context 'when exercise has extra code and belongs to a guide with no extra code' do
       let!(:exercise_with_extra) { create(:exercise, guide: guide, extra: 'exercise extra code') }
       let!(:guide) { create(:guide) }
 
-      it { expect(exercise_with_extra.extra).to eq "exercise extra code\n" }
+      it { expect(exercise_with_extra.accumulated_extra).to eq "exercise extra code\n" }
     end
 
     context 'when exercise has extra code with trailing whitespaces
@@ -122,15 +125,15 @@ describe Exercise do
       let!(:exercise_with_extra) { create(:exercise, guide: guide, extra: "\nexercise extra code \n") }
       let!(:guide) { create(:guide) }
 
-      it { expect(exercise_with_extra.extra).to eq "exercise extra code\n" }
+      it { expect(exercise_with_extra.accumulated_extra).to eq "exercise extra code\n" }
     end
 
     context 'when exercise has extra code and belongs to a guide with extra code' do
       let!(:exercise_with_extra) { create(:exercise, guide: guide, extra: 'exercise extra code') }
       let!(:guide) { create(:guide, extra: 'guide extra code') }
 
-      it { expect(exercise_with_extra.extra).to eq "guide extra code\nexercise extra code\n" }
-      it { expect(exercise_with_extra[:extra]).to eq 'exercise extra code' }
+      it { expect(exercise_with_extra.extra).to eq 'exercise extra code' }
+      it { expect(exercise_with_extra.accumulated_extra).to eq "guide extra code\nexercise extra code\n" }
     end
   end
 

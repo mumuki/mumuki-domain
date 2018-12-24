@@ -8,8 +8,7 @@ class Exercise < ApplicationRecord
           WithLanguage,
           Assistable,
           WithRandomizations,
-          WithDiscussions,
-          WithEditionMode
+          WithDiscussions
 
   include Submittable,
           Questionable
@@ -24,10 +23,15 @@ class Exercise < ApplicationRecord
   validates_presence_of :submissions_count,
                         :guide, :bibliotheca_id
 
-  randomize :description, :hint, :extra, :test, :default_content
   delegate :timed?, to: :navigable_parent
 
-  editable :description, :hint, :test, :default_content
+  def accumulated_extra
+    extra
+  end
+
+  def accumulated_expectations
+    expectations
+  end
 
   def console?
     queriable?

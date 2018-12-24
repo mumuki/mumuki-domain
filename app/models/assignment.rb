@@ -1,12 +1,14 @@
 class Assignment < ApplicationRecord
   include Contextualization
   include WithMessages
-
-  markdown_on :extra_preview
+  include WithExerciseCustomizations
 
   belongs_to :exercise
   has_one :guide, through: :exercise
-  has_many :messages, -> { where.not(submission_id: nil).order(date: :desc) }, foreign_key: :submission_id, primary_key: :submission_id, dependent: :delete_all
+  has_many :messages, -> { where.not(submission_id: nil).order(date: :desc) },
+           foreign_key: :submission_id,
+           primary_key: :submission_id,
+           dependent: :delete_all
 
   belongs_to :submitter, class_name: 'User'
 
@@ -67,18 +69,6 @@ class Assignment < ApplicationRecord
     if content.present?
       self.solution = exercise.single_choice? ? exercise.choice_index_for(content) : content
     end
-  end
-
-  def test
-    exercise.test && language.interpolate_references_for(self, exercise.test)
-  end
-
-  def extra
-    exercise.extra && language.interpolate_references_for(self, exercise.extra)
-  end
-
-  def extra_preview
-    Mumukit::ContentType::Markdown.highlighted_code(language.name, extra)
   end
 
   def run_update!

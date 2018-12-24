@@ -3,6 +3,12 @@ require 'spec_helper'
 describe WithExpectations do
   let(:exercise) { build(:exercise) }
 
+  context 'when a non-problem exercise' do
+    let(:playground) { build(:playground) }
+    it { expect(playground.expectations).to be nil }
+    it { expect(playground.accumulated_expectations).to be nil }
+  end
+
   context 'when setting empty list' do
     before { exercise.expectations = [] }
 
@@ -23,6 +29,7 @@ describe WithExpectations do
     before { exercise.expectations = [{binding: 'foo', inspection: 'HasBinding'}] }
 
     it { expect(exercise.expectations).to eq [{'binding' => 'foo', 'inspection' => 'HasBinding'}] }
+    it { expect(exercise.accumulated_expectations).to eq exercise.expectations }
   end
 
   context 'when setting non empty stringified list' do
@@ -48,9 +55,9 @@ describe WithExpectations do
       guide.expectations = [{binding: 'bar', inspection: 'HasBinding'}]
     end
 
-    it {
-      expect(exercise.expectations)
-      .to eq [{'binding' => 'foo', 'inspection' => 'HasBinding'}, {'binding' => 'bar', 'inspection' => 'HasBinding'}]
-    }
+    it { expect(exercise.expectations).to eq [{'binding' => 'foo', 'inspection' => 'HasBinding'}] }
+    it { expect(exercise.accumulated_expectations).to eq [
+          {'binding' => 'foo', 'inspection' => 'HasBinding'},
+          {'binding' => 'bar', 'inspection' => 'HasBinding'}] }
   end
 end

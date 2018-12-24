@@ -21,18 +21,12 @@ class Problem < QueriableChallenge
     self.expectations = []
   end
 
-  def expectations
-    own_expectations + guide_expectations
-  end
-
-  editable :expectations
-
-  def guide_expectations
-    guide.expectations
+  def accumulated_expectations
+    expectations + guide.expectations
   end
 
   def evaluation_criteria?
-    manual_evaluation? || own_expectations.present? || test.present?
+    manual_evaluation? || expectations.present? || test.present?
   end
 
   private

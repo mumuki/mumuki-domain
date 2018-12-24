@@ -1,5 +1,6 @@
 class Discussion < ApplicationRecord
   include WithDiscussionStatus, ParentNavigation, WithScopedQueries, Contextualization
+  include WithExerciseCustomizations
 
   belongs_to :item, polymorphic: true
   has_many :messages, -> { order(:created_at) }, dependent: :delete_all
@@ -123,6 +124,7 @@ class Discussion < ApplicationRecord
     responses_count > 0
   end
 
+  # required by `Contextualization`
   def extra_preview_html
     # FIXME this is buggy, because the extra
     # may have changed since the submission of this discussion

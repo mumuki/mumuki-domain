@@ -8,15 +8,13 @@ class Challenge < Exercise
     self.layout = self.class.default_layout
   end
 
-  def extra(*)
-    [guide.extra, super]
+  def accumulated_extra
+    [guide.extra, extra]
       .compact
       .join("\n")
       .strip
       .ensure_newline
   end
-
-  editable :extra
 
   private
 
