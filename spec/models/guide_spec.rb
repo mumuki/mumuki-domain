@@ -48,8 +48,7 @@ describe Guide do
     it { expect(exercise.hint).to eq "try some" }
     it { expect(exercise.test).to eq 'describe "some" do pending end' }
 
-    it { expect(exercise.to_resource_h).to json_eq(
-            {
+    it { expect(exercise.to_resource_h).to json_eq({
               default_content: 'x = "$randomizedWord" /*...previousSolution...*/',
               description: 'works with $randomizedWord',
               expectations: [],
@@ -57,7 +56,7 @@ describe Guide do
               hint: 'try $randomizedWord',
               test: 'describe "$randomizedWord" do pending end'
             },
-            only: [:default_content, :description, :expectations, :extra, :hint, :test]) }
+            only: Exercise::RANDOMIZED_FIELDS) }
   end
 
   describe '#fork!' do

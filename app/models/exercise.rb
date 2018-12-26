@@ -1,4 +1,6 @@
 class Exercise < ApplicationRecord
+  RANDOMIZED_FIELDS = [:default_content, :description, :extra, :hint, :test]
+
   include WithDescription
   include WithLocale
   include WithNumber,
@@ -23,7 +25,7 @@ class Exercise < ApplicationRecord
   validates_presence_of :submissions_count,
                         :guide, :bibliotheca_id
 
-  randomize :description, :hint, :extra, :test, :default_content
+  randomize(*RANDOMIZED_FIELDS)
   delegate :timed?, to: :navigable_parent
 
   def console?
@@ -110,13 +112,8 @@ class Exercise < ApplicationRecord
                      choices assistance_rules randomizations tag_list extra_visible goal
                      free_form_editor_source initial_state final_state))
       .merge(id: bibliotheca_id, language: language_resource_h, type: type.underscore)
-      .merge(
-        default_content: self[:default_content],
-        description: self[:description],
-        expectations: self[:expectations],
-        extra: self[:extra],
-        hint: self[:hint],
-        test: self[:test])
+      .merge(expectations: own_expectations)
+      .merge(RANDOMIZED_FIELDS.map { |it| [it, self[it]] }.to_h)
       .symbolize_keys
       .compact
   end
