@@ -24,6 +24,30 @@ describe Guide do
     end
   end
 
+  describe '#to_resource_h' do
+    let!(:guide) {
+      create(:guide,
+        extra: 'guide extra',
+        expectations: [{binding: 'guide', inspection: 'Uses:expectations'}],
+        exercises: [exercise])}
+    let(:exercise) {
+      build(:exercise,
+        extra: 'exercise extra',
+        description: 'works with $randomizedWord',
+        randomizations: {
+          randomizedWord: { type: :one_of, value: %w(some) }
+        })}
+
+    it { expect(exercise.expectations).to eq guide.expectations }
+    it { expect(exercise.extra).to eq "guide extra\nexercise extra\n" }
+    it { expect(exercise.description).to eq "works with some" }
+    it { expect(exercise.to_resource_h).to json_eq(
+            { extra: 'exercise extra',
+              description: 'works with $randomizedWord',
+              expectations: [] },
+            only: [:extra, :description, :expectations]) }
+  end
+
   describe '#fork!' do
     let(:syncer) { double(:syncer) }
     let!(:guide_from) { create :guide, slug: 'foo/bar' }
