@@ -24,7 +24,7 @@ describe Guide do
     end
   end
 
-  describe '#to_resource_h' do
+  describe 'customizations' do
     let!(:guide) {
       create(:guide,
         extra: 'guide extra',
@@ -32,20 +32,32 @@ describe Guide do
         exercises: [exercise])}
     let(:exercise) {
       build(:exercise,
-        extra: 'exercise extra',
+        default_content: 'x = "$randomizedWord" /*...previousSolution...*/',
         description: 'works with $randomizedWord',
+        extra: 'exercise extra',
+        hint: 'try $randomizedWord',
+        test: 'describe "$randomizedWord" do pending end',
         randomizations: {
           randomizedWord: { type: :one_of, value: %w(some) }
         })}
 
+    it { expect(exercise.default_content).to eq 'x = "some" /*...previousSolution...*/' }
+    it { expect(exercise.description).to eq "works with some" }
     it { expect(exercise.expectations).to eq guide.expectations }
     it { expect(exercise.extra).to eq "guide extra\nexercise extra\n" }
-    it { expect(exercise.description).to eq "works with some" }
+    it { expect(exercise.hint).to eq "try some" }
+    it { expect(exercise.test).to eq 'describe "some" do pending end' }
+
     it { expect(exercise.to_resource_h).to json_eq(
-            { extra: 'exercise extra',
+            {
+              default_content: 'x = "$randomizedWord" /*...previousSolution...*/',
               description: 'works with $randomizedWord',
-              expectations: [] },
-            only: [:extra, :description, :expectations]) }
+              expectations: [],
+              extra: 'exercise extra',
+              hint: 'try $randomizedWord',
+              test: 'describe "$randomizedWord" do pending end'
+            },
+            only: [:default_content, :description, :expectations, :extra, :hint, :test]) }
   end
 
   describe '#fork!' do
