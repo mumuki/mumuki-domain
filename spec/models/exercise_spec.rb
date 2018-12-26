@@ -464,12 +464,6 @@ describe Exercise do
     end
   end
 
-  describe '#splitted_description' do
-    let(:exercise) { create(:exercise, description: "**Foo**\n\n> _Bar_") }
-    it { expect(exercise.description_context).to eq "<p><strong>Foo</strong></p>\n" }
-    it { expect(exercise.description_task).to eq "<p><em>Bar</em></p>\n" }
-  end
-
   describe '#validate!' do
     context 'non-empty, valid randomizations' do
       let(:exercise) { build(:exercise,

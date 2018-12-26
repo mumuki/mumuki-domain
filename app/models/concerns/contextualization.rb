@@ -35,7 +35,7 @@ module Contextualization
   # this is the only actually required method for implementors
   # to properly display them.
   #
-  # See `WithExerciseCustomizations#extra_preview` and `Discussion#extra_preview_html`
+  # See `WithCustomizations#extra_preview` and `Discussion#extra_preview_html`
   required :extra_preview_html
 
   def queries_with_results

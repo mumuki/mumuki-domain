@@ -4,7 +4,16 @@
 # by guide's _accumulative fields_, _interpolations_ and _randomizations_ instead.
 #
 # These customizations are compatible with the `Contextualization` mixin.
-module WithExerciseCustomizations
+#
+# Customized fields are
+#
+#  * `expectations`
+#  * `description`
+#  * `hint`
+#  * `extra`
+#  * `test`
+#  * `default_content`
+module WithCustomizations
   # TODO: move this code into mumukit-core
   def self.patch_accessor(*selectors, &block)
     selectors.each do |selector|
@@ -35,7 +44,7 @@ module WithExerciseCustomizations
     end
   end
 
-  interpolate :test, :extra
+  interpolate :test, :extra, :default_content
 
   ## Randomization
 
@@ -56,6 +65,25 @@ module WithExerciseCustomizations
   end
 
   randomize :description, :hint, :extra, :test, :default_content
+
+
+  ## Kids description
+
+  def description_context
+    splitted_description.first
+  end
+
+  def description_task
+    splitted_description.drop(1).join("\n")
+  end
+
+  def splitted_description
+    description.split('> ')
+  end
+
+  ## Markdown handling
+
+  markdown_on :hint, :description, :description_context, :description_task
 
   ## Contextualization
 

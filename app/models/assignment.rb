@@ -1,7 +1,7 @@
 class Assignment < ApplicationRecord
   include Contextualization
   include WithMessages
-  include WithExerciseCustomizations
+  include WithCustomizations
 
   belongs_to :exercise
   has_one :guide, through: :exercise
@@ -160,10 +160,6 @@ class Assignment < ApplicationRecord
 
   def current_content_at(index)
     exercise.sibling_at(index).assignment_for(submitter).current_content
-  end
-
-  def default_content
-    @default_content ||= language.interpolate_references_for(self, exercise.default_content)
   end
 
   def files

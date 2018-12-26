@@ -188,4 +188,12 @@ describe Assignment do
     it { expect(assignment.extra).to eq "some_email\nsome_first_name\nsome_last_name\n" }
   end
 
+  describe '#splitted_description' do
+    let(:exercise) { build(:exercise, description: "**Foo**\n\n> _Bar_") }
+    let(:assignment) { build(:assignment, exercise: exercise) }
+
+    it { expect(assignment.description_context_html).to eq "<p><strong>Foo</strong></p>\n" }
+    it { expect(assignment.description_task_html).to eq "<p><em>Bar</em></p>\n" }
+  end
+
 end

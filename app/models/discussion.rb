@@ -1,6 +1,5 @@
 class Discussion < ApplicationRecord
   include WithDiscussionStatus, ParentNavigation, WithScopedQueries, Contextualization
-  include WithExerciseCustomizations
 
   belongs_to :item, polymorphic: true
   has_many :messages, -> { order(:created_at) }, dependent: :delete_all
