@@ -23,7 +23,7 @@ class Exercise < ApplicationRecord
   validates_presence_of :submissions_count,
                         :guide, :bibliotheca_id
 
-  randomize :description, :hint, :extra, :test, :default_content
+  randomize :description, :hint, :extra, :test
   delegate :timed?, to: :navigable_parent
 
   def console?
@@ -174,6 +174,8 @@ class Exercise < ApplicationRecord
   def default_content
     self[:default_content] || ''
   end
+
+  randomize :default_content
 
   # Submits the user solution
   # only if the corresponding assignment has attemps left
