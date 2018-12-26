@@ -75,6 +75,7 @@ class Language < ApplicationRecord
 
   # TODO we should use Mumukit::Directives::Pipeline
   def interpolate(interpolee, *interpolations)
+    interpolee = interpolee || ''
     interpolations.inject(interpolee) { |content, interpolation| directives_interpolations.interpolate(content, interpolation).first }
   end
 

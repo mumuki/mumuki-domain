@@ -1,4 +1,6 @@
 class Exercise < ApplicationRecord
+  RANDOMIZED_FIELDS = [:default_content, :description, :extra, :hint, :test]
+
   include WithDescription
   include WithLocale
   include WithNumber,
@@ -23,7 +25,7 @@ class Exercise < ApplicationRecord
   validates_presence_of :submissions_count,
                         :guide, :bibliotheca_id
 
-  randomize :description, :hint, :extra, :test, :default_content
+  randomize(*RANDOMIZED_FIELDS)
   delegate :timed?, to: :navigable_parent
 
   def console?
@@ -106,10 +108,12 @@ class Exercise < ApplicationRecord
 
   def to_resource_h
     language_resource_h = language.to_embedded_resource_h if language != guide.language
-    as_json(only: %i(name layout editor description corollary teacher_info hint test manual_evaluation locale extra
-                     choices expectations assistance_rules randomizations tag_list extra_visible goal default_content
+    as_json(only: %i(name layout editor corollary teacher_info manual_evaluation locale
+                     choices assistance_rules randomizations tag_list extra_visible goal
                      free_form_editor_source initial_state final_state))
       .merge(id: bibliotheca_id, language: language_resource_h, type: type.underscore)
+      .merge(expectations: own_expectations)
+      .merge(RANDOMIZED_FIELDS.map { |it| [it, self[it]] }.to_h)
       .symbolize_keys
       .compact
   end
@@ -162,10 +166,6 @@ class Exercise < ApplicationRecord
 
   def inspection_keywords
     {}
-  end
-
-  def default_content
-    self[:default_content] || ''
   end
 
   # Submits the user solution

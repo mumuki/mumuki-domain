@@ -24,6 +24,41 @@ describe Guide do
     end
   end
 
+  describe 'customizations' do
+    let!(:guide) {
+      create(:guide,
+        extra: 'guide extra',
+        expectations: [{binding: 'guide', inspection: 'Uses:expectations'}],
+        exercises: [exercise])}
+    let(:exercise) {
+      build(:exercise,
+        default_content: 'x = "$randomizedWord" /*...previousSolution...*/',
+        description: 'works with $randomizedWord',
+        extra: 'exercise extra',
+        hint: 'try $randomizedWord',
+        test: 'describe "$randomizedWord" do pending end',
+        randomizations: {
+          randomizedWord: { type: :one_of, value: %w(some) }
+        })}
+
+    it { expect(exercise.default_content).to eq 'x = "some" /*...previousSolution...*/' }
+    it { expect(exercise.description).to eq "works with some" }
+    it { expect(exercise.expectations).to eq guide.expectations }
+    it { expect(exercise.extra).to eq "guide extra\nexercise extra\n" }
+    it { expect(exercise.hint).to eq "try some" }
+    it { expect(exercise.test).to eq 'describe "some" do pending end' }
+
+    it { expect(exercise.to_resource_h).to json_eq({
+              default_content: 'x = "$randomizedWord" /*...previousSolution...*/',
+              description: 'works with $randomizedWord',
+              expectations: [],
+              extra: 'exercise extra',
+              hint: 'try $randomizedWord',
+              test: 'describe "$randomizedWord" do pending end'
+            },
+            only: Exercise::RANDOMIZED_FIELDS) }
+  end
+
   describe '#fork!' do
     let(:syncer) { double(:syncer) }
     let!(:guide_from) { create :guide, slug: 'foo/bar' }
