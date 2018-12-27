@@ -112,7 +112,7 @@ class Exercise < ApplicationRecord
                      choices assistance_rules randomizations tag_list extra_visible goal
                      free_form_editor_source initial_state final_state))
       .merge(id: bibliotheca_id, language: language_resource_h, type: type.underscore)
-      .merge(expectations: own_expectations)
+      .merge(expectations: self[:expectations])
       .merge(RANDOMIZED_FIELDS.map { |it| [it, self[it]] }.to_h)
       .symbolize_keys
       .compact
