@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://mumuki.org"
   s.summary     = "Mumuki Platform's Domain Model"
   s.description = "Mumuki Platform's Domain Model"
-  s.license     = "GPL-3.0"
+  s.license     = "AGPL-3.0"
 
   s.files = Dir["{app,db,lib}/**/*", "LICENSE", "Rakefile", "README.md"]
 
