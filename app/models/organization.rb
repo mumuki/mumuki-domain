@@ -130,7 +130,11 @@ class Organization < ApplicationRecord
       :name
     end
 
-    def with_usage_of(item)
+    # Answers organizations that have the given item
+    # in their paths.
+    #
+    # See `Organization#in_path?`
+    def in_path(item)
       joins(:usages)
         .select('organizations.*, usages.item_id')
         .where('usages.item_id = ?', item.id)
