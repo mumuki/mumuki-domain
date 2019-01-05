@@ -129,5 +129,13 @@ class Organization < ApplicationRecord
     def sync_key_id_field
       :name
     end
+
+    def with_usage(item_id)
+      self
+          .joins(:usages)
+          .select('organizations.*, usages.item_id')
+          .where('usages.item_id = ?', item_id)
+          .distinct()
+    end
   end
 end
