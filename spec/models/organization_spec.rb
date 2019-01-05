@@ -90,7 +90,6 @@ describe Organization, organization_workspace: :test do
     it { expect(organization.in_path? guide_in_path).to be true }
   end
 
-
   describe 'login_settings' do
     let(:fresh_organization) { create(:organization, name: 'foo') }
     it { expect(fresh_organization.login_settings.login_methods).to eq Mumukit::Login::Settings.default_methods }
@@ -120,5 +119,15 @@ describe Organization, organization_workspace: :test do
       it { expect(organization.has_login_method? 'github').to be true }
       it { expect(organization.has_login_method? 'google').to be false }
     end
+  end
+
+  describe 'in_path' do
+    let(:organization) { create :public_organization, name: 'foooo' }
+    before { create :public_organization, name: 'barrr' }
+    before { create :public_organization, name: 'bazzz' }
+    let(:usage) { create :usage, organization: organization }
+
+    it { expect(Organization.in_path(usage.item).map(&:name)).to eq ['foooo'] }
+    it { expect(organization.in_path? usage.item).to be true }
   end
 end
