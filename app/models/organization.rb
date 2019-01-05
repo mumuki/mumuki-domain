@@ -130,12 +130,11 @@ class Organization < ApplicationRecord
       :name
     end
 
-    def with_usage(item_id)
-      self
-          .joins(:usages)
-          .select('organizations.*, usages.item_id')
-          .where('usages.item_id = ?', item_id)
-          .distinct()
+    def with_usage_of(item)
+      joins(:usages)
+        .select('organizations.*, usages.item_id')
+        .where('usages.item_id = ?', item.id)
+        .distinct()
     end
   end
 end

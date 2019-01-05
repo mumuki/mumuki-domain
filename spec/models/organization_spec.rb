@@ -121,12 +121,12 @@ describe Organization, organization_workspace: :test do
     end
   end
 
-  describe 'with_usage' do
+  describe 'with_usage_of' do
     let(:organization_foo) { create :public_organization, name: 'foooo' }
     before { create :public_organization, name: 'barrr' }
     before { create :public_organization, name: 'bazzz' }
     let(:usage) { create :usage, organization: organization_foo }
 
-    it { expect(Organization.with_usage(usage.item.id).map {|it| it.name }).to eql ['foooo'] }
+    it { expect(Organization.with_usage_of(usage.item).map(&:name)).to eq ['foooo'] }
   end
 end
