@@ -130,6 +130,8 @@ _as defined in `Topic#to_resource_h`_
   private
   expectations
   collaborators
+  sources
+  learn_more
   description
   corollary
   locale

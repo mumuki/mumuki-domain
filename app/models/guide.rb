@@ -3,7 +3,7 @@ class Guide < Content
           WithExpectations,
           WithLanguage
 
-  markdown_on :corollary
+  markdown_on :corollary, :sources, :learn_more
 
   numbered :exercises
   has_many :exercises, -> { order(number: :asc) }, dependent:  :delete_all
@@ -80,7 +80,7 @@ class Guide < Content
   end
 
   def to_resource_h
-    as_json(only: %i(beta type id_format private expectations corollary teacher_info authors collaborators extra))
+    as_json(only: %i(beta type id_format private expectations corollary teacher_info sources learn_more authors collaborators extra))
       .symbolize_keys
       .merge(super)
       .merge(exercises: exercises.map(&:to_resource_h))
