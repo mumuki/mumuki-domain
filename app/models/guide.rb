@@ -3,7 +3,7 @@ class Guide < Content
           WithExpectations,
           WithLanguage
 
-  markdown_on :corollary, :learn_more, :sources
+  markdown_on :corollary, :sources, :learn_more
 
   numbered :exercises
   has_many :exercises, -> { order(number: :asc) }, dependent:  :delete_all
