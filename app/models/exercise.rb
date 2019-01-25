@@ -19,6 +19,9 @@ class Exercise < ApplicationRecord
           ParentNavigation
 
   belongs_to :guide
+
+  markdown_on :teacher_info
+
   defaults { self.submissions_count = 0 }
 
   serialize :choices, Array
