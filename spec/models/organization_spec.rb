@@ -126,6 +126,10 @@ describe Organization, organization_workspace: :test do
     let!(:other_organization) { create :public_organization, name: 'other' }
     before { create :public_organization, name: 'other-more' }
 
+    it 'is a relation' do
+      expect(Organization.in_path Guide.new).to be_a ActiveRecord::Relation
+    end
+
     context 'with a topic usage' do
       let(:chapter) { create(:chapter) }
 
