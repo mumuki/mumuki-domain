@@ -138,7 +138,7 @@ class Organization < ApplicationRecord
     #
     # See `Organization#in_path?`
     def in_path(content)
-      content.usages.map(&:organization).uniq
+      content.usages.map &:organization
     end
   end
 end
