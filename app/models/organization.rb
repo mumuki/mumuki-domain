@@ -133,12 +133,12 @@ class Organization < ApplicationRecord
     # Answers organizations that have the given item
     # in their paths.
     #
+    # Warning: unlike `in_path?`, this method does only work with
+    # content - child - items instead of both kind of items - content and content containers.
+    #
     # See `Organization#in_path?`
-    def in_path(item)
-      joins(:usages)
-        .select('organizations.*, usages.item_id')
-        .where('usages.item_id = ?', item.id)
-        .distinct()
+    def in_path(content)
+      content.usages.map(&:organization).uniq
     end
   end
 end
