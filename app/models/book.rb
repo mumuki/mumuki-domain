@@ -48,6 +48,7 @@ class Book < Content
   end
 
   def index_usage!(organization)
+    organization.index_usage_of! self, self
     [chapters, complements].flatten.each { |item| item.index_usage! organization }
   end
 
