@@ -46,7 +46,7 @@ describe Usage do
     it { expect(oop.usage_in_organization.number).to eq 3 }
     it { expect(logic_programming.usage_in_organization.number).to eq 4 }
 
-    it { expect(Usage.in_organization.count).to eq 4  }
+    it { expect(Usage.in_organization.count).to eq 5  }
 
   end
 
@@ -72,6 +72,6 @@ describe Usage do
     it { expect(logic_programming.usage_in_organization.number).to eq 2 }
     it { expect(oop.usage_in_organization.number).to eq 3 }
 
-    it { expect(Usage.in_organization.count).to eq 3  }
+    it { expect(Usage.in_organization.count).to eq 4  }
   end
 end
