@@ -122,12 +122,46 @@ describe Organization, organization_workspace: :test do
   end
 
   describe 'in_path' do
-    let(:organization) { create :public_organization, name: 'foooo' }
-    before { create :public_organization, name: 'barrr' }
-    before { create :public_organization, name: 'bazzz' }
-    let(:usage) { create :usage, organization: organization }
+    let(:organization) { create :public_organization, name: 'main' }
+    let!(:other_organization) { create :public_organization, name: 'other' }
+    before { create :public_organization, name: 'other-more' }
 
-    it { expect(Organization.in_path(usage.item).map(&:name)).to eq ['foooo'] }
-    it { expect(organization.in_path? usage.item).to be true }
+    context 'with a topic usage' do
+      let(:chapter) { create(:chapter) }
+
+      before { chapter.index_usage! organization }
+
+      it { expect(Organization.in_path(chapter.topic).map(&:name)).to eq ['main'] }
+      it { expect(organization.in_path? chapter.topic).to be true }
+    end
+
+    context 'with a guide usage' do
+      let(:lesson) { create(:lesson) }
+
+      before { lesson.index_usage! organization }
+
+      it { expect(Organization.in_path(lesson.guide).map(&:name)).to eq ['main'] }
+      it { expect(organization.in_path? lesson.guide).to be true }
+    end
+
+    context 'with a guide and topic usage with same id' do
+      let(:chapter) { create(:chapter, topic: create(:topic, id: 3141516)) }
+      let(:lesson) { create(:lesson, guide: create(:guide, id: 3141516)) }
+
+      before { lesson.index_usage! organization }
+      before { chapter.index_usage! other_organization }
+
+      it { expect(Organization.in_path(lesson.guide).map(&:name)).to eq ['main'] }
+      it { expect(Organization.in_path(chapter.topic).map(&:name)).to eq ['other'] }
+    end
+
+    context 'with a book usage' do
+      let(:book) { create(:book) }
+
+      before { book.index_usage! organization }
+
+      it { expect(Organization.in_path(book).map(&:name)).to eq ['main'] }
+      it { expect(organization.in_path? book).to be true }
+    end
   end
 end
