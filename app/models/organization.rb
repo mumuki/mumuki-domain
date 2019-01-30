@@ -6,6 +6,8 @@ class Organization < ApplicationRecord
   serialize :settings, Mumukit::Platform::Organization::Settings
   serialize :theme, Mumukit::Platform::Organization::Theme
 
+  markdown_on :description
+
   validate :ensure_consistent_public_login
 
   belongs_to :book
