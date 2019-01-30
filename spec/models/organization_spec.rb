@@ -172,6 +172,6 @@ describe Organization, organization_workspace: :test do
   describe '#description_html' do
     let(:organization) { build(:organization, description: 'some text with *markdown*!') }
 
-    it { expect(organization.description_html).to eq('<p>some text with <em>markdown</em>!</p>') }
+    it { expect(organization.description_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
   end
 end
