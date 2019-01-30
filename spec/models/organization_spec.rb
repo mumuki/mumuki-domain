@@ -168,4 +168,10 @@ describe Organization, organization_workspace: :test do
       it { expect(organization.in_path? book).to be true }
     end
   end
+
+  describe '#description_html' do
+    let(:organization) { build(:organization, description: 'some text with *markdown*!') }
+
+    it { expect(organization.description_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
+  end
 end
