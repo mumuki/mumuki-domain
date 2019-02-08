@@ -3,6 +3,28 @@ require 'spec_helper'
 describe Book, organization_workspace: :test do
   let(:book) { Organization.current.book }
 
+
+  describe 'fork_to!' do
+    let(:original_book) do
+      create(:book,
+        slug: 'original/book',
+        chapters: [
+          create(:chapter,
+            slug: 'original/topic1',
+            lessons: [
+              create(:lesson, slug: 'original/lesson1'),
+              create(:lesson, slug: 'original/lesson2')]),
+          create(:chapter,
+            slug: 'original/topic2',
+            lessons: [
+              create(:lesson, slug: 'original/lesson3'),
+              create(:lesson, slug: 'original/lesson4')])])
+    end
+    let!(:new_book) { book.fork_to! 'new' }
+
+    it { expect(new_book.slug).to eq 'new/slug' }
+  end
+
   describe '#next_lesson_for' do
     let!(:chapter) { create(:chapter, lessons: [create(:lesson)]) }
     let(:fresh_user) { create(:user) }

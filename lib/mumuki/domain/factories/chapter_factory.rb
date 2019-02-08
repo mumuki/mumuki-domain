@@ -7,10 +7,11 @@ FactoryBot.define do
     transient do
       lessons { [] }
       name { Faker::Lorem.sentence(3) }
+      slug { "mumuki/mumuki-test-topic-#{SecureRandom.uuid}" }
     end
 
     after(:build) do |chapter, evaluator|
-      chapter.topic = build(:topic, name: evaluator.name, lessons: evaluator.lessons) unless evaluator.topic
+      chapter.topic = build(:topic, name: evaluator.name, slug: evaluator.slug, lessons: evaluator.lessons) unless evaluator.topic
     end
   end
 end
