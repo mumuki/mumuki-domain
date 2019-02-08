@@ -48,7 +48,7 @@ class Topic < Content
   ## Forking
 
   def fork_children_into!(dup, organization, syncer)
-    dup.lessons = lessons.map { |lesson| lesson.guide.fork_to!(organization, syncer).as_lesson_of(dup) }
+    dup.lessons = lessons.map { |lesson| lesson.guide.fork_to!(organization, syncer, quiet: true).as_lesson_of(dup) }
   end
 
   private

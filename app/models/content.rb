@@ -12,9 +12,9 @@ class Content < ApplicationRecord
     as_json(only: [:name, :slug, :description, :locale]).symbolize_keys
   end
 
-  def fork_to!(organization, syncer)
+  def fork_to!(organization, syncer, quiet: false)
     rebased_dup(organization).tap do |dup|
-      next if self.class.exists?(slug: dup.slug)
+      next if quiet && self.class.exists?(slug: dup.slug)
 
       fork_children_into! dup, organization, syncer
       dup.save!
