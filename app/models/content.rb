@@ -12,5 +12,12 @@ class Content < ApplicationRecord
     as_json(only: [:name, :slug, :description, :locale]).symbolize_keys
   end
 
+  def fork_to!(organization, syncer)
+    rebased_dup(organization).tap do |dup|
+      fork_children_into! dup, organization, syncer
+      dup.save!
+      syncer.export! dup
+    end
+  end
 end
 

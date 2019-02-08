@@ -111,11 +111,9 @@ class Guide < Content
     usage_in_organization.resettable?
   end
 
-  def fork_to!(organization, syncer)
-    rebased_dup(organization).tap do |dup|
-      dup.exercises = exercises.map(&:dup)
-      dup.save!
-      syncer.export! dup
-    end
+  ## Forking
+
+  def fork_children_into!(dup, _organization, _syncer)
+    dup.exercises = exercises.map(&:dup)
   end
 end
