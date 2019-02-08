@@ -12,17 +12,40 @@ describe Book, organization_workspace: :test do
           create(:chapter,
             slug: 'original/topic1',
             lessons: [
-              create(:lesson, slug: 'original/lesson1'),
-              create(:lesson, slug: 'original/lesson2')]),
+              create(:lesson, slug: 'original/guide1'),
+              create(:lesson, slug: 'original/guide2')]),
           create(:chapter,
             slug: 'original/topic2',
             lessons: [
-              create(:lesson, slug: 'original/lesson3'),
-              create(:lesson, slug: 'original/lesson4')])])
+              create(:lesson, slug: 'original/guide3'),
+              create(:lesson, slug: 'original/guide4')])])
     end
-    let!(:new_book) { book.fork_to! 'new' }
 
-    it { expect(new_book.slug).to eq 'new/slug' }
+    shared_examples_for 'a successful fork operation' do
+      let!(:new_book) { original_book.fork_to! 'new', Mumukit::Sync::Syncer.new(Mumukit::Sync::Store::NullStore.new) }
+
+      it { expect(new_book.slug).to eq 'new/book' }
+
+      it { expect(Book.find_by_slug 'new/book').to be_present }
+      it { expect(Topic.find_by_slug 'new/topic1').to be_present }
+      it { expect(Topic.find_by_slug 'new/topic2').to be_present }
+
+      it { expect(Guide.find_by_slug 'new/guide1').to be_present }
+      it { expect(Guide.find_by_slug 'new/guide2').to be_present }
+      it { expect(Guide.find_by_slug 'new/guide3').to be_present }
+      it { expect(Guide.find_by_slug 'new/guide4').to be_present }
+    end
+
+    context 'when no content has been previously forked' do
+      it_behaves_like 'a successful fork operation'
+    end
+
+    context 'when some content has been previously forked' do
+      before { create :guide, slug: 'new/guide2' }
+      before { create :guide, slug: 'new/guide4' }
+
+      it_behaves_like 'a successful fork operation'
+    end
   end
 
   describe '#next_lesson_for' do
