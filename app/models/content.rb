@@ -14,6 +14,8 @@ class Content < ApplicationRecord
 
   def fork_to!(organization, syncer)
     rebased_dup(organization).tap do |dup|
+      next if self.class.exists?(slug: dup.slug)
+
       fork_children_into! dup, organization, syncer
       dup.save!
       syncer.export! dup
