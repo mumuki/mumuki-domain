@@ -21,10 +21,14 @@ describe Book, organization_workspace: :test do
               create(:lesson, slug: 'original/guide4')])])
     end
 
+    let(:new_guides) { new_book.reload.chapters.map(&:topic).flat_map(&:lessons).map(&:guide) }
+
     shared_examples_for 'a successful fork operation' do
       let!(:new_book) { original_book.fork_to! 'new', Mumukit::Sync::Syncer.new(Mumukit::Sync::Store::NullStore.new) }
 
       it { expect(new_book.slug).to eq 'new/book' }
+      it { expect(new_book.chapters.map(&:slug)).to eq %w(new/topic1 new/topic2) }
+      it { expect(new_guides.map(&:slug)).to eq %w(new/guide1 new/guide2 new/guide3 new/guide4) }
 
       it { expect(Book.find_by_slug 'new/book').to be_present }
       it { expect(Topic.find_by_slug 'new/topic1').to be_present }
