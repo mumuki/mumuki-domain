@@ -58,12 +58,8 @@ class Book < Content
 
   ## Forking
 
-  def fork_to!(organization, syncer)
-    rebased_dup(organization).tap do |dup|
-      dup.chapters = chapters.map { |chapter| chapter.topic.fork_to!(organization, syncer).as_chapter_of(self) }
-      dup.complements = complements.map { |complement| complement.guide.fork_to!(organization, syncer).as_complement_of(self) }
-      dup.save!
-      syncer.export! dup
-    end
+  def fork_children_into!(dup, organization, syncer)
+    dup.chapters = chapters.map { |chapter| chapter.topic.fork_to!(organization, syncer, quiet: true).as_chapter_of(dup) }
+    dup.complements = complements.map { |complement| complement.guide.fork_to!(organization, syncer, quiet: true).as_complement_of(dup) }
   end
 end

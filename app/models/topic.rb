@@ -47,12 +47,8 @@ class Topic < Content
 
   ## Forking
 
-  def fork_to!(organization, syncer)
-    rebased_dup(organization).tap do |dup|
-      dup.lessons = lessons.map { |lesson| lesson.guide.fork_to!(organization, syncer).as_lesson_of(self) }
-      dup.save!
-      syncer.export! dup
-    end
+  def fork_children_into!(dup, organization, syncer)
+    dup.lessons = lessons.map { |lesson| lesson.guide.fork_to!(organization, syncer, quiet: true).as_lesson_of(dup) }
   end
 
   private
