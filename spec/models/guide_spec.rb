@@ -4,6 +4,12 @@ describe Guide do
   let!(:extra_user) { create(:user, first_name: 'Ignatius', last_name: 'Reilly') }
   let(:guide) { create(:guide) }
 
+  describe 'slug normalization' do
+    let(:guide) { create(:guide, slug: 'fLbUlGaReLlI/MuMUkI-saMPle-gUIde') }
+
+    it { expect(guide.slug).to eq('flbulgarelli/mumuki-sample-guide') }
+  end
+
   describe '#clear_progress!' do
     let(:an_exercise) { create(:exercise) }
     let(:another_exercise) { create(:exercise) }
@@ -77,12 +83,6 @@ describe Guide do
       before { expect(syncer).to_not receive(:export!) }
       it { expect { Guide.find_by_slug!(slug_from).fork_to! 'test', syncer }.to raise_error ActiveRecord::RecordInvalid }
     end
-  end
-
-  describe 'slug normalization' do
-    let(:guide) { create(:guide, slug: 'fLbUlGaReLlI/MuMUkI-saMPle-gUIde') }
-
-    it { expect(guide.slug).to eq('flbulgarelli/mumuki-sample-guide') }
   end
 
   describe '#to_markdownified_resource_h' do

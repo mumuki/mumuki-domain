@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Guide do
+describe Topic do
   let!(:haskell) { create(:haskell) }
   let!(:gobstones) { create(:gobstones) }
 
@@ -18,6 +18,12 @@ describe Guide do
      slug: 'mumuki/mumuki-sample-topic',
      locale: 'en',
      lessons: [guide_2, guide_1, guide_3].map(&:slug)}
+  end
+
+  describe 'slug normalization' do
+    let(:topic) { create(:topic, slug: 'fLbUlGaReLlI/MuMUkI-saMPle-gUIde') }
+
+    it { expect(topic.slug).to eq('flbulgarelli/mumuki-sample-guide') }
   end
 
   describe '#import_from_resource_h!' do
