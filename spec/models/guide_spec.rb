@@ -79,6 +79,12 @@ describe Guide do
     end
   end
 
+  describe 'slug normalization' do
+    let(:guide) { create(:guide, slug: 'fLbUlGaReLlI/MuMUkI-saMPle-gUIde') }
+
+    it { expect(guide.slug).to eq('flbulgarelli/mumuki-sample-guide') }
+  end
+
   describe '#to_markdownified_resource_h' do
     subject { guide.to_markdownified_resource_h }
     context 'description' do
