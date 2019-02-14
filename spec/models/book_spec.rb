@@ -3,6 +3,11 @@ require 'spec_helper'
 describe Book, organization_workspace: :test do
   let(:book) { Organization.current.book }
 
+  describe 'book normalization' do
+    let(:book) { create(:book, slug: 'fLbUlGaReLlI/MuMUkI-saMPle-gUIde') }
+
+    it { expect(book.slug).to eq('flbulgarelli/mumuki-sample-guide') }
+  end
 
   describe 'fork_to!' do
     let(:original_book) do
