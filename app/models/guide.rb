@@ -8,8 +8,6 @@ class Guide < Content
   numbered :exercises
   has_many :exercises, -> { order(number: :asc) }, dependent:  :delete_all
 
-  before_create :normalize_slug!
-
   self.inheritance_column = nil
 
   enum type: [:learning, :practice]
@@ -57,10 +55,6 @@ class Guide < Content
 
   def done_for?(user)
     stats_for(user).done?
-  end
-
-  def normalize_slug!
-    self.slug = self.slug.to_mumukit_slug.normalize.to_s
   end
 
   def import_from_resource_h!(resource_h)

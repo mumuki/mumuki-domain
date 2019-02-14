@@ -5,11 +5,16 @@ module WithSlug
   included do
     validates_presence_of :slug
     validates_uniqueness_of :slug
+    before_create :normalize_slug!
   end
 
   def slug_parts
     org, repo = slug.split('/')
     {organization: org, repository: repo}
+  end
+
+  def normalize_slug!
+    self.slug = self.slug.to_mumukit_slug.normalize.to_s
   end
 
   ## Copy and Rebase
