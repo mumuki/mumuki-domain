@@ -1,6 +1,12 @@
 require 'spec_helper'
 
 describe User, organization_workspace: :test do
+
+  context 'can not have a null or empty uid' do
+    it { expect { User.create! uid: nil }.to raise_error ActiveRecord::RecordInvalid }
+    it { expect { User.create! uid: '' }.to raise_error ActiveRecord::RecordInvalid }
+  end
+
   describe '#clear_progress!' do
     let(:student) { create :user }
     let(:more_clauses) { create(:exercise, name: 'More Clauses') }
@@ -12,6 +18,7 @@ describe User, organization_workspace: :test do
     it { expect(student.reload.assignments).to be_empty }
     it { expect(student.never_submitted?).to be true }
   end
+
   describe '#transfer_progress_to!' do
 
     let(:codeorga) { build :organization, name: 'code.orga' }

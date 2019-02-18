@@ -32,6 +32,7 @@ class User < ApplicationRecord
   after_initialize :init
 
   before_validation :set_uid!
+  validates :uid, presence: true
 
   def last_lesson
     last_guide.try(:lesson)
