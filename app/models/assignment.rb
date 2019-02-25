@@ -6,7 +6,11 @@ class Assignment < ApplicationRecord
 
   belongs_to :exercise
   has_one :guide, through: :exercise
-  has_many :messages, -> { where.not(submission_id: nil).order(date: :desc) }, foreign_key: :submission_id, primary_key: :submission_id, dependent: :delete_all
+  has_many :messages,
+           -> { where.not(submission_id: nil).order(date: :desc) },
+           foreign_key: :submission_id,
+           primary_key: :submission_id,
+           dependent: :nullify
 
   belongs_to :submitter, class_name: 'User'
 

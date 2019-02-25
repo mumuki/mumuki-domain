@@ -7,7 +7,7 @@ module WithAssignments
   # since in the normal scenario the assignment object already exists
 
   included do
-    has_many :assignments, dependent: :destroy
+    has_many :assignments, dependent: :nullify
   end
 
   def messages_for(user)
