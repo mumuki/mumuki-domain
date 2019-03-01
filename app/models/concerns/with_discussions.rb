@@ -2,7 +2,7 @@ module WithDiscussions
   extend ActiveSupport::Concern
 
   included do
-    has_many :discussions, as: :item, dependent: :nullify
+    has_many :discussions, as: :item
   end
 
   def discuss!(user, discussion)

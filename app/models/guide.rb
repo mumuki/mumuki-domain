@@ -6,7 +6,7 @@ class Guide < Content
   markdown_on :corollary, :sources, :learn_more, :teacher_info
 
   numbered :exercises
-  has_many :exercises, -> { order(number: :asc) }, dependent:  :nullify
+  has_many :exercises, -> { order(number: :asc) }
 
   self.inheritance_column = nil
 

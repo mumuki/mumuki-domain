@@ -166,7 +166,7 @@ describe Exercise do
       let!(:assignment) { create(:assignment, exercise: exercise) }
       before { exercise.destroy! }
       it { expect { Assignment.find(assignment.id) }.to_not raise_error }
-      it { expect(assignment.reload.exercise_id).to be nil }
+      it { expect(assignment.reload.exercise_id).to_not be nil }
     end
 
   end
