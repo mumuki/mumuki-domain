@@ -53,7 +53,12 @@ class Assignment < ApplicationRecord
   end
 
   def notify_to_accessible_organizations!
-    submitter.accessible_organizations.each do |organization|
+    warn "Don't use notify_to_accessible_organizations!. Use notify_to_granted_organizations! instead"
+    notify_to_granted_organizations!
+  end
+
+  def notify_to_granted_organizations!
+    submitter.student_granted_organizations.each do |organization|
       organization.switch!
       notify!
     end
