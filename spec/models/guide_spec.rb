@@ -46,7 +46,7 @@ describe Guide do
                 lessons: [create(:lesson, guide: guide)])]))
       end
       before { reindex_organization! organization }
-      it { expect { guide.reload.destroy! }.to raise_error('Guide is in usage in organization test') }
+      it { expect { guide.reload.destroy! }.to raise_error('Guide is still in use in organization an-organization') }
     end
   end
 

@@ -20,6 +20,14 @@ es:
         content: Contenido
     errors:
       models:
+        guide:
+          attributes:
+            base:
+              in_use: 'La guía aún están siendo utilizada en la organización %{organization}'
+        topic:
+            attributes:
+              base:
+                in_use: 'El tema aún está siendo utilizado en la organización %{organization}'
         exercise:
           attributes:
             randomizations:

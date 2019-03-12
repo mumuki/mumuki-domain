@@ -19,7 +19,7 @@ module WithUsages
 
   def ensure_unused!
     if usages.present?
-      errors.add :base, :content_is_still_used
+      errors.add :base, :in_use, organization: usages.first.organization.name
       throw :abort
     end
   end
