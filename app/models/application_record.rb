@@ -44,13 +44,13 @@ class ApplicationRecord < ActiveRecord::Base
     errors[:base].last.try { |it| raise ActiveRecord::RecordNotDestroyed.new it }
     raise e
   rescue ActiveRecord::InvalidForeignKey => e
-    reraise_foreign_key_error! e
+    raise_foreign_key_error!
   end
 
   def delete
     super
   rescue ActiveRecord::InvalidForeignKey => e
-    reraise_foreign_key_error! e
+    raise_foreign_key_error!
   end
 
   def save_and_notify!
@@ -103,8 +103,7 @@ class ApplicationRecord < ActiveRecord::Base
 
   private
 
-  def reraise_foreign_key_error!(e)
-    raise ActiveRecord::InvalidForeignKey.new "#{model_name} is still referenced" if e.message.include? 'is still referenced from table'
-    raise e
+  def raise_foreign_key_error!
+    raise ActiveRecord::InvalidForeignKey.new "#{model_name} is still referenced"
   end
 end
