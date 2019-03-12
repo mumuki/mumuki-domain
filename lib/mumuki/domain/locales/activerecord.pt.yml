@@ -1,0 +1,29 @@
+---
+pt:
+  activerecord:
+    errors:
+      models:
+        guide:
+          attributes:
+            base:
+              in_use: 'O guia ainda está em uso na organização da %{organization}'
+        topic:
+            attributes:
+              base:
+                in_use: 'O tópico ainda está em uso na organização da %{organization}'
+        exercise:
+          attributes:
+            randomizations:
+              invalid_format: 'o formato é inválido'
+            own_expectations:
+              invalid_format: 'o formato é inválido'
+            assistance_rules:
+              invalid_format: 'o formato é inválido'
+            name:
+              invalid_format: 'must not contain /'
+            base:
+              evaluation_criteria_required:  'Você precisa fornecer testes e/ou expectativas'
+        organization:
+          attributes:
+            base:
+              consistent_public_login: 'Uma organização pública não pode restringir métodos de login'

@@ -3,6 +3,14 @@ en:
   activerecord:
     errors:
       models:
+        guide:
+          attributes:
+            base:
+              in_use: 'Guide is still in use in organization %{organization}'
+        topic:
+            attributes:
+              base:
+                in_use: 'Topic is still in use in organization %{organization}'
         exercise:
           attributes:
             randomizations:

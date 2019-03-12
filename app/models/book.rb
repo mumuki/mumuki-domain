@@ -2,8 +2,8 @@ class Book < Content
   numbered :chapters
   aggregate_of :chapters
 
-  has_many :chapters, -> { order(number: :asc) }, dependent: :delete_all
-  has_many :complements, dependent: :delete_all
+  has_many :chapters, -> { order(number: :asc) }, dependent: :destroy
+  has_many :complements, dependent: :destroy
 
   has_many :exercises, through: :chapters
   has_many :discussions, through: :exercises

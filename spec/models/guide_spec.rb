@@ -10,6 +10,46 @@ describe Guide do
     it { expect(guide.slug).to eq('flbulgarelli/mumuki-sample-guide') }
   end
 
+  describe '#destroy' do
+    let(:guide) { create(:guide) }
+
+    context 'when orphan' do
+      it { expect { guide.destroy! }.to_not raise_error }
+    end
+
+    context 'when referenced' do
+      before do
+        create(:chapter,
+          slug: 'mumuki/topic1',
+          lessons: [create(:lesson, guide: guide)])
+      end
+      it { expect { guide.destroy! }.to raise_error('Guide is still referenced') }
+    end
+
+    context 'when referenced' do
+      before do
+        create(:chapter,
+          slug: 'mumuki/topic1',
+          lessons: [create(:lesson, guide: guide)])
+      end
+      it { expect { guide.delete }.to raise_error('Guide is still referenced') }
+    end
+
+    context 'when used' do
+      let(:organization) do
+        create(:organization, book:
+          create(:book,
+            slug: 'mumuki/book',
+            chapters: [
+              create(:chapter,
+                slug: 'mumuki/topic1',
+                lessons: [create(:lesson, guide: guide)])]))
+      end
+      before { reindex_organization! organization }
+      it { expect { guide.reload.destroy! }.to raise_error('Guide is still in use in organization an-organization') }
+    end
+  end
+
   describe '#clear_progress!' do
     let(:an_exercise) { create(:exercise) }
     let(:another_exercise) { create(:exercise) }

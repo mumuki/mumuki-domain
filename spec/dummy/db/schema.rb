@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190123180147) do
+ActiveRecord::Schema.define(version: 20190312152901) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -332,4 +332,9 @@ ActiveRecord::Schema.define(version: 20190123180147) do
     t.index ["uid"], name: "index_users_on_uid", unique: true
   end
 
+  add_foreign_key "chapters", "topics"
+  add_foreign_key "complements", "guides"
+  add_foreign_key "exams", "guides"
+  add_foreign_key "lessons", "guides"
+  add_foreign_key "organizations", "books"
 end

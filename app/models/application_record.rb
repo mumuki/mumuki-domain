@@ -38,6 +38,21 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
+  def destroy!
+    super
+  rescue ActiveRecord::RecordNotDestroyed => e
+    errors[:base].last.try { |it| raise ActiveRecord::RecordNotDestroyed.new it }
+    raise e
+  rescue ActiveRecord::InvalidForeignKey => e
+    raise_foreign_key_error!
+  end
+
+  def delete
+    super
+  rescue ActiveRecord::InvalidForeignKey => e
+    raise_foreign_key_error!
+  end
+
   def save_and_notify!
     save!
     notify!
@@ -84,5 +99,11 @@ class ApplicationRecord < ActiveRecord::Base
     attributes = attribute_names
     attributes += reflections.keys if options[:relations]
     a_hash.with_indifferent_access.slice(*attributes).except(*options[:except])
+  end
+
+  private
+
+  def raise_foreign_key_error!
+    raise ActiveRecord::InvalidForeignKey.new "#{model_name} is still referenced"
   end
 end
