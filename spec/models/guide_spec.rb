@@ -35,17 +35,18 @@ describe Guide do
       it { expect { guide.delete }.to raise_error('Guide is still referenced') }
     end
 
-    context 'when used', organization_workspace: :test do
-      before do
-        create(:book,
-          slug: 'mumuki/book',
-          chapters: [
-            create(:chapter,
-              slug: 'mumuki/topic1',
-              lessons: [create(:lesson, guide: guide)])])
+    context 'when used' do
+      let(:organization) do
+        create(:organization, book:
+          create(:book,
+            slug: 'mumuki/book',
+            chapters: [
+              create(:chapter,
+                slug: 'mumuki/topic1',
+                lessons: [create(:lesson, guide: guide)])]))
       end
-      before { reindex_current_organization! }
-      it { expect { guide.destroy! }.to raise_error('Guide is in usage in organization test') }
+      before { reindex_organization! organization }
+      it { expect { guide.reload.destroy! }.to raise_error('Guide is in usage in organization test') }
     end
   end
 

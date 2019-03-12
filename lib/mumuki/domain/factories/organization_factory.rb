@@ -5,6 +5,7 @@ FactoryBot.define do
     description { 'a great org' }
     locale { 'en' }
     settings {}
+    name { 'an-organization' }
     book
   end
 
