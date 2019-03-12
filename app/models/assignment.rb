@@ -9,7 +9,8 @@ class Assignment < ApplicationRecord
   has_many :messages,
            -> { where.not(submission_id: nil).order(date: :desc) },
            foreign_key: :submission_id,
-           primary_key: :submission_id
+           primary_key: :submission_id,
+           dependent: :destroy
 
   belongs_to :submitter, class_name: 'User'
 

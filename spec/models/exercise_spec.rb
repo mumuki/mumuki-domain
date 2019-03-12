@@ -165,8 +165,7 @@ describe Exercise do
     context 'when there are submissions' do
       let!(:assignment) { create(:assignment, exercise: exercise) }
       before { exercise.destroy! }
-      it { expect { Assignment.find(assignment.id) }.to_not raise_error }
-      it { expect(assignment.reload.exercise_id).to_not be nil }
+      it { expect { Assignment.find(assignment.id) }.to raise_error(ActiveRecord::RecordNotFound) }
     end
 
   end
