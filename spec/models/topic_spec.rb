@@ -1,23 +1,13 @@
 require 'spec_helper'
 
 describe Topic do
-  let!(:haskell) { create(:haskell) }
-  let!(:gobstones) { create(:gobstones) }
+  describe 'transparent navigation api' do
+    let!(:topic) { create(:topic, slug: 'foo/bar') }
+    let(:params) { { organization: 'foo', repository: 'bar' } }
 
-  let!(:lesson_1) { create(:lesson, name: 'l1') }
-  let(:guide_1) { lesson_1.guide }
-
-  let!(:lesson_2) { create(:lesson, name: 'l2') }
-
-  let!(:guide_2) { create(:guide, name: 'g2') }
-  let!(:guide_3) { create(:guide, name: 'g3') }
-
-  let(:topic_resource_h) do
-    {name: 'sample topic',
-     description: 'topic description',
-     slug: 'mumuki/mumuki-sample-topic',
-     locale: 'en',
-     lessons: [guide_2, guide_1, guide_3].map(&:slug)}
+    it { expect(topic.transparent_id).to eq 'foo/bar' }
+    it { expect(topic.transparent_parms).to eq params }
+    it { expect(Topic.find_transparently!(params)).to eq topic }
   end
 
   describe 'slug normalization' do
@@ -27,6 +17,25 @@ describe Topic do
   end
 
   describe '#import_from_resource_h!' do
+    let!(:haskell) { create(:haskell) }
+    let!(:gobstones) { create(:gobstones) }
+
+    let!(:lesson_1) { create(:lesson, name: 'l1') }
+    let(:guide_1) { lesson_1.guide }
+
+    let!(:lesson_2) { create(:lesson, name: 'l2') }
+
+    let!(:guide_2) { create(:guide, name: 'g2') }
+    let!(:guide_3) { create(:guide, name: 'g3') }
+
+    let(:topic_resource_h) do
+      {name: 'sample topic',
+       description: 'topic description',
+       slug: 'mumuki/mumuki-sample-topic',
+       locale: 'en',
+       lessons: [guide_2, guide_1, guide_3].map(&:slug)}
+    end
+
     context 'when guide is empty' do
       let(:topic) { create(:topic, lessons: [lesson_1, lesson_2]) }
 
