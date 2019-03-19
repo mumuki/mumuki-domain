@@ -28,10 +28,14 @@ describe Exercise do
     end
   end
 
-  describe '#slug' do
+  describe 'transparent navigation api' do
     let(:guide) { create(:guide, slug: 'foo/bar') }
-    let(:exercise) { create(:exercise, guide: guide, bibliotheca_id: 4) }
-    it { expect(exercise.slug).to eq 'foo/bar/4' }
+    let!(:exercise) { create(:exercise, guide: guide, bibliotheca_id: 4) }
+    let(:params) { { organization: 'foo', repository: 'bar', bibliotheca_id: 4 } }
+
+    it { expect(exercise.transparent_id).to eq 'foo/bar/4' }
+    it { expect(exercise.transparent_params).to eq params }
+    it { expect(Exercise.find_transparently!(params)).to eq exercise }
   end
 
   describe '#new_solution' do

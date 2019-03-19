@@ -8,9 +8,13 @@ module WithSlug
     before_create :normalize_slug!
   end
 
-  def slug_parts
+  def transparent_params
     org, repo = slug.split('/')
     {organization: org, repository: repo}
+  end
+
+  def transparent_id
+    slug
   end
 
   def normalize_slug!
@@ -40,7 +44,7 @@ module WithSlug
       all.select { |it| !it.private? || permissions&.writer?(it.slug) }
     end
 
-    def by_slug_parts!(args)
+    def find_transparently!(args)
       find_by!(slug: "#{args[:organization]}/#{args[:repository]}")
     end
 
