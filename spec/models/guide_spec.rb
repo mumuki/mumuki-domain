@@ -125,6 +125,15 @@ describe Guide do
     end
   end
 
+  describe 'transparent navigation api' do
+    let!(:guide) { create(:guide, slug: 'foo/bar') }
+    let(:params) { { organization: 'foo', repository: 'bar' } }
+
+    it { expect(guide.transparent_id).to eq 'foo/bar' }
+    it { expect(guide.transparent_parms).to eq params }
+    it { expect(Guide.find_transparently!(params)).to eq guide }
+  end
+
   describe '#to_markdownified_resource_h' do
     subject { guide.to_markdownified_resource_h }
     context 'description' do

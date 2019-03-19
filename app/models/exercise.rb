@@ -64,12 +64,12 @@ class Exercise < ApplicationRecord
     [language&.name, *tag_list].compact
   end
 
-  def slug
-    "#{guide.slug}/#{bibliotheca_id}"
+  def transparent_id
+    "#{guide.transparent_id}/#{bibliotheca_id}"
   end
 
-  def slug_parts
-    guide.slug_parts.merge(bibliotheca_id: bibliotheca_id)
+  def transparent_parms
+    guide.transparent_parms.merge(bibliotheca_id: bibliotheca_id)
   end
 
   def friendly
@@ -191,6 +191,10 @@ class Exercise < ApplicationRecord
       .directives_sections
       .split_sections(current_content)
       .map { |name, content| Mumuki::Domain::File.new name, content }
+  end
+
+  def self.find_transparently!(params)
+    Guide.find_transparently!(params).exercises.find_by!(bibliotheca_id: params[:bibliotheca_id])
   end
 
   private
