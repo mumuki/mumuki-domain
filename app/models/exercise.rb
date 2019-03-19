@@ -68,8 +68,8 @@ class Exercise < ApplicationRecord
     "#{guide.transparent_id}/#{bibliotheca_id}"
   end
 
-  def transparent_parms
-    guide.transparent_parms.merge(bibliotheca_id: bibliotheca_id)
+  def transparent_params
+    guide.transparent_params.merge(bibliotheca_id: bibliotheca_id)
   end
 
   def friendly

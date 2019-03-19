@@ -34,7 +34,7 @@ describe Exercise do
     let(:params) { { organization: 'foo', repository: 'bar', bibliotheca_id: 4 } }
 
     it { expect(exercise.transparent_id).to eq 'foo/bar/4' }
-    it { expect(exercise.transparent_parms).to eq params }
+    it { expect(exercise.transparent_params).to eq params }
     it { expect(Exercise.find_transparently!(params)).to eq exercise }
   end
 

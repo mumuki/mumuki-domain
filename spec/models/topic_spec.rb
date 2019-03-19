@@ -6,7 +6,7 @@ describe Topic do
     let(:params) { { organization: 'foo', repository: 'bar' } }
 
     it { expect(topic.transparent_id).to eq 'foo/bar' }
-    it { expect(topic.transparent_parms).to eq params }
+    it { expect(topic.transparent_params).to eq params }
     it { expect(Topic.find_transparently!(params)).to eq topic }
   end
 

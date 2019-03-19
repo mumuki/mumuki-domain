@@ -130,7 +130,7 @@ describe Guide do
     let(:params) { { organization: 'foo', repository: 'bar' } }
 
     it { expect(guide.transparent_id).to eq 'foo/bar' }
-    it { expect(guide.transparent_parms).to eq params }
+    it { expect(guide.transparent_params).to eq params }
     it { expect(Guide.find_transparently!(params)).to eq guide }
   end
 

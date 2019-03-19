@@ -8,7 +8,7 @@ module WithSlug
     before_create :normalize_slug!
   end
 
-  def transparent_parms
+  def transparent_params
     org, repo = slug.split('/')
     {organization: org, repository: repo}
   end
