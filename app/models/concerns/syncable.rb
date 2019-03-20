@@ -59,11 +59,6 @@ module Syncable
       find_or_initialize_by sync_key_id_field => sync_key_id
     end
 
-    # `locate_resource` is a helpful method that can be used
-    # outside the `Mumukit::Sync` context, thus this mixin provide
-    # a shorter alias
-    alias_method :locate, :locate_resource
-
     # `locate!` is similar to `locate`, but fails instead of creating a
     # a new object when not found
     #
