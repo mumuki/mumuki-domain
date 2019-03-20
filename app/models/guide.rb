@@ -57,6 +57,11 @@ class Guide < Content
     stats_for(user).done?
   end
 
+  # Finds an exercise by bibliotheca_id within this guide
+  def locate_exercise!(bibliotheca_id)
+    exercises.find_by!(bibliotheca_id: bibliotheca_id)
+  end
+
   def import_from_resource_h!(resource_h)
     self.assign_attributes whitelist_attributes(resource_h)
     self.language = Language.for_name(resource_h.dig(:language, :name))

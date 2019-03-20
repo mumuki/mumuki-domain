@@ -194,7 +194,7 @@ class Exercise < ApplicationRecord
   end
 
   def self.find_transparently!(params)
-    Guide.find_transparently!(params).exercises.find_by!(bibliotheca_id: params[:bibliotheca_id])
+    Guide.find_transparently!(params).locate_exercise! params[:bibliotheca_id]
   end
 
   private
