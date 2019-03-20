@@ -38,6 +38,13 @@ describe Exercise do
     it { expect(Exercise.find_transparently!(params)).to eq exercise }
   end
 
+  describe 'locate!' do
+    let(:guide) { create(:guide, slug: 'foo/bar') }
+    let(:exercise) { create(:exercise, guide: guide, bibliotheca_id: 4) }
+
+    it { expect(Exercise.locate!([guide.slug, exercise.bibliotheca_id])).to eq exercise }
+  end
+
   describe '#new_solution' do
     context 'when there is default content' do
       let(:exercise) { create(:exercise, default_content: 'foo') }

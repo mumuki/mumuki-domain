@@ -197,6 +197,11 @@ class Exercise < ApplicationRecord
     Guide.find_transparently!(params).locate_exercise! params[:bibliotheca_id]
   end
 
+  def self.locate!(slug_and_bibliotheca_id)
+    slug, bibliotheca_id = slug_and_bibliotheca_id
+    Guide.locate!(slug).locate_exercise! bibliotheca_id
+  end
+
   private
 
   def evaluation_class
