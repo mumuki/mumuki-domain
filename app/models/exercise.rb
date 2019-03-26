@@ -25,6 +25,8 @@ class Exercise < ApplicationRecord
   defaults { self.submissions_count = 0 }
 
   serialize :choices, Array
+  serialize :settings, Hash
+
   validates_presence_of :submissions_count,
                         :guide, :bibliotheca_id
 
@@ -200,6 +202,10 @@ class Exercise < ApplicationRecord
   def self.locate!(slug_and_bibliotheca_id)
     slug, bibliotheca_id = slug_and_bibliotheca_id
     Guide.locate!(slug).locate_exercise! bibliotheca_id
+  end
+
+  def settings
+    guide.settings.deep_merge super
   end
 
   private

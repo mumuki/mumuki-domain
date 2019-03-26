@@ -8,6 +8,8 @@ class Guide < Content
   numbered :exercises
   has_many :exercises, -> { order(number: :asc) }, dependent: :destroy
 
+  serialize :settings, Hash
+
   self.inheritance_column = nil
 
   enum type: [:learning, :practice]
