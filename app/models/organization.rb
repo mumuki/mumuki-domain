@@ -95,8 +95,12 @@ class Organization < ApplicationRecord
     central? ? 'mumuki' : name
   end
 
-  def ask_for_help_enabled?
-    report_issue_enabled? || community_link.present? || forum_enabled?
+  def ask_for_help_enabled?(user)
+    report_issue_enabled? || community_link.present? || can_create_discussions?(user)
+  end
+
+  def can_create_discussions?(user)
+    forum_enabled? && user.permissions.has_permission?(forum_discussions_minimal_role, self.slug)
   end
 
   def import_from_resource_h!(resource_h)
