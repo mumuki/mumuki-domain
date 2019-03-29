@@ -45,7 +45,7 @@ module GuideContainer
     false
   end
 
-  def start!(user)
+  def start!(user, session_id)
   end
 
   def resettable?

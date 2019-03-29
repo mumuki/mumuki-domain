@@ -72,8 +72,8 @@ class Exam < ApplicationRecord
     authorizations.where(user_id: users.map(&:id))
   end
 
-  def start!(user)
-    authorization_for(user).start! unless user.teacher_here?
+  def start!(user, session_id = nil)
+    authorization_for(user).start! session_id unless user.teacher_here?
   end
 
   def started?(user)

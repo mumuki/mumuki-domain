@@ -107,6 +107,17 @@ describe Exam, organization_workspace: :test do
         end
       end
 
+      context 'session_id restriction' do
+        let(:user) { create(:user, uid: 'auth0|1') }
+        let(:guide) { create(:guide) }
+        let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 10, language: 'haskell', name: 'foo', uids: [user.uid], organization: 'test'} }
+        let(:exam) { Exam.import_from_resource_h! exam_json }
+        before { exam.start! user, '123'}
+
+        it { expect(ExamAuthorization.first.session_id).to eq '123' }
+        it { expect { exam.start! user, '456'}.to raise_error(Mumuki::Domain::ForbiddenError) }
+      end
+
       context 'update exam does not change user started_at' do
         let(:user) { create(:user, uid: 'auth0|1') }
         let(:guide) { create(:guide) }
