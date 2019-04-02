@@ -41,7 +41,7 @@ class Invitation < ApplicationRecord
   end
 
   def unexpired
-    raise RecordNotFound, "This invitation has already expired" if expired?
+    raise Mumuki::Domain::GoneError, "This invitation has already expired" if expired?
     self
   end
 
