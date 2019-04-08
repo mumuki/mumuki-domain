@@ -5,6 +5,7 @@ class Discussion < ApplicationRecord
   has_many :messages, -> { order(:created_at) }, dependent: :destroy
   belongs_to :initiator, class_name: 'User'
   belongs_to :exercise, foreign_type: :exercise, foreign_key: 'item_id'
+  belongs_to :organization
   has_many :subscriptions
   has_many :upvotes
 
@@ -23,7 +24,7 @@ class Discussion < ApplicationRecord
   delegate :to_discussion_status, to: :status
 
   scope :for_user, -> (user) do
-    if user.try(:moderator?)
+    if user.try(:moderator_here?)
       all
     else
       where.not(status: :closed).where.not(status: :pending_review).or(where(initiator: user))
@@ -41,11 +42,11 @@ class Discussion < ApplicationRecord
   end
 
   def used_in?(organization)
-    item.used_in?(organization)
+    organization == self.organization
   end
 
   def commentable_by?(user)
-    user&.moderator? || (opened? && user.present?)
+    user&.moderator_here? || (opened? && user.present?)
   end
 
   def subscribable?
@@ -87,7 +88,7 @@ class Discussion < ApplicationRecord
   end
 
   def authorized?(user)
-    initiator?(user) || user.try(:moderator?)
+    initiator?(user) || user.try(:moderator_here?)
   end
 
   def initiator?(user)

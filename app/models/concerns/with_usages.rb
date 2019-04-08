@@ -4,10 +4,11 @@ module WithUsages
   included do
     has_many :usages, as: :item
     before_destroy :ensure_unused!
+    organic_on :usages
   end
 
   def usage_in_organization(organization = Organization.current)
-    usages.in_organization(organization).first.try(:parent_item)
+    usages_in_organization(organization).first.try(:parent_item)
   end
 
   def usage_in_organization_of_type(type, organization = Organization.current)

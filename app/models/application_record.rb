@@ -101,7 +101,17 @@ class ApplicationRecord < ActiveRecord::Base
     a_hash.with_indifferent_access.slice(*attributes).except(*options[:except])
   end
 
+  def self.organic_on(*selectors)
+    selectors.each { |selector| _define_organic_on(selector) }
+  end
+
   private
+
+  def self._define_organic_on(selector)
+    define_method("#{selector}_in_organization") do |organization = Organization.current|
+      send(selector).where(organization: organization)
+    end
+  end
 
   def raise_foreign_key_error!
     raise ActiveRecord::InvalidForeignKey.new "#{model_name} is still referenced"

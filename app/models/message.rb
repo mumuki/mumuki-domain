@@ -25,7 +25,7 @@ class Message < ApplicationRecord
   end
 
   def authorized?(user)
-    from_user?(user) || user&.moderator?
+    from_user?(user) || user&.moderator_here?
   end
 
   def authorize!(user)
