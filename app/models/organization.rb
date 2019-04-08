@@ -100,7 +100,7 @@ class Organization < ApplicationRecord
   end
 
   def import_from_resource_h!(resource_h)
-    attrs = Mumukit::Platform::Organization::Helpers.slice_platform_json resource_h
+    attrs = Mumukit::Platform::Organization::Helpers.slice_resource_h resource_h
     attrs[:book] = Book.locate! attrs[:book]
     update! attrs
   end
