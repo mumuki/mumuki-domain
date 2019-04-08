@@ -73,7 +73,10 @@ class Exam < ApplicationRecord
   end
 
   def start!(user)
-    authorization_for(user).start! unless user.teacher_here?
+    authorization = authorization_for(user)
+    raise raise Mumuki::Domain::ForbiddenError unless authorization
+
+    authorization.start! unless user.teacher_here?
   end
 
   def started?(user)
