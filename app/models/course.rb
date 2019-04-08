@@ -15,7 +15,7 @@ class Course < ApplicationRecord
   end
 
   def import_from_resource_h!(resource_h)
-    update! Mumukit::Platform::Course::Helpers.slice_platform_json(resource_h)
+    update! Mumukit::Platform::Course::Helpers.slice_resource_h(resource_h)
   end
 
   def slug=(slug)
