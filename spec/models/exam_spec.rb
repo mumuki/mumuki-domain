@@ -128,6 +128,11 @@ describe Exam, organization_workspace: :test do
 
       end
 
+      context 'unauthorized user does not start' do
+        let(:exam) { create(:exam) }
+        it { expect { exam.start! user }.to raise_error Mumuki::Domain::ForbiddenError }
+      end
+
       context 'teacher does not start exams' do
         let(:teacher) { create(:user, uid: 'auth0|1') }
         let(:guide) { create(:guide) }
