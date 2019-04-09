@@ -107,9 +107,9 @@ class Organization < ApplicationRecord
   # create discussion in this organization
   #
   # This is true only when this organization has a forum and the user
-  # has access to this organization with the minimal forum permissions
+  # has the discusser pseudo-permission
   def can_create_discussions?(user)
-    forum_enabled? && user.has_permission?(forum_discussions_minimal_role, slug)
+    forum_enabled? && user.discusser_of?(self)
   end
 
   def import_from_resource_h!(resource_h)
