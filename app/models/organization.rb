@@ -100,7 +100,7 @@ class Organization < ApplicationRecord
   end
 
   def can_create_discussions?(user)
-    forum_enabled? && user.permissions.has_permission?(forum_discussions_minimal_role, self.slug)
+    forum_enabled? && user.has_permission?(forum_discussions_minimal_role, slug)
   end
 
   def import_from_resource_h!(resource_h)
