@@ -95,10 +95,19 @@ class Organization < ApplicationRecord
     central? ? 'mumuki' : name
   end
 
+  # Tells if the given user can
+  # ask for help in this organization
+  #
+  # Warning: this method does not strictly check user's permission
   def ask_for_help_enabled?(user)
     report_issue_enabled? || community_link.present? || can_create_discussions?(user)
   end
 
+  # Tells if the given user can
+  # create discussion in this organization
+  #
+  # This is true only when this organization has a forum and the user
+  # has access to this organization with the minimal forum permissions
   def can_create_discussions?(user)
     forum_enabled? && user.has_permission?(forum_discussions_minimal_role, slug)
   end
