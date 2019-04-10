@@ -18,6 +18,37 @@ describe Organization, organization_workspace: :test do
     it { expect(found).to json_eq resource_h, except: [:theme, :settings]  }
   end
 
+  describe '#ask_for_help_enabled?' do
+    let(:user) { create(:user) }
+    let(:organization) { create(:organization) }
+
+    context 'when non assistance medium present' do
+      it { expect(organization.ask_for_help_enabled? user).to be false }
+    end
+
+    context 'when can report issues' do
+      before { organization.report_issue_enabled = true }
+      it { expect(organization.ask_for_help_enabled? user).to be true }
+    end
+    context 'when there is a community link' do
+      before { organization.community_link = 'https://an-external-mumuki-forum.org' }
+      it { expect(organization.ask_for_help_enabled? user).to be true }
+    end
+
+    context 'when forum is enabled' do
+      before { organization.forum_enabled = true }
+
+      context 'when user does not meet minimal permissions' do
+        it { expect(organization.ask_for_help_enabled? user).to be false }
+      end
+
+      context 'when user meets minimal permissions' do
+        before { user.make_student_of! organization.slug }
+        it { expect(organization.ask_for_help_enabled? user).to be true }
+      end
+    end
+  end
+
   describe '.current' do
     let(:organization) { Organization.find_by(name: 'test') }
     it { expect(organization).to_not be nil }
