@@ -169,6 +169,7 @@ ActiveRecord::Schema.define(version: 20190404181724) do
     t.text "free_form_editor_source"
     t.text "teacher_info"
     t.text "choices"
+    t.text "settings"
     t.index ["guide_id"], name: "index_exercises_on_guide_id"
     t.index ["language_id"], name: "index_exercises_on_language_id"
   end
@@ -193,6 +194,7 @@ ActiveRecord::Schema.define(version: 20190404181724) do
     t.text "teacher_info"
     t.text "sources"
     t.text "learn_more"
+    t.text "settings"
     t.index ["name"], name: "index_guides_on_name"
     t.index ["slug"], name: "index_guides_on_slug", unique: true
   end

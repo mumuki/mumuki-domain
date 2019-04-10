@@ -25,6 +25,8 @@ class Exercise < ApplicationRecord
   defaults { self.submissions_count = 0 }
 
   serialize :choices, Array
+  serialize :settings, Hash
+
   validates_presence_of :submissions_count,
                         :guide, :bibliotheca_id
 
@@ -116,6 +118,7 @@ class Exercise < ApplicationRecord
                      free_form_editor_source initial_state final_state))
       .merge(id: bibliotheca_id, language: language_resource_h, type: type.underscore)
       .merge(expectations: self[:expectations])
+      .merge(settings: self[:settings])
       .merge(RANDOMIZED_FIELDS.map { |it| [it, self[it]] }.to_h)
       .symbolize_keys
       .compact
@@ -200,6 +203,10 @@ class Exercise < ApplicationRecord
   def self.locate!(slug_and_bibliotheca_id)
     slug, bibliotheca_id = slug_and_bibliotheca_id
     Guide.locate!(slug).locate_exercise! bibliotheca_id
+  end
+
+  def settings
+    guide.settings.deep_merge super
   end
 
   private

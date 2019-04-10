@@ -8,6 +8,8 @@ class Guide < Content
   numbered :exercises
   has_many :exercises, -> { order(number: :asc) }, dependent: :destroy
 
+  serialize :settings, Hash
+
   self.inheritance_column = nil
 
   enum type: [:learning, :practice]
@@ -85,7 +87,7 @@ class Guide < Content
   end
 
   def to_resource_h
-    as_json(only: %i(beta type id_format private expectations corollary teacher_info sources learn_more authors collaborators extra))
+    as_json(only: %i(beta type id_format private expectations corollary teacher_info sources learn_more authors collaborators extra settings))
       .symbolize_keys
       .merge(super)
       .merge(exercises: exercises.map(&:to_resource_h))

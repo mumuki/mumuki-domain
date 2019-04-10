@@ -16,7 +16,7 @@ class Assignment < ApplicationRecord
 
   validates_presence_of :exercise, :submitter
 
-  delegate :language, :name, :navigable_parent,
+  delegate :language, :name, :navigable_parent, :settings,
            :limited?, :input_kids?, :choice?, to: :exercise
 
   alias_attribute :status, :submission_status
@@ -118,11 +118,11 @@ class Assignment < ApplicationRecord
 
   %w(query try).each do |key|
     name = "run_#{key}!"
-    define_method(name) { |params| exercise.send name, params.merge(extra: extra) }
+    define_method(name) { |params| exercise.send name, params.merge(extra: extra, settings: settings) }
   end
 
   def run_tests!(params)
-    exercise.run_tests! params.merge(extra: extra, test: test)
+    exercise.run_tests! params.merge(extra: extra, test: test, settings: settings)
   end
 
   def to_resource_h
