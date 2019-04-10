@@ -7,6 +7,7 @@ class Book < Content
 
   has_many :exercises, through: :chapters
   has_many :discussions, through: :exercises
+  organic_on :discussions
 
   delegate :first_lesson, to: :first_chapter
 

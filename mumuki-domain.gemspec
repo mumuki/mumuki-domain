@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'mumukit-directives', '~> 0.5'
   s.add_dependency 'mumukit-inspection', '~> 3.6'
   s.add_dependency 'mumukit-randomizer', '~> 1.0'
-  s.add_dependency 'mumukit-platform', '~> 3.2'
+  s.add_dependency 'mumukit-platform', '~> 4.2'
   s.add_dependency 'mumukit-sync', '~> 0.3'
 
   s.add_development_dependency 'pg', '~> 0.18.0'

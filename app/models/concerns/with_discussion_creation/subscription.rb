@@ -2,9 +2,13 @@ module WithDiscussionCreation::Subscription
   extend ActiveSupport::Concern
 
   included do
-    has_many :discussions, foreign_key: 'initiator_id'
     has_many :subscriptions
     has_many :watched_discussions, through: :subscriptions, source: :discussion
+    organic_on :watched_discussions
+  end
+
+  def subscriptions_in_organization
+    subscriptions.joins(:discussion).where(discussion: discussions_in_organization)
   end
 
   def subscribed_to?(discussion)
@@ -28,6 +32,6 @@ module WithDiscussionCreation::Subscription
   end
 
   def unread_discussions
-    subscriptions.where(read: false).map(&:discussion)
+    subscriptions_in_organization.where(read: false).map(&:discussion)
   end
 end

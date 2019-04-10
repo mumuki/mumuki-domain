@@ -98,7 +98,7 @@ class User < ApplicationRecord
   end
 
   def import_from_resource_h!(json)
-    update! Mumukit::Platform::User::Helpers.slice_platform_json json
+    update! Mumukit::Platform::User::Helpers.slice_resource_h json
   end
 
   def unsubscribe_from_reminders!

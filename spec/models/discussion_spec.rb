@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe Discussion do
+describe Discussion, organization_workspace: :test do
 
   context 'when created' do
     let(:initiator) { create(:user) }
     let(:student) { create(:user) }
     let(:problem) { create(:problem) }
     let(:discussion) { problem.discuss! initiator, title: 'Need help' }
-    let(:moderator) { create(:user, permissions: {moderator: 'private/*'}) }
+    let(:moderator) { create(:user, permissions: {moderator: 'test/*'}) }
 
     it { expect(discussion.new_record?).to be false }
     it { expect(discussion.has_responses?).to be false }
@@ -84,8 +84,9 @@ describe Discussion do
   end
 
   describe '#toggle_subscription!' do
+    let(:discussion) { create(:discussion, {organization: Organization.current}) }
+
     context 'when the student is not subscribed' do
-      let(:discussion) { create(:discussion) }
       let(:student) { create(:user) }
 
       before { student.toggle_subscription!(discussion) }
@@ -94,7 +95,6 @@ describe Discussion do
     end
 
     context 'when the student is subscribed' do
-      let(:discussion) { create(:discussion) }
       let(:student) { create(:user, watched_discussions: [discussion]) }
 
       before { student.toggle_subscription!(discussion) }
@@ -104,8 +104,9 @@ describe Discussion do
   end
 
   describe '#toggle_upvote!' do
+    let(:discussion) { create(:discussion, {organization: Organization.current}) }
+
     context 'when the student has not upvoted' do
-      let(:discussion) { create(:discussion) }
       let(:student) { create(:user) }
 
       before { student.toggle_upvote!(discussion) }
@@ -115,7 +116,6 @@ describe Discussion do
     end
 
     context 'when the student is subscribed' do
-      let(:discussion) { create(:discussion) }
       let(:student) { create(:user, upvoted_discussions: [discussion]) }
 
       before { student.toggle_upvote!(discussion) }
@@ -133,11 +133,12 @@ describe Discussion do
 
   describe 'scope for user' do
     let(:initiator) { create(:user) }
+    let(:other_user) { create(:user) }
     let(:exercise) { create(:problem) }
 
-    let!(:public_discussions) { [:opened, :solved].map { |it| create(:discussion, {status: it, initiator: initiator, item: exercise}) } }
-    let!(:private_discussions) { [:pending_review, :closed].map { |it| create(:discussion, {status: it, initiator: initiator, item: exercise}) } }
-    let!(:other_discussion) { create(:discussion, { status: :closed, item: exercise }) }
+    let!(:public_discussions) { [:opened, :solved].map { |it| exercise.discuss!(initiator, {status: it, title: 'A disc'}) } }
+    let!(:private_discussions ) { [:pending_review, :closed].map { |it| exercise.discuss!(initiator, {status: it, title: 'A disc'}) } }
+    let!(:other_discussion) { exercise.discuss!(other_user, {status: :closed, title: 'A disc'}) }
 
     context 'as student' do
       let(:student) { create(:user) }
@@ -149,7 +150,7 @@ describe Discussion do
     end
 
     context 'as moderator' do
-      let(:moderator) { create(:user, permissions: {moderator: 'private/*'}) }
+      let(:moderator) { create(:user, permissions: {moderator: 'test/*'}) }
       it { expect(exercise.discussions.for_user(moderator)).to match_array public_discussions + private_discussions + [other_discussion] }
     end
 

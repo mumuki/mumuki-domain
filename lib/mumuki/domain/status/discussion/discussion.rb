@@ -27,11 +27,11 @@ module Mumuki::Domain::Status::Discussion
   end
 
   def should_be_shown?(count, user)
-    count > 0 || user&.moderator?
+    count > 0 || user&.moderator_here?
   end
 
   def reachable_statuses_for(user, discussion)
-    if user.moderator?
+    if user.moderator_here?
       reachable_statuses_for_moderator(discussion)
     else
       reachable_statuses_for_initiator(discussion)
