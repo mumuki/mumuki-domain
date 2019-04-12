@@ -99,7 +99,7 @@ class Organization < ApplicationRecord
   # ask for help in this organization
   #
   # Warning: this method does not strictly check user's permission
-  def ask_for_help_enabled?(user)
+  def ask_for_help_enabled?(user = nil)
     report_issue_enabled? || community_link.present? || can_create_discussions?(user)
   end
 
@@ -108,8 +108,8 @@ class Organization < ApplicationRecord
   #
   # This is true only when this organization has a forum and the user
   # has the discusser pseudo-permission
-  def can_create_discussions?(user)
-    forum_enabled? && user.discusser_of?(self)
+  def can_create_discussions?(user = nil)
+    forum_enabled? && (!user || user.discusser_of?(self))
   end
 
   def import_from_resource_h!(resource_h)
