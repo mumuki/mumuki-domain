@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,db,lib}/**/*", "LICENSE", "Rakefile", "README.md"]
 
-  s.add_dependency "rails", "~> 5.2"
+  s.add_dependency "rails", "~> 5.2.3"
 
   s.add_dependency 'mumukit-auth', '~> 7.6'
   s.add_dependency 'mumukit-assistant', '~> 0.1'
