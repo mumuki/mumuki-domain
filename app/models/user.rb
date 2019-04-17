@@ -29,6 +29,8 @@ class User < ApplicationRecord
 
   has_many :exams, through: :exam_authorizations
 
+  has_one_attached :avatar
+
   after_initialize :init
 
   before_validation :set_uid!
