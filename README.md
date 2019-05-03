@@ -17,6 +17,7 @@
   triable
   feedback
   queriable
+  multifile
   stateful_console
   test_extension
   test_template
