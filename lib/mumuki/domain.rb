@@ -12,7 +12,7 @@ require 'mumukit/platform'
 require 'mumukit/randomizer'
 require 'mumukit/sync'
 
-I18n.load_translations_path File.join(__dir__, 'domain', 'locales', '*.yml')
+I18n.load_translations_path File.join(__dir__, 'domain', 'locales', '**', '*.yml')
 
 module Mumuki
   module Domain
