@@ -23,7 +23,7 @@ es:
         guide:
           attributes:
             base:
-              in_use: 'La guía aún están siendo utilizada en la organización %{organization}'
+              in_use: 'La guía aún está siendo utilizada en la organización %{organization}'
         topic:
             attributes:
               base:
