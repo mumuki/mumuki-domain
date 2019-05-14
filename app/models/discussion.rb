@@ -84,6 +84,7 @@ class Discussion < ApplicationRecord
   def submit_message!(message, user)
     message.merge!(sender: user.uid)
     messages.create(message)
+    user.subscribe_to! self
     unread_subscriptions(user)
   end
 

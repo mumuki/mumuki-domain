@@ -54,6 +54,7 @@ describe Discussion, organization_workspace: :test do
       it { expect(discussion.reachable_statuses_for initiator).to eq [:pending_review] }
       it { expect(discussion.reachable_statuses_for moderator).to eq [:closed, :solved] }
       it { expect(discussion.reachable_statuses_for student).to eq [] }
+      it { expect(student.subscribed_to? discussion).to be true }
 
       describe 'gets updated to pending_review by initiator' do
         before { discussion.update_status!(:pending_review, initiator) }
