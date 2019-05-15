@@ -3,7 +3,7 @@ module WithDiscussionCreation::Subscription
 
   included do
     has_many :subscriptions
-    has_many :watched_discussions, through: :subscriptions, source: :discussion
+    has_many :watched_discussions, -> { order(created_at: :desc) }, through: :subscriptions, source: :discussion
     organic_on :watched_discussions
   end
 
@@ -16,7 +16,7 @@ module WithDiscussionCreation::Subscription
   end
 
   def subscribe_to!(discussion)
-    watched_discussions << discussion
+    watched_discussions << discussion unless subscribed_to? discussion
   end
 
   def unsubscribe_to!(discussion)
