@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190506180102) do
+ActiveRecord::Schema.define(version: 20190521181429) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -233,6 +233,8 @@ ActiveRecord::Schema.define(version: 20190506180102) do
     t.text "test_template"
     t.boolean "feedback"
     t.boolean "multifile", default: false
+    t.boolean "layout_shows_loading_content", default: false
+    t.boolean "editor_shows_loading_content", default: false
     t.index ["name"], name: "index_languages_on_name", unique: true
   end
 

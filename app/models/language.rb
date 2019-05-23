@@ -67,8 +67,9 @@ class Language < ApplicationRecord
   def to_resource_h
     as_json(only: %i(comment_type devicon editor_css_urls editor_html_urls editor_js_urls
                     extension feedback highlight_mode layout_css_urls layout_html_urls
-                    layout_js_urls multifile name output_content_type prompt queriable runner_url
-                    stateful_console test_extension test_template triable visible_success_output)).symbolize_keys
+                    layout_js_urls layout_shows_loading_content editor_shows_loading_content multifile
+                    name output_content_type prompt queriable runner_url stateful_console test_extension
+                    test_template triable visible_success_output)).symbolize_keys
   end
 
   private
