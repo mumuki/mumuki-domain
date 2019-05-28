@@ -2,7 +2,7 @@ module WithDescription
   extend ActiveSupport::Concern
 
   included do
-    markdown_on :description, :description_teaser
+    markdown_on :description, :description_teaser, skip_sanitization: true
     validates_presence_of :description
   end
 
