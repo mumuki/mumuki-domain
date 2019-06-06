@@ -50,7 +50,7 @@ describe Guide do
     end
   end
 
-  describe '#clear_progress!' do
+  describe '#clear_progress!', organization_workspace: :test do
     let(:an_exercise) { create(:exercise) }
     let(:another_exercise) { create(:exercise) }
 

@@ -60,6 +60,7 @@ describe Assignment, organization_workspace: :test do
     it { expect(passed_submission_with_visible_output_language.results_visible?).to be true }
     it { expect(manual_evaluation_pending_submission.results_visible?).to be false }
   end
+
   describe '#expectation_results_visible?' do
     let(:haskell) { create(:language, visible_success_output: true) }
     let(:exercise) { create(:exercise) }
@@ -73,6 +74,7 @@ describe Assignment, organization_workspace: :test do
       it { expect(errored_submission.expectation_results_visible?).to be true }
     end
   end
+
   describe '#showable_results_visible?' do
     let(:failed_submission) { create(:assignment, exercise: problem, status: :failed, expectation_results: [{binding: "foo", inspection: "HasBinding", result: :failed},
                                                                                                             {binding: "bar", inspection: "HasBinding", result: :failed}]) }
@@ -87,6 +89,7 @@ describe Assignment, organization_workspace: :test do
       it { expect(failed_submission.visible_expectation_results.size).to eq 1 }
     end
   end
+
   describe '#run_update!' do
     let(:assignment) { create(:assignment) }
     context 'when run passes unstructured' do
@@ -147,6 +150,19 @@ describe Assignment, organization_workspace: :test do
     end
 
     it { expect(exercise.reload.submissions_count).to eq(3) }
+  end
+
+  describe 'organization' do
+    let(:exercise) { create(:exercise) }
+    let(:user) { create(:user) }
+
+    context "when solution is submitted" do
+      before { exercise.submit_solution!(user, content: 'foo') }
+
+      it "should persist what organization it was submitted in" do
+        expect(exercise.assignment_for(user).organization).to eq Organization.current
+      end
+    end
   end
 
   describe '#submission_id' do
