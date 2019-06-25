@@ -504,7 +504,7 @@ describe Exercise do
     end
   end
 
-  describe '#files_for' do
+  describe '#files_for', organization_workspace: :test do
     before { create(:language, extension: 'js', highlight_mode: 'javascript') }
     let(:current_content) { "/*<index.html#*/a html content/*#index.html>*/\n/*<a_file.js#*/a js content/*#a_file.js>*/" }
     let(:assignment) { build(:assignment, exercise: exercise, solution: current_content) }

@@ -3,5 +3,6 @@ FactoryBot.define do
     status { :pending }
     exercise
     submitter { create(:user) }
+    organization { Organization.current }
   end
 end

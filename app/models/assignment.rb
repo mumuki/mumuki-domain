@@ -12,7 +12,7 @@ class Assignment < ApplicationRecord
            primary_key: :submission_id,
            dependent: :destroy
 
-  belongs_to :organization, default: -> { Organization.current }
+  belongs_to :organization
   belongs_to :submitter, class_name: 'User'
 
   validates_presence_of :exercise, :submitter
