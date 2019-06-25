@@ -163,10 +163,10 @@ describe Exercise do
   describe '#submit_solution!', organization_workspace: :test do
     context 'when user did a submission' do
       before { exercise.submit_solution!(user) }
-      it { expect(exercise.find_assignment_for(user)).to be_present }
+      it { expect(exercise.find_assignment_for(user, Organization.current)).to be_present }
     end
     context 'when user did no submission' do
-      it { expect(exercise.find_assignment_for(user)).to be_blank }
+      it { expect(exercise.find_assignment_for(user, Organization.current)).to be_blank }
     end
   end
 

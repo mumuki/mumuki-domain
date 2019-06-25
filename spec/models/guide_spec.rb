@@ -53,20 +53,21 @@ describe Guide do
   describe '#clear_progress!', organization_workspace: :test do
     let(:an_exercise) { create(:exercise) }
     let(:another_exercise) { create(:exercise) }
+    let(:test_organization) { Organization.current }
 
     before do
       guide.exercises = [an_exercise]
       an_exercise.submit_solution! extra_user
       another_exercise.submit_solution! extra_user
-      guide.clear_progress!(extra_user)
+      guide.clear_progress!(extra_user, test_organization)
     end
 
     it 'destroys the guides assignments for the given user' do
-      expect(an_exercise.find_assignment_for(extra_user)).to be_nil
+      expect(an_exercise.find_assignment_for(extra_user, test_organization)).to be_nil
     end
 
     it 'does not destroy other guides assignments' do
-      expect(another_exercise.find_assignment_for(extra_user)).to be_truthy
+      expect(another_exercise.find_assignment_for(extra_user, test_organization)).to be_truthy
     end
   end
 

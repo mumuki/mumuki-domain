@@ -14,10 +14,10 @@ class Guide < Content
 
   enum type: [:learning, :practice]
 
-  def clear_progress!(user)
+  def clear_progress!(user, organization)
     transaction do
       exercises.each do |exercise|
-        exercise.find_assignment_for(user)&.destroy!
+        exercise.find_assignment_for(user, organization)&.destroy!
       end
     end
   end

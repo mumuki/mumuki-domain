@@ -16,9 +16,9 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
       before { reindex_current_organization! }
       let!(:result) { problem.try_submit_solution! user }
 
-      it { expect(result).to eq problem.find_assignment_for(user) }
-      it { expect(result.attempts_left).to eq nil  }
-      it { expect(result.attempts_left?).to be true  }
+      it { expect(result).to eq problem.find_assignment_for(user, Organization.current) }
+      it { expect(result.attempts_left).to eq nil }
+      it { expect(result.attempts_left?).to be true }
     end
 
     context 'when on exam' do
@@ -28,9 +28,9 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
       before { reindex_current_organization! }
       let(:result) { problem.try_submit_solution! user }
 
-      it { expect(result).to eq problem.find_assignment_for(user) }
-      it { expect(result.attempts_left).to eq 9  }
-      it { expect(result.attempts_left?).to be true  }
+      it { expect(result).to eq problem.find_assignment_for(user, Organization.current) }
+      it { expect(result.attempts_left).to eq 9 }
+      it { expect(result.attempts_left?).to be true }
     end
   end
 

@@ -5,7 +5,7 @@ describe Mumuki::Domain::Submission::Query, organization_workspace: :test do
   let(:student) { create(:user) }
 
   describe '#submit_question!' do
-    let(:assignment) { exercise.find_assignment_for student }
+    let(:assignment) { exercise.find_assignment_for(student, Organization.current) }
 
     context 'when just a question on an empty assignment is sent' do
       before { exercise.submit_question!(student, content: 'Please help!') }
