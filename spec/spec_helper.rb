@@ -37,6 +37,9 @@ RSpec.configure do |config|
   end
 end
 
+Mumukit::Platform.configure do |config|
+  config.application = Mumukit::Platform::Application::Organic.new 'http://sample.app.com', Mumukit::Platform.organization_mapping
+end
 
 Mumukit::Auth.configure do |c|
   c.clients.default = {id: 'test-client', secret: 'thisIsATestSecret'}

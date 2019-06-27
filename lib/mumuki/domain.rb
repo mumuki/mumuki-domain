@@ -50,6 +50,6 @@ class Mumukit::Randomizer
   end
 end
 
+require_relative './bridge'
 require_relative './platform'
 require_relative './sync'
-require_relative './bridge'

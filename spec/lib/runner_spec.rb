@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative '../spec_helper'
 
 describe Mumukit::Bridge::Runner do
   let(:bridge) { Mumukit::Bridge::Runner.new('http://foo', 10, foo: 'bar') }

@@ -69,8 +69,8 @@ describe Mumukit::Platform::Organization do
     context 'when not switched' do
       before { Mumukit::Platform::Organization.leave! }
       it { expect(Mumukit::Platform::Organization.current?).to be false }
-      it { expect { Mumukit::Platform::Organization.current }.to raise_error }
-      it { expect { Mumukit::Platform.current_organization_name }.to raise_error }
+      it { expect { Mumukit::Platform::Organization.current }.to raise_error('organization not selected') }
+      it { expect { Mumukit::Platform.current_organization_name }.to raise_error('organization not selected') }
     end
   end
 

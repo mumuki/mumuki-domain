@@ -10,8 +10,8 @@ class Module
     raise "method #{selector} was previously defined here" if method_defined?(selector)
   end
 
-  def define_once(selector, *args, **named, &block)
+  def define_once(selector, *args, &block)
     ensure_undefined! selector
-    define_method selector, *args, **named, &block
+    define_method selector, *args, &block
   end
 end
