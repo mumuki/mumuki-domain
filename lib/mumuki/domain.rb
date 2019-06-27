@@ -48,3 +48,7 @@ class Mumukit::Randomizer
     !!parse(randomizations) rescue false
   end
 end
+
+require_relative './platform'
+require_relative './sync'
+require_relative './bridge'
