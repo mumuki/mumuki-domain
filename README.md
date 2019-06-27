@@ -43,7 +43,7 @@ _as defined in `Language#to_resource_h`_
   theme
 ```
 
-_as defined in `Mumukit::Platform::Organization::Helpers#to_resource_h`_
+_as defined in `Mumuki::Domain::Helpers::Organization#to_resource_h`_
 
 ### `User`
 
@@ -57,7 +57,7 @@ _as defined in `Mumukit::Platform::Organization::Helpers#to_resource_h`_
   permissions
 ```
 
-_as defined in `Mumukit::Platform::User::Helpers#to_resource_h`_
+_as defined in `Mumuki::Domain::Helpers::User#to_resource_h`_
 
 ### `Course`
 
@@ -70,7 +70,7 @@ _as defined in `Mumukit::Platform::User::Helpers#to_resource_h`_
   description
 ```
 
-_as defined in `Mumukit::Platform::Course::Helpers#to_resource_h`_
+_as defined in `Mumuki::Domain::Helpers::Course#to_resource_h`_
 
 ## Content Hashes
 

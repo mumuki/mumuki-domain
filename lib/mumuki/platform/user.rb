@@ -3,5 +3,3 @@ module Mumukit::Platform::User
     Mumukit::Platform.user_class.find_by_uid!(uid)
   end
 end
-
-require_relative './user/helpers'

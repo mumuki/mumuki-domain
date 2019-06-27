@@ -1,6 +1,6 @@
 class Organization < ApplicationRecord
   include Syncable
-  include Mumukit::Platform::Organization::Helpers
+  include Mumuki::Domain::Helpers::Organization
 
   serialize :profile, Mumukit::Platform::Organization::Profile
   serialize :settings, Mumukit::Platform::Organization::Settings
@@ -16,7 +16,7 @@ class Organization < ApplicationRecord
   validates_presence_of :contact_email, :locale
   validates :name, uniqueness: true,
                    presence: true,
-                   format: { with: Mumukit::Platform::Organization::Helpers.anchored_valid_name_regex }
+                   format: { with: Mumuki::Domain::Helpers::Organization.anchored_valid_name_regex }
   validates :locale, inclusion: { in: Mumukit::Platform::Locale.supported }
 
   after_create :reindex_usages!
@@ -113,7 +113,7 @@ class Organization < ApplicationRecord
   end
 
   def import_from_resource_h!(resource_h)
-    attrs = Mumukit::Platform::Organization::Helpers.slice_resource_h resource_h
+    attrs = Mumuki::Domain::Helpers::Organization.slice_resource_h resource_h
     attrs[:book] = Book.locate! attrs[:book]
     update! attrs
   end

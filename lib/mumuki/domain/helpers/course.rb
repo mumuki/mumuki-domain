@@ -1,14 +1,5 @@
-module Mumukit::Platform::Course::Helpers
+module Mumuki::Domain::Helpers::Course
   include Mumukit::Platform::Notifiable
-
-  ## Implementors must declare the following methods:
-  #
-  #  * slug
-  #  * shifts
-  #  * code
-  #  * days
-  #  * period
-  #  * description
 
   def platform_class_name
     :Course

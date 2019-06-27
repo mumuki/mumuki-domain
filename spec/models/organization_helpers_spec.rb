@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 class DemoOrganization
-  include Mumukit::Platform::Organization::Helpers
+  include Mumuki::Domain::Helpers::Organization
 
   attr_accessor :name, :profile, :settings, :theme, :book
 
@@ -175,7 +175,7 @@ describe Mumukit::Platform::Organization do
     end
   end
 
-  describe Mumukit::Platform::Organization::Helpers do
+  describe Mumuki::Domain::Helpers::Organization do
     let(:parsed) { organization.singleton_class.parse(json) }
 
     describe '.parse' do
@@ -228,7 +228,7 @@ describe Mumukit::Platform::Organization do
 
     describe '#valid_name?' do
       def valid_name?(name)
-        Mumukit::Platform::Organization::Helpers.valid_name? name
+        Mumuki::Domain::Helpers::Organization.valid_name? name
       end
 
       it { expect(valid_name? 'foo').to be true }

@@ -1,6 +1,6 @@
 class Course < ApplicationRecord
   include Syncable
-  include Mumukit::Platform::Course::Helpers
+  include Mumuki::Domain::Helpers::Course
 
   validates_presence_of :slug, :shifts, :code, :days, :period, :description, :organization_id
   validates_uniqueness_of :slug
@@ -15,7 +15,7 @@ class Course < ApplicationRecord
   end
 
   def import_from_resource_h!(resource_h)
-    update! Mumukit::Platform::Course::Helpers.slice_resource_h(resource_h)
+    update! Mumuki::Domain::Helpers::Course.slice_resource_h(resource_h)
   end
 
   def slug=(slug)

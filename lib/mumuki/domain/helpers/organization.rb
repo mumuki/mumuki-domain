@@ -1,14 +1,6 @@
-module Mumukit::Platform::Organization::Helpers
+module Mumuki::Domain::Helpers::Organization
   extend ActiveSupport::Concern
   include Mumukit::Platform::Notifiable
-
-  ## Implementors must declare the following methods:
-  #
-  #  * name
-  #  * book
-  #  * profile
-  #  * settings
-  #  * theme
 
   included do
     delegate *Mumukit::Platform::Organization::Theme.accessors, to: :theme

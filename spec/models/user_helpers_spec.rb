@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 class DemoUser
-  include Mumukit::Platform::User::Helpers
+  include Mumuki::Domain::Helpers::User
 
   attr_accessor :permissions, :uid, :social_id, :image_url, :email, :first_name, :last_name
 
@@ -36,7 +36,7 @@ describe Mumukit::Platform::User do
     end
   end
 
-  describe Mumukit::Platform::User::Helpers do
+  describe Mumuki::Domain::Helpers::User do
     let(:user) { DemoUser.new }
     let(:organization) { struct slug: 'foo/_', name: 'foo' }
 

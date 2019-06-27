@@ -1,18 +1,6 @@
-module Mumukit::Platform::User::Helpers
+module Mumuki::Domain::Helpers::User
   include Mumukit::Auth::Roles
   include Mumukit::Platform::Notifiable
-
-  extend Gem::Deprecate
-
-  ## Implementors must declare the following methods:
-  #
-  #  * permissions
-  #  * uid
-  #  * social_id
-  #  * image_url
-  #  * email
-  #  * first_name
-  #  * last_name
 
   ## Permissions
 
@@ -92,12 +80,6 @@ module Mumukit::Platform::User::Helpers
 
   def has_student_granted_organizations?
     student_granted_organizations.present?
-  end
-
-  [[:accessible_organizations, :student_granted_organizations],
-   [:has_accessible_organizations?, :has_student_granted_organizations?]].each do |it, replacement|
-    alias_method it, replacement
-    deprecate it, replacement, 2019, 6
   end
 
   def main_organization

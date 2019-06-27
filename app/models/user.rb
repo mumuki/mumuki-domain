@@ -4,7 +4,7 @@ class User < ApplicationRecord
           WithUserNavigation,
           WithReminders,
           WithDiscussionCreation,
-          Mumukit::Platform::User::Helpers
+          Mumuki::Domain::Helpers::User
 
   serialize :permissions, Mumukit::Auth::Permissions
 
@@ -98,7 +98,7 @@ class User < ApplicationRecord
   end
 
   def import_from_resource_h!(json)
-    update! Mumukit::Platform::User::Helpers.slice_resource_h json
+    update! Mumuki::Domain::Helpers::User.slice_resource_h json
   end
 
   def unsubscribe_from_reminders!
