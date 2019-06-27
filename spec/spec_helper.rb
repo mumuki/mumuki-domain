@@ -25,9 +25,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     if RSpec.current_example.metadata[:organization_workspace] == :test
-      create(:public_organization,
-          name: 'test',
-          book: create(:book, name: 'test', slug: 'mumuki/mumuki-the-book')).switch!
+      create(:test_organization).switch!
     end
   end
 
