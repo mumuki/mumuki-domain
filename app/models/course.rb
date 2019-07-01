@@ -10,12 +10,14 @@ class Course < ApplicationRecord
 
   alias_attribute :name, :code
 
+  resource_fields :slug, :shifts, :code, :days, :period, :description
+
   def current_invitation
     invitations.where('expiration_date > ?', Time.now).take
   end
 
   def import_from_resource_h!(resource_h)
-    update! Mumuki::Domain::Helpers::Course.slice_resource_h(resource_h)
+    update! self.class.slice_resource_h(resource_h)
   end
 
   def slug=(slug)

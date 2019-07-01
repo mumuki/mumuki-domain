@@ -109,6 +109,23 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
+  ## Partially implements resource-hash protocol, by
+  ## defining `to_resource_h` and helper methods `resource_fields` and `slice_resource_h`
+  ## using the given fields
+  def self.resource_fields(*fields)
+    define_method :to_resource_h do
+      fields.map { |it| [it, send(it)] }.to_h.compact
+    end
+
+    define_singleton_method :resource_fields do
+      fields
+    end
+
+    define_singleton_method :slice_resource_h do |resource_h|
+      resource_h.slice(*fields)
+    end
+  end
+
   private
 
   def raise_foreign_key_error!

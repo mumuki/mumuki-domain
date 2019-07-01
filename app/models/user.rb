@@ -34,6 +34,8 @@ class User < ApplicationRecord
   before_validation :set_uid!
   validates :uid, presence: true
 
+  resource_fields :uid, :social_id, :image_url, :email, :first_name, :last_name, :permissions
+
   def last_lesson
     last_guide.try(:lesson)
   end
@@ -98,7 +100,7 @@ class User < ApplicationRecord
   end
 
   def import_from_resource_h!(json)
-    update! Mumuki::Domain::Helpers::User.slice_resource_h json
+    update! self.class.slice_resource_h json
   end
 
   def unsubscribe_from_reminders!

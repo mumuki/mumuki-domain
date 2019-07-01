@@ -70,24 +70,6 @@ module Mumuki::Domain::Helpers::Organization
 
   ## Resource Hash
 
-  def self.slice_resource_h(resource_h)
-    resource_h.slice(:name, :book, :profile, :settings, :theme)
-  end
-
-  def to_resource_h
-    {
-      name: name,
-      book: book.slug,
-      profile: profile,
-      settings: settings,
-      theme: theme
-    }.except(*protected_resource_fields).compact
-  end
-
-  def protected_resource_fields
-    []
-  end
-
   module ClassMethods
     def current
       Mumukit::Platform::Organization.current

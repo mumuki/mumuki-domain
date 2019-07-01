@@ -1,7 +1,7 @@
 module Mumukit
   module Bridge
     class Runner
-      def importable_info(headers={})
+      define_once :importable_info do |headers={}|
         @language_json ||= info(headers).merge('url' => test_runner_url)
         {
           name:                         @language_json['name'],

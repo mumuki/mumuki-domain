@@ -28,6 +28,8 @@ class Organization < ApplicationRecord
   has_many :exams
   has_many :courses
 
+  resource_fields :name, :book, :profile, :settings, :theme
+
   defaults do
     self.class.base.try do |base|
       self.theme         = base.theme    if theme.empty?
@@ -113,7 +115,7 @@ class Organization < ApplicationRecord
   end
 
   def import_from_resource_h!(resource_h)
-    attrs = Mumuki::Domain::Helpers::Organization.slice_resource_h resource_h
+    attrs = self.class.slice_resource_h resource_h
     attrs[:book] = Book.locate! attrs[:book]
     update! attrs
   end

@@ -99,26 +99,4 @@ module Mumuki::Domain::Helpers::User
   def to_param
     uid
   end
-
-  ## Resource Hash
-
-  def self.slice_resource_h(resource_h)
-    resource_h.slice(:uid, :social_id, :image_url, :email, :first_name, :last_name, :permissions)
-  end
-
-  def to_resource_h
-    {
-      uid: uid,
-      social_id: social_id,
-      image_url: image_url,
-      email: email,
-      first_name: first_name,
-      last_name: last_name,
-      permissions: permissions
-    }.except(*protected_resource_fields).compact
-  end
-
-  def protected_resource_fields
-    []
-  end
 end
