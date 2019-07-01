@@ -1,4 +1,6 @@
-class Mumukit::Platform::Organization::Settings < Mumukit::Platform::Model
+class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
+  include Mumukit::Login::LoginSettingsHelpers
+
   model_attr_accessor :login_methods,
                       :login_provider,
                       :login_provider_settings,

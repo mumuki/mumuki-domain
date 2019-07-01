@@ -11,6 +11,7 @@ require 'mumukit/inspection'
 require 'mumukit/platform'
 require 'mumukit/randomizer'
 require 'mumukit/sync'
+require 'mumukit/login'
 
 I18n.load_translations_path File.join(__dir__, 'domain', 'locales', '**', '*.yml')
 
@@ -30,8 +31,10 @@ require_relative './domain/status'
 require_relative './domain/exceptions'
 require_relative './domain/file'
 require_relative './domain/extensions'
+require_relative './domain/organization'
 require_relative './domain/helpers'
 require_relative './domain/syncable'
+require_relative './domain/stores'
 
 class Mumukit::Assistant
   def self.valid?(rules)
@@ -51,5 +54,3 @@ class Mumukit::Randomizer
   end
 end
 
-require_relative './platform'
-require_relative './sync'

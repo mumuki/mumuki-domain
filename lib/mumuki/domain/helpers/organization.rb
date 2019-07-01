@@ -3,9 +3,9 @@ module Mumuki::Domain::Helpers::Organization
   include Mumukit::Platform::Notifiable
 
   included do
-    delegate *Mumukit::Platform::Organization::Theme.accessors, to: :theme
-    delegate *Mumukit::Platform::Organization::Settings.accessors, :private?, :login_settings, to: :settings
-    delegate *Mumukit::Platform::Organization::Profile.accessors, :locale_json, to: :profile
+    delegate *Mumuki::Domain::Organization::Theme.accessors, to: :theme
+    delegate *Mumuki::Domain::Organization::Settings.accessors, :private?, :login_settings, to: :settings
+    delegate *Mumuki::Domain::Organization::Profile.accessors, :locale_json, to: :profile
   end
 
   def platform_class_name
@@ -78,9 +78,9 @@ module Mumuki::Domain::Helpers::Organization
     def parse(json)
       json
         .slice(:name)
-        .merge(theme: Mumukit::Platform::Organization::Theme.parse(json[:theme]))
-        .merge(settings: Mumukit::Platform::Organization::Settings.parse(json[:settings]))
-        .merge(profile: Mumukit::Platform::Organization::Profile.parse(json[:profile]))
+        .merge(theme: Mumuki::Domain::Organization::Theme.parse(json[:theme]))
+        .merge(settings: Mumuki::Domain::Organization::Settings.parse(json[:settings]))
+        .merge(profile: Mumuki::Domain::Organization::Profile.parse(json[:profile]))
     end
   end
 end

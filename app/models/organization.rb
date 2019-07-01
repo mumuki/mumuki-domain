@@ -2,9 +2,11 @@ class Organization < ApplicationRecord
   include Mumuki::Domain::Syncable
   include Mumuki::Domain::Helpers::Organization
 
-  serialize :profile, Mumukit::Platform::Organization::Profile
-  serialize :settings, Mumukit::Platform::Organization::Settings
-  serialize :theme, Mumukit::Platform::Organization::Theme
+  include Mumukit::Login::OrganizationHelpers
+
+  serialize :profile, Mumuki::Domain::Organization::Profile
+  serialize :settings, Mumuki::Domain::Organization::Settings
+  serialize :theme, Mumuki::Domain::Organization::Theme
 
   markdown_on :description
 

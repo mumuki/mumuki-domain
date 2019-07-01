@@ -6,7 +6,6 @@ require 'rspec/rails'
 require 'codeclimate-test-reporter'
 require 'mumukit/core/rspec'
 require 'factory_bot_rails'
-require 'mumukit/login'
 
 require 'mumuki/domain/factories'
 

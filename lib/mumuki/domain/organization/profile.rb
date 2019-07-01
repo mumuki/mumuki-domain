@@ -1,4 +1,4 @@
-class Mumukit::Platform::Organization::Profile < Mumukit::Platform::Model
+class Mumuki::Domain::Organization::Profile < Mumukit::Platform::Model
   LOCALES = Mumukit::Platform::Locale::SPECS
 
   model_attr_accessor :logo_url,

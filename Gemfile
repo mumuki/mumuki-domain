@@ -11,4 +11,9 @@ group :test do
   gem 'faker', '~> 1.5'
 end
 
+gem 'mumukit-platform', path: '../mumukit-platform'
+gem 'mumukit-sync', path: '../mumukit-sync'
+gem 'mumukit-bridge', path: '../mumukit-bridge'
+gem 'mumukit-login', path: '../mumukit-login'
+
 gem 'codeclimate-test-reporter', :group => :test, :require => nil

@@ -4,12 +4,12 @@ describe Mumukit::Platform::Organization do
   let(:organization) do
     Organization.new(
       name: 'orga',
-      profile:  Mumukit::Platform::Organization::Profile.new(
+      profile:  Mumuki::Domain::Organization::Profile.new(
                   community_link: 'http://link/to/community',
                   terms_of_service: 'The TOS',
                   description: 'the description'),
-      settings: Mumukit::Platform::Organization::Settings.new(immersive: true),
-      theme:    Mumukit::Platform::Organization::Theme.new(theme_stylesheet: 'css', extension_javascript: 'js'),
+      settings: Mumuki::Domain::Organization::Settings.new(immersive: true),
+      theme:    Mumuki::Domain::Organization::Theme.new(theme_stylesheet: 'css', extension_javascript: 'js'),
       book:     Book.new(slug: 'the/book'))
   end
 
@@ -66,21 +66,21 @@ describe Mumukit::Platform::Organization do
   end
 
   describe 'json conversion' do
-    describe Mumukit::Platform::Organization::Settings do
+    describe Mumuki::Domain::Organization::Settings do
       describe 'boolean accessors' do
-        it { expect(Mumukit::Platform::Organization::Settings.new(public: true)).to be_public }
-        it { expect(Mumukit::Platform::Organization::Settings.new(public: 'true')).to be_public }
-        it { expect(Mumukit::Platform::Organization::Settings.new(public: false)).to_not be_public }
-        it { expect(Mumukit::Platform::Organization::Settings.new(public: nil)).to_not be_public }
-        it { expect(Mumukit::Platform::Organization::Settings.new(public: 'false')).to_not be_public }
-        it { expect(Mumukit::Platform::Organization::Settings.new(public: 1)).to be_public }
-        it { expect(Mumukit::Platform::Organization::Settings.new(public: 0)).to_not be_public }
-        it { expect(Mumukit::Platform::Organization::Settings.new(public: '1')).to be_public }
-        it { expect(Mumukit::Platform::Organization::Settings.new(public: '0')).to_not be_public }
+        it { expect(Mumuki::Domain::Organization::Settings.new(public: true)).to be_public }
+        it { expect(Mumuki::Domain::Organization::Settings.new(public: 'true')).to be_public }
+        it { expect(Mumuki::Domain::Organization::Settings.new(public: false)).to_not be_public }
+        it { expect(Mumuki::Domain::Organization::Settings.new(public: nil)).to_not be_public }
+        it { expect(Mumuki::Domain::Organization::Settings.new(public: 'false')).to_not be_public }
+        it { expect(Mumuki::Domain::Organization::Settings.new(public: 1)).to be_public }
+        it { expect(Mumuki::Domain::Organization::Settings.new(public: 0)).to_not be_public }
+        it { expect(Mumuki::Domain::Organization::Settings.new(public: '1')).to be_public }
+        it { expect(Mumuki::Domain::Organization::Settings.new(public: '0')).to_not be_public }
       end
 
       describe '.parse' do
-        subject { Mumukit::Platform::Organization::Settings.parse(json[:settings]) }
+        subject { Mumuki::Domain::Organization::Settings.parse(json[:settings]) }
 
         it { expect(subject.login_methods).to eq %w{facebook twitter google} }
         it { expect(subject.login_provider).to eq 'google' }
@@ -94,10 +94,10 @@ describe Mumukit::Platform::Organization do
         it { expect(subject.embeddable?).to eq false }
         it { expect(subject.immersive?).to eq false }
 
-        it { expect(Mumukit::Platform::Organization::Settings.parse(nil)).to be_empty }
+        it { expect(Mumuki::Domain::Organization::Settings.parse(nil)).to be_empty }
       end
       describe '.load' do
-        let(:settings) { Mumukit::Platform::Organization::Settings.new(
+        let(:settings) { Mumuki::Domain::Organization::Settings.new(
                             public: true,
                             embeddable: true,
                             immersive: true,
@@ -106,9 +106,9 @@ describe Mumukit::Platform::Organization do
                             forum_enabled: false,
                             forum_discussions_minimal_role: 'teacher',
                             login_methods: [:google]) }
-        let(:dump) { Mumukit::Platform::Organization::Settings.dump(settings) }
+        let(:dump) { Mumuki::Domain::Organization::Settings.dump(settings) }
 
-        subject { Mumukit::Platform::Organization::Settings.load(dump) }
+        subject { Mumuki::Domain::Organization::Settings.load(dump) }
 
         it { expect(subject.login_methods).to eq %w{google} }
         it { expect(subject.forum_discussions_minimal_role).to be :teacher }
@@ -120,19 +120,19 @@ describe Mumukit::Platform::Organization do
         it { expect(subject.embeddable?).to eq true }
         it { expect(subject.immersive?).to eq true }
 
-        it { expect(Mumukit::Platform::Organization::Settings.load(nil)).to be_empty }
+        it { expect(Mumuki::Domain::Organization::Settings.load(nil)).to be_empty }
       end
     end
 
-    describe Mumukit::Platform::Organization::Theme do
-      subject { Mumukit::Platform::Organization::Theme.parse(json[:theme]) }
+    describe Mumuki::Domain::Organization::Theme do
+      subject { Mumuki::Domain::Organization::Theme.parse(json[:theme]) }
 
       it { expect(subject.theme_stylesheet).to eq '.foo { }' }
       it { expect(subject.extension_javascript).to eq 'function foo() { }' }
     end
 
-    describe Mumukit::Platform::Organization::Profile do
-      subject { Mumukit::Platform::Organization::Profile.parse(json[:profile]) }
+    describe Mumuki::Domain::Organization::Profile do
+      subject { Mumuki::Domain::Organization::Profile.parse(json[:profile]) }
 
       it { expect(subject.logo_url).to eq 'http://mumuki.io/logo-alt-large.png' }
       it { expect(subject.contact_email).to eq 'issues@mumuki.io' }
@@ -146,8 +146,8 @@ describe Mumukit::Platform::Organization do
       it { expect(subject.locale_h).to be_a Hash }
     end
 
-    describe Mumukit::Platform::Organization::Profile do
-      subject { Mumukit::Platform::Organization::Profile.parse({}) }
+    describe Mumuki::Domain::Organization::Profile do
+      subject { Mumuki::Domain::Organization::Profile.parse({}) }
 
       it { expect(subject.logo_url).to eq 'https://mumuki.io/logo-alt-large.png' }
       it { expect(subject.banner_url).to eq 'https://mumuki.io/logo-alt-large.png' }
@@ -156,8 +156,8 @@ describe Mumukit::Platform::Organization do
       it { expect(subject.open_graph_image_url).to eq 'http://sample.app.com/logo-alt.png' }
     end
 
-    describe Mumukit::Platform::Organization::Profile do
-      subject { Mumukit::Platform::Organization::Profile.parse(images_url_json) }
+    describe Mumuki::Domain::Organization::Profile do
+      subject { Mumuki::Domain::Organization::Profile.parse(images_url_json) }
       it { expect(subject.logo_url).to eq 'http://mumuki.io/new-logo.png' }
       it { expect(subject.banner_url).to eq 'http://mumuki.io/new-logo.png' }
       it { expect(subject.favicon_url).to eq 'http://mumuki.io/new-favicon.png' }
@@ -171,9 +171,9 @@ describe Mumukit::Platform::Organization do
 
     describe '.parse' do
       it { expect(parsed[:name]).to eq 'test-orga' }
-      it { expect(parsed[:theme]).to be_a Mumukit::Platform::Organization::Theme }
-      it { expect(parsed[:settings]).to be_a Mumukit::Platform::Organization::Settings }
-      it { expect(parsed[:profile]).to be_a Mumukit::Platform::Organization::Profile }
+      it { expect(parsed[:theme]).to be_a Mumuki::Domain::Organization::Theme }
+      it { expect(parsed[:settings]).to be_a Mumuki::Domain::Organization::Settings }
+      it { expect(parsed[:profile]).to be_a Mumuki::Domain::Organization::Profile }
     end
     describe 'defaults' do
       it { expect(organization.private?).to be true }
