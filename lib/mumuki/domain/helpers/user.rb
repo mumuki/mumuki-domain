@@ -1,4 +1,5 @@
 module Mumuki::Domain::Helpers::User
+  extend ActiveSupport::Concern
   include Mumukit::Auth::Roles
   include Mumukit::Platform::Notifiable
 
@@ -63,7 +64,7 @@ module Mumuki::Domain::Helpers::User
   alias_method :name, :full_name
 
   def profile_completed?
-    [first_name, last_name].all? &:present?
+    self.class.profile_fields.map { |it| self[it] }.all? &:present?
   end
 
   def to_s
@@ -98,5 +99,11 @@ module Mumuki::Domain::Helpers::User
 
   def to_param
     uid
+  end
+
+  class_methods do
+    def profile_fields
+      [:first_name, :last_name, :gender, :birthdate]
+    end
   end
 end
