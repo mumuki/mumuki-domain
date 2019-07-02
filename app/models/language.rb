@@ -8,6 +8,33 @@ class Language < ApplicationRecord
 
   validates :name, presence: true, uniqueness: {case_sensitive: false}
 
+  # This list must kept up to date with
+  # Mumukit::Sync::Store::Thesaurus::InfoConverter
+  resource_fields :comment_type,
+                  :devicon,
+                  :editor_css_urls,
+                  :editor_html_urls,
+                  :editor_js_urls,
+                  :editor_shows_loading_content,
+                  :extension,
+                  :feedback,
+                  :highlight_mode,
+                  :layout_css_urls,
+                  :layout_html_urls,
+                  :layout_js_urls,
+                  :layout_shows_loading_content,
+                  :multifile,
+                  :name,
+                  :output_content_type,
+                  :prompt,
+                  :queriable,
+                  :runner_url,
+                  :stateful_console,
+                  :test_extension,
+                  :test_template,
+                  :triable,
+                  :visible_success_output
+
   markdown_on :description
 
   delegate :run_tests!, :run_query!, :run_try!, to: :bridge
@@ -62,13 +89,6 @@ class Language < ApplicationRecord
 
   def to_embedded_resource_h
     as_json(only: [:name, :extension, :test_extension]).symbolize_keys
-  end
-
-  def to_resource_h
-    as_json(only: %i(comment_type devicon editor_css_urls editor_html_urls editor_js_urls
-                    extension feedback highlight_mode layout_css_urls layout_html_urls
-                    layout_js_urls multifile name output_content_type prompt queriable runner_url
-                    stateful_console test_extension test_template triable visible_success_output layout_shows_loading_content editor_shows_loading_content)).symbolize_keys
   end
 
   private
