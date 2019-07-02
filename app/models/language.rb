@@ -1,6 +1,6 @@
 class Language < ApplicationRecord
   include WithCaseInsensitiveSearch
-  include Syncable
+  include Mumuki::Domain::Syncable
 
   enum output_content_type: [:plain, :html, :markdown]
 

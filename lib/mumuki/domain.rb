@@ -31,6 +31,7 @@ require_relative './domain/exceptions'
 require_relative './domain/file'
 require_relative './domain/extensions'
 require_relative './domain/helpers'
+require_relative './domain/syncable'
 
 class Mumukit::Assistant
   def self.valid?(rules)

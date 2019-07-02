@@ -1,5 +1,5 @@
 class Organization < ApplicationRecord
-  include Syncable
+  include Mumuki::Domain::Syncable
   include Mumuki::Domain::Helpers::Organization
 
   serialize :profile, Mumukit::Platform::Organization::Profile
@@ -118,6 +118,10 @@ class Organization < ApplicationRecord
     attrs = self.class.slice_resource_h resource_h
     attrs[:book] = Book.locate! attrs[:book]
     update! attrs
+  end
+
+  def to_resource_h
+    super.merge(book: book.slug)
   end
 
   private

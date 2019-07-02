@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  include Syncable
+  include Mumuki::Domain::Syncable
   include WithProfile,
           WithUserNavigation,
           WithReminders,

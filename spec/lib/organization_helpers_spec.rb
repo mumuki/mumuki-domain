@@ -1,27 +1,18 @@
 require_relative '../spec_helper'
 
-class DemoOrganization
-  include Mumuki::Domain::Helpers::Organization
-
-  attr_accessor :name, :profile, :settings, :theme, :book
-
-  def self.find_by_name!
-  end
-
-  def initialize
-    @name = 'orga'
-    @profile =  Mumukit::Platform::Organization::Profile.new community_link: 'http://link/to/community',
-                                                             terms_of_service: 'The TOS',
-                                                             description: 'the description'
-    @settings = Mumukit::Platform::Organization::Settings.new immersive: true
-    @theme =    Mumukit::Platform::Organization::Theme.new theme_stylesheet: 'css',
-                                                           extension_javascript: 'js'
-    @book = struct(slug: 'the/book')
-  end
-end
-
 describe Mumukit::Platform::Organization do
-  let(:organization) { DemoOrganization.new }
+  let(:organization) do
+    Organization.new(
+      name: 'orga',
+      profile:  Mumukit::Platform::Organization::Profile.new(
+                  community_link: 'http://link/to/community',
+                  terms_of_service: 'The TOS',
+                  description: 'the description'),
+      settings: Mumukit::Platform::Organization::Settings.new(immersive: true),
+      theme:    Mumukit::Platform::Organization::Theme.new(theme_stylesheet: 'css', extension_javascript: 'js'),
+      book:     Book.new(slug: 'the/book'))
+  end
+
   let(:json) do
     { name: 'test-orga',
       id: 998,

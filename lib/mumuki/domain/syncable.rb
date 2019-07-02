@@ -2,7 +2,7 @@
 # be treated as `Mumukit::Sync` resources
 #
 # `Syncable` objects also get `Mumukit::Platform::Notifiable` by free
-module Syncable
+module Mumuki::Domain::Syncable
   extend ActiveSupport::Concern
   include Mumukit::Platform::Notifiable
 
@@ -87,3 +87,5 @@ module Syncable
     end
   end
 end
+
+require_relative './syncable/with_resource_fields'

@@ -1,5 +1,5 @@
 class Course < ApplicationRecord
-  include Syncable
+  include Mumuki::Domain::Syncable
   include Mumuki::Domain::Helpers::Course
 
   validates_presence_of :slug, :shifts, :code, :days, :period, :description, :organization_id
