@@ -86,6 +86,8 @@ class Guide < Content
     reload
   end
 
+  # Keep this list up to date with
+  # Mumukit::Sync::Store::Github::Schema::Guide
   def to_resource_h
     as_json(only: %i(beta type id_format private expectations corollary teacher_info sources learn_more authors collaborators extra settings))
       .symbolize_keys
