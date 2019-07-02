@@ -11,9 +11,9 @@ group :test do
   gem 'faker', '~> 1.5'
 end
 
-gem 'mumukit-platform', path: '../mumukit-platform'
-gem 'mumukit-sync', path: '../mumukit-sync'
-gem 'mumukit-bridge', path: '../mumukit-bridge'
-gem 'mumukit-login', path: '../mumukit-login'
+gem 'mumukit-platform', github: 'mumuki/mumukit-platform', branch: 'feature-remove-domain-helpers'
+gem 'mumukit-sync', github: 'mumuki/mumukit-sync', branch: 'feature-remove-domain-specific-code'
+gem 'mumukit-bridge', github: 'mumuki/mumukit-bridge', branch: 'feature-remove-importable-info'
+gem 'mumukit-login', github: 'mumuki/mumukit-login', branch: 'feature-remove-domain-code'
 
 gem 'codeclimate-test-reporter', :group => :test, :require => nil
