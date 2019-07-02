@@ -1,2 +1,2 @@
-require_relative './sync/thesaurus'
-require_relative './sync/bibliotheca'
+require_relative './sync/thesaurus_store'
+require_relative './sync/bibliotheca_store'
