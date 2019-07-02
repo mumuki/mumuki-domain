@@ -114,13 +114,13 @@ describe Guide do
         guide.import_from_resource_h!(guide_resource_h)
       end
 
-      describe 'it is removed from the guide' do
-        it { expect(guide.exercises.count).to eq 5 }
-        it { expect(guide.exercises).not_to include exercise_6 }
+      it 'is removed from the guide' do
+        expect(guide.exercises.count).to eq 5
+        expect(guide.exercises).not_to include exercise_6
       end
 
-      describe 'it is deleted from the database' do
-        it { expect { Exercise.find(exercise_6.id) }.to raise_error(ActiveRecord::RecordNotFound) }
+      it 'is deleted from the database' do
+        expect { Exercise.find(exercise_6.id) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
@@ -132,26 +132,35 @@ describe Guide do
         guide.import_from_resource_h!(guide_resource_h)
       end
 
-      it { expect(guide).to_not be nil }
-      it { expect(guide.name).to eq 'sample guide' }
-      it { expect(guide.language).to eq haskell }
-      it { expect(guide.slug).to eq 'mumuki/sample-guide' }
-      it { expect(guide.extra).to eq 'bar' }
-      it { expect(guide.description).to eq 'Baz' }
+      it 'imports basic fields' do
+        expect(guide).to_not be nil
+        expect(guide.name).to eq 'sample guide'
+        expect(guide.language).to eq haskell
+        expect(guide.slug).to eq 'mumuki/sample-guide'
+        expect(guide.extra).to eq 'bar'
+        expect(guide.description).to eq 'Baz'
+      end
 
-      it { expect(guide.exercises.count).to eq 5 }
-      it { expect(guide.exercises.first.language).to eq gobstones }
-      it { expect(guide.exercises.first.extra_visible).to be false }
-      it { expect(guide.exercises.first.assistance_rules).to be_present }
-      it { expect(guide.exercises.first.assistant.rules.count).to eq 2 }
+      it 'imports first exercise' do
+        expect(guide.exercises.count).to eq 5
+        expect(guide.exercises.first.language).to eq gobstones
+        expect(guide.exercises.first.extra_visible).to be false
+        expect(guide.exercises.first.assistance_rules).to be_present
+        expect(guide.exercises.first.assistant.rules.count).to eq 2
+      end
 
-      it { expect(guide.exercises.second.language).to eq haskell }
-      it { expect(guide.exercises.second.default_content).to eq 'a default content' }
-      it { expect(guide.exercises.second.extra_visible).to be true }
-      it { expect(guide.exercises.fourth.choices).to eq [{'value' => 'foo', 'checked' => false}, {'value' => 'bar', 'checked' => true}] }
-      it { expect(guide.exercises.fourth.choice_values).to eq ['foo', 'bar'] }
+      it 'imports second exercise' do
+        expect(guide.exercises.second.language).to eq haskell
+        expect(guide.exercises.second.default_content).to eq 'a default content'
+        expect(guide.exercises.second.extra_visible).to be true
+      end
 
       it { expect(guide.exercises.third.expectations.first['binding']).to eq 'foo' }
+
+      it 'imports fourth exercise' do
+        expect(guide.exercises.fourth.choices).to eq [{'value' => 'foo', 'checked' => false}, {'value' => 'bar', 'checked' => true}]
+        expect(guide.exercises.fourth.choice_values).to eq ['foo', 'bar']
+      end
 
       it { expect(guide.exercises.pluck(:name)).to eq %W(Bar Foo Baz Choice Reading) }
     end
@@ -170,13 +179,15 @@ describe Guide do
                                  name: 'Exercise 1',
                                  description: 'description') }
 
-        describe 'exercises are not duplicated' do
-          it { expect(guide.exercises.count).to eq 5 }
-          it { expect(Exercise.count).to eq 5 }
+        it 'exercises are not duplicated' do
+          expect(guide.exercises.count).to eq 5
+          expect(Exercise.count).to eq 5
         end
 
-        it { expect(guide.exercises.first).to be_instance_of(Problem) }
-        it { expect(guide.exercises.first).to eq reloaded_exercise_1 }
+        it 'changes type properly' do
+          expect(guide.exercises.first).to be_instance_of(Problem)
+          expect(guide.exercises.first).to eq reloaded_exercise_1
+        end
       end
 
       context 'when exercise doesnt have choices anymore' do
@@ -210,9 +221,9 @@ describe Guide do
 
         it { expect(guide.exercises.pluck(:bibliotheca_id)).to eq [1, 4, 2, 8, 9] }
 
-        describe 'exercises are not duplicated' do
-          it { expect(guide.exercises.count).to eq 5 }
-          it { expect(Exercise.count).to eq 5 }
+        it 'exercises are not duplicated' do
+          expect(guide.exercises.count).to eq 5
+          expect(Exercise.count).to eq 5
         end
       end
     end
@@ -245,22 +256,28 @@ describe Guide do
         guide.import_from_resource_h! guide_resource_h
       end
 
-      describe 'exercises are not duplicated' do
-        it { expect(guide.exercises.count).to eq 5 }
-        it { expect(Exercise.count).to eq 5 }
+      it 'exercises are not duplicated' do
+        expect(guide.exercises.count).to eq 5
+        expect(Exercise.count).to eq 5
       end
 
-      it { expect(guide.exercises.first).to be_instance_of(Problem) }
-      it { expect(guide.exercises.second).to be_instance_of(Playground) }
-      it { expect(guide.exercises.third).to be_instance_of(Problem) }
+      it 'load types properly' do
+        expect(guide.exercises.first).to be_instance_of(Problem)
+        expect(guide.exercises.second).to be_instance_of(Playground)
+        expect(guide.exercises.third).to be_instance_of(Problem)
+      end
 
-      it { expect(guide.exercises.second).to eq reloaded_exercise_2 }
-      it { expect(guide.exercises.third).to eq reloaded_exercise_1 }
+      it 'loads exercises properly' do
+        expect(guide.exercises.second).to eq reloaded_exercise_2
+        expect(guide.exercises.third).to eq reloaded_exercise_1
+      end
 
-      it { expect(guide.exercises.first.number).to eq 1 }
-      it { expect(guide.exercises.second.number).to eq 2 }
-      it { expect(guide.exercises.third.number).to eq 3 }
-      it { expect(guide.exercises.fourth.number).to eq 4 }
+      it 'loads exercises order properly' do
+        expect(guide.exercises.first.number).to eq 1
+        expect(guide.exercises.second.number).to eq 2
+        expect(guide.exercises.third.number).to eq 3
+        expect(guide.exercises.fourth.number).to eq 4
+      end
 
       it { expect(guide.exercises.pluck(:bibliotheca_id)).to eq [1, 4, 2, 8, 9] }
       it { expect(guide.exercises.pluck(:id).drop(1)).to eq [reloaded_exercise_2.id, reloaded_exercise_1.id, guide.exercises.fourth.id, guide.exercises.fifth.id] }
@@ -293,8 +310,10 @@ describe Guide do
         guide.import_from_resource_h! guide_resource_h
       end
 
-      it { expect(guide.exercises.first.new_expectations).to be_truthy }
-      it { expect(guide.exercises.first.expectations).to eq [] }
+      it 'load expectations properly' do
+        expect(guide.exercises.first.new_expectations).to be_truthy
+        expect(guide.exercises.first.expectations).to eq []
+      end
     end
   end
 end
