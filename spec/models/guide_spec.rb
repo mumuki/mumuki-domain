@@ -11,8 +11,6 @@ describe Guide do
   end
 
   describe '#destroy' do
-    let(:guide) { create(:guide) }
-
     context 'when orphan' do
       it { expect { guide.destroy! }.to_not raise_error }
     end
@@ -50,24 +48,45 @@ describe Guide do
     end
   end
 
-  describe '#clear_progress!', organization_workspace: :test do
+  describe '#clear_progress!' do
     let(:an_exercise) { create(:exercise) }
-    let(:another_exercise) { create(:exercise) }
-    let(:test_organization) { Organization.current }
+    let(:test_organization) { create(:test_organization) }
 
     before do
+      test_organization.switch!
       guide.exercises = [an_exercise]
       an_exercise.submit_solution! extra_user
-      another_exercise.submit_solution! extra_user
-      guide.clear_progress!(extra_user, test_organization)
     end
 
-    it 'destroys the guides assignments for the given user' do
-      expect(an_exercise.find_assignment_for(extra_user, test_organization)).to be_nil
+    context 'when progress is exclusively in one organization' do
+      let(:another_exercise) { create(:exercise) }
+
+      before do
+        another_exercise.submit_solution! extra_user
+        guide.clear_progress!(extra_user, test_organization)
+      end
+
+      it 'destroys the guides assignments for the given user and organization' do
+        expect(an_exercise.find_assignment_for(extra_user, test_organization)).to be_nil
+      end
+
+      it 'does not destroy other guides assignments for the given user and organization' do
+        expect(another_exercise.find_assignment_for(extra_user, test_organization)).to be_truthy
+      end
     end
 
-    it 'does not destroy other guides assignments' do
-      expect(another_exercise.find_assignment_for(extra_user, test_organization)).to be_truthy
+    context 'when progress is in more than one organization' do
+      let(:another_organization) { create(:another_test_organization) }
+
+      before do
+        another_organization.switch!
+        an_exercise.submit_solution! extra_user
+        guide.clear_progress!(extra_user, test_organization)
+      end
+
+      it 'destroys the guides assignments for the given user and organization' do
+        expect(an_exercise.find_assignment_for(extra_user, test_organization)).to be_nil
+      end
     end
   end
 

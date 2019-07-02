@@ -156,10 +156,10 @@ describe Assignment, organization_workspace: :test do
     let(:exercise) { create(:exercise) }
     let(:user) { create(:user) }
 
-    context "when solution is submitted" do
+    context 'when solution is submitted' do
       before { exercise.submit_solution!(user, content: 'foo') }
 
-      it "should persist what organization it was submitted in" do
+      it 'should persist what organization it was submitted in' do
         expect(exercise.assignment_for(user).organization).to eq Organization.current
       end
     end

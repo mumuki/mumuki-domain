@@ -161,12 +161,21 @@ describe Exercise do
   end
 
   describe '#submit_solution!', organization_workspace: :test do
-    context 'when user did a submission' do
-      before { exercise.submit_solution!(user) }
-      it { expect(exercise.find_assignment_for(user, Organization.current)).to be_present }
+    let(:test_organization) { Organization.current }
+    let(:another_organization) { create(:public_organization) }
+
+    context 'when user does no submission' do
+      it 'should not find a submission' do
+        expect(exercise.find_assignment_for(user, test_organization)).to be_blank
+      end
     end
-    context 'when user did no submission' do
-      it { expect(exercise.find_assignment_for(user, Organization.current)).to be_blank }
+
+    context 'when user does a submission in an organization' do
+      before { exercise.submit_solution!(user) }
+
+      it 'should find a submission for that user and organization' do
+        expect(exercise.find_assignment_for(user, test_organization)).to be_present
+      end
     end
   end
 
@@ -504,10 +513,10 @@ describe Exercise do
     end
   end
 
-  describe '#files_for', organization_workspace: :test do
+  describe '#files_for' do
     before { create(:language, extension: 'js', highlight_mode: 'javascript') }
     let(:current_content) { "/*<index.html#*/a html content/*#index.html>*/\n/*<a_file.js#*/a js content/*#a_file.js>*/" }
-    let(:assignment) { build(:assignment, exercise: exercise, solution: current_content) }
+    let(:assignment) { build(:assignment, exercise: exercise, solution: current_content, organization: create(:test_organization)) }
     let(:files) { exercise.files_for(current_content) }
 
     it { expect(files.count).to eq 2 }
