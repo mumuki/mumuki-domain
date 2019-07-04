@@ -42,29 +42,37 @@ describe 'Navigation', organization_workspace: :test do
   before { reindex_organization! organization_1 }
   before { reindex_organization! organization_2 }
 
-  it { expect(book_1.complements.first.used_in? Organization.current).to be false }
-  it { expect(book_1.complements.first.used_in? organization_1).to be true }
-  it { expect(book_1.complements.first.used_in? organization_2).to be false }
+  it 'works with complements' do
+    expect(book_1.complements.first.used_in? Organization.current).to be false
+    expect(book_1.complements.first.used_in? organization_1).to be true
+    expect(book_1.complements.first.used_in? organization_2).to be false
 
-  it { expect(book_2.complements.first.used_in? Organization.current).to be false }
-  it { expect(book_2.complements.first.used_in? organization_1).to be false }
-  it { expect(book_2.complements.first.used_in? organization_2).to be true }
+    expect(book_2.complements.first.used_in? Organization.current).to be false
+    expect(book_2.complements.first.used_in? organization_1).to be false
+    expect(book_2.complements.first.used_in? organization_2).to be true
+  end
 
-  it { expect(chapter_1.used_in? organization_1).to be true }
-  it { expect(chapter_1.used_in? organization_2).to be false }
+  it 'works with chapters' do
+    expect(chapter_1.used_in? organization_1).to be true
+    expect(chapter_1.used_in? organization_2).to be false
 
-  it { expect(chapter_2.used_in? organization_1).to be false }
-  it { expect(chapter_2.used_in? organization_2).to be true }
+    expect(chapter_2.used_in? organization_1).to be false
+    expect(chapter_2.used_in? organization_2).to be true
+  end
 
-  it { expect(lesson_1.used_in? organization_1).to be true }
-  it { expect(lesson_1.used_in? organization_2).to be false }
+  it 'works with lessons' do
+    expect(lesson_1.used_in? organization_1).to be true
+    expect(lesson_1.used_in? organization_2).to be false
 
-  it { expect(lesson_2.used_in? organization_1).to be false }
-  it { expect(lesson_2.used_in? organization_2).to be true }
+    expect(lesson_2.used_in? organization_1).to be false
+    expect(lesson_2.used_in? organization_2).to be true
+  end
 
-  it { expect(exercise_1.used_in? organization_1).to be true }
-  it { expect(exercise_1.used_in? organization_2).to be false }
+  it 'works with exercsies' do
+    expect(exercise_1.used_in? organization_1).to be true
+    expect(exercise_1.used_in? organization_2).to be false
 
-  it { expect(exercise_2.used_in? organization_1).to be false }
-  it { expect(exercise_2.used_in? organization_2).to be true }
+    expect(exercise_2.used_in? organization_1).to be false
+    expect(exercise_2.used_in? organization_2).to be true
+  end
 end

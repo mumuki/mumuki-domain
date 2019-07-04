@@ -31,18 +31,19 @@ describe Book, organization_workspace: :test do
     shared_examples_for 'a successful fork operation' do
       let!(:new_book) { original_book.fork_to! 'new', Mumukit::Sync::Syncer.new(Mumukit::Sync::Store::NullStore.new) }
 
-      it { expect(new_book.slug).to eq 'new/book' }
-      it { expect(new_book.chapters.map(&:slug)).to eq %w(new/topic1 new/topic2) }
-      it { expect(new_guides.map(&:slug)).to eq %w(new/guide1 new/guide2 new/guide3 new/guide4) }
+      it "forks properly" do
+        expect(new_book.slug).to eq 'new/book'
+        expect(new_book.chapters.map(&:slug)).to eq %w(new/topic1 new/topic2)
+        expect(new_guides.map(&:slug)).to eq %w(new/guide1 new/guide2 new/guide3 new/guide4)
 
-      it { expect(Book.find_by_slug 'new/book').to be_present }
-      it { expect(Topic.find_by_slug 'new/topic1').to be_present }
-      it { expect(Topic.find_by_slug 'new/topic2').to be_present }
-
-      it { expect(Guide.find_by_slug 'new/guide1').to be_present }
-      it { expect(Guide.find_by_slug 'new/guide2').to be_present }
-      it { expect(Guide.find_by_slug 'new/guide3').to be_present }
-      it { expect(Guide.find_by_slug 'new/guide4').to be_present }
+        expect(Book.find_by_slug 'new/book').to be_present
+        expect(Topic.find_by_slug 'new/topic1').to be_present
+        expect(Topic.find_by_slug 'new/topic2').to be_present
+        expect(Guide.find_by_slug 'new/guide1').to be_present
+        expect(Guide.find_by_slug 'new/guide2').to be_present
+        expect(Guide.find_by_slug 'new/guide3').to be_present
+        expect(Guide.find_by_slug 'new/guide4').to be_present
+      end
     end
 
     context 'when no content has been previously forked' do
@@ -88,15 +89,18 @@ describe Book, organization_workspace: :test do
         chapter_2.rebuild!([lesson_3])
       end
 
-      it { expect(book.description).to eq '#foo' }
-      it { expect(book.description_html).to eq "<h1>foo</h1>\n" }
 
-      it { expect(Chapter.count).to eq 2 }
-      it { expect(book.chapters).to eq [chapter_1, chapter_2] }
-      it { expect(chapter_1.guides).to eq [guide_1, guide_2] }
-      it { expect(chapter_2.guides).to eq [guide_3] }
-      it { expect(chapter_1.number).to eq 1 }
-      it { expect(chapter_2.number).to eq 2 }
+      it "rebuilds successfully" do
+        expect(book.description).to eq '#foo'
+        expect(book.description_html).to eq "<h1>foo</h1>\n"
+
+        expect(Chapter.count).to eq 2
+        expect(book.chapters).to eq [chapter_1, chapter_2]
+        expect(chapter_1.guides).to eq [guide_1, guide_2]
+        expect(chapter_2.guides).to eq [guide_3]
+        expect(chapter_1.number).to eq 1
+        expect(chapter_2.number).to eq 2
+      end
     end
 
     context 'when some chapters are orphan' do
@@ -109,16 +113,18 @@ describe Book, organization_workspace: :test do
         chapter_2.rebuild!([lesson_3])
       end
 
-      it { expect(book.description).to eq '#foo' }
-      it { expect(book.description_html).to eq "<h1>foo</h1>\n" }
+      it "rebuilds successfully" do
+        expect(book.description).to eq '#foo'
+        expect(book.description_html).to eq "<h1>foo</h1>\n"
 
-      it { expect(Chapter.count).to eq 3 }
-      it { expect(book.chapters).to eq [chapter_1, orphan_chapter, chapter_2] }
-      it { expect(chapter_1.guides).to eq [guide_1, guide_2] }
-      it { expect(chapter_2.guides).to eq [guide_3] }
-      it { expect(chapter_1.number).to eq 1 }
-      it { expect(orphan_chapter.number).to eq 2 }
-      it { expect(chapter_2.number).to eq 3 }
+        expect(Chapter.count).to eq 3
+        expect(book.chapters).to eq [chapter_1, orphan_chapter, chapter_2]
+        expect(chapter_1.guides).to eq [guide_1, guide_2]
+        expect(chapter_2.guides).to eq [guide_3]
+        expect(chapter_1.number).to eq 1
+        expect(orphan_chapter.number).to eq 2
+        expect(chapter_2.number).to eq 3
+      end
     end
 
 
@@ -134,15 +140,17 @@ describe Book, organization_workspace: :test do
         chapter_2.rebuild!([lesson_3])
       end
 
-      it { expect(book.description).to eq '#foo' }
-      it { expect(book.description_html).to eq "<h1>foo</h1>\n" }
+      it "rebuilds successfully" do
+        expect(book.description).to eq '#foo'
+        expect(book.description_html).to eq "<h1>foo</h1>\n"
 
-      it { expect(Chapter.count).to eq 2 }
-      it { expect(book.chapters).to eq [chapter_1, chapter_2] }
-      it { expect(chapter_1.guides).to eq [guide_1, guide_2] }
-      it { expect(chapter_2.guides).to eq [guide_3] }
-      it { expect(chapter_1.number).to eq 1 }
-      it { expect(chapter_2.number).to eq 2 }
+        expect(Chapter.count).to eq 2
+        expect(book.chapters).to eq [chapter_1, chapter_2]
+        expect(chapter_1.guides).to eq [guide_1, guide_2]
+        expect(chapter_2.guides).to eq [guide_3]
+        expect(chapter_1.number).to eq 1
+        expect(chapter_2.number).to eq 2
+      end
     end
 
     context 'when chapter is rebuilt before book rebuilt' do
@@ -154,15 +162,17 @@ describe Book, organization_workspace: :test do
         book.rebuild!([chapter_1, chapter_2])
       end
 
-      it { expect(book.description).to eq '#foo' }
-      it { expect(book.description_html).to eq "<h1>foo</h1>\n" }
+      it "rebuilds successfully" do
+        expect(book.description).to eq '#foo'
+        expect(book.description_html).to eq "<h1>foo</h1>\n"
 
-      it { expect(Chapter.count).to eq 2 }
-      it { expect(book.chapters).to eq [chapter_1, chapter_2] }
-      it { expect(chapter_1.number).to eq 1 }
-      it { expect(chapter_2.number).to eq 2 }
-      it { expect(chapter_1.guides).to eq [guide_1, guide_2] }
-      it { expect(chapter_2.guides).to eq [guide_3] }
+        expect(Chapter.count).to eq 2
+        expect(book.chapters).to eq [chapter_1, chapter_2]
+        expect(chapter_1.number).to eq 1
+        expect(chapter_2.number).to eq 2
+        expect(chapter_1.guides).to eq [guide_1, guide_2]
+        expect(chapter_2.guides).to eq [guide_3]
+      end
     end
   end
 end

@@ -43,14 +43,18 @@ describe Book do
 
       before { book.import_from_resource_h!(book_resource_h) }
 
-      it { expect(book.name).to eq 'sample book' }
-      it { expect(book.description).to eq 'a sample book description' }
-      it { expect(book.locale).to eq 'en' }
-      it { expect(book.chapters.count).to eq 2 }
-      it { expect(book.complements.count).to eq 2 }
+      it 'imports data succesfully' do
+        expect(book.name).to eq 'sample book'
+        expect(book.description).to eq 'a sample book description'
+        expect(book.locale).to eq 'en'
+        expect(book.chapters.count).to eq 2
+        expect(book.complements.count).to eq 2
+      end
 
-      it { expect(topic_2.reload.usage_in_organization).to be_a Chapter }
-      it { expect(guide_2.reload.usage_in_organization).to be_a Complement }
+      it 'reindexes usages properly' do
+        expect(topic_2.reload.usage_in_organization).to be_a Chapter
+        expect(guide_2.reload.usage_in_organization).to be_a Complement
+      end
 
       it { expect(book.sync_key).to eq Mumukit::Sync.key(Book, 'mumuki/a-book') }
     end
