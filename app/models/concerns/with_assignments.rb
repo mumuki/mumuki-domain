@@ -19,7 +19,7 @@ module WithAssignments
   end
 
   def find_assignment_for(user, organization)
-    assignments.find_by(submitter: user, organization: organization)
+    assignments.find_by(submitter: user)
   end
 
   def status_for(user)
