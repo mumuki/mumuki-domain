@@ -5,7 +5,7 @@ class IntroduceSettingsAndThemes < ActiveRecord::Migration[4.2]
     add_column :organizations, :profile, :text, default: "{}", null: false
 
     Organization.all.each do |organization|
-      organization.profile = Mumukit::Platform::Organization::Profile.new(
+      organization.profile = Mumuki::Domain::Organization::Profile.new(
         logo_url: organization[:logo_url],
         locale: organization[:locale],
         description: organization[:description],
@@ -13,12 +13,12 @@ class IntroduceSettingsAndThemes < ActiveRecord::Migration[4.2]
         terms_of_service: organization[:terms_of_service],
         community_link: organization[:community_link]
       )
-      organization.settings = Mumukit::Platform::Organization::Settings.new(
+      organization.settings = Mumuki::Domain::Organization::Settings.new(
         login_methods: organization[:login_methods],
         raise_hand_enabled: organization[:raise_hand_enabled],
         public: organization[:public]
       )
-      organization.theme = Mumukit::Platform::Organization::Theme.new(
+      organization.theme = Mumuki::Domain::Organization::Theme.new(
         theme_stylesheet_url: organization[:theme_stylesheet_url],
         extension_javascript_url: organization[:extension_javascript_url]
       )

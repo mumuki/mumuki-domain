@@ -1,7 +1,7 @@
 class Content < ApplicationRecord
   self.abstract_class = true
 
-  include Syncable
+  include Mumuki::Domain::Syncable
   include WithDescription
   include WithLocale
   include WithSlug

@@ -1,5 +1,5 @@
 class Invitation < ApplicationRecord
-  include Syncable
+  include Mumuki::Domain::Syncable
 
   belongs_to :course
   validates_uniqueness_of :code

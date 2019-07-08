@@ -109,6 +109,17 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
+  ## Partially implements resource-hash protocol, by
+  ## defining `to_resource_h` and helper methods `resource_fields` and `slice_resource_h`
+  ## using the given fields
+  def self.resource_fields(*fields)
+    include Mumuki::Domain::Syncable::WithResourceFields
+
+    define_singleton_method :resource_fields do
+      fields
+    end
+  end
+
   private
 
   def raise_foreign_key_error!

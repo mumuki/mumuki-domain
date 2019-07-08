@@ -111,6 +111,8 @@ class Exercise < ApplicationRecord
     choice_values.index(value)
   end
 
+  # Keep this list up to date with
+  # Mumukit::Sync::Store::Github::Schema::Exercise
   def to_resource_h
     language_resource_h = language.to_embedded_resource_h if language != guide.language
     as_json(only: %i(name layout editor corollary teacher_info manual_evaluation locale

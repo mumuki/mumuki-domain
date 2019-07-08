@@ -18,16 +18,16 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'mumukit-auth', '~> 7.6'
   s.add_dependency 'mumukit-assistant', '~> 0.1'
-  s.add_dependency 'mumukit-bridge', '~> 3.8'
+  s.add_dependency 'mumukit-bridge', '~> 4.0'
   s.add_dependency 'mumukit-content-type', '~> 1.7'
   s.add_dependency 'mumukit-core', '~> 1.13'
   s.add_dependency 'mumukit-directives', '~> 0.5'
   s.add_dependency 'mumukit-inspection', '~> 3.6'
   s.add_dependency 'mumukit-randomizer', '~> 1.0'
-  s.add_dependency 'mumukit-platform', '~> 4.2'
-  s.add_dependency 'mumukit-sync', '~> 0.3'
+  s.add_dependency 'mumukit-platform', '~> 5.0'
+  s.add_dependency 'mumukit-sync', '~> 1.0'
 
   s.add_development_dependency 'pg', '~> 0.18.0'
-  s.add_development_dependency 'mumukit-login', '~> 6.1'
+  s.add_development_dependency 'mumukit-login', '~> 7.0'
 end
 

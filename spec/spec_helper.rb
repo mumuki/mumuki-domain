@@ -6,7 +6,6 @@ require 'rspec/rails'
 require 'codeclimate-test-reporter'
 require 'mumukit/core/rspec'
 require 'factory_bot_rails'
-require 'mumukit/login'
 
 require 'mumuki/domain/factories'
 
@@ -37,6 +36,9 @@ RSpec.configure do |config|
   end
 end
 
+Mumukit::Platform.configure do |config|
+  config.application = Mumukit::Platform::Application::Organic.new 'http://sample.app.com', Mumukit::Platform.organization_mapping
+end
 
 Mumukit::Auth.configure do |c|
   c.clients.default = {id: 'test-client', secret: 'thisIsATestSecret'}

@@ -1,6 +1,6 @@
 class Course < ApplicationRecord
-  include Syncable
-  include Mumukit::Platform::Course::Helpers
+  include Mumuki::Domain::Syncable
+  include Mumuki::Domain::Helpers::Course
 
   validates_presence_of :slug, :shifts, :code, :days, :period, :description, :organization_id
   validates_uniqueness_of :slug
@@ -10,12 +10,14 @@ class Course < ApplicationRecord
 
   alias_attribute :name, :code
 
+  resource_fields :slug, :shifts, :code, :days, :period, :description
+
   def current_invitation
     invitations.where('expiration_date > ?', Time.now).take
   end
 
   def import_from_resource_h!(resource_h)
-    update! Mumukit::Platform::Course::Helpers.slice_resource_h(resource_h)
+    update! self.class.slice_resource_h(resource_h)
   end
 
   def slug=(slug)

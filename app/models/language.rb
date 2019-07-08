@@ -1,12 +1,39 @@
 class Language < ApplicationRecord
   include WithCaseInsensitiveSearch
-  include Syncable
+  include Mumuki::Domain::Syncable
 
   enum output_content_type: [:plain, :html, :markdown]
 
   validates_presence_of :runner_url, :output_content_type
 
   validates :name, presence: true, uniqueness: {case_sensitive: false}
+
+  # This list must kept up to date with
+  # Mumukit::Sync::Store::Thesaurus::InfoConverter
+  resource_fields :comment_type,
+                  :devicon,
+                  :editor_css_urls,
+                  :editor_html_urls,
+                  :editor_js_urls,
+                  :editor_shows_loading_content,
+                  :extension,
+                  :feedback,
+                  :highlight_mode,
+                  :layout_css_urls,
+                  :layout_html_urls,
+                  :layout_js_urls,
+                  :layout_shows_loading_content,
+                  :multifile,
+                  :name,
+                  :output_content_type,
+                  :prompt,
+                  :queriable,
+                  :runner_url,
+                  :stateful_console,
+                  :test_extension,
+                  :test_template,
+                  :triable,
+                  :visible_success_output
 
   markdown_on :description
 
@@ -62,13 +89,6 @@ class Language < ApplicationRecord
 
   def to_embedded_resource_h
     as_json(only: [:name, :extension, :test_extension]).symbolize_keys
-  end
-
-  def to_resource_h
-    as_json(only: %i(comment_type devicon editor_css_urls editor_html_urls editor_js_urls
-                    extension feedback highlight_mode layout_css_urls layout_html_urls
-                    layout_js_urls multifile name output_content_type prompt queriable runner_url
-                    stateful_console test_extension test_template triable visible_success_output)).symbolize_keys
   end
 
   private

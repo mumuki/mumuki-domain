@@ -1,10 +1,12 @@
 class Organization < ApplicationRecord
-  include Syncable
-  include Mumukit::Platform::Organization::Helpers
+  include Mumuki::Domain::Syncable
+  include Mumuki::Domain::Helpers::Organization
 
-  serialize :profile, Mumukit::Platform::Organization::Profile
-  serialize :settings, Mumukit::Platform::Organization::Settings
-  serialize :theme, Mumukit::Platform::Organization::Theme
+  include Mumukit::Login::OrganizationHelpers
+
+  serialize :profile, Mumuki::Domain::Organization::Profile
+  serialize :settings, Mumuki::Domain::Organization::Settings
+  serialize :theme, Mumuki::Domain::Organization::Theme
 
   markdown_on :description
 
@@ -16,7 +18,7 @@ class Organization < ApplicationRecord
   validates_presence_of :contact_email, :locale
   validates :name, uniqueness: true,
                    presence: true,
-                   format: { with: Mumukit::Platform::Organization::Helpers.anchored_valid_name_regex }
+                   format: { with: Mumuki::Domain::Helpers::Organization.anchored_valid_name_regex }
   validates :locale, inclusion: { in: Mumukit::Platform::Locale.supported }
 
   after_create :reindex_usages!
@@ -27,6 +29,8 @@ class Organization < ApplicationRecord
   has_many :assignments, through: :exercises
   has_many :exams
   has_many :courses
+
+  resource_fields :name, :book, :profile, :settings, :theme
 
   defaults do
     self.class.base.try do |base|
@@ -113,9 +117,13 @@ class Organization < ApplicationRecord
   end
 
   def import_from_resource_h!(resource_h)
-    attrs = Mumukit::Platform::Organization::Helpers.slice_resource_h resource_h
+    attrs = self.class.slice_resource_h resource_h
     attrs[:book] = Book.locate! attrs[:book]
     update! attrs
+  end
+
+  def to_resource_h
+    super.merge(book: book.slug)
   end
 
   private
