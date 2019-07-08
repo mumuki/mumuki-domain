@@ -54,3 +54,7 @@ class Mumukit::Randomizer
   end
 end
 
+Mumukit::Sync::Store::Github.configure do |config|
+  config.guide_schema = Mumukit::Sync::Store::Github::Schema::Guide
+  config.exercise_schema = Mumukit::Sync::Store::Github::Schema::Exercise
+end
