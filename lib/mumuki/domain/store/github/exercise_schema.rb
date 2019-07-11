@@ -17,8 +17,8 @@ module Mumuki::Domain::Store::Github::ExerciseSchema
       {name: :manual_evaluation, kind: :metadata},
       {name: :choices, kind: :metadata},
 
-      {name: :custom_expectations, kind: :file, extension: 'edl'},
       {name: :expectations,        kind: :file, extension: 'yml', transform: yaml_list('expectations')},
+      {name: :custom_expectations, kind: :file, extension: 'edl'},
       {name: :assistance_rules,    kind: :file, extension: 'yml', transform: yaml_list('rules')},
       {name: :randomizations,      kind: :file, extension: 'yml', transform: yaml_hash},
 
