@@ -17,7 +17,9 @@ module Mumuki::Domain::Store::Github::GuideSchema
       {name: :order, kind: :metadata, transform: with { |it| it.map { |e| e[:id] } }, reverse: :exercises},
       {name: :private, kind: :metadata},
 
-      {name: :expectations, kind: :file, extension: 'yml', transform: yaml_list('expectations')},
+      {name: :expectations,        kind: :file, extension: 'yml', transform: yaml_list('expectations')},
+      {name: :custom_expectations, kind: :file, extension: 'edl'},
+
       {name: :description, kind: :file, extension: 'md', required: true},
       {name: :corollary, kind: :file, extension: 'md'},
       {name: :sources, kind: :file, extension: 'md'},
