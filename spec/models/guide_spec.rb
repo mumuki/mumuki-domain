@@ -4,6 +4,13 @@ describe Guide do
   let!(:extra_user) { create(:user, first_name: 'Ignatius', last_name: 'Reilly') }
   let(:guide) { create(:guide) }
 
+  describe("schema fields are in sync") do
+    let(:resource_h_fields) { Guide.new(language: Language.new).to_expanded_resource_h.keys - [:exercises]}
+    let(:schema_fields) { Mumuki::Domain::Store::Github::GuideSchema.fields.map(&:reverse_name) - [:id, :exercises] }
+
+    it { expect(resource_h_fields).to contain_exactly(*schema_fields) }
+  end
+
   describe 'slug normalization' do
     let(:guide) { create(:guide, slug: 'fLbUlGaReLlI/MuMUkI-saMPle-gUIde') }
 

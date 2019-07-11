@@ -33,8 +33,8 @@ class Topic < Content
     rebuild! resource_h[:lessons].to_a.map { |it| lesson_for(it) }
   end
 
-  def to_resource_h
-    super.merge(appendix: appendix, lessons: lessons.map(&:slug)).compact
+  def to_expanded_resource_h
+    super.merge(appendix: appendix, lessons: lessons.map(&:slug))
   end
 
   def as_chapter_of(book)

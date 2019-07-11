@@ -5,6 +5,7 @@ module Mumuki::Domain::Store::Github::ExerciseSchema
     [
       {name: :id, kind: :special},
       {name: :name, kind: :special},
+      {name: :locale, kind: :metadata},
 
       {name: :tags, kind: :metadata, reverse: :tag_list, transform: with { |it| it.to_a }},
       {name: :layout, kind: :metadata},
@@ -21,6 +22,7 @@ module Mumuki::Domain::Store::Github::ExerciseSchema
       {name: :custom_expectations, kind: :file, extension: 'edl'},
       {name: :assistance_rules,    kind: :file, extension: 'yml', transform: yaml_list('rules')},
       {name: :randomizations,      kind: :file, extension: 'yml', transform: yaml_hash},
+      {name: :settings,            kind: :file, extension: 'yml', transform: yaml_hash},
 
       {name: :goal, kind: :metadata},
       {name: :test, kind: :file, extension: :test},
