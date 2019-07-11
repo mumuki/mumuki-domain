@@ -1,4 +1,4 @@
-module Mumukit::Sync::Store
+module Mumuki::Domain::Store
 
   ## This Store enables importing content
   ## from Bibliotheca API

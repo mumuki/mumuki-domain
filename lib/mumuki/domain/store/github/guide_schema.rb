@@ -1,4 +1,4 @@
-module Mumukit::Sync::Store::Github::Schema::Guide
+module Mumuki::Domain::Store::Github::GuideSchema
   extend Mumukit::Sync::Store::Github::Schema
 
   def self.fields_schema

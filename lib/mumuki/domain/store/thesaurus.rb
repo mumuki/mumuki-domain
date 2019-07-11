@@ -1,4 +1,4 @@
-module Mumukit::Sync::Store
+module Mumuki::Domain::Store
 
   ## This Store enables importing languages
   ## from Thesaurus API
@@ -17,7 +17,7 @@ module Mumukit::Sync::Store
     end
 
     def transform_after_read(runner_url, info)
-      Mumukit::Sync::Store::Thesaurus::InfoConverter.new(runner_url, info).call
+      Mumuki::Domain::Store::Thesaurus::InfoConverter.new(runner_url, info).call
     end
 
     def write_resource!(*)

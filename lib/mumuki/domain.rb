@@ -34,7 +34,7 @@ require_relative './domain/extensions'
 require_relative './domain/organization'
 require_relative './domain/helpers'
 require_relative './domain/syncable'
-require_relative './domain/stores'
+require_relative './domain/store'
 
 class Mumukit::Assistant
   def self.valid?(rules)
@@ -55,6 +55,6 @@ class Mumukit::Randomizer
 end
 
 Mumukit::Sync::Store::Github.configure do |config|
-  config.guide_schema = Mumukit::Sync::Store::Github::Schema::Guide
-  config.exercise_schema = Mumukit::Sync::Store::Github::Schema::Exercise
+  config.guide_schema = Mumuki::Domain::Store::Github::GuideSchema
+  config.exercise_schema = Mumuki::Domain::Store::Thesaurus
 end
