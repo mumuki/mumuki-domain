@@ -1,9 +1,9 @@
 require_relative '../spec_helper'
 
-describe Mumukit::Sync::Store::Bibliotheca do
+describe Mumuki::Domain::Store::Bibliotheca do
   describe 'sync_keys_matching' do
     let(:bridge) { Mumukit::Bridge::Bibliotheca.new('http://nonexistenurl.com') }
-    let(:store) { Mumukit::Sync::Store::Bibliotheca.new bridge }
+    let(:store) { Mumuki::Domain::Store::Bibliotheca.new bridge }
     let(:syncer) { Mumukit::Sync::Syncer.new store }
     let(:append_resources) { proc { |resource_type, slug| imported_resources << [resource_type, slug] } }
 
@@ -41,7 +41,7 @@ describe Mumukit::Sync::Store::Bibliotheca do
 
   describe 'read_resource' do
     let(:bridge) { Mumukit::Bridge::Bibliotheca.new('http://nonexistenurl.com') }
-    let(:store) { Mumukit::Sync::Store::Bibliotheca.new bridge }
+    let(:store) { Mumuki::Domain::Store::Bibliotheca.new bridge }
 
     let(:guide_hash) { {
       id: 'abe61891',

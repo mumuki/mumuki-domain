@@ -4,6 +4,8 @@ describe Guide do
   let!(:extra_user) { create(:user, first_name: 'Ignatius', last_name: 'Reilly') }
   let(:guide) { create(:guide) }
 
+  it { expect(Guide.new.to_resource_h.keys).to eq Mumuki::Domain::Store::Github::GuideSchema.fields.map(&:name) }
+
   describe 'slug normalization' do
     let(:guide) { create(:guide, slug: 'fLbUlGaReLlI/MuMUkI-saMPle-gUIde') }
 

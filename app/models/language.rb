@@ -9,7 +9,7 @@ class Language < ApplicationRecord
   validates :name, presence: true, uniqueness: {case_sensitive: false}
 
   # This list must kept up to date with
-  # Mumukit::Sync::Store::Thesaurus::InfoConverter
+  # Mumuki::Domain::Store::Thesaurus::InfoConverter
   resource_fields :comment_type,
                   :devicon,
                   :editor_css_urls,

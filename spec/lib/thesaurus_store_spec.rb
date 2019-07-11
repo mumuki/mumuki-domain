@@ -1,9 +1,9 @@
 
 require_relative '../spec_helper'
-describe Mumukit::Sync::Store::Thesaurus do
+describe Mumuki::Domain::Store::Thesaurus do
   describe 'read_resource' do
     let(:bridge) { Mumukit::Bridge::Thesaurus.new('http://thesaurus.com') }
-    let(:store) { Mumukit::Sync::Store::Thesaurus.new bridge }
+    let(:store) { Mumuki::Domain::Store::Thesaurus.new bridge }
     let(:sync_key) { struct kind: :language, id: 'http://rubyrunner.com' }
 
     let(:response) { {
@@ -68,8 +68,8 @@ describe Mumukit::Sync::Store::Thesaurus do
   end
 end
 
-describe Mumukit::Sync::Store::Thesaurus::InfoConverter do
-  let(:converter) { Mumukit::Sync::Store::Thesaurus::InfoConverter.new('http://foo', response) }
+describe Mumuki::Domain::Store::Thesaurus::InfoConverter do
+  let(:converter) { Mumuki::Domain::Store::Thesaurus::InfoConverter.new('http://foo', response) }
 
   describe 'importable_info' do
     context 'when language is non-graphical' do
