@@ -18,7 +18,7 @@ class Organization < ApplicationRecord
   validates_presence_of :contact_email, :locale
   validates :name, uniqueness: true,
                    presence: true,
-                   format: { with: Mumuki::Domain::Helpers::Organization.anchored_valid_name_regex }
+                   format: { with: Mumukit::Platform::Organization.anchored_valid_name_regex }
   validates :locale, inclusion: { in: Mumukit::Platform::Locale.supported }
 
   after_create :reindex_usages!
