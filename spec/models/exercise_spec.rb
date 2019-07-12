@@ -77,7 +77,8 @@ describe Exercise do
       it { expect(exercise_with_guide.next_for(user)).to eq alternative_exercise }
     end
 
-    context 'when exercise belongs to a guide with two exercises and alternative exercise has being solved' do
+    context 'when exercise belongs to a guide with two exercises and alternative exercise has been solved',
+            organization_workspace: :test do
       let(:exercise_with_guide) { create(:exercise, guide: guide) }
       let!(:alternative_exercise) { create(:exercise, guide: guide) }
       let(:guide) { create(:guide) }
@@ -87,7 +88,8 @@ describe Exercise do
       it { expect(exercise_with_guide.next_for(user)).to be nil }
     end
 
-    context 'when exercise belongs to a guide with two exercises and alternative exercise has being submitted but not solved' do
+    context 'when exercise belongs to a guide with two exercises and alternative exercise has been submitted but not solved',
+            organization_workspace: :test do
       let!(:exercise_with_guide) { create(:exercise, guide: guide, number: 2) }
       let!(:alternative_exercise) { create(:exercise, guide: guide, number: 3) }
       let(:guide) { create(:guide) }
@@ -145,7 +147,7 @@ describe Exercise do
     end
   end
 
-  describe '#extra_preview' do
+  describe '#extra_preview', organization_workspace: :test do
     let(:haskell) { create(:haskell) }
     let(:guide) { create(:guide,
                          extra: 'f x = 1',
@@ -158,13 +160,22 @@ describe Exercise do
     it { expect(exercise.assignment_for(user).extra_preview).to eq "```haskell\nf x = 1\ng y = y + 3\n```" }
   end
 
-  describe '#submit_solution!' do
-    context 'when user did a submission' do
-      before { exercise.submit_solution!(user) }
-      it { expect(exercise.find_assignment_for(user)).to be_present }
+  describe '#submit_solution!', organization_workspace: :test do
+    let(:test_organization) { Organization.current }
+    let(:another_organization) { create(:public_organization) }
+
+    context 'when user does no submission' do
+      it 'should not find a submission' do
+        expect(exercise.find_assignment_for(user, test_organization)).to be_blank
+      end
     end
-    context 'when user did no submission' do
-      it { expect(exercise.find_assignment_for(user)).to be_blank }
+
+    context 'when user does a submission in an organization' do
+      before { exercise.submit_solution!(user) }
+
+      it 'should find a submission for that user and organization' do
+        expect(exercise.find_assignment_for(user, test_organization)).to be_present
+      end
     end
   end
 
@@ -173,7 +184,7 @@ describe Exercise do
       it { exercise.destroy! }
     end
 
-    context 'when there are submissions' do
+    context 'when there are submissions', organization_workspace: :test do
       let!(:assignment) { create(:assignment, exercise: exercise) }
       before { exercise.destroy! }
       it { expect { Assignment.find(assignment.id) }.to raise_error(ActiveRecord::RecordNotFound) }
@@ -399,13 +410,12 @@ describe Exercise do
     end
   end
 
-  describe '#guide_done_for?' do
-
+  describe '#guide_done_for?', organization_workspace: :test do
     context 'when it does not belong to a guide' do
       it { expect(exercise.guide_done_for?(user)).to be false }
     end
 
-    context 'when it belongs to a guide unfinished' do
+    context 'when it belongs to an unfinished guide' do
       let!(:guide) { create(:guide) }
       let!(:exercise_unfinished) { create(:exercise, guide: guide) }
       let!(:exercise_finished) { create(:exercise, guide: guide) }
@@ -417,7 +427,7 @@ describe Exercise do
       it { expect(exercise_finished.guide_done_for?(user)).to be false }
     end
 
-    context 'when it belongs to a guide unfinished' do
+    context 'when it belongs to a finished guide' do
       let!(:guide) { create(:guide) }
       let!(:exercise_finished) { create(:exercise, guide: guide) }
       let!(:exercise_finished2) { create(:exercise, guide: guide) }
@@ -506,7 +516,7 @@ describe Exercise do
   describe '#files_for' do
     before { create(:language, extension: 'js', highlight_mode: 'javascript') }
     let(:current_content) { "/*<index.html#*/a html content/*#index.html>*/\n/*<a_file.js#*/a js content/*#a_file.js>*/" }
-    let(:assignment) { build(:assignment, exercise: exercise, solution: current_content) }
+    let(:assignment) { build(:assignment, exercise: exercise, solution: current_content, organization: create(:test_organization)) }
     let(:files) { exercise.files_for(current_content) }
 
     it { expect(files.count).to eq 2 }

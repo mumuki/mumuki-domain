@@ -54,20 +54,6 @@ module Mumuki::Domain::Helpers::Organization
     name
   end
 
-  ## Name validation
-
-  def self.valid_name?(name)
-    !!(name =~ anchored_valid_name_regex)
-  end
-
-  def self.anchored_valid_name_regex
-    /\A#{valid_name_regex}\z/
-  end
-
-  def self.valid_name_regex
-    /([-a-z0-9_]+(\.[-a-z0-9_]+)*)?/
-  end
-
   ## Resource Hash
 
   module ClassMethods

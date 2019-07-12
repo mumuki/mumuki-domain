@@ -9,10 +9,8 @@ FactoryBot.define do
     book
   end
 
-  factory :base, parent: :organization do
-    public { true }
-    name { 'base' }
-    login_methods { Mumukit::Login::Settings.login_methods }
+  factory :private_organization, parent: :organization do
+    name { 'the-private-org' }
   end
 
   factory :public_organization, parent: :organization do
@@ -21,7 +19,20 @@ FactoryBot.define do
     login_methods { Mumukit::Login::Settings.login_methods }
   end
 
-  factory :private_organization, parent: :organization do
-    name { 'the-private-org' }
+  factory :base, parent: :public_organization do
+    name { 'base' }
+  end
+
+  factory :test_organization, parent: :public_organization do
+    name { 'test' }
+    book { create(:book, name: 'test', slug: 'mumuki/mumuki-the-book') }
+  end
+
+  factory :another_test_organization, parent: :test_organization, traits: [:skip_unique_name_validation] do
+    book { create(:book, name: 'another-test', slug: 'mumuki/mumuki-another-book') }
+  end
+
+  trait :skip_unique_name_validation do
+    to_create { |instance| instance.save(validate: false) }
   end
 end

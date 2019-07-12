@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190702003600) do
+ActiveRecord::Schema.define(version: 20190702182407) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,7 +41,9 @@ ActiveRecord::Schema.define(version: 20190702003600) do
     t.text "query_results"
     t.text "manual_evaluation_comment"
     t.integer "attemps_count", default: 0
+    t.bigint "organization_id"
     t.index ["exercise_id"], name: "index_assignments_on_exercise_id"
+    t.index ["organization_id"], name: "index_assignments_on_organization_id"
     t.index ["submission_id"], name: "index_assignments_on_submission_id"
     t.index ["submitter_id"], name: "index_assignments_on_submitter_id"
   end

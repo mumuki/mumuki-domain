@@ -216,22 +216,7 @@ describe Mumukit::Platform::Organization do
       } }
       it { expect(organization.to_resource_h).to json_eq resource_h }
     end
-
-    describe '#valid_name?' do
-      def valid_name?(name)
-        Mumuki::Domain::Helpers::Organization.valid_name? name
-      end
-
-      it { expect(valid_name? 'foo').to be true }
-      it { expect(valid_name? 'a.name').to be true }
-      it { expect(valid_name? 'a.name.with.subdomains').to be true }
-      it { expect(valid_name? '.a.name.that.starts.with.period').to be false }
-      it { expect(valid_name? 'a.name.that.ends.with.period.').to be false }
-      it { expect(valid_name? 'a.name.that..has.two.periods.in.a.row').to be false }
-      it { expect(valid_name? 'a.name.with.Uppercases').to be false }
-      it { expect(valid_name? 'A random name').to be false }
-    end
-
+    
     describe '#as_json' do
       context 'when settings has unsupported attributes' do
         before { organization.settings.instance_variable_set :@saraza, 5 }

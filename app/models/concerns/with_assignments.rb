@@ -18,7 +18,7 @@ module WithAssignments
     messages_for(user).present?
   end
 
-  def find_assignment_for(user)
+  def find_assignment_for(user, _organization)
     assignments.find_by(submitter: user)
   end
 
@@ -26,7 +26,7 @@ module WithAssignments
     assignment_for(user).status if user
   end
 
-  def assignment_for(user)
-    find_assignment_for(user) || user.assignments.build(exercise: self)
+  def assignment_for(user, organization: Organization.current)
+    find_assignment_for(user, organization) || user.assignments.build(exercise: self, organization: organization)
   end
 end

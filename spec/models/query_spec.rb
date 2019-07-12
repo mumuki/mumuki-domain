@@ -9,9 +9,9 @@ describe Mumuki::Domain::Submission::Query do
     allow_any_instance_of(Language).to receive(:run_query!).and_return(status: :passed, result: '5')
   end
 
-  describe '#submit_query!' do
+  describe '#submit_query!', organization_workspace: :test do
     let!(:results) { exercise.submit_query!(user, query: 'foo', content: 'bar', cookie: ['foo', 'bar']) }
-    let(:assignment) { exercise.find_assignment_for user }
+    let(:assignment) { exercise.find_assignment_for(user, Organization.current) }
 
     it { expect(results[:status]).to eq :passed }
     it { expect(results[:result]).to eq '5' }

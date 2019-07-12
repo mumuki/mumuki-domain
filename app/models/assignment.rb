@@ -12,6 +12,7 @@ class Assignment < ApplicationRecord
            primary_key: :submission_id,
            dependent: :destroy
 
+  belongs_to :organization
   belongs_to :submitter, class_name: 'User'
 
   validates_presence_of :exercise, :submitter
@@ -126,7 +127,7 @@ class Assignment < ApplicationRecord
   end
 
   def to_resource_h
-    as_json(except: [:exercise_id, :submission_id, :id, :submitter_id, :solution, :created_at, :updated_at, :submission_status],
+    as_json(except: [:exercise_id, :submission_id, :organization_id, :id, :submitter_id, :solution, :created_at, :updated_at, :submission_status],
               include: {
                 guide: {
                   only: [:slug, :name],
@@ -187,6 +188,11 @@ class Assignment < ApplicationRecord
 
   def files
     exercise.files_for(current_content)
+  end
+
+  def save!(*)
+    self.organization = Organization.current
+    super
   end
 
   private
