@@ -18,8 +18,8 @@ module WithAssignments
     messages_for(user).present?
   end
 
-  def find_assignment_for(user, _organization)
-    assignments.find_by(submitter: user)
+  def find_assignment_for(user, organization)
+    assignments.find_by(submitter: user, organization: organization)
   end
 
   def status_for(user)

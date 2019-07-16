@@ -176,6 +176,10 @@ describe Exercise do
       it 'should find a submission for that user and organization' do
         expect(exercise.find_assignment_for(user, test_organization)).to be_present
       end
+
+      it 'should not find a submission for that user and another organization' do
+        expect(exercise.find_assignment_for(user, another_organization)).to be_blank
+      end
     end
   end
 

@@ -190,11 +190,6 @@ class Assignment < ApplicationRecord
     exercise.files_for(current_content)
   end
 
-  def save!(*)
-    self.organization = Organization.current
-    super
-  end
-
   private
 
   def update_submissions_count!
