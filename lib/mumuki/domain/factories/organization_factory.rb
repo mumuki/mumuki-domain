@@ -25,11 +25,8 @@ FactoryBot.define do
 
   factory :test_organization, parent: :public_organization do
     name { 'test' }
-    book { create(:book, name: 'test', slug: 'mumuki/mumuki-the-book') }
-  end
-
-  factory :another_test_organization, parent: :test_organization, traits: [:skip_unique_name_validation] do
-    book { create(:book, name: 'another-test', slug: 'mumuki/mumuki-another-book') }
+    book
+    skip_unique_name_validation
   end
 
   trait :skip_unique_name_validation do

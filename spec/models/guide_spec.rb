@@ -76,7 +76,7 @@ describe Guide do
     end
 
     context 'when progress is in more than one organization' do
-      let(:another_organization) { create(:another_test_organization) }
+      let(:another_organization) { create(:test_organization) }
 
       before do
         another_organization.switch!
