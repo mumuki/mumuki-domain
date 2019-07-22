@@ -31,10 +31,12 @@ class User < ApplicationRecord
 
   after_initialize :init
 
+  enum gender: %i(female male other)
+
   before_validation :set_uid!
   validates :uid, presence: true
 
-  resource_fields :uid, :social_id, :image_url, :email, :first_name, :last_name, :permissions
+  resource_fields :uid, :social_id, :image_url, :email, :permissions, *profile_fields
 
   def last_lesson
     last_guide.try(:lesson)

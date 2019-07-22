@@ -18,6 +18,18 @@ describe Mumuki::Domain::Helpers::User do
   it { expect(user.platform_event_name(:changed)).to eq 'UserChanged' }
   it { expect(user.as_platform_event).to eq user: user.to_resource_h }
 
+  describe "profile_completed?" do
+    let(:empty) { User.new }
+    let(:name_only) { User.new first_name: 'Julio', last_name: 'Cortazar' }
+    let(:with_gender) { User.new first_name: 'Victoria', last_name: 'Ocampo', gender: :female }
+    let(:complete) { User.new first_name: 'Maria Elena', last_name: 'Walsh', gender: :female, birthdate: Date.new(1930, 2, 1) }
+
+    it { expect(empty).to_not be_profile_completed }
+    it { expect(name_only).to_not be_profile_completed }
+    it { expect(with_gender).to_not be_profile_completed }
+    it { expect(complete).to be_profile_completed }
+  end
+
   describe 'make_student_of!' do
     before { user.make_student_of! organization.slug }
 
