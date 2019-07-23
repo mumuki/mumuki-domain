@@ -210,6 +210,7 @@ class Assignment < ApplicationRecord
   end
 
   def update_last_submission!
+    update!(submitted_at: DateTime.now)
     submitter.update!(last_submission_date: DateTime.now, last_exercise: exercise)
   end
 
