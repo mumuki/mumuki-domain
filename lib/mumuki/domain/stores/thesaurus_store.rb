@@ -46,6 +46,7 @@ module Mumukit::Sync::Store
           queriable:                    @info.dig('features', 'query').present?,
           stateful_console:             @info.dig('features', 'stateful').present?,
           multifile:                    @info.dig('features', 'multifile').present?,
+          settings:                     @info.dig('features', 'settings').present?,
           test_extension:               @info.dig('test_framework', 'test_extension'),
           test_template:                @info.dig('test_framework', 'template'),
           layout_js_urls:               get_assets_for(:layout, 'js'),

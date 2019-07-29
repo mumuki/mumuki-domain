@@ -24,6 +24,7 @@ class Language < ApplicationRecord
                   :layout_js_urls,
                   :layout_shows_loading_content,
                   :multifile,
+                  :settings,
                   :name,
                   :output_content_type,
                   :prompt,
