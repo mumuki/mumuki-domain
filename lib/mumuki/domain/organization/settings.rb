@@ -11,7 +11,8 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
                       :embeddable?,
                       :immersive?,
                       :forum_enabled?,
-                      :report_issue_enabled?
+                      :report_issue_enabled?,
+                      :ensures_single_session_exam?
 
   def private?
     !public?

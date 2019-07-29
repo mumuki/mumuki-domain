@@ -93,6 +93,7 @@ describe Mumukit::Platform::Organization do
         it { expect(subject.public?).to eq false }
         it { expect(subject.embeddable?).to eq false }
         it { expect(subject.immersive?).to eq false }
+        it { expect(subject.ensures_single_session_exam?).to eq false }
 
         it { expect(Mumuki::Domain::Organization::Settings.parse(nil)).to be_empty }
       end
