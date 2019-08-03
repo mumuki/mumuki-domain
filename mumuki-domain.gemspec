@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'mumukit-randomizer', '~> 1.0'
   s.add_dependency 'mumukit-platform', '~> 5.1'
   s.add_dependency 'mumukit-sync', '~> 1.0'
+  s.add_dependency 'mumukit-login', '~> 7.0'
 
   s.add_development_dependency 'pg', '~> 0.18.0'
   s.add_development_dependency 'mumukit-login', '~> 7.0'
