@@ -14,7 +14,7 @@ class Guide < Content
 
   enum type: [:learning, :practice]
 
-  def clear_progress!(user, organization)
+  def clear_progress!(user, organization=Organization.current)
     transaction do
       exercises.each do |exercise|
         exercise.find_assignment_for(user, organization)&.destroy!
