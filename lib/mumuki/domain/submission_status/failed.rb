@@ -1,5 +1,5 @@
-module Mumuki::Domain::Status::Submission::Failed
-  extend Mumuki::Domain::Status::Submission
+module Mumuki::Domain::SubmissionStatus::Failed
+  extend Mumuki::Domain::SubmissionStatus::Base
 
   def self.failed?
     true

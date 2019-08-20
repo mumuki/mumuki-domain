@@ -16,7 +16,8 @@ module Contextualization
   end
 
   included do
-    serialize :submission_status, Mumuki::Domain::Status::Submission
+    enums = [:pending, :running, :passed, :failed, :errored, :aborted, :passed_with_warnings, :manual_evaluation_pending]
+    serialize_enum submission_status: enums, class: Mumuki::Domain::SubmissionStatus
     validates_presence_of :submission_status
 
     serialize_symbolized_hash_array :expectation_results, :test_results, :query_results
@@ -25,7 +26,7 @@ module Contextualization
 
     delegate :visible_success_output?, to: :exercise
     delegate :output_content_type, to: :language
-    delegate :should_retry?, :to_submission_status, *Mumuki::Domain::Status::Submission.test_selectors, to: :submission_status
+    delegate :should_retry?, :to_submission_status, *Mumuki::Domain::SubmissionStatus.test_selectors, to: :submission_status
     delegate :inspection_keywords, to: :exercise
   end
 

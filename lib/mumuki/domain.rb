@@ -27,7 +27,8 @@ end
 
 require_relative './domain/evaluation'
 require_relative './domain/submission'
-require_relative './domain/status'
+require_relative './domain/submission_status'
+require_relative './domain/discussion_status'
 require_relative './domain/exceptions'
 require_relative './domain/file'
 require_relative './domain/extensions'

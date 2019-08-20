@@ -4,6 +4,6 @@ class Mumuki::Domain::Submission::Confirmation < Mumuki::Domain::Submission::Per
   end
 
   def try_evaluate!(*)
-    {status: Mumuki::Domain::Status::Submission::Passed, result: ''}
+    {status: Mumuki::Domain::SubmissionStatus::Passed, result: ''}
   end
 end

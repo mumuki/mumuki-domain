@@ -1,5 +1,5 @@
 class Mumuki::Domain::Evaluation::Manual
   def evaluate!(*)
-    {status: Mumuki::Domain::Status::Submission::ManualEvaluationPending, result: ''}
+    {status: Mumuki::Domain::SubmissionStatus::ManualEvaluationPending, result: ''}
   end
 end

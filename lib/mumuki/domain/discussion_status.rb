@@ -1,19 +1,4 @@
-module Mumuki::Domain::Status::Discussion
-  include Mumuki::Domain::Status
-end
-
-require_relative './opened'
-require_relative './closed'
-require_relative './solved'
-require_relative './pending_review'
-
-module Mumuki::Domain::Status::Discussion
-  STATUSES = [Opened, Closed, Solved, PendingReview]
-
-  test_selectors.each do |selector|
-    define_method(selector) { false }
-  end
-
+module Mumuki::Domain::DiscussionStatus
   def allowed_for?(*)
     true
   end
@@ -39,6 +24,12 @@ module Mumuki::Domain::Status::Discussion
   end
 
   def allowed_statuses_for(user, discussion)
-    STATUSES.select { |it| it.allowed_for?(user, discussion) }
+    constants(false).select { |it| it.allowed_for?(user, discussion) }
   end
 end
+
+require_relative 'discussion_status/opened'
+require_relative 'discussion_status/closed'
+require_relative 'discussion_status/pending_review'
+require_relative 'discussion_status/solved'
+

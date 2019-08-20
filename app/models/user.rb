@@ -15,7 +15,7 @@ class User < ApplicationRecord
   has_many :submitted_exercises, through: :assignments, class_name: 'Exercise', source: :exercise
 
   has_many :solved_exercises,
-           -> { where('assignments.submission_status' => Mumuki::Domain::Status::Submission::Passed.to_i) },
+           -> { where('assignments.submission_status' => Mumuki::Domain::SubmissionStatus::Passed.to_i) },
            through: :assignments,
            class_name: 'Exercise',
            source: :exercise
@@ -59,7 +59,7 @@ class User < ApplicationRecord
   end
 
   def passed_assignments
-    assignments.where(status: Mumuki::Domain::Status::Submission::Passed.to_i)
+    assignments.where(status: Mumuki::Domain::SubmissionStatus::Passed.to_i)
   end
 
   def unread_messages

@@ -2,7 +2,7 @@ module WithDiscussionStatus
   extend ActiveSupport::Concern
 
   included do
-    serialize :status, Mumuki::Domain::Status::Discussion
+    serialize_enum :status, Mumuki::Domain::DiscussionStatus
     validates_presence_of :status
     scope :by_status, -> (status) { where(status: status) }
   end

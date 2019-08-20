@@ -1,5 +1,4 @@
-module Mumuki::Domain::Status::Discussion::Opened
-  extend Mumuki::Domain::Status::Discussion
+class Mumuki::Domain::DiscussionStatus::Opened
 
   def self.opened?
     true
@@ -7,17 +6,17 @@ module Mumuki::Domain::Status::Discussion::Opened
 
   def self.reachable_statuses_for_initiator(discussion)
     if discussion.has_responses?
-      [Mumuki::Domain::Status::Discussion::PendingReview]
+      [Mumuki::Domain::DiscussionStatus::PendingReview]
     else
-      [Mumuki::Domain::Status::Discussion::Closed]
+      [Mumuki::Domain::DiscussionStatus::Closed]
     end
   end
 
   def self.reachable_statuses_for_moderator(discussion)
     if discussion.has_responses?
-      [Mumuki::Domain::Status::Discussion::Closed, Mumuki::Domain::Status::Discussion::Solved]
+      [Mumuki::Domain::DiscussionStatus::Closed, Mumuki::Domain::DiscussionStatus::Solved]
     else
-      [Mumuki::Domain::Status::Discussion::Closed]
+      [Mumuki::Domain::DiscussionStatus::Closed]
     end
   end
 

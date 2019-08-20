@@ -1,12 +1,10 @@
-module Mumuki::Domain::Status::Discussion::Solved
-  extend Mumuki::Domain::Status::Discussion
-
+class Mumuki::Domain::DiscussionStatus::Solved
   def self.solved?
     true
   end
 
   def self.reachable_statuses_for_moderator(*)
-    [Mumuki::Domain::Status::Discussion::Opened, Mumuki::Domain::Status::Discussion::Closed]
+    [Mumuki::Domain::DiscussionStatus::Opened, Mumuki::Domain::DiscussionStatus::Closed]
   end
 
   def self.iconize

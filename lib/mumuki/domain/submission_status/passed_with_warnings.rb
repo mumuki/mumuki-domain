@@ -1,5 +1,5 @@
-module Mumuki::Domain::Status::Submission::PassedWithWarnings
-  extend Mumuki::Domain::Status::Submission
+module Mumuki::Domain::SubmissionStatus::PassedWithWarnings
+  extend Mumuki::Domain::SubmissionStatus::Base
 
   def self.passed_with_warnings?
     true

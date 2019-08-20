@@ -1,5 +1,5 @@
-module Mumuki::Domain::Status::Submission::Errored
-  extend Mumuki::Domain::Status::Submission
+module Mumuki::Domain::SubmissionStatus::Errored
+  extend Mumuki::Domain::SubmissionStatus::Base
 
   def self.errored?
     true
@@ -10,7 +10,7 @@ module Mumuki::Domain::Status::Submission::Errored
   end
 
   def self.group
-    Mumuki::Domain::Status::Submission::Failed
+    Mumuki::Domain::SubmissionStatus::Failed
   end
 
   def self.iconize

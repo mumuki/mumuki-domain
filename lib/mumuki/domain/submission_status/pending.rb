@@ -1,5 +1,5 @@
-module Mumuki::Domain::Status::Submission::Pending
-  extend Mumuki::Domain::Status::Submission
+module Mumuki::Domain::SubmissionStatus::Pending
+  extend Mumuki::Domain::SubmissionStatus::Base
 
   def self.pending?
     true
