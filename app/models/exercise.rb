@@ -112,7 +112,7 @@ class Exercise < ApplicationRecord
   end
 
   # Keep this list up to date with
-  # Mumukit::Sync::Store::Github::Schema::Exercise
+  # Mumuki::Domain::Store::Thesaurus
   def to_resource_h
     language_resource_h = language.to_embedded_resource_h if language != guide.language
     as_json(only: %i(name layout editor corollary teacher_info manual_evaluation locale
