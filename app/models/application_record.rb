@@ -118,15 +118,15 @@ class ApplicationRecord < ActiveRecord::Base
 
     values = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
 
-    serializer = klass ? klass : name.to_s.camelize.constantize
+    serializer =  klass || name.to_s.camelize.constantize
 
     serializer.include WithEnum unless serializer.include? WithEnum
     serializer.defined_enums = values
     WithEnum.define_enum_methods_for serializer
-    serialize field, serializer
+    serialize name, serializer
   end
 
-  def check_valid_enum_values!(values)
+  def self.check_valid_enum_values!(values)
     unless values.is_a?(Hash) || values.all? { |v| v.is_a?(Symbol) } || values.all? { |v| v.is_a?(String) }
       error_message = <<~MSG
             Enum values #{values} must be either a hash, an array of symbols, or an array of strings.

@@ -14,12 +14,12 @@ module WithEnum
   def self.define_enum_methods_for(klass)
     to_method_name = klass.to_instance_method_name
     String.send :define_method, to_method_name, proc { to_sym.send(to_method_name) }
-    Symbol.send :define_method, to_method_name, proc { base.from_sym klass }
-    define_method to_method_name, proc { klass }
-    from_constants.each do |enum|
+    Symbol.send :define_method, to_method_name, proc { klass.from_sym self }
+    klass.send(:define_method, to_method_name) { self }
+    klass.from_constants.each do |enum|
       enum.extend klass
-      base.from_constants.each do |it|
-        enum.define_singleton_method("#{it.to_method_name}?") { klass == it }
+      klass.from_constants.each do |it|
+        enum.define_singleton_method("#{it.to_method_name}?") { self == it }
       end
     end
   end
@@ -82,7 +82,7 @@ module WithEnum
     end
 
     def from_constants
-      defined_enums.map(&method(:from_sym))
+      defined_enums.map { |enum| from_sym enum }
     end
   end
 end
