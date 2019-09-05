@@ -1,9 +1,4 @@
 class Mumuki::Domain::DiscussionStatus::Opened
-
-  def self.opened?
-    true
-  end
-
   def self.reachable_statuses_for_initiator(discussion)
     if discussion.has_responses?
       [Mumuki::Domain::DiscussionStatus::PendingReview]

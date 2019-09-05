@@ -1,8 +1,4 @@
 class Mumuki::Domain::DiscussionStatus::Solved
-  def self.solved?
-    true
-  end
-
   def self.reachable_statuses_for_moderator(*)
     [Mumuki::Domain::DiscussionStatus::Opened, Mumuki::Domain::DiscussionStatus::Closed]
   end
