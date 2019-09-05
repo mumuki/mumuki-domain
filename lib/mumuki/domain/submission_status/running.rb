@@ -1,5 +1,4 @@
 module Mumuki::Domain::SubmissionStatus::Running
-  extend Mumuki::Domain::SubmissionStatus::Base
   def self.running?
     true
   end

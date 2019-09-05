@@ -1,22 +1,20 @@
 module Mumuki::Domain::SubmissionStatus
-  module Base
-    def group
-      self
-    end
+  def group
+    self
+  end
 
-    # Tells if a new, different submission should be tried.
-    # True for `failed`, `errored` and `passed_with_warnings`
-    def should_retry?
-      false
-    end
+  # Tells if a new, different submission should be tried.
+  # True for `failed`, `errored` and `passed_with_warnings`
+  def should_retry?
+    false
+  end
 
-    def iconize
-      group.iconize
-    end
+  def iconize
+    group.iconize
+  end
 
-    def as_json(_options={})
-      to_s
-    end
+  def as_json(_options={})
+    to_s
   end
 end
 

@@ -1,5 +1,5 @@
 module Mumuki::Domain::SubmissionStatus::ManualEvaluationPending
-  extend Mumuki::Domain::SubmissionStatus::Base
+
 
   def self.manual_evaluation_pending?
     true

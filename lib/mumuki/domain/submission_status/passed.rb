@@ -1,6 +1,4 @@
 module Mumuki::Domain::SubmissionStatus::Passed
-  extend Mumuki::Domain::SubmissionStatus::Base
-
   def self.passed?
     true
   end
