@@ -44,6 +44,7 @@ class Assignment < ApplicationRecord
     transaction do
       messages.destroy_all if submission_id.present?
       update! submission_id: submission.id
+      update! submitted_at: DateTime.now
       update_submissions_count!
       update_last_submission!
     end
@@ -127,7 +128,7 @@ class Assignment < ApplicationRecord
   end
 
   def to_resource_h
-    as_json(except: [:exercise_id, :submission_id, :organization_id, :id, :submitter_id, :solution, :created_at, :updated_at, :submission_status],
+    as_json(except: [:exercise_id, :submission_id, :organization_id, :id, :submitter_id, :solution, :created_at, :updated_at, :submission_status, :submitted_at],
               include: {
                 guide: {
                   only: [:slug, :name],
