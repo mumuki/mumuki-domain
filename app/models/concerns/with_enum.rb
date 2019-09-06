@@ -16,16 +16,16 @@ module WithEnum
     String.send :define_method, to_method_name, proc { to_sym.send(to_method_name) }
     Symbol.send :define_method, to_method_name, proc { klass.from_sym self }
     klass.send(:define_method, to_method_name) { self }
-    klass.from_constants.each do |enum|
+    klass.enum_constants.each do |enum|
       enum.extend klass
-      klass.from_constants.each do |it|
+      klass.enum_constants.each do |it|
         enum.define_singleton_method("#{it.to_method_name}?") { self == it }
       end
     end
   end
 
   def to_i
-    parent.from_constants.index(self)
+    parent.enum_constants.index(self)
   end
 
   def to_test_selector
@@ -66,7 +66,7 @@ module WithEnum
     end
 
     def test_selectors
-      from_constants.map(&:to_test_selector)
+      enum_constants.map(&:to_test_selector)
     end
 
     def from_sym(enum_name)
@@ -78,11 +78,11 @@ module WithEnum
     end
 
     def cast(i)
-      from_constants.find { |it| it.to_i == i.to_i } if i.present?
+      enum_constants.find { |it| it.to_i == i.to_i } if i.present?
     end
 
-    def from_constants
-      defined_enums.map { |enum| from_sym enum }
+    def enum_constants
+      @enum_constants ||= defined_enums.map { |enum| from_sym enum }
     end
   end
 end
