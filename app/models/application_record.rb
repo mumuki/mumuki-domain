@@ -113,12 +113,12 @@ class ApplicationRecord < ActiveRecord::Base
     klass = definitions.delete(:class)
     raise ArgumentError, "Invalid options specified" if definitions.size != 1
     name, values = *definitions.first
-    check_valid_enum_values!(values)
+    assert_valid_enum_definition_values values
     name = name.to_s
 
     values = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
 
-    serializer =  klass || name.to_s.camelize.constantize
+    serializer =  klass || name.camelize.constantize
 
     serializer.include WithEnum unless serializer.include? WithEnum
     serializer.defined_enums = values
@@ -126,7 +126,7 @@ class ApplicationRecord < ActiveRecord::Base
     serialize name, serializer
   end
 
-  def self.check_valid_enum_values!(values)
+  def self.assert_valid_enum_definition_values(values)
     unless values.is_a?(Hash) || values.all? { |v| v.is_a?(Symbol) } || values.all? { |v| v.is_a?(String) }
       error_message = <<~MSG
             Enum values #{values} must be either a hash, an array of symbols, or an array of strings.
@@ -138,10 +138,7 @@ class ApplicationRecord < ActiveRecord::Base
       raise ArgumentError, "Enum label name must not be blank."
     end
   end
-
-  def enum(definitions)
-  end
-
+  
   ## Partially implements resource-hash protocol, by
   ## defining `to_resource_h` and helper methods `resource_fields` and `slice_resource_h`
   ## using the given fields
