@@ -25,7 +25,7 @@ module WithEnum
   end
 
   def to_i
-    parent.enum_constants.index(self)
+    parent.enum_hash[self]
   end
 
   def to_test_selector
@@ -78,11 +78,15 @@ module WithEnum
     end
 
     def cast(i)
-      enum_constants.find { |it| it.to_i == i.to_i } if i.present?
+      enum_hash.key(i) if i.present?
+    end
+
+    def enum_hash
+      @enum_hash ||= defined_enums.transform_keys { |enum| from_sym enum }
     end
 
     def enum_constants
-      @enum_constants ||= defined_enums.map { |enum| from_sym enum }
+      @enum_constants ||= enum_hash.keys
     end
   end
 end

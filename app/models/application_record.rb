@@ -116,7 +116,7 @@ class ApplicationRecord < ActiveRecord::Base
     assert_valid_enum_definition_values values
     name = name.to_s
 
-    values = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
+    values = values.is_a?(Hash) ? values : values.each_with_index.to_h
 
     serializer =  klass || name.camelize.constantize
 
