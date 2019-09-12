@@ -16,8 +16,7 @@ module Contextualization
   end
 
   included do
-    enums = [:pending, :running, :passed, :failed, :errored, :aborted, :passed_with_warnings, :manual_evaluation_pending]
-    serialize_enum submission_status: enums, class: Mumuki::Domain::SubmissionStatus
+    serialize_enum :submission_status, class: Mumuki::Domain::SubmissionStatus
     validates_presence_of :submission_status
 
     serialize_symbolized_hash_array :expectation_results, :test_results, :query_results

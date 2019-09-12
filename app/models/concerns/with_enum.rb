@@ -70,6 +70,7 @@ module WithEnum
     end
 
     def from_sym(enum_name)
+      p enum_name
       "#{module_namespace(self)}::#{module_namespace(enum_name)}".constantize
     end
 

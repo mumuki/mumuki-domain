@@ -1,4 +1,6 @@
 module Mumuki::Domain::DiscussionStatus
+  ENUM = [:opened, :closed, :solved, :pending_review]
+
   def allowed_for?(*)
     true
   end

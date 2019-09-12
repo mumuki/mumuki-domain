@@ -109,19 +109,20 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
-  def self.serialize_enum(definitions)
-    klass = definitions.delete(:class)
-    raise ArgumentError, "Invalid options specified" if definitions.size != 1
-    name, values = *definitions.first
+  def self.serialize_enum(name, options)
+    klass = options.delete(:class)
+    raise ArgumentError, "Invalid options specified" unless options.size == 0
+    serializer = klass || name.camelize.constantize
+    values = serializer::ENUM
+
     assert_valid_enum_definition_values values
     name = name.to_s
 
     values = values.is_a?(Hash) ? values : values.each_with_index.to_h
 
-    serializer =  klass || name.camelize.constantize
-
     serializer.include WithEnum unless serializer.include? WithEnum
     serializer.defined_enums = values
+
     WithEnum.define_enum_methods_for serializer
     serialize name, serializer
   end

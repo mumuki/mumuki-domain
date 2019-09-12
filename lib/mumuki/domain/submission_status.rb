@@ -1,4 +1,6 @@
 module Mumuki::Domain::SubmissionStatus
+  ENUM = [:pending, :running, :passed, :failed, :errored, :aborted, :passed_with_warnings, :manual_evaluation_pending]
+
   def group
     self
   end
