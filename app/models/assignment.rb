@@ -44,7 +44,7 @@ class Assignment < ApplicationRecord
     transaction do
       messages.destroy_all if submission_id.present?
       update! submission_id: submission.id
-      update! submitted_at: DateTime.now
+      update! submitted_at: DateTime.current
       update_submissions_count!
       update_last_submission!
     end
