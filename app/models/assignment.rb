@@ -141,7 +141,7 @@ class Assignment < ApplicationRecord
       deep_merge(
         'organization' => Organization.current.name,
         'sid' => submission_id,
-        'created_at' => updated_at,
+        'created_at' => submitted_at || updated_at,
         'content' => solution,
         'status' => submission_status,
         'exercise' => {
