@@ -41,12 +41,6 @@ class Mumukit::Assistant
   end
 end
 
-class Mumukit::Expectation
-  def self.valid?(expectation)
-    !!Mumukit::Inspection.parse(expectation['inspection']) rescue false
-  end
-end
-
 class Mumukit::Randomizer
   def self.valid?(randomizations)
     !!parse(randomizations) rescue false
