@@ -302,7 +302,6 @@ describe Guide do
               test: 'foo bar',
               type: 'problem',
               expectations: [{inspection: 'HasBinding', binding: 'foo'}],
-              new_expectations: true,
               id: 2}]}
       end
 
@@ -311,7 +310,6 @@ describe Guide do
       end
 
       it 'load expectations properly' do
-        expect(guide.exercises.first.new_expectations).to be_truthy
         expect(guide.exercises.first.expectations).to eq []
       end
     end

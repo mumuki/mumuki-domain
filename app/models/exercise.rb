@@ -97,7 +97,7 @@ class Exercise < ApplicationRecord
     attrs[:bibliotheca_id] = resource_h[:id]
     attrs[:number] = number
     attrs[:manual_evaluation] ||= false
-    attrs = attrs.except(:expectations, :custom_expectations) if type != 'Problem' || resource_h[:new_expectations] # TODO remove this field
+    attrs = attrs.except(:expectations, :custom_expectations) if type != 'Problem'
 
     assign_attributes(attrs)
     save!
