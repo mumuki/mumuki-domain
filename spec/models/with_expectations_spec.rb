@@ -40,7 +40,7 @@ describe WithExpectations do
   context 'when setting custom expectations' do
     before { exercise.custom_expectations = 'expectation: assigns;'}
 
-    it { expect(exercise.custom_expectations).to eq 'expectation: assigns;' }
+    it { expect(exercise.custom_expectations).to eq "expectation: assigns;\n" }
   end
 
   context 'when the guide has expectations' do
