@@ -97,7 +97,7 @@ class Exercise < ApplicationRecord
     attrs[:bibliotheca_id] = resource_h[:id]
     attrs[:number] = number
     attrs[:manual_evaluation] ||= false
-    attrs = attrs.except(:expectations) if type != 'Problem' || resource_h[:new_expectations]
+    attrs = attrs.except(:expectations, :custom_expectations) if type != 'Problem' || resource_h[:new_expectations] # TODO remove this field
 
     assign_attributes(attrs)
     save!
@@ -119,7 +119,8 @@ class Exercise < ApplicationRecord
                      choices assistance_rules randomizations tag_list extra_visible goal
                      free_form_editor_source initial_state final_state custom_expectations))
       .merge(id: bibliotheca_id, language: language_resource_h, type: type.underscore)
-      .merge(expectations: self[:expectations])
+      .merge(expectations: own_expectations)
+      .merge(custom_expectations: own_custom_expectations)
       .merge(settings: self[:settings])
       .merge(RANDOMIZED_FIELDS.map { |it| [it, self[it]] }.to_h)
       .symbolize_keys

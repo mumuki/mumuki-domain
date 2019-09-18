@@ -92,7 +92,8 @@ class Guide < Content
     as_json(only: %i(beta type id_format private custom_expectations corollary teacher_info sources learn_more authors collaborators extra settings))
       .symbolize_keys
       .merge(super)
-      .merge(expectations: self[:expectations])
+      .merge(expectations: own_expectations)
+      .merge(custom_expectations: own_custom_expectations)
       .merge(exercises: exercises.map(&:to_resource_h))
       .merge(language: language.to_embedded_resource_h)
       .compact

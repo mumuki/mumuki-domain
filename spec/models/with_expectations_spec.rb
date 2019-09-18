@@ -37,6 +37,12 @@ describe WithExpectations do
     it { expect(exercise.expectations).to eq [{'binding' => 'foo', 'inspection' => 'HasBinding'}] }
   end
 
+  context 'when setting custom expectations' do
+    before { exercise.custom_expectations = 'expectation: assigns;'}
+
+    it { expect(exercise.custom_expectations).to eq 'expectation: assigns;' }
+  end
+
   context 'when the guide has expectations' do
     let(:guide) { create(:guide) }
 

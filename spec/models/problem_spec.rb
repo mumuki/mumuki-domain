@@ -15,6 +15,11 @@ describe Problem, organization_workspace: :test do
       it { expect(problem.evaluation_criteria?).to be true }
     end
 
+    context 'when no test but custom expectations' do
+      let(:problem) { build(:problem, test: nil, custom_expectations: 'expectation: uses `foo`') }
+      it { expect(problem.evaluation_criteria?).to be true }
+    end
+
     context 'when no expectations but test' do
       let(:problem) { build(:problem, test: 'describe ...', expectations: []) }
       it { expect(problem.evaluation_criteria?).to be true }
