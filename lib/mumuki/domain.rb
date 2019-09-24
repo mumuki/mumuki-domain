@@ -12,6 +12,8 @@ require 'mumukit/randomizer'
 require 'mumukit/sync'
 require 'mumukit/login'
 
+require 'mulang'
+
 I18n.load_translations_path File.join(__dir__, 'domain', 'locales', '**', '*.yml')
 
 module Mumuki
