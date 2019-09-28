@@ -89,11 +89,11 @@ class Guide < Content
   # Keep this list up to date with
   # Mumuki::Domain::Store::Github::GuideSchema
   def to_resource_h
-    as_json(only: %i(beta type id_format private custom_expectations corollary teacher_info sources learn_more authors collaborators extra settings))
+    as_json(only: %i(beta type id_format private corollary teacher_info sources learn_more authors collaborators extra settings))
       .symbolize_keys
       .merge(super)
-      .merge(expectations: own_expectations)
-      .merge(custom_expectations: own_custom_expectations)
+      .merge(expectations: expectations)
+      .merge(custom_expectations: custom_expectations)
       .merge(exercises: exercises.map(&:to_resource_h))
       .merge(language: language.to_embedded_resource_h)
       .compact
