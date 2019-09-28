@@ -38,10 +38,11 @@ class Problem < QueriableChallenge
   end
 
   def evaluation_criteria?
-    manual_evaluation? ||
-      own_expectations.present? ||
-      own_custom_expectations.present? ||
-      test.present? # TODO maybe just expectations?
+    manual_evaluation? || expectations? || test.present? # TODO maybe just expectations?
+  end
+
+  def expectations?
+    own_expectations.present? || own_custom_expectations.present?
   end
 
   private
