@@ -38,7 +38,7 @@ class Problem < QueriableChallenge
   end
 
   def evaluation_criteria?
-    manual_evaluation? || expectations? || test.present? # TODO maybe just expectations?
+    manual_evaluation? || expectations? || test.present?
   end
 
   def expectations?
