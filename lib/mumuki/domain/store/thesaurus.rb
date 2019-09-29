@@ -41,12 +41,13 @@ module Mumuki::Domain::Store
           highlight_mode:               @info.dig('language', 'ace_mode'),
           visible_success_output:       @info.dig('language', 'graphic').present?,
           devicon:                      @info.dig('language', 'icon', 'name'),
-          triable:                      @info.dig('features', 'try').present?,
-          feedback:                     @info.dig('features', 'feedback').present?,
-          queriable:                    @info.dig('features', 'query').present?,
-          stateful_console:             @info.dig('features', 'stateful').present?,
-          multifile:                    @info.dig('features', 'multifile').present?,
-          settings:                     @info.dig('features', 'settings').present?,
+          expectations:                 feature_present?('expectations'),
+          feedback:                     feature_present?('feedback'),
+          multifile:                    feature_present?('multifile'),
+          queriable:                    feature_present?('query'),
+          settings:                     feature_present?('settings'),
+          stateful_console:             feature_present?('stateful'),
+          triable:                      feature_present?('try'),
           test_extension:               @info.dig('test_framework', 'test_extension'),
           test_template:                @info.dig('test_framework', 'template'),
           layout_js_urls:               get_assets_for(:layout, 'js'),
@@ -58,6 +59,10 @@ module Mumuki::Domain::Store
           layout_shows_loading_content: shows_loading_content_for?(:layout),
           editor_shows_loading_content: shows_loading_content_for?(:editor)
         }
+      end
+
+      def feature_present?(feature)
+        @info.dig('features', feature).present?
       end
 
       def get_assets_for(kind, content_type)
