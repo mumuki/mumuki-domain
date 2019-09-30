@@ -1,4 +1,9 @@
 class Guide < Content
+  BASIC_RESOURCE_FIELDS = %i(
+    authors beta collaborators corollary
+    custom_expectations expectations extra id_format
+    learn_more private settings sources teacher_info type)
+
   include WithStats,
           WithExpectations,
           WithLanguage
@@ -89,11 +94,9 @@ class Guide < Content
   # Keep this list up to date with
   # Mumuki::Domain::Store::Github::GuideSchema
   def to_resource_h
-    as_json(only: %i(beta type id_format private corollary teacher_info sources learn_more authors collaborators extra settings))
+    as_json(only: BASIC_RESOURCE_FIELDS)
       .symbolize_keys
       .merge(super)
-      .merge(expectations: expectations)
-      .merge(custom_expectations: custom_expectations)
       .merge(exercises: exercises.map(&:to_resource_h))
       .merge(language: language.to_embedded_resource_h)
       .compact
