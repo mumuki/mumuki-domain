@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190918140026) do
+ActiveRecord::Schema.define(version: 20190929180601) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -240,6 +240,7 @@ ActiveRecord::Schema.define(version: 20190918140026) do
     t.boolean "layout_shows_loading_content"
     t.boolean "editor_shows_loading_content"
     t.boolean "settings", default: false
+    t.boolean "expectations"
     t.index ["name"], name: "index_languages_on_name", unique: true
   end
 
