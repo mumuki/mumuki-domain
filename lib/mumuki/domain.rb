@@ -7,11 +7,12 @@ require 'mumukit/auth'
 require 'mumukit/bridge'
 require 'mumukit/content_type'
 require 'mumukit/directives'
-require 'mumukit/inspection'
 require 'mumukit/platform'
 require 'mumukit/randomizer'
 require 'mumukit/sync'
 require 'mumukit/login'
+
+require 'mulang'
 
 I18n.load_translations_path File.join(__dir__, 'domain', 'locales', '**', '*.yml')
 
@@ -39,12 +40,6 @@ require_relative './domain/store'
 class Mumukit::Assistant
   def self.valid?(rules)
     !!parse(rules.map(&:deep_symbolize_keys)) rescue false
-  end
-end
-
-class Mumukit::Expectation
-  def self.valid?(expectation)
-    !!Mumukit::Inspection.parse(expectation['inspection']) rescue false
   end
 end
 

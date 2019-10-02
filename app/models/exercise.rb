@@ -1,5 +1,9 @@
 class Exercise < ApplicationRecord
   RANDOMIZED_FIELDS = [:default_content, :description, :extra, :hint, :test]
+  BASIC_RESOURCE_FIELDS = %i(
+    name layout editor corollary teacher_info manual_evaluation locale
+    choices assistance_rules randomizations tag_list extra_visible goal
+    free_form_editor_source initial_state final_state)
 
   include WithDescription
   include WithLocale
@@ -97,7 +101,7 @@ class Exercise < ApplicationRecord
     attrs[:bibliotheca_id] = resource_h[:id]
     attrs[:number] = number
     attrs[:manual_evaluation] ||= false
-    attrs = attrs.except(:expectations) if type != 'Problem' || resource_h[:new_expectations]
+    attrs = attrs.except(:expectations, :custom_expectations) if type != 'Problem'
 
     assign_attributes(attrs)
     save!
@@ -112,14 +116,13 @@ class Exercise < ApplicationRecord
   end
 
   # Keep this list up to date with
-  # Mumuki::Domain::Store::Thesaurus
+  # Mumuki::Domain::Store::ExerciseSchema
   def to_resource_h
     language_resource_h = language.to_embedded_resource_h if language != guide.language
-    as_json(only: %i(name layout editor corollary teacher_info manual_evaluation locale
-                     choices assistance_rules randomizations tag_list extra_visible goal
-                     free_form_editor_source initial_state final_state))
+    as_json(only: BASIC_RESOURCE_FIELDS)
       .merge(id: bibliotheca_id, language: language_resource_h, type: type.underscore)
       .merge(expectations: self[:expectations])
+      .merge(custom_expectations: self[:custom_expectations])
       .merge(settings: self[:settings])
       .merge(RANDOMIZED_FIELDS.map { |it| [it, self[it]] }.to_h)
       .symbolize_keys

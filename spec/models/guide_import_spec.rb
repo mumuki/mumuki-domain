@@ -283,7 +283,7 @@ describe Guide do
       it { expect(guide.exercises.pluck(:id).drop(1)).to eq [reloaded_exercise_2.id, reloaded_exercise_1.id, guide.exercises.fourth.id, guide.exercises.fifth.id] }
     end
 
-    context 'when new_expecations' do
+    context 'when custom expectations' do
       let(:guide) { create(:guide, language: haskell) }
       let(:guide_resource_h) do
         {name: 'sample guide',
@@ -301,8 +301,7 @@ describe Guide do
               layout: 'input_bottom',
               test: 'foo bar',
               type: 'problem',
-              expectations: [{inspection: 'HasBinding', binding: 'foo'}],
-              new_expectations: true,
+              custom_expectations: 'expect: assigns;',
               id: 2}]}
       end
 
@@ -311,8 +310,7 @@ describe Guide do
       end
 
       it 'load expectations properly' do
-        expect(guide.exercises.first.new_expectations).to be_truthy
-        expect(guide.exercises.first.expectations).to eq []
+        expect(guide.exercises.first.custom_expectations).to eq "expect: assigns;\n"
       end
     end
   end

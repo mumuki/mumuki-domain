@@ -125,24 +125,88 @@ describe Guide do
             only: Exercise::RANDOMIZED_FIELDS) }
   end
 
-  describe '#fork!' do
-    let(:syncer) { double(:syncer) }
-    let!(:guide_from) { create :guide, slug: 'foo/bar' }
-    let(:slug_from) { guide_from.slug }
-    let(:slug_to) { 'baz/bar'.to_mumukit_slug }
-    let(:guide_to) { Guide.find_by_slug! slug_to.to_s }
-    let!(:guide) { create(:guide, slug: 'test/bar') }
-
-    context 'fork works' do
-      before { expect(syncer).to receive(:export!).with(instance_of(Guide)) }
-      before { Guide.find_by_slug!(slug_from).fork_to! 'baz', syncer }
-      it { expect(guide_from.to_resource_h).to json_eq guide_to.to_resource_h, except: [:slug] }
+  describe '#to_resource_h' do
+    let(:guide) do
+      create :guide,
+            name: 'Introduction to Python',
+            slug: 'mumukiproject/python-guide',
+            description: 'Lets introduce python',
+            language: python,
+            exercises: [
+              create(:reading, name: 'This is python', language: python, bibliotheca_id: 10),
+              create(:problem, name: 'Say hello', language: python, bibliotheca_id: 11),
+              create(:playground, name: 'Some functions', language: python, bibliotheca_id: 12)
+            ]
     end
 
-    context 'fork does not work if guide already exists' do
-      before { expect(syncer).to_not receive(:export!) }
-      it { expect { Guide.find_by_slug!(slug_from).fork_to! 'test', syncer }.to raise_error ActiveRecord::RecordInvalid }
+    let(:python) do
+      create :language, name: 'python', extension: 'py', test_extension: 'py'
     end
+
+    it { expect(guide.to_resource_h).to json_eq beta: false,
+                                                expectations: [],
+                                                type: "learning",
+                                                id_format: "%05d",
+                                                private: false,
+                                                settings: {},
+                                                name: "Introduction to Python",
+                                                description: "Lets introduce python",
+                                                locale: "en",
+                                                slug: "mumukiproject/python-guide",
+                                                exercises: [ {
+                                                  name: "This is python",
+                                                  id: 10,
+                                                  locale: "en",
+                                                  layout: "input_bottom",
+                                                  tag_list: [],
+                                                  extra_visible: false,
+                                                  manual_evaluation: false,
+                                                  editor: 0,
+                                                  assistance_rules: [],
+                                                  randomizations: {},
+                                                  choices: [],
+                                                  type: "reading",
+                                                  settings: {},
+                                                  description: "Simple reading"
+                                                }, {
+                                                  name: "Say hello",
+                                                  id: 11,
+                                                  locale: "en",
+                                                  layout: "input_right",
+                                                  tag_list: [],
+                                                  extra_visible: false,
+                                                  manual_evaluation: false,
+                                                  editor: "code",
+                                                  assistance_rules: [],
+                                                  randomizations: {},
+                                                  choices: [],
+                                                  type: "problem",
+                                                  expectations: [],
+                                                  settings: {},
+                                                  description: "Simple problem",
+                                                  test: "dont care"
+                                                }, {
+                                                  name: "Some functions",
+                                                  id: 12,
+                                                  locale: "en",
+                                                  layout: "input_right",
+                                                  tag_list: [],
+                                                  extra_visible: false,
+                                                  manual_evaluation: false,
+                                                  editor: 0,
+                                                  assistance_rules: [],
+                                                  randomizations: {},
+                                                  choices: [],
+                                                  type: "playground",
+                                                  settings: {},
+                                                  description: "Simple playground"
+                                                }],
+                                                language: {
+                                                  name: "python",
+                                                  extension: 'py',
+                                                  test_extension: 'py'
+                                                }
+                                              }
   end
 
   describe 'transparent navigation api' do

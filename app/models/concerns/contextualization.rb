@@ -75,7 +75,7 @@ module Contextualization
     visible_expectation_results.map do |it|
       {
         result: it[:result],
-        explanation: Mumukit::Inspection::Expectation.parse(it).translate(inspection_keywords)
+        explanation: Mulang::Expectation.parse(it).translate(inspection_keywords)
       }
     end
   end

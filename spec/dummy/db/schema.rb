@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190905174934) do
+ActiveRecord::Schema.define(version: 20190918140026) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -160,7 +160,6 @@ ActiveRecord::Schema.define(version: 20190905174934) do
     t.text "default_content"
     t.integer "bibliotheca_id", null: false
     t.boolean "extra_visible", default: false
-    t.boolean "new_expectations", default: false
     t.boolean "manual_evaluation", default: false
     t.integer "editor", default: 0, null: false
     t.string "choice_values", default: [], null: false, array: true
@@ -173,6 +172,7 @@ ActiveRecord::Schema.define(version: 20190905174934) do
     t.text "teacher_info"
     t.text "choices"
     t.text "settings"
+    t.text "custom_expectations"
     t.index ["guide_id"], name: "index_exercises_on_guide_id"
     t.index ["language_id"], name: "index_exercises_on_language_id"
   end
@@ -198,6 +198,7 @@ ActiveRecord::Schema.define(version: 20190905174934) do
     t.text "sources"
     t.text "learn_more"
     t.text "settings"
+    t.text "custom_expectations"
     t.index ["name"], name: "index_guides_on_name"
     t.index ["slug"], name: "index_guides_on_slug", unique: true
   end

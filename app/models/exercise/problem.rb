@@ -25,12 +25,24 @@ class Problem < QueriableChallenge
     own_expectations + guide_expectations
   end
 
+  def custom_expectations
+    "#{own_custom_expectations}\n#{guide_custom_expectations}"
+  end
+
   def guide_expectations
     guide.expectations
   end
 
+  def guide_custom_expectations
+    guide.custom_expectations
+  end
+
   def evaluation_criteria?
-    manual_evaluation? || own_expectations.present? || test.present?
+    manual_evaluation? || expectations? || test.present?
+  end
+
+  def expectations?
+    own_expectations.present? || own_custom_expectations.present?
   end
 
   private

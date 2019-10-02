@@ -6,7 +6,7 @@ module Solvable
   end
 
   def run_tests!(params)
-    language.run_tests!(params.merge(locale: locale, expectations: expectations))
+    language.run_tests!(params.merge(locale: locale, expectations: expectations, custom_expectations: custom_expectations))
   end
 end
 

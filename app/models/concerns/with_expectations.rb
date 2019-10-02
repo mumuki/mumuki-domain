@@ -22,8 +22,12 @@ module WithExpectations
     self[:expectations]
   end
 
+  def own_custom_expectations
+    self[:custom_expectations]
+  end
+
   def ensure_expectations_format
     errors.add :own_expectations,
-               :invalid_format unless own_expectations.to_a.all? { |it| Mumukit::Expectation.valid? it }
+               :invalid_format unless own_expectations.to_a.all? { |it| Mulang::Expectation.valid? it }
   end
 end
