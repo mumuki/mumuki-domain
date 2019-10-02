@@ -33,7 +33,7 @@ class Book < Content
     rebuild_complements! resource_h[:complements].to_a.map { |it| Guide.find_by(slug: it)&.as_complement_of(self) }.compact
   end
 
-  def to_resource_h
+  def to_expanded_resource_h
     super.merge(
       chapters: chapters.map(&:slug),
       complements: complements.map(&:slug))

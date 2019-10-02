@@ -93,13 +93,12 @@ class Guide < Content
 
   # Keep this list up to date with
   # Mumuki::Domain::Store::Github::GuideSchema
-  def to_resource_h
+  def to_expanded_resource_h
     as_json(only: BASIC_RESOURCE_FIELDS)
       .symbolize_keys
       .merge(super)
       .merge(exercises: exercises.map(&:to_resource_h))
       .merge(language: language.to_embedded_resource_h)
-      .compact
   end
 
   def to_markdownified_resource_h

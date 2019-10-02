@@ -4,6 +4,13 @@ describe Exercise do
   let(:exercise) { create(:exercise) }
   let(:user) { create(:user, first_name: 'Orlo') }
 
+  describe("schema fields are in sync") do
+    let(:resource_h_fields) { Exercise.new(guide: Guide.new, language: Language.new).to_expanded_resource_h.keys }
+    let(:schema_fields) { Mumuki::Domain::Store::Github::ExerciseSchema.fields.map(&:reverse_name) }
+
+    it { expect(resource_h_fields).to contain_exactly(*schema_fields) }
+  end
+
   describe '#choice_values' do
     context 'when choices are in 5.0 format' do
       let(:choice_values) { %w(1492 1453 1773)  }

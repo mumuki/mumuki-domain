@@ -19,6 +19,7 @@ module Mumuki::Domain::Store::Github::GuideSchema
 
       {name: :expectations,        kind: :file, extension: 'yml', transform: yaml_list('expectations')},
       {name: :custom_expectations, kind: :file, extension: 'edl'},
+      {name: :settings,            kind: :file, extension: 'yml', transform: yaml_hash},
 
       {name: :description, kind: :file, extension: 'md', required: true},
       {name: :corollary, kind: :file, extension: 'md'},

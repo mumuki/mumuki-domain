@@ -9,6 +9,10 @@ class Content < ApplicationRecord
   include WithName
 
   def to_resource_h
+    to_expanded_resource_h.compact
+  end
+
+  def to_expanded_resource_h
     as_json(only: [:name, :slug, :description, :locale]).symbolize_keys
   end
 
