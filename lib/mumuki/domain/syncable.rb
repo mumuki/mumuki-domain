@@ -66,7 +66,7 @@ module Mumuki::Domain::Syncable
     def locate!(sync_key_id)
       find_by! sync_key_id_field => sync_key_id
     rescue ActiveRecord::RecordNotFound
-      raise ActiveRecord::RecordNotFound, "Coudn't find #{self.name} with #{sync_key_id_field}:  #{sync_key_id}"
+      raise ActiveRecord::RecordNotFound, "Couldn't find #{self.name} with #{sync_key_id_field}:  #{sync_key_id}"
     end
 
     # Locates and imports a resource, extracting
