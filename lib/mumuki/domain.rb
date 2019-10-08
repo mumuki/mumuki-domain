@@ -11,8 +11,7 @@ require 'mumukit/platform'
 require 'mumukit/randomizer'
 require 'mumukit/sync'
 require 'mumukit/login'
-
-require 'mulang'
+require 'mumukit/inspection'
 
 I18n.load_translations_path File.join(__dir__, 'domain', 'locales', '**', '*.yml')
 
@@ -53,3 +52,6 @@ Mumukit::Sync::Store::Github.configure do |config|
   config.guide_schema = Mumuki::Domain::Store::Github::GuideSchema
   config.exercise_schema = Mumuki::Domain::Store::Thesaurus
 end
+
+Mulang::Inspection.register_extension! Mumukit::Inspection::Css
+Mulang::Inspection.register_extension! Mumukit::Inspection::Source
