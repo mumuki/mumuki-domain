@@ -3,7 +3,7 @@ class Exercise < ApplicationRecord
   BASIC_RESOURCE_FIELDS = %i(
     name layout editor corollary teacher_info manual_evaluation locale
     choices assistance_rules randomizations tag_list extra_visible goal
-    free_form_editor_source initial_state final_state)
+    free_form_editor_source initial_state final_state offline_test)
 
   include WithDescription
   include WithLocale
@@ -31,6 +31,7 @@ class Exercise < ApplicationRecord
   alias_method :progress_for, :assignment_for
 
   serialize :choices, Array
+  serialize :offline_test, Hash
   serialize :settings, Hash
 
   validates_presence_of :submissions_count,

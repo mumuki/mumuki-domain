@@ -29,6 +29,8 @@ module Mumuki::Domain::Store::Github::ExerciseSchema
       {name: :extra, kind: :file, extension: :code},
       {name: :default, kind: :file, extension: :code, reverse: :default_content},
 
+      {name: :offline_test, kind: :file, extension: 'js'},
+
       {name: :description, kind: :file, extension: 'md', required: true},
       {name: :hint, kind: :file, extension: 'md'},
       {name: :corollary, kind: :file, extension: 'md'},
