@@ -115,13 +115,13 @@ class Exercise < ApplicationRecord
     choice_values.index(value)
   end
 
-  def to_resource_h
-    to_expanded_resource_h.compact
+  def to_resource_h(*args)
+    to_expanded_resource_h(*args).compact
   end
 
   # Keep this list up to date with
   # Mumuki::Domain::Store::ExerciseSchema
-  def to_expanded_resource_h
+  def to_expanded_resource_h(options={})
     language_resource_h = language.to_embedded_resource_h if language != guide.language
     as_json(only: BASIC_RESOURCE_FIELDS)
       .merge(id: bibliotheca_id, language: language_resource_h, type: type.underscore)
@@ -130,6 +130,7 @@ class Exercise < ApplicationRecord
       .merge(settings: self[:settings])
       .merge(RANDOMIZED_FIELDS.map { |it| [it, self[it]] }.to_h)
       .symbolize_keys
+      .tap { |it| it.markdownify!(:hint, :corollary, :description, :teacher_info) if options[:markdownified] }
   end
 
   def reset!

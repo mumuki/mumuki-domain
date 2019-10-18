@@ -8,11 +8,11 @@ class Content < ApplicationRecord
   include WithUsages
   include WithName
 
-  def to_resource_h
-    to_expanded_resource_h.compact
+  def to_resource_h(*args)
+    to_expanded_resource_h(*args).compact
   end
 
-  def to_expanded_resource_h
+  def to_expanded_resource_h(*)
     as_json(only: [:name, :slug, :description, :locale]).symbolize_keys
   end
 

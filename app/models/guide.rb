@@ -93,23 +93,17 @@ class Guide < Content
 
   # Keep this list up to date with
   # Mumuki::Domain::Store::Github::GuideSchema
-  def to_expanded_resource_h
+  def to_expanded_resource_h(options={})
     as_json(only: BASIC_RESOURCE_FIELDS)
       .symbolize_keys
       .merge(super)
-      .merge(exercises: exercises.map(&:to_resource_h))
+      .merge(exercises: exercises.map { |it| it.to_resource_h(options) })
       .merge(language: language.to_embedded_resource_h)
+      .tap { |it| it.markdownify!(:corollary, :description, :teacher_info) if options[:markdownified] }
   end
 
   def to_markdownified_resource_h
-    to_resource_h.tap do |guide|
-      %i(corollary description teacher_info).each do |it|
-        guide[it] = Mumukit::ContentType::Markdown.to_html(guide[it])
-      end
-      %i(hint corollary description teacher_info).each do |it|
-        guide[:exercises].each { |exercise| exercise[it] = Mumukit::ContentType::Markdown.to_html(exercise[it]) }
-      end
-    end
+    to_resource_h(markdownified: true)
   end
 
   def as_lesson_of(topic)
