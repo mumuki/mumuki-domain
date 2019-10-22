@@ -108,7 +108,7 @@ class Exercise < ApplicationRecord
   end
 
   def choice_values
-    self[:choice_values].presence || choices.map { |it| it.indifferent_get(:value) }
+    choices.map { |it| it.indifferent_get(:value) }
   end
 
   def choice_index_for(value)
