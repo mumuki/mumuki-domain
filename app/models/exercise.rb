@@ -31,7 +31,6 @@ class Exercise < ApplicationRecord
   alias_method :progress_for, :assignment_for
 
   serialize :choices, Array
-  serialize :offline_test, Hash
   serialize :settings, Hash
 
   validates_presence_of :submissions_count,
