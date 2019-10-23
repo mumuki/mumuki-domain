@@ -125,7 +125,7 @@ class Exercise < ApplicationRecord
   # Keep this list up to date with
   # Mumuki::Domain::Store::Github::ExerciseSchema
   def to_expanded_resource_h(options={})
-    language_resource_h = language.to_embedded_resource_h if language != guide.language
+    language_resource_h = language.to_embedded_resource_h if options[:embed_language] || language != guide.language
     as_json(only: BASIC_RESOURCE_FIELDS)
       .merge(id: bibliotheca_id, language: language_resource_h, type: type.underscore)
       .merge(expectations: self[:expectations])
