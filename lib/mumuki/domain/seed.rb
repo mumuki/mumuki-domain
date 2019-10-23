@@ -15,15 +15,19 @@ module Mumuki::Domain::Seed
     flbulgarelli
   )
 
+  def self.contents_syncer
+    Mumukit::Sync::Syncer.new(Mumuki::Domain::Store::Bibliotheca.new(Mumukit::Platform.bibliotheca_bridge))
+  end
+
+  def self.languages_syncer
+    Mumukit::Sync::Syncer.new(Mumuki::Domain::Store::Thesaurus.new(Mumukit::Platform.thesaurus_bridge))
+  end
+
   def self.import_main_contents!
-    Mumukit::Sync::Syncer.new(
-      Mumuki::Domain::Store::Bibliotheca.new(
-        Mumukit::Platform.bibliotheca_bridge)).import_all! /^#{MAIN_CONTENT_ORGANIZATIONS.join('|')}\/.*$/i
+    self.contents_syncer.import_all! /^#{MAIN_CONTENT_ORGANIZATIONS.join('|')}\/.*$/i
   end
 
   def self.import_languages!
-    Mumukit::Sync::Syncer.new(
-      Mumuki::Domain::Store::Thesaurus.new(
-        Mumukit::Platform.thesaurus_bridge)).import_all!
+    self.languages_syncer.import_all!
   end
 end
