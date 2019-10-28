@@ -54,4 +54,5 @@ Mumukit::Sync::Store::Github.configure do |config|
 end
 
 Mulang::Inspection.register_extension! Mumukit::Inspection::Css
+Mulang::Inspection.register_extension! Mumukit::Inspection::Html
 Mulang::Inspection.register_extension! Mumukit::Inspection::Source
