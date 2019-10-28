@@ -120,7 +120,7 @@ class Exercise < ApplicationRecord
   end
 
   # Keep this list up to date with
-  # Mumuki::Domain::Store::ExerciseSchema
+  # Mumuki::Domain::Store::Github::ExerciseSchema
   def to_expanded_resource_h(options={})
     language_resource_h = language.to_embedded_resource_h if language != guide.language
     as_json(only: BASIC_RESOURCE_FIELDS)

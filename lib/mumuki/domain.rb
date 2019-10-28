@@ -50,7 +50,7 @@ end
 
 Mumukit::Sync::Store::Github.configure do |config|
   config.guide_schema = Mumuki::Domain::Store::Github::GuideSchema
-  config.exercise_schema = Mumuki::Domain::Store::Thesaurus
+  config.exercise_schema = Mumuki::Domain::Store::Github::ExerciseSchema
 end
 
 Mulang::Inspection.register_extension! Mumukit::Inspection::Css
