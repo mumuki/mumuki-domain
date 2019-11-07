@@ -166,6 +166,10 @@ class Exam < ApplicationRecord
     false
   end
 
+  def structural_parent
+    nil
+  end
+
   private
 
   def max_attempts_for(exercise)
