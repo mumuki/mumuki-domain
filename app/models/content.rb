@@ -27,4 +27,8 @@ class Content < ApplicationRecord
       syncer.export! dup
     end
   end
+
+  def progress_for(user, organization=Organization.current)
+    Indicator.find_or_initialize_by(user: user, organization: organization, content: self)
+  end
 end

@@ -1,6 +1,7 @@
 class Assignment < ApplicationRecord
   include Contextualization
   include WithMessages
+  include Progress
 
   markdown_on :extra_preview
 
@@ -35,6 +36,9 @@ class Assignment < ApplicationRecord
     self.query_results = []
     self.expectation_results = []
   end
+
+  alias_method :parent_content, :guide
+  alias_method :user, :submitter
 
   def evaluate_manually!(teacher_evaluation)
     update! status: teacher_evaluation[:status], manual_evaluation_comment: teacher_evaluation[:manual_evaluation]
