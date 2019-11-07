@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191022180238) do
+
+ActiveRecord::Schema.define(version: 20191105171244) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,8 +44,10 @@ ActiveRecord::Schema.define(version: 20191022180238) do
     t.integer "attemps_count", default: 0
     t.bigint "organization_id"
     t.datetime "submitted_at"
+    t.bigint "parent_id"
     t.index ["exercise_id"], name: "index_assignments_on_exercise_id"
     t.index ["organization_id"], name: "index_assignments_on_organization_id"
+    t.index ["parent_id"], name: "index_assignments_on_parent_id"
     t.index ["submission_id"], name: "index_assignments_on_submission_id"
     t.index ["submitter_id"], name: "index_assignments_on_submitter_id"
   end
@@ -200,6 +203,20 @@ ActiveRecord::Schema.define(version: 20191022180238) do
     t.text "custom_expectations"
     t.index ["name"], name: "index_guides_on_name"
     t.index ["slug"], name: "index_guides_on_slug", unique: true
+  end
+
+  create_table "indicators", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "organization_id"
+    t.bigint "parent_id"
+    t.string "content_type"
+    t.bigint "content_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["content_type", "content_id"], name: "index_indicators_on_content_type_and_content_id"
+    t.index ["organization_id"], name: "index_indicators_on_organization_id"
+    t.index ["parent_id"], name: "index_indicators_on_parent_id"
+    t.index ["user_id"], name: "index_indicators_on_user_id"
   end
 
   create_table "invitations", id: :serial, force: :cascade do |t|
