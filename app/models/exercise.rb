@@ -39,6 +39,8 @@ class Exercise < ApplicationRecord
   randomize(*RANDOMIZED_FIELDS)
   delegate :timed?, to: :navigable_parent
 
+  enum purpose: %i(learning practice reinforcement)
+
   def console?
     queriable?
   end
