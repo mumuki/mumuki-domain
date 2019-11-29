@@ -123,7 +123,7 @@ class Exam < ApplicationRecord
   def self.adapt_json_values(exam)
     exam[:guide_id] = Guide.find_by(slug: exam[:slug]).id
     exam[:organization_id] = Organization.current.id
-    exam[:users] = exam[:uids].map { |uid| User.find_by(uid: uid) }.compact
+    exam[:users] = User.where(uid: exam[:uids])
     [:start_time, :end_time].each { |param| exam[param] = exam[param].to_time }
   end
 
