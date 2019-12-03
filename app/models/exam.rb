@@ -100,7 +100,7 @@ class Exam < ApplicationRecord
     users.each { |user| authorize! user }
   end
 
-  def unauthorize_users(users)
+  def unauthorize_users!(users)
     authorizations_for(users).destroy_all
   end
 
@@ -110,7 +110,7 @@ class Exam < ApplicationRecord
   end
 
   def clean_authorizations(authorized_users)
-    unauthorize_users(users.all_except(authorized_users))
+    unauthorize_users!(users.all_except(authorized_users))
   end
 
   def reindex_usages!
@@ -136,7 +136,7 @@ class Exam < ApplicationRecord
     deleted_users = User.where(uid: data[:deleted])
 
     exam.authorize_users! added_users
-    exam.unauthorize_users(deleted_users)
+    exam.unauthorize_users! deleted_users
   end
 
   def self.adapt_json_values(exam)
