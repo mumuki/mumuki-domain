@@ -96,13 +96,21 @@ class Exam < ApplicationRecord
     authorization_for(user).started_at
   end
 
+  def authorize_users!(users)
+    users.each { |user| authorize! user }
+  end
+
+  def unauthorize_users(users)
+    authorizations_for(users).destroy_all
+  end
+
   def process_users(users)
-    users.map { |user| authorize! user }
+    authorize_users!(users)
     clean_authorizations users
   end
 
-  def clean_authorizations(users)
-    authorizations.all_except(authorizations_for(users)).destroy_all
+  def clean_authorizations(authorized_users)
+    unauthorize_users(users.all_except(authorized_users))
   end
 
   def reindex_usages!
@@ -118,6 +126,17 @@ class Exam < ApplicationRecord
     exam = where(classroom_id: exam_data[:eid]).update_or_create!(whitelist_attributes(exam_data))
     exam.process_users exam_data[:users]
     exam
+  end
+
+  def self.upsert_students!(json)
+    data = json.with_indifferent_access
+    exam = find_by(classroom_id: data[:eid])
+
+    added_users = User.where(uid: data[:added])
+    deleted_users = User.where(uid: data[:deleted])
+
+    exam.authorize_users! added_users
+    exam.unauthorize_users(deleted_users)
   end
 
   def self.adapt_json_values(exam)
