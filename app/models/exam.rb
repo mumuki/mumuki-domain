@@ -96,13 +96,21 @@ class Exam < ApplicationRecord
     authorization_for(user).started_at
   end
 
+  def authorize_users!(users)
+    users.each { |user| authorize! user }
+  end
+
+  def unauthorize_users!(users)
+    authorizations_for(users).destroy_all
+  end
+
   def process_users(users)
-    users.map { |user| authorize! user }
+    authorize_users!(users)
     clean_authorizations users
   end
 
-  def clean_authorizations(users)
-    authorizations.all_except(authorizations_for(users)).destroy_all
+  def clean_authorizations(authorized_users)
+    unauthorize_users!(users.all_except(authorized_users))
   end
 
   def reindex_usages!
@@ -111,7 +119,7 @@ class Exam < ApplicationRecord
 
   def self.import_from_resource_h!(json)
     exam_data = json.with_indifferent_access
-    organization = Organization.find_by!(name: exam_data[:organization])
+    organization = Organization.locate! exam_data[:organization]
     organization.switch!
     adapt_json_values exam_data
     remove_previous_version exam_data[:eid], exam_data[:guide_id]
@@ -120,8 +128,19 @@ class Exam < ApplicationRecord
     exam
   end
 
+  def self.upsert_students!(json)
+    data = json.with_indifferent_access
+    exam = find_by(classroom_id: data[:eid])
+
+    added_users = User.where(uid: data[:added])
+    deleted_users = User.where(uid: data[:deleted])
+
+    exam.authorize_users! added_users
+    exam.unauthorize_users! deleted_users
+  end
+
   def self.adapt_json_values(exam)
-    exam[:guide_id] = Guide.find_by(slug: exam[:slug]).id
+    exam[:guide_id] = Guide.locate!(exam[:slug]).id
     exam[:organization_id] = Organization.current.id
     exam[:users] = User.where(uid: exam[:uids])
     [:start_time, :end_time].each { |param| exam[param] = exam[param].to_time }
