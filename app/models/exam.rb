@@ -119,7 +119,7 @@ class Exam < ApplicationRecord
 
   def self.import_from_resource_h!(json)
     exam_data = json.with_indifferent_access
-    organization = Organization.find_by!(name: exam_data[:organization])
+    organization = Organization.locate! exam_data[:organization]
     organization.switch!
     adapt_json_values exam_data
     remove_previous_version exam_data[:eid], exam_data[:guide_id]
@@ -140,7 +140,7 @@ class Exam < ApplicationRecord
   end
 
   def self.adapt_json_values(exam)
-    exam[:guide_id] = Guide.find_by(slug: exam[:slug]).id
+    exam[:guide_id] = Guide.locate!(exam[:slug]).id
     exam[:organization_id] = Organization.current.id
     exam[:users] = User.where(uid: exam[:uids])
     [:start_time, :end_time].each { |param| exam[param] = exam[param].to_time }
