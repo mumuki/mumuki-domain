@@ -8,11 +8,13 @@ class Guide < Content
           WithExpectations,
           WithLanguage
 
+  include Mumukit::Flow::AdaptiveItem
+
   markdown_on :corollary, :sources, :learn_more, :teacher_info
 
   numbered :exercises
   has_many :exercises, -> { order(number: :asc) }, dependent: :destroy
-
+  
   serialize :settings, Hash
 
   self.inheritance_column = nil
