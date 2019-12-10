@@ -22,6 +22,8 @@ class Exercise < ApplicationRecord
   include SiblingsNavigation,
           ParentNavigation
 
+  include Mumukit::Flow::AdaptiveItem
+
   belongs_to :guide
 
   markdown_on :teacher_info
@@ -35,6 +37,8 @@ class Exercise < ApplicationRecord
 
   validates_presence_of :submissions_count,
                         :guide, :bibliotheca_id
+
+  alias_attribute :tags, :tag_list
 
   randomize(*RANDOMIZED_FIELDS)
   delegate :timed?, to: :navigable_parent
