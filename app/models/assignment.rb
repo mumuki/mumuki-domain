@@ -225,6 +225,10 @@ class Assignment < Progress
     exercise.files_for(current_content)
   end
 
+  def skip_if_pending!
+    skipped! if pending?
+  end
+
   private
 
   def update_submissions_count!
