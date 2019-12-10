@@ -125,6 +125,10 @@ class Guide < Content
     usage_in_organization.resettable?
   end
 
+  def exercise_assignments_for(user)
+    exercises.map { |exercise| exercise.find_assignment_for user, Organization.current }
+  end
+
   ## Forking
 
   def fork_children_into!(dup, _organization, _syncer)
