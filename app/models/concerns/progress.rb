@@ -10,4 +10,8 @@ module Progress
     super || assign_attributes(parent: parent_content&.progress_for(user, organization))
     super
   end
+
+  def dirty_parent!
+    parent&.dirty!
+  end
 end

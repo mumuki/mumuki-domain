@@ -7,6 +7,7 @@ class Content < ApplicationRecord
   include WithSlug
   include WithUsages
   include WithName
+  include WithProgress
 
   def to_resource_h(*args)
     to_expanded_resource_h(*args).compact

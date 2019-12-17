@@ -39,6 +39,17 @@ class Assignment < ApplicationRecord
 
   alias_method :parent_content, :guide
   alias_method :user, :submitter
+  alias_method :completed?, :passed?
+
+  after_save :dirty_parent!, if: :completion_changed?
+
+  def completion_changed?
+    completed_before_last_save? != completed?
+  end
+
+  def completed_before_last_save?
+    status_before_last_save.completed?
+  end
 
   def evaluate_manually!(teacher_evaluation)
     update! status: teacher_evaluation[:status], manual_evaluation_comment: teacher_evaluation[:manual_evaluation]
