@@ -65,6 +65,10 @@ FactoryBot.define do
 
   factory :exercise, parent: :problem
 
+  factory :indexed_exercise, parent: :exercise do
+    guide { create(:indexed_guide) }
+  end
+
   factory :x_equal_5_exercise, parent: :exercise do
     test { 'describe "x" $ do
              it "should be equal 5" $ do

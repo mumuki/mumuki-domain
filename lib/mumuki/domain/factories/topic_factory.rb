@@ -6,4 +6,10 @@ FactoryBot.define do
     slug { "mumuki/mumuki-sample-topic-#{SecureRandom.uuid}" }
     locale { :en }
   end
+
+  factory :indexed_topic, parent: :topic do
+    after(:build) do |topic|
+      create(:chapter, topic: topic)
+    end
+  end
 end
