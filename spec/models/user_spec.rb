@@ -166,9 +166,9 @@ describe User, organization_workspace: :test do
   end
 
   describe '#submissions_count' do
-    let!(:exercise_1) { build(:exercise) }
-    let!(:exercise_2) { build(:exercise) }
-    let!(:exercise_3) { build(:exercise) }
+    let!(:exercise_1) { build(:indexed_exercise) }
+    let!(:exercise_2) { build(:indexed_exercise) }
+    let!(:exercise_3) { build(:indexed_exercise) }
 
     let(:user) { create(:user) }
     context 'when there are no submissions' do
