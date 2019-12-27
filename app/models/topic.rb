@@ -9,8 +9,6 @@ class Topic < Content
 
   markdown_on :appendix
 
-  after_save :reindex_usages!
-
   def pending_lessons(user)
     guides.
         joins('left join public.exercises exercises

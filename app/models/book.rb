@@ -23,8 +23,6 @@ class Book < Content
     user.try(:last_lesson)|| first_lesson
   end
 
-  after_save :reindex_usages!
-
   def import_from_resource_h!(resource_h)
     self.assign_attributes resource_h.except(:chapters, :complements, :id, :description)
     self.description = resource_h[:description]&.squeeze(' ')
