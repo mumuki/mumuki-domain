@@ -1,8 +1,10 @@
 module GuideContainer
   extend ActiveSupport::Concern
+  include WithContent
 
   included do
     validates_presence_of :guide
+    before_destroy :destroy_usages!
 
     delegate :name,
              :slug,

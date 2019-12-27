@@ -1,5 +1,7 @@
 module TopicContainer
   extend ActiveSupport::Concern
+  include WithContent
+
   included do
     validates_presence_of :topic
 
