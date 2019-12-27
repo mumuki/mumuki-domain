@@ -12,6 +12,10 @@ class Usage < ApplicationRecord
     Usage.where(parent_item: record).destroy_all
   end
 
+  def index_children(children)
+    children.each { |it| it.index_usage! organization }
+  end
+
   private
 
   def set_slug

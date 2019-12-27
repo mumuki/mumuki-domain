@@ -16,6 +16,21 @@ module WithUsages
     item.is_a?(type) ? item : nil
   end
 
+  class_methods do
+    def content_aggregate_of(association)
+      aggregate_of association
+
+      define_method :rebuild_with_usages! do |children|
+        old_children = send association
+        added_children = children - old_children
+        rebuild! children
+        usages.each { |it| it.index_children(added_children) }
+
+        self
+      end
+    end
+  end
+
   private
 
   def ensure_unused!

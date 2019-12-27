@@ -1,6 +1,6 @@
 class Topic < Content
   numbered :lessons
-  aggregate_of :lessons
+  content_aggregate_of :lessons
 
   has_many :lessons, -> { order(number: :asc) }, dependent: :delete_all
 
@@ -28,7 +28,7 @@ class Topic < Content
   def import_from_resource_h!(resource_h)
     self.assign_attributes resource_h.except(:lessons, :description)
     self.description = resource_h[:description].squeeze(' ')
-    rebuild! resource_h[:lessons].to_a.map { |it| lesson_for(it) }
+    rebuild_with_usages! resource_h[:lessons].to_a.map { |it| lesson_for(it) }
   end
 
   def to_expanded_resource_h
