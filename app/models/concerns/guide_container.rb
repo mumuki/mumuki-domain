@@ -4,7 +4,6 @@ module GuideContainer
 
   included do
     validates_presence_of :guide
-    before_destroy :destroy_usages!
 
     delegate :name,
              :slug,
