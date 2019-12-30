@@ -24,7 +24,7 @@ module WithUsages
         old_children = send association
         added_children = children - old_children
         rebuild! children
-        usages.each { |it| it.index_children(added_children) }
+        usages.each { |it| it.index_children!(added_children) }
 
         self
       end
