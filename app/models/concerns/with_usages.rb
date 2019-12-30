@@ -17,16 +17,16 @@ module WithUsages
   end
 
   class_methods do
-    def content_aggregate_of(association)
-      aggregate_of association
+    def aggregate_of(association)
+      super
 
-      define_method :rebuild_with_usages! do |children|
-        old_children = send association
+      revamp :rebuild! do |_, this, children, hyper|
+        old_children = this.send association
         added_children = children - old_children
-        rebuild! children
-        usages.each { |it| it.index_children!(added_children) }
+        hyper.(children)
+        this.usages.each { |it| it.index_children!(added_children) }
 
-        self
+        this
       end
     end
   end
