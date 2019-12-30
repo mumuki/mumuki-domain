@@ -20,7 +20,7 @@ module WithUsages
     def aggregate_of(association)
       super
 
-      revamp :rebuild! do |_, this, children, hyper|
+      revamp "rebuild_#{association}!" do |_, this, children, hyper|
         old_children = this.send association
         added_children = children - old_children
         hyper.(children)

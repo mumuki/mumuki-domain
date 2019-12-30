@@ -1,6 +1,7 @@
 class Book < Content
   numbered :chapters
   aggregate_of :chapters
+  aggregate_of :complements
 
   has_many :chapters, -> { order(number: :asc) }, dependent: :destroy
   has_many :complements, dependent: :destroy
@@ -27,7 +28,7 @@ class Book < Content
     self.assign_attributes resource_h.except(:chapters, :complements, :id, :description)
     self.description = resource_h[:description]&.squeeze(' ')
 
-    rebuild! resource_h[:chapters].map { |it| Topic.find_by!(slug: it).as_chapter_of(self) }
+    rebuild_chapters! resource_h[:chapters].map { |it| Topic.find_by!(slug: it).as_chapter_of(self) }
     rebuild_complements! resource_h[:complements].to_a.map { |it| Guide.find_by(slug: it)&.as_complement_of(self) }.compact
   end
 
@@ -35,15 +36,6 @@ class Book < Content
     super.merge(
       chapters: chapters.map(&:slug),
       complements: complements.map(&:slug))
-  end
-
-  def rebuild_complements!(complements) #FIXME use rebuild
-    transaction do
-      self.complements.all_except(complements).delete_all
-      self.update! :complements => complements
-      complements.each &:save!
-    end
-    reload
   end
 
   def index_usage!(organization)

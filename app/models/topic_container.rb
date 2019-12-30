@@ -12,7 +12,7 @@ module TopicContainer
              :description,
              :description_html,
              :description_teaser_html,
-             :rebuild!,
+             :rebuild_lessons!,
              :lessons,
              :guides,
              :pending_guides,

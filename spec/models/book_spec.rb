@@ -83,10 +83,10 @@ describe Book, organization_workspace: :test do
     context 'when chapter is rebuilt after book rebuilt' do
       before do
         book.description = '#foo'
-        book.rebuild!([chapter_1, chapter_2])
+        book.rebuild_chapters!([chapter_1, chapter_2])
 
-        chapter_1.rebuild!([lesson_1, lesson_2])
-        chapter_2.rebuild!([lesson_3])
+        chapter_1.rebuild_lessons!([lesson_1, lesson_2])
+        chapter_2.rebuild_lessons!([lesson_3])
       end
 
 
@@ -107,10 +107,10 @@ describe Book, organization_workspace: :test do
       let(:orphan_chapter) { build(:chapter, book: nil) }
       before do
         book.description = '#foo'
-        book.rebuild!([chapter_1, orphan_chapter, chapter_2])
+        book.rebuild_chapters!([chapter_1, orphan_chapter, chapter_2])
 
-        chapter_1.rebuild!([lesson_1, lesson_2])
-        chapter_2.rebuild!([lesson_3])
+        chapter_1.rebuild_lessons!([lesson_1, lesson_2])
+        chapter_2.rebuild_lessons!([lesson_3])
       end
 
       it "rebuilds successfully" do
@@ -134,10 +134,10 @@ describe Book, organization_workspace: :test do
         chapter_2.save!
 
         book.description = '#foo'
-        book.rebuild!([chapter_1, chapter_2])
+        book.rebuild_chapters!([chapter_1, chapter_2])
 
-        chapter_1.rebuild!([lesson_1, lesson_2])
-        chapter_2.rebuild!([lesson_3])
+        chapter_1.rebuild_lessons!([lesson_1, lesson_2])
+        chapter_2.rebuild_lessons!([lesson_3])
       end
 
       it "rebuilds successfully" do
@@ -155,11 +155,11 @@ describe Book, organization_workspace: :test do
 
     context 'when chapter is rebuilt before book rebuilt' do
       before do
-        chapter_1.rebuild!([lesson_1, lesson_2])
-        chapter_2.rebuild!([lesson_3])
+        chapter_1.rebuild_lessons!([lesson_1, lesson_2])
+        chapter_2.rebuild_lessons!([lesson_3])
 
         book.description = '#foo'
-        book.rebuild!([chapter_1, chapter_2])
+        book.rebuild_chapters!([chapter_1, chapter_2])
       end
 
       it "rebuilds successfully" do
