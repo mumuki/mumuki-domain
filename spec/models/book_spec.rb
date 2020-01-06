@@ -174,5 +174,20 @@ describe Book, organization_workspace: :test do
         expect(chapter_2.guides).to eq [guide_3]
       end
     end
+
+    context 'when rebuilt content changes' do
+      before { book.rebuild_chapters!([chapter_1, chapter_2]) }
+
+      let!(:usage_1) { Usage.find_by parent_item: chapter_1 }
+      let!(:usage_2) { Usage.find_by parent_item: chapter_2 }
+
+      before { book.rebuild_chapters!([chapter_2]) }
+
+      it { expect { chapter_1.reload }.to raise_error ActiveRecord::RecordNotFound }
+      it { expect { chapter_2.reload }.to_not raise_error }
+      it { expect { usage_1.reload }.to raise_error ActiveRecord::RecordNotFound }
+      it { expect { usage_2.reload }.to_not raise_error }
+      it { expect(Chapter.count).to eq 1 }
+    end
   end
 end
