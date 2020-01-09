@@ -5,28 +5,32 @@
 ### `Language`
 
 ```
-  name
   comment_type
-  runner_url
+  devicon
+  editor_css_urls
+  editor_html_urls
+  editor_js_urls
+  editor_shows_loading_content
+  expectations
+  extension
+  feedback
+  highlight_mode
+  layout_css_urls
+  layout_html_urls
+  layout_js_urls
+  layout_shows_loading_content
+  multifile
+  name
   output_content_type
   prompt
-  extension
-  highlight_mode
-  visible_success_output
-  devicon
-  triable
-  feedback
   queriable
-  multifile
+  runner_url
+  settings
   stateful_console
   test_extension
   test_template
-  layout_js_urls
-  layout_html_urls
-  layout_css_urls
-  editor_js_urls
-  editor_html_urls
-  editor_css_urls
+  triable
+  visible_success_output
 ```
 
 _as defined in `Language#to_resource_h`_
