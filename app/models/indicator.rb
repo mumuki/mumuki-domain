@@ -8,13 +8,45 @@ class Indicator < ApplicationRecord
 
   include Progress
 
-  def self.dirty_for_content!(content)
-    where(content: content).update_all dirty: true
+  def propagate_up!(&block)
+    instance_eval &block
+    parent&.instance_eval { propagate_up! &block }
   end
 
-  def dirty!
-    update! dirty: true
-    dirty_parent!
+  def self.dirty_by_content_change!(content)
+    where(content: content).update_all dirty_by_content_change: true
+  end
+
+  def dirty_by_submission!
+    propagate_up! { update! dirty_by_submission: true }
+  end
+
+  def rebuild!
+    if dirty_by_content_change?
+      propagate_up! do
+        refresh_children_count!
+        refresh_children_passed_count!
+        clean!
+        save!
+      end
+    elsif dirty_by_submission?
+      refresh_children_passed_count!
+      clean!
+      save!
+    end
+  end
+
+  def clean!
+    self.dirty_by_submission = false
+    self.dirty_by_content_change = false
+  end
+
+  def refresh_children_count!
+    self.children_count = content.children.count
+  end
+
+  def refresh_children_passed_count!
+    self.children_passed_count = children.count(&:completed?)
   end
 
   def completion_percentage
@@ -31,24 +63,13 @@ class Indicator < ApplicationRecord
     indicators.presence || assignments
   end
 
-  def children_count
-    unless self[:children_count]
-      update!(children_count: content.children.count)
+  %i(children_count children_passed_count).each do |selector|
+    define_method selector do
+      send "refresh_#{selector}!" unless self[selector]
+      rebuild!
+
+      self[selector]
     end
-
-    self[:children_count]
-  end
-
-  def update_passed_children!
-    update!(children_passed_count: children.count(&:completed?))
-  end
-
-  def children_passed_count
-    if dirty? || !self[:children_passed_count]
-      update_passed_children!
-    end
-
-    self[:children_passed_count]
   end
 
   def parent_content
