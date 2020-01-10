@@ -212,7 +212,8 @@ ActiveRecord::Schema.define(version: 20191217184525) do
     t.bigint "content_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "dirty", default: false
+    t.boolean "dirty_by_content_change", default: false
+    t.boolean "dirty_by_submission", default: false
     t.integer "children_passed_count"
     t.integer "children_count"
     t.index ["content_type", "content_id"], name: "index_indicators_on_content_type_and_content_id"
