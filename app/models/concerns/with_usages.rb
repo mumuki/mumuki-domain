@@ -16,6 +16,21 @@ module WithUsages
     item.is_a?(type) ? item : nil
   end
 
+  class_methods do
+    def aggregate_of(association)
+      super
+
+      revamp "rebuild_#{association}!" do |_, this, children, hyper|
+        old_children = this.send association
+        added_children = children - old_children
+        hyper.(children)
+        this.usages.each { |it| it.index_children!(added_children) }
+
+        this
+      end
+    end
+  end
+
   private
 
   def ensure_unused!

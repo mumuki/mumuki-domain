@@ -67,9 +67,9 @@ class ApplicationRecord < ActiveRecord::Base
 
   def self.aggregate_of(association)
     class_eval do
-      define_method(:rebuild!) do |children|
+      define_method("rebuild_#{association}!") do |children|
         transaction do
-          self.send(association).all_except(children).delete_all
+          self.send(association).all_except(children).destroy_all
           self.update! association => children
           children.each &:save!
         end

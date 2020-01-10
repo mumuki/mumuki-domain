@@ -83,10 +83,10 @@ describe Book, organization_workspace: :test do
     context 'when chapter is rebuilt after book rebuilt' do
       before do
         book.description = '#foo'
-        book.rebuild!([chapter_1, chapter_2])
+        book.rebuild_chapters!([chapter_1, chapter_2])
 
-        chapter_1.rebuild!([lesson_1, lesson_2])
-        chapter_2.rebuild!([lesson_3])
+        chapter_1.rebuild_lessons!([lesson_1, lesson_2])
+        chapter_2.rebuild_lessons!([lesson_3])
       end
 
 
@@ -107,10 +107,10 @@ describe Book, organization_workspace: :test do
       let(:orphan_chapter) { build(:chapter, book: nil) }
       before do
         book.description = '#foo'
-        book.rebuild!([chapter_1, orphan_chapter, chapter_2])
+        book.rebuild_chapters!([chapter_1, orphan_chapter, chapter_2])
 
-        chapter_1.rebuild!([lesson_1, lesson_2])
-        chapter_2.rebuild!([lesson_3])
+        chapter_1.rebuild_lessons!([lesson_1, lesson_2])
+        chapter_2.rebuild_lessons!([lesson_3])
       end
 
       it "rebuilds successfully" do
@@ -134,10 +134,10 @@ describe Book, organization_workspace: :test do
         chapter_2.save!
 
         book.description = '#foo'
-        book.rebuild!([chapter_1, chapter_2])
+        book.rebuild_chapters!([chapter_1, chapter_2])
 
-        chapter_1.rebuild!([lesson_1, lesson_2])
-        chapter_2.rebuild!([lesson_3])
+        chapter_1.rebuild_lessons!([lesson_1, lesson_2])
+        chapter_2.rebuild_lessons!([lesson_3])
       end
 
       it "rebuilds successfully" do
@@ -155,11 +155,11 @@ describe Book, organization_workspace: :test do
 
     context 'when chapter is rebuilt before book rebuilt' do
       before do
-        chapter_1.rebuild!([lesson_1, lesson_2])
-        chapter_2.rebuild!([lesson_3])
+        chapter_1.rebuild_lessons!([lesson_1, lesson_2])
+        chapter_2.rebuild_lessons!([lesson_3])
 
         book.description = '#foo'
-        book.rebuild!([chapter_1, chapter_2])
+        book.rebuild_chapters!([chapter_1, chapter_2])
       end
 
       it "rebuilds successfully" do
@@ -173,6 +173,21 @@ describe Book, organization_workspace: :test do
         expect(chapter_1.guides).to eq [guide_1, guide_2]
         expect(chapter_2.guides).to eq [guide_3]
       end
+    end
+
+    context 'when rebuilt content changes' do
+      before { book.rebuild_chapters!([chapter_1, chapter_2]) }
+
+      let!(:usage_1) { Usage.find_by parent_item: chapter_1 }
+      let!(:usage_2) { Usage.find_by parent_item: chapter_2 }
+
+      before { book.rebuild_chapters!([chapter_2]) }
+
+      it { expect { chapter_1.reload }.to raise_error ActiveRecord::RecordNotFound }
+      it { expect { chapter_2.reload }.to_not raise_error }
+      it { expect { usage_1.reload }.to raise_error ActiveRecord::RecordNotFound }
+      it { expect { usage_2.reload }.to_not raise_error }
+      it { expect(Chapter.count).to eq 1 }
     end
   end
 end

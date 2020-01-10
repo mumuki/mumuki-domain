@@ -9,8 +9,6 @@ class Topic < Content
 
   markdown_on :appendix
 
-  after_save :reindex_usages!
-
   def pending_lessons(user)
     guides.
         joins('left join public.exercises exercises
@@ -30,7 +28,7 @@ class Topic < Content
   def import_from_resource_h!(resource_h)
     self.assign_attributes resource_h.except(:lessons, :description)
     self.description = resource_h[:description].squeeze(' ')
-    rebuild! resource_h[:lessons].to_a.map { |it| lesson_for(it) }
+    rebuild_lessons! resource_h[:lessons].to_a.map { |it| lesson_for(it) }
   end
 
   def to_expanded_resource_h
