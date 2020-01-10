@@ -11,7 +11,7 @@ module Progress
     super
   end
 
-  def dirty_parent!
-    parent&.dirty!
+  def dirty_parent_by_submission!
+    parent&.dirty_by_submission!
   end
 end

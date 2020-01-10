@@ -41,7 +41,7 @@ class Assignment < ApplicationRecord
   alias_method :user, :submitter
   alias_method :completed?, :passed?
 
-  after_save :dirty_parent!, if: :completion_changed?
+  after_save :dirty_parent_by_submission!, if: :completion_changed?
 
   def completion_changed?
     completed_before_last_save? != completed?

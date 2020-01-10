@@ -8,6 +8,6 @@ module WithProgress
   end
 
   def dirty_progresses!
-    Indicator.dirty_for_content! self
+    Indicator.dirty_by_content_change! self
   end
 end
