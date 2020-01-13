@@ -10,4 +10,8 @@ module TerminalNavigation
   def navigable_name
     name
   end
+
+  def structural_parent
+    nil
+  end
 end

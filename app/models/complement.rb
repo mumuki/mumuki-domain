@@ -12,8 +12,4 @@ class Complement < ApplicationRecord
   def used_in?(organization)
     organization.book == book
   end
-
-  def structural_parent
-    nil
-  end
 end
