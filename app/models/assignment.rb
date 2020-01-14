@@ -1,7 +1,6 @@
-class Assignment < ApplicationRecord
+class Assignment < Progress
   include Contextualization
   include WithMessages
-  include Progress
 
   markdown_on :extra_preview
 

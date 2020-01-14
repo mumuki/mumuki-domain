@@ -1,12 +1,10 @@
-class Indicator < ApplicationRecord
+class Indicator < Progress
   belongs_to :user
   belongs_to :content, polymorphic: true
   belongs_to :organization
 
   has_many :indicators, foreign_key: :parent_id, class_name: 'Indicator'
   has_many :assignments, foreign_key: :parent_id
-
-  include Progress
 
   def propagate_up!(&block)
     instance_eval &block
