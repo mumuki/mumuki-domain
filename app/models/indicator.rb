@@ -48,10 +48,12 @@ class Indicator < Progress
   end
 
   def completion_percentage
+    rebuild!
     children_passed_count.fdiv children_count
   end
 
   def completed?
+    rebuild!
     children_passed_count == children_count
   end
 
@@ -64,7 +66,6 @@ class Indicator < Progress
   %i(children_count children_passed_count).each do |selector|
     define_method selector do
       send "refresh_#{selector}!" unless self[selector]
-      rebuild!
 
       self[selector]
     end
