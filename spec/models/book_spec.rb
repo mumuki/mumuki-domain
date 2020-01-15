@@ -176,17 +176,27 @@ describe Book, organization_workspace: :test do
     end
 
     context 'when rebuilt content changes' do
+      let(:guide_1) { create :indexed_guide }
+      let(:guide_2) { create :indexed_guide }
+
+      let(:chapter_1) { guide_1.chapter }
+      let(:chapter_2) { guide_2.chapter }
+
       before { book.rebuild_chapters!([chapter_1, chapter_2]) }
 
-      let!(:usage_1) { Usage.find_by parent_item: chapter_1 }
-      let!(:usage_2) { Usage.find_by parent_item: chapter_2 }
+      let!(:chapter_1_usage) { Usage.find_by parent_item: chapter_1 }
+      let!(:chapter_2_usage) { Usage.find_by parent_item: chapter_2 }
+      let!(:guide_1_usage) { Usage.find_by item: guide_1 }
+      let!(:guide_2_usage) { Usage.find_by item: guide_2 }
 
       before { book.rebuild_chapters!([chapter_2]) }
 
       it { expect { chapter_1.reload }.to raise_error ActiveRecord::RecordNotFound }
       it { expect { chapter_2.reload }.to_not raise_error }
-      it { expect { usage_1.reload }.to raise_error ActiveRecord::RecordNotFound }
-      it { expect { usage_2.reload }.to_not raise_error }
+      it { expect { chapter_1_usage.reload }.to raise_error ActiveRecord::RecordNotFound }
+      it { expect { chapter_2_usage.reload }.to_not raise_error }
+      it { expect { guide_1_usage.reload }.to raise_error ActiveRecord::RecordNotFound }
+      it { expect { guide_2_usage.reload }.to_not raise_error }
       it { expect(Chapter.count).to eq 1 }
     end
   end
