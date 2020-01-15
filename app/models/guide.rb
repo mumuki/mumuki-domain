@@ -19,6 +19,8 @@ class Guide < Content
 
   enum type: [:learning, :practice]
 
+  alias_method :children, :exercises
+
   def clear_progress!(user, organization=Organization.current)
     transaction do
       exercises.each do |exercise|
