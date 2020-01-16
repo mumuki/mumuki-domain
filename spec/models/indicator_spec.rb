@@ -1,0 +1,71 @@
+require 'spec_helper'
+
+describe Indicator, organization_workspace: :test do
+  let(:user) { create(:user) }
+
+  let(:exercise) { create :exercise, guide: guide }
+  let(:sibling_exercise) { create :exercise, guide: sibling_guide }
+  let(:guide) { create :indexed_guide }
+  let(:topic) { guide.chapter.topic }
+  let(:book) { guide.chapter.book }
+  let!(:sibling_lesson) { create :lesson, topic: topic }
+  let(:sibling_guide) { sibling_lesson.guide }
+
+  let(:guide_indicator) { Indicator.find_by user: user, content: guide }
+  let(:sibling_guide_indicator) { Indicator.find_by user: user, content: sibling_guide }
+  let(:topic_indicator) { Indicator.find_by user: user, content: topic }
+  let(:book_indicator) { Indicator.find_by user: user, content: book }
+
+  it { expect(Indicator.count).to eq 0 }
+
+  before { reindex_current_organization! }
+
+  context 'on submission' do
+    let!(:assignment) { exercise.submit_solution!(user, content: 'foo').tap(&:passed!) }
+
+    context 'tree is created when submission is sent' do
+      it { expect(Assignment.count).to eq 1 }
+      it { expect(Indicator.count).to eq 3 }
+      it { expect(assignment.parent).to eq guide_indicator }
+      it { expect(guide_indicator.parent).to eq topic_indicator }
+      it { expect(topic_indicator.parent).to eq book_indicator }
+      it { expect(book_indicator.parent).to be_nil }
+    end
+
+    context 'dirtiness' do
+      let!(:sibling_assignment) { sibling_exercise.submit_solution!(user, content: 'foo').tap(&:passed!) }
+
+      context 'indicator rebuild is not propagated up' do
+        before { guide_indicator.completed? }
+
+        it { expect(guide_indicator).to_not be_dirty_by_submission }
+        it { expect(topic_indicator).to be_dirty_by_submission }
+      end
+
+      context 'when indicators are not dirty' do
+        before { Indicator.update_all dirty_by_content_change: false, dirty_by_submission: false }
+        before { assignment.reload }
+
+        context 'it is dirtied when submission changes completion status' do
+          before { assignment.errored!('something went wrong!') }
+
+          it { expect(guide_indicator).to be_dirty_by_submission }
+
+          context 'dirtiness is propagated upwards' do
+            it { expect(topic_indicator).to be_dirty_by_submission }
+            it { expect(book_indicator).to be_dirty_by_submission }
+
+            it { expect(sibling_guide_indicator).to_not be_dirty_by_submission }
+          end
+        end
+
+        context 'it is not dirtied when submission does not change completion status' do
+          before { assignment.reload }
+          before { assignment.passed! }
+
+          it { expect(guide_indicator).to_not be_dirty_by_submission }
+        end
+      end
+    end
+  end
+end
