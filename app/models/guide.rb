@@ -72,25 +72,27 @@ class Guide < Content
   end
 
   def import_from_resource_h!(resource_h)
-    self.assign_attributes whitelist_attributes(resource_h)
-    self.language = Language.for_name(resource_h.dig(:language, :name))
-    self.save!
+    dirty_progress_if_children_changed do
+      self.assign_attributes whitelist_attributes(resource_h)
+      self.language = Language.for_name(resource_h.dig(:language, :name))
+      self.save!
 
-    resource_h[:exercises]&.each_with_index do |e, i|
-      exercise = Exercise.find_by(guide_id: self.id, bibliotheca_id: e[:id])
-      exercise_type = e[:type] || 'problem'
+      resource_h[:exercises]&.each_with_index do |e, i|
+        exercise = Exercise.find_by(guide_id: self.id, bibliotheca_id: e[:id])
+        exercise_type = e[:type] || 'problem'
 
-      exercise = exercise ?
-          exercise.ensure_type!(exercise_type.as_module_name) :
-          exercise_type.as_module.new(guide_id: self.id, bibliotheca_id: e[:id])
+        exercise = exercise ?
+            exercise.ensure_type!(exercise_type.as_module_name) :
+            exercise_type.as_module.new(guide_id: self.id, bibliotheca_id: e[:id])
 
-      exercise.import_from_resource_h! (i+1), e
+        exercise.import_from_resource_h! (i+1), e
+      end
+
+      new_ids = resource_h[:exercises].map { |it| it[:id] }
+      self.exercises.where.not(bibliotheca_id: new_ids).destroy_all
+
+      reload
     end
-
-    new_ids = resource_h[:exercises].map { |it| it[:id] }
-    self.exercises.where.not(bibliotheca_id: new_ids).destroy_all
-
-    reload
   end
 
   # Keep this list up to date with
