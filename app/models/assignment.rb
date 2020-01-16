@@ -142,7 +142,7 @@ class Assignment < Progress
   end
 
   def to_resource_h
-    as_json(except: [:exercise_id, :submission_id, :organization_id, :id, :submitter_id, :solution, :created_at, :updated_at, :submission_status, :submitted_at],
+    as_json(except: %i(exercise_id submission_id organization_id id submitter_id solution created_at updated_at submission_status submitted_at parent_id),
               include: {
                 guide: {
                   only: [:slug, :name],
