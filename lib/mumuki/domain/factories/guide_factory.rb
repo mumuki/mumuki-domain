@@ -27,4 +27,11 @@ FactoryBot.define do
     end
   end
 
+  factory :indexed_guide, parent: :guide do
+    after(:build) do |guide|
+      create(:lesson, guide: guide, topic: create(:indexed_topic))
+
+      reindex_current_organization!
+    end
+  end
 end

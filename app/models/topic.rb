@@ -9,6 +9,8 @@ class Topic < Content
 
   markdown_on :appendix
 
+  alias_method :children, :guides
+
   def pending_lessons(user)
     guides.
         joins('left join public.exercises exercises

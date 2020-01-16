@@ -4,6 +4,7 @@ class Book < Content
   aggregate_of :complements
 
   has_many :chapters, -> { order(number: :asc) }, dependent: :destroy
+  has_many :topics, through: :chapters
   has_many :complements, dependent: :destroy
 
   has_many :exercises, through: :chapters
@@ -11,6 +12,8 @@ class Book < Content
   organic_on :discussions
 
   delegate :first_lesson, to: :first_chapter
+
+  alias_method :children, :topics
 
   def to_s
     slug
