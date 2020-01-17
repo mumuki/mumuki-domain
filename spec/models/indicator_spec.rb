@@ -16,13 +16,11 @@ describe Indicator, organization_workspace: :test do
   let(:topic_indicator) { Indicator.find_by user: user, content: topic }
   let(:book_indicator) { Indicator.find_by user: user, content: book }
 
-  it { expect(Indicator.count).to eq 0 }
-
   before { reindex_current_organization! }
 
-  context 'on submission' do
-    let!(:assignment) { exercise.submit_solution!(user, content: 'foo').tap(&:passed!) }
+  let!(:assignment) { exercise.submit_solution!(user, content: 'foo').tap(&:passed!) }
 
+  context 'on submission' do
     context 'tree is created when submission is sent' do
       it { expect(Assignment.count).to eq 1 }
       it { expect(Indicator.count).to eq 3 }
@@ -40,6 +38,7 @@ describe Indicator, organization_workspace: :test do
 
         it { expect(guide_indicator).to_not be_dirty_by_submission }
         it { expect(topic_indicator).to be_dirty_by_submission }
+        it { expect(book_indicator).to be_dirty_by_submission }
       end
 
       context 'when indicators are not dirty' do
@@ -65,6 +64,37 @@ describe Indicator, organization_workspace: :test do
 
           it { expect(guide_indicator).to_not be_dirty_by_submission }
         end
+      end
+    end
+  end
+
+  context 'on content change' do
+    context 'when children do not change' do
+      before { guide.import_from_resource_h!(guide.to_resource_h.merge description: 'foo') }
+
+      it { expect(guide_indicator).to_not be_dirty_by_content_change }
+    end
+
+    context 'when children change' do
+      let(:new_exercise_h) { build(:exercise).to_resource_h }
+
+      before { guide.import_from_resource_h!(guide.to_resource_h.merge exercises: [new_exercise_h]) }
+
+      it { expect(guide_indicator).to be_dirty_by_content_change }
+
+      context 'dirtiness is not propagated up' do
+        it { expect(topic_indicator).to_not be_dirty_by_content_change }
+        it { expect(book_indicator).to_not be_dirty_by_content_change }
+      end
+
+      context 'indicator rebuild is propagated up' do
+        before { guide_indicator.completed? }
+
+        it { expect(guide_indicator).to_not be_dirty_by_content_change }
+        it { expect(topic_indicator).to_not be_dirty_by_content_change }
+        it { expect(book_indicator).to_not be_dirty_by_content_change }
+        it { expect(topic_indicator).to_not be_dirty_by_submission }
+        it { expect(book_indicator).to_not be_dirty_by_submission }
       end
     end
   end
