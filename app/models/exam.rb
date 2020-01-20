@@ -4,7 +4,6 @@ class Exam < ApplicationRecord
 
   validates_presence_of :start_time, :end_time
 
-  belongs_to :guide
   belongs_to :organization
 
   has_many :authorizations, class_name: 'ExamAuthorization', dependent: :destroy

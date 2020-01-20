@@ -5,7 +5,6 @@ class Lesson < ApplicationRecord
   include GuideContainer
 
   belongs_to :topic
-  belongs_to :guide
 
   include ParentNavigation, SiblingsNavigation
 

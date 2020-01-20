@@ -3,6 +3,8 @@ module GuideContainer
   include WithContent
 
   included do
+    belongs_to :guide
+
     validates_presence_of :guide
 
     delegate :name,
