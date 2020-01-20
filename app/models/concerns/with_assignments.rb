@@ -26,7 +26,7 @@ module WithAssignments
     assignment_for(user).status if user
   end
 
-  def assignment_for(user, organization: Organization.current)
+  def assignment_for(user, organization=Organization.current)
     find_assignment_for(user, organization) || user.assignments.build(exercise: self, organization: organization)
   end
 end
