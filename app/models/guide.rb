@@ -41,15 +41,6 @@ class Guide < Content
     exercises.count
   end
 
-  def pending_exercises(user)
-    exercises.
-        joins("left join public.assignments assignments
-                on assignments.exercise_id = exercises.id
-                and assignments.submitter_id = #{user.id}
-                and assignments.submission_status = #{Mumuki::Domain::Status::Submission::Passed.to_i}").
-        where('assignments.id is null')
-  end
-
   def next_exercise(user)
     pending_exercises(user).order('public.exercises.number asc').first
   end

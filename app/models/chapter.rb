@@ -17,10 +17,6 @@ class Chapter < ApplicationRecord
     organization.book == self.book
   end
 
-  def pending_siblings_for(user)
-    book.pending_chapters(user)
-  end
-
   def index_usage!(organization = Organization.current)
     organization.index_usage_of! topic, self
     lessons.each { |lesson| lesson.index_usage! organization }

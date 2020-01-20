@@ -28,6 +28,8 @@ class Exercise < ApplicationRecord
 
   defaults { self.submissions_count = 0 }
 
+  alias_method :progress_for, :assignment_for
+
   serialize :choices, Array
   serialize :settings, Hash
 
@@ -43,10 +45,6 @@ class Exercise < ApplicationRecord
 
   def used_in?(organization=Organization.current)
     guide.usage_in_organization(organization).present?
-  end
-
-  def pending_siblings_for(user)
-    guide.pending_exercises(user)
   end
 
   def structural_parent
@@ -216,6 +214,10 @@ class Exercise < ApplicationRecord
 
   def settings
     guide.settings.deep_merge super
+  end
+
+  def content
+    self
   end
 
   private

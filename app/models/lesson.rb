@@ -14,10 +14,6 @@ class Lesson < ApplicationRecord
     guide.usage_in_organization(organization) == self
   end
 
-  def pending_siblings_for(user)
-    topic.pending_lessons(user)
-  end
-
   def structural_parent
     topic
   end

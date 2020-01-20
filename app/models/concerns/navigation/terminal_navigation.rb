@@ -14,4 +14,8 @@ module TerminalNavigation
   def structural_parent
     nil
   end
+
+  def siblings
+    []
+  end
 end

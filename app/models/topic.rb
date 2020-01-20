@@ -11,18 +11,6 @@ class Topic < Content
 
   alias_method :children, :guides
 
-  def pending_lessons(user)
-    guides.
-        joins('left join public.exercises exercises
-                on exercises.guide_id = guides.id').
-        joins("left join public.assignments assignments
-                on assignments.exercise_id = exercises.id
-                and assignments.submitter_id = #{user.id}
-                and assignments.submission_status = #{Mumuki::Domain::Status::Submission::Passed.to_i}").
-        where('assignments.id is null').
-        group('public.guides.id', 'lessons.number').map(&:lesson)
-  end
-
   def first_lesson
     lessons.first
   end

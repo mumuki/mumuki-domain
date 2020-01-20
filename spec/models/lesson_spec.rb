@@ -58,9 +58,9 @@ describe Lesson, organization_workspace: :test do
 
     context 'when there is a next guide' do
       let!(:chapter) { create(:chapter, lessons: [
-          create(:lesson),
-          create(:lesson),
-          create(:lesson)
+          create(:lesson, exercises: [create(:exercise)]),
+          create(:lesson, exercises: [create(:exercise)]),
+          create(:lesson, exercises: [create(:exercise)])
       ]) }
       let(:lesson) { chapter.lessons.second }
       let(:other_lesson) { chapter.lessons.third }
@@ -72,10 +72,10 @@ describe Lesson, organization_workspace: :test do
     context 'when there are many next guides at same level' do
       let!(:chapter) {
         create(:chapter, lessons: [
-            create(:lesson),
-            create(:lesson),
-            create(:lesson),
-            create(:lesson),
+            create(:lesson, exercises: [create(:exercise)]),
+            create(:lesson, exercises: [create(:exercise)]),
+            create(:lesson, exercises: [create(:exercise)]),
+            create(:lesson, exercises: [create(:exercise)])
         ]) }
 
       let(:lesson) { chapter.lessons.first }
