@@ -72,7 +72,7 @@ class Guide < Content
   end
 
   def import_from_resource_h!(resource_h)
-    dirty_progress_if_children_changed do
+    dirty_progress_if_children_changed! do
       self.assign_attributes whitelist_attributes(resource_h)
       self.language = Language.for_name(resource_h.dig(:language, :name))
       self.save!

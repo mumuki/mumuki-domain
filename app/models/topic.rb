@@ -28,7 +28,7 @@ class Topic < Content
   end
 
   def import_from_resource_h!(resource_h)
-    dirty_progress_if_children_changed do
+    dirty_progress_if_children_changed! do
       self.assign_attributes resource_h.except(:lessons, :description)
       self.description = resource_h[:description].squeeze(' ')
       rebuild_lessons! resource_h[:lessons].to_a.map { |it| lesson_for(it) }

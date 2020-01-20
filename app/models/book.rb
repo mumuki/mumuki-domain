@@ -28,7 +28,7 @@ class Book < Content
   end
 
   def import_from_resource_h!(resource_h)
-    dirty_progress_if_children_changed do
+    dirty_progress_if_children_changed! do
       self.assign_attributes resource_h.except(:chapters, :complements, :id, :description)
       self.description = resource_h[:description]&.squeeze(' ')
 

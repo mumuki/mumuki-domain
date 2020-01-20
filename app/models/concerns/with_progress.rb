@@ -11,7 +11,7 @@ module WithProgress
     Indicator.dirty_by_content_change! self
   end
 
-  def dirty_progress_if_children_changed
+  def dirty_progress_if_children_changed!
     old_children = children.to_a
     yield
     Indicator.dirty_by_content_change! self if children_changed?(old_children)
@@ -22,6 +22,6 @@ module WithProgress
   private
 
   def children_changed?(old_children)
-    Set.new(children).^(Set.new(old_children)).present?
+    (Set.new(children) ^ Set.new(old_children)).present?
   end
 end
