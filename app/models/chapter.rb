@@ -26,4 +26,8 @@ class Chapter < ApplicationRecord
     organization.index_usage_of! topic, self
     lessons.each { |lesson| lesson.index_usage! organization }
   end
+
+  def structural_parent
+    book
+  end
 end

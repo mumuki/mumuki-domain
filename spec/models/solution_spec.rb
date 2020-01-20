@@ -41,7 +41,7 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
     let(:assignment) { exercise.submit_solution! user }
 
     context 'when results have no expectation' do
-      let(:exercise) { create(:exercise) }
+      let(:exercise) { create(:indexed_exercise) }
       let(:bridge_response) { {result: '0 failures', status: :passed} }
 
       it { expect(assignment.status).to eq(:passed) }
@@ -50,7 +50,7 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
 
     context 'when results have standard expectations' do
       let(:exercise) {
-        create(:exercise, expectations: [{binding: :foo, inspection: :HasComposition}]) }
+        create(:indexed_exercise, expectations: [{binding: :foo, inspection: :HasComposition}]) }
       let(:bridge_response) { {
           result: '0 failures',
           status: :passed,
@@ -63,7 +63,7 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
 
 
     context 'when results have custom expectations' do
-      let(:exercise) { create(:exercise, custom_expectations: 'expectation "foo uses composition": `foo` uses composition;') }
+      let(:exercise) { create(:indexed_exercise, custom_expectations: 'expectation "foo uses composition": `foo` uses composition;') }
       let(:bridge_response) { {
           result: '0 failures',
           status: :passed,

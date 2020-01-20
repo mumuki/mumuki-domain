@@ -77,7 +77,7 @@ describe Exercise do
             organization_workspace: :test do
       let(:exercise_with_guide) { create(:exercise, guide: guide) }
       let!(:alternative_exercise) { create(:exercise, guide: guide) }
-      let(:guide) { create(:guide) }
+      let(:guide) { create(:indexed_guide) }
 
       before { alternative_exercise.submit_solution!(user, content: 'foo').passed! }
 
@@ -412,7 +412,7 @@ describe Exercise do
     end
 
     context 'when it belongs to an unfinished guide' do
-      let!(:guide) { create(:guide) }
+      let!(:guide) { create(:indexed_guide) }
       let!(:exercise_unfinished) { create(:exercise, guide: guide) }
       let!(:exercise_finished) { create(:exercise, guide: guide) }
 
@@ -424,7 +424,7 @@ describe Exercise do
     end
 
     context 'when it belongs to a finished guide' do
-      let!(:guide) { create(:guide) }
+      let!(:guide) { create(:indexed_guide) }
       let!(:exercise_finished) { create(:exercise, guide: guide) }
       let!(:exercise_finished2) { create(:exercise, guide: guide) }
 

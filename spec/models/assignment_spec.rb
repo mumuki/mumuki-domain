@@ -47,10 +47,11 @@ describe Assignment, organization_workspace: :test do
 
   describe '#results_visible?' do
     let(:gobstones) { create(:language, visible_success_output: true) }
-    let(:gobstones_exercise) { create(:exercise, language: gobstones) }
+    let(:gobstones_exercise) { create(:indexed_exercise, language: gobstones) }
+    let(:exercise) { create(:indexed_exercise, language: create(:haskell)) }
 
     let(:failed_submission) { create(:assignment, status: :failed) }
-    let(:passed_submission) { create(:assignment, status: :passed, expectation_results: []) }
+    let(:passed_submission) { create(:assignment, status: :passed, expectation_results: [], exercise: exercise) }
     let(:passed_submission_with_visible_output_language) { create(:assignment, status: :passed, exercise: gobstones_exercise) }
     let(:manual_evaluation_pending_submission) { create(:assignment, status: :manual_evaluation_pending) }
 
@@ -91,7 +92,8 @@ describe Assignment, organization_workspace: :test do
   end
 
   describe '#run_update!' do
-    let(:assignment) { create(:assignment) }
+    let(:exercise) { create(:indexed_exercise) }
+    let(:assignment) { create(:assignment, exercise: exercise) }
     context 'when run passes unstructured' do
       before { assignment.run_update! { {result: 'ok', status: :passed} } }
       it { expect(assignment.status).to eq(:passed) }

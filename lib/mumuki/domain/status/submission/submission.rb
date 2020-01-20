@@ -35,4 +35,8 @@ module Mumuki::Domain::Status::Submission
   def as_json(_options={})
     to_s
   end
+
+  def completed?
+    passed?
+  end
 end

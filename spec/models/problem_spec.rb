@@ -37,7 +37,7 @@ describe Problem, organization_workspace: :test do
   end
 
   context 'when solving then failing' do
-    let!(:problem) { create(:problem) }
+    let!(:problem) { create(:indexed_exercise) }
     let!(:user) { create(:user) }
 
     before do

@@ -1,4 +1,4 @@
-class Assignment < ApplicationRecord
+class Assignment < Progress
   include Contextualization
   include WithMessages
 
@@ -34,6 +34,20 @@ class Assignment < ApplicationRecord
   defaults do
     self.query_results = []
     self.expectation_results = []
+  end
+
+  alias_method :parent_content, :guide
+  alias_method :user, :submitter
+  alias_method :completed?, :passed?
+
+  after_save :dirty_parent_by_submission!, if: :completion_changed?
+
+  def completion_changed?
+    completed_before_last_save? != completed?
+  end
+
+  def completed_before_last_save?
+    status_before_last_save.completed?
   end
 
   def evaluate_manually!(teacher_evaluation)
@@ -128,7 +142,7 @@ class Assignment < ApplicationRecord
   end
 
   def to_resource_h
-    as_json(except: [:exercise_id, :submission_id, :organization_id, :id, :submitter_id, :solution, :created_at, :updated_at, :submission_status, :submitted_at],
+    as_json(except: %i(exercise_id submission_id organization_id id submitter_id solution created_at updated_at submission_status submitted_at parent_id),
               include: {
                 guide: {
                   only: [:slug, :name],

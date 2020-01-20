@@ -24,15 +24,17 @@ class Book < Content
   end
 
   def next_lesson_for(user)
-    user.try(:last_lesson)|| first_lesson
+    user.try(:last_lesson) || first_lesson
   end
 
   def import_from_resource_h!(resource_h)
-    self.assign_attributes resource_h.except(:chapters, :complements, :id, :description)
-    self.description = resource_h[:description]&.squeeze(' ')
+    dirty_progress_if_children_changed! do
+      self.assign_attributes resource_h.except(:chapters, :complements, :id, :description)
+      self.description = resource_h[:description]&.squeeze(' ')
 
-    rebuild_chapters! resource_h[:chapters].map { |it| Topic.find_by!(slug: it).as_chapter_of(self) }
-    rebuild_complements! resource_h[:complements].to_a.map { |it| Guide.find_by(slug: it)&.as_complement_of(self) }.compact
+      rebuild_chapters! resource_h[:chapters].map { |it| Topic.find_by!(slug: it).as_chapter_of(self) }
+      rebuild_complements! resource_h[:complements].to_a.map { |it| Guide.find_by(slug: it)&.as_complement_of(self) }.compact
+    end
   end
 
   def to_expanded_resource_h
@@ -55,5 +57,9 @@ class Book < Content
   def fork_children_into!(dup, organization, syncer)
     dup.chapters = chapters.map { |chapter| chapter.topic.fork_to!(organization, syncer, quiet: true).as_chapter_of(dup) }
     dup.complements = complements.map { |complement| complement.guide.fork_to!(organization, syncer, quiet: true).as_complement_of(dup) }
+  end
+
+  def structural_parent
+    nil
   end
 end
