@@ -13,7 +13,7 @@ class Book < Content
 
   delegate :first_lesson, to: :first_chapter
 
-  alias_method :children, :topics
+  alias_method :structural_children, :chapters
 
   def to_s
     slug
@@ -28,7 +28,7 @@ class Book < Content
   end
 
   def import_from_resource_h!(resource_h)
-    dirty_progress_if_children_changed! do
+    dirty_progress_if_structural_children_changed! do
       self.assign_attributes resource_h.except(:chapters, :complements, :id, :description)
       self.description = resource_h[:description]&.squeeze(' ')
 

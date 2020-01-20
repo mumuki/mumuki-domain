@@ -40,7 +40,7 @@ class Indicator < Progress
   end
 
   def refresh_children_count!
-    self.children_count = content.children.count
+    self.children_count = content.structural_children.count
   end
 
   def refresh_children_passed_count!
