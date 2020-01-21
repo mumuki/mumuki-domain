@@ -3,10 +3,7 @@ module GuideContainer
   include WithContent
 
   included do
-    belongs_to :guide
-
-    validates_presence_of :guide
-    alias_method :content, :guide
+    associated_content :guide
 
     delegate :name,
              :slug,

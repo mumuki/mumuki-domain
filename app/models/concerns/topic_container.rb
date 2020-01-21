@@ -3,10 +3,7 @@ module TopicContainer
   include WithContent
 
   included do
-    belongs_to :topic
-
-    validates_presence_of :topic
-    alias_method :content, :topic
+    associated_content :topic
 
     delegate :name,
              :slug,
