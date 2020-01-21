@@ -45,6 +45,16 @@ class Guide < Content
     pending_exercises(user).order('public.exercises.number asc').first
   end
 
+  # TODO: Make use of pending_siblings logic
+  def pending_exercises(user)
+    exercises.
+        joins("left join public.assignments assignments
+                on assignments.exercise_id = exercises.id
+                and assignments.submitter_id = #{user.id}
+                and assignments.submission_status = #{Mumuki::Domain::Status::Submission::Passed.to_i}").
+        where('assignments.id is null')
+  end
+
   def first_exercise
     exercises.first
   end
