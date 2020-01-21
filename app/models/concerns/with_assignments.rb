@@ -18,6 +18,7 @@ module WithAssignments
     messages_for(user).present?
   end
 
+  # TODO: When the organization is used in this one, please change guide.pending_exercises
   def find_assignment_for(user, _organization)
     assignments.find_by(submitter: user)
   end

@@ -2,11 +2,11 @@ class Lesson < ApplicationRecord
   include WithNumber
   include FriendlyName
 
+  include ParentNavigation, SiblingsNavigation
+
   include GuideContainer
 
   belongs_to :topic
-
-  include ParentNavigation, SiblingsNavigation
 
   alias_method :chapter, :navigable_parent
 

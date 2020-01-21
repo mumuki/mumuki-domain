@@ -9,11 +9,11 @@ module SiblingsNavigation
   end
 
   def siblings
-    structural_parent.structural_children - [self]
+    structural_parent.structural_children
   end
 
   def pending_siblings_for(user, organization=Organization.current)
-    siblings.reject { |it| it.content.progress_for(user, organization).completed? }
+    siblings.reject { |it| it.progress_for(user, organization).completed? }
   end
 
   # Names

@@ -216,10 +216,6 @@ class Exercise < ApplicationRecord
     guide.settings.deep_merge super
   end
 
-  def content
-    self
-  end
-
   private
 
   def evaluation_class
