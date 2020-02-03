@@ -28,4 +28,8 @@ class Content < ApplicationRecord
       syncer.export! dup
     end
   end
+
+  def public?
+    !private?
+  end
 end
