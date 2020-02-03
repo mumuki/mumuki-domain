@@ -3,7 +3,7 @@ module TopicContainer
   include WithContent
 
   included do
-    validates_presence_of :topic
+    associated_content :topic
 
     delegate :name,
              :slug,

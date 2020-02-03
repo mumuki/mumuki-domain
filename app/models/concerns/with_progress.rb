@@ -11,17 +11,17 @@ module WithProgress
     Indicator.dirty_by_content_change! self
   end
 
-  def dirty_progress_if_children_changed!
-    old_children = children.to_a
+  def dirty_progress_if_structural_children_changed!
+    old_structural_children = structural_children.to_a
     yield
-    Indicator.dirty_by_content_change! self if children_changed?(old_children)
+    Indicator.dirty_by_content_change! self if structural_children_changed?(old_structural_children)
 
     self
   end
 
   private
 
-  def children_changed?(old_children)
-    (Set.new(children) ^ Set.new(old_children)).present?
+  def structural_children_changed?(old_structural_children)
+    (Set.new(structural_children) ^ Set.new(old_structural_children)).present?
   end
 end

@@ -19,7 +19,7 @@ class Guide < Content
 
   enum type: [:learning, :practice]
 
-  alias_method :children, :exercises
+  alias_method :structural_children, :exercises
 
   def clear_progress!(user, organization=Organization.current)
     transaction do
@@ -41,6 +41,11 @@ class Guide < Content
     exercises.count
   end
 
+  def next_exercise(user)
+    pending_exercises(user).order('public.exercises.number asc').first
+  end
+
+  # TODO: Make use of pending_siblings logic
   def pending_exercises(user)
     exercises.
         joins("left join public.assignments assignments
@@ -48,10 +53,6 @@ class Guide < Content
                 and assignments.submitter_id = #{user.id}
                 and assignments.submission_status = #{Mumuki::Domain::Status::Submission::Passed.to_i}").
         where('assignments.id is null')
-  end
-
-  def next_exercise(user)
-    pending_exercises(user).order('public.exercises.number asc').first
   end
 
   def first_exercise
@@ -72,7 +73,7 @@ class Guide < Content
   end
 
   def import_from_resource_h!(resource_h)
-    dirty_progress_if_children_changed! do
+    dirty_progress_if_structural_children_changed! do
       self.assign_attributes whitelist_attributes(resource_h)
       self.language = Language.for_name(resource_h.dig(:language, :name))
       self.save!

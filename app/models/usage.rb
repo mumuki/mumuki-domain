@@ -18,7 +18,7 @@ class Usage < ApplicationRecord
   end
 
   def destroy_children_usages!
-    item.children.each { |child| Usage.destroy_all_where(item: child, organization: organization) }
+    item.structural_children.each { |child| Usage.destroy_all_where(parent_item: child, organization: organization) }
   end
 
   def index_children!(children)

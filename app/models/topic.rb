@@ -9,26 +9,14 @@ class Topic < Content
 
   markdown_on :appendix
 
-  alias_method :children, :guides
-
-  def pending_lessons(user)
-    guides.
-        joins('left join public.exercises exercises
-                on exercises.guide_id = guides.id').
-        joins("left join public.assignments assignments
-                on assignments.exercise_id = exercises.id
-                and assignments.submitter_id = #{user.id}
-                and assignments.submission_status = #{Mumuki::Domain::Status::Submission::Passed.to_i}").
-        where('assignments.id is null').
-        group('public.guides.id', 'lessons.number').map(&:lesson)
-  end
+  alias_method :structural_children, :lessons
 
   def first_lesson
     lessons.first
   end
 
   def import_from_resource_h!(resource_h)
-    dirty_progress_if_children_changed! do
+    dirty_progress_if_structural_children_changed! do
       self.assign_attributes resource_h.except(:lessons, :description)
       self.description = resource_h[:description].squeeze(' ')
       rebuild_lessons! resource_h[:lessons].to_a.map { |it| lesson_for(it) }

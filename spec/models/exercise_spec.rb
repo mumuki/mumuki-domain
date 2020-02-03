@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Exercise do
+describe Exercise, organization_workspace: :test do
   let(:exercise) { create(:exercise) }
   let(:user) { create(:user, first_name: 'Orlo') }
 
@@ -512,7 +512,7 @@ describe Exercise do
   describe '#files_for' do
     before { create(:language, extension: 'js', highlight_mode: 'javascript') }
     let(:current_content) { "/*<index.html#*/a html content/*#index.html>*/\n/*<a_file.js#*/a js content/*#a_file.js>*/" }
-    let(:assignment) { build(:assignment, exercise: exercise, solution: current_content, organization: create(:test_organization)) }
+    let(:assignment) { build(:assignment, exercise: exercise, solution: current_content) }
     let(:files) { exercise.files_for(current_content) }
 
     it { expect(files.count).to eq 2 }
