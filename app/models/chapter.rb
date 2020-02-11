@@ -2,8 +2,8 @@ class Chapter < ApplicationRecord
   include WithStats
   include WithNumber
 
-  include SiblingsNavigation
-  include TerminalNavigation
+  include Mumukit::Flow::SiblingsNavigation
+  include Mumukit::Flow::TerminalNavigation
 
   include FriendlyName
 

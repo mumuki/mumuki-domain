@@ -19,8 +19,8 @@ class Exercise < ApplicationRecord
   include Submittable,
           Questionable
 
-  include SiblingsNavigation,
-          ParentNavigation
+  include Mumukit::Flow::SiblingsNavigation,
+          Mumukit::Flow::ParentNavigation
 
   include Mumukit::Flow::AdaptiveItem
 

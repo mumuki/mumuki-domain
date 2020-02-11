@@ -2,7 +2,7 @@ class Lesson < ApplicationRecord
   include WithNumber
   include FriendlyName
 
-  include ParentNavigation, SiblingsNavigation
+  include Mumukit::Flow::ParentNavigation, Mumukit::Flow::SiblingsNavigation
 
   include GuideContainer
 
