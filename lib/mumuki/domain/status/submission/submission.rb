@@ -10,9 +10,10 @@ require_relative './errored'
 require_relative './aborted'
 require_relative './passed_with_warnings'
 require_relative './manual_evaluation_pending'
+require_relative './skipped'
 
 module Mumuki::Domain::Status::Submission
-  STATUSES = [Pending, Running, Passed, Failed, Errored, Aborted, PassedWithWarnings, ManualEvaluationPending]
+  STATUSES = [Pending, Running, Passed, Failed, Errored, Aborted, PassedWithWarnings, ManualEvaluationPending, Skipped]
 
   test_selectors.each do |selector|
     define_method(selector) { false }
