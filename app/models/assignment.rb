@@ -38,7 +38,6 @@ class Assignment < Progress
 
   alias_method :parent_content, :guide
   alias_method :user, :submitter
-  alias_method :completed?, :passed?
 
   after_save :dirty_parent_by_submission!, if: :completion_changed?
 
@@ -118,6 +117,10 @@ class Assignment < Progress
 
   def passed!
     update! submission_status: :passed
+  end
+
+  def skipped!
+    update! submission_status: :skipped
   end
 
   def running!
