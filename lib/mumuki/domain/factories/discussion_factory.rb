@@ -4,5 +4,6 @@ FactoryBot.define do
     description { 'A discussion description' }
     initiator { create(:user) }
     item { create(:exercise) }
+    organization { Organization.current rescue nil }
   end
 end
