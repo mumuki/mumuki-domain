@@ -10,7 +10,7 @@ class Exam < ApplicationRecord
   has_many :users, through: :authorizations
 
   after_destroy { |record| Usage.destroy_usages_for record }
-  after_save :reindex_usages!
+  after_create :reindex_usages!
 
   include TerminalNavigation
 
