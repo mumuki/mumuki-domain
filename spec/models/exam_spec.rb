@@ -14,8 +14,9 @@ describe Exam, organization_workspace: :test do
       let!(:exam2) { Exam.import_from_resource_h! exam_json2 }
       context 'and the organization is the same' do
         it { expect(Exam.count).to eq 1 }
-        it { expect(Usage.where(item_id: guide.id, parent_item_id: exam.id).count).to eq 0 }
-        it { expect(ExamAuthorization.where(exam_id: exam.id).count).to eq 0 }
+        it { expect(Usage.where(item: guide, parent_item: exam).count).to eq 0 }
+        it { expect(Usage.where(item: guide, parent_item: exam2).count).to eq 1 }
+        it { expect(ExamAuthorization.where(exam: exam).count).to eq 0 }
       end
     end
 
@@ -63,6 +64,7 @@ describe Exam, organization_workspace: :test do
         context 'new exam' do
           it { expect(Exam.count).to eq 1 }
           it { expect { Exam.find_by(classroom_id: '1').validate_accessible_for! user }.to_not raise_error }
+          it { expect(Usage.where(organization: Organization.current, item: guide).count).to eq 1 }
           it { expect(guide.usage_in_organization).to be_a Exam }
         end
 
