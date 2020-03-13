@@ -21,6 +21,7 @@ describe Assignment, organization_workspace: :test do
       it { expect(message.assignment).to eq assignment }
       it { expect(message.submission_id).to eq assignment.submission_id }
       it { expect(message.date).to_not be nil }
+      it { expect(assignment.organization).to eq Organization.current }
     end
 
     describe '.receive_answer!' do
@@ -34,6 +35,7 @@ describe Assignment, organization_workspace: :test do
       it { expect(message.read).to be false }
       it { expect(message.assignment).to eq assignment }
       it { expect(message.submission_id).to eq assignment.submission_id }
+      it { expect(assignment.organization).to eq Organization.current }
     end
   end
 
@@ -152,17 +154,27 @@ describe Assignment, organization_workspace: :test do
     end
 
     it { expect(exercise.reload.submissions_count).to eq(3) }
+    it { expect(exercise.assignments.first.organization).to eq Organization.current }
   end
 
   describe 'organization' do
     let(:exercise) { create(:exercise) }
     let(:user) { create(:user) }
 
-    context 'when solution is submitted' do
+    context 'when solution is submitted for the first time' do
       before { exercise.submit_solution!(user, content: 'foo') }
 
       it 'should persist what organization it was submitted in' do
         expect(exercise.assignment_for(user).organization).to eq Organization.current
+      end
+    end
+
+    context 'when solution is submitted after the assignment was created' do
+      before { exercise.submit_solution!(user, content: 'foo') }
+      before { assignment = exercise.assignment_for(user); assignment.organization = nil; assignment.save(validate: false) }
+
+      it 'should persist what organization it was submitted in' do
+        expect { exercise.submit_solution!(user, content: 'foo') }.to raise_error ActiveRecord::RecordInvalid
       end
     end
   end
