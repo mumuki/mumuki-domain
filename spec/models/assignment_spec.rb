@@ -160,9 +160,20 @@ describe Assignment, organization_workspace: :test do
   describe 'organization' do
     let(:exercise) { create(:exercise) }
     let(:user) { create(:user) }
+    let(:chapter) { create(:chapter, lessons: [ create(:lesson, exercises: [exercise] )]) }
+    let(:new_organization) { create(:organization, book: create(:book, chapters: [chapter] )) }
+
+    before { exercise.submit_solution!(user, content: 'foo') }
 
     context 'when solution is submitted for the first time' do
-      before { exercise.submit_solution!(user, content: 'foo') }
+
+      it 'should persist what organization it was submitted in' do
+        expect(exercise.assignment_for(user).organization).to eq Organization.current
+      end
+    end
+
+    context 'when solution is submitted after the assignment was created without an organization' do
+      before { assignment = exercise.assignment_for(user); assignment.organization = nil; assignment.save(validate: false) }
 
       it 'should persist what organization it was submitted in' do
         expect(exercise.assignment_for(user).organization).to eq Organization.current
@@ -170,11 +181,12 @@ describe Assignment, organization_workspace: :test do
     end
 
     context 'when solution is submitted after the assignment was created' do
+      before { new_organization.switch! }
+      before { reindex_current_organization! }
       before { exercise.submit_solution!(user, content: 'foo') }
-      before { assignment = exercise.assignment_for(user); assignment.organization = nil; assignment.save(validate: false) }
 
       it 'should persist what organization it was submitted in' do
-        expect { exercise.submit_solution!(user, content: 'foo') }.to raise_error ActiveRecord::RecordInvalid
+        expect(exercise.assignment_for(user).organization).to eq new_organization
       end
     end
   end
