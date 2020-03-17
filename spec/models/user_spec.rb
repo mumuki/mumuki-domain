@@ -32,7 +32,7 @@ describe User, organization_workspace: :test do
     context 'when final user has less information than original' do
       let!(:submission) { your_first_program.submit_solution! original, content: 'adasdsadas' }
 
-      before { original.reload.copy_progress_to! final }
+      before { original.reload.transfer_progress_to! final }
 
       let(:original) { create :user,
                               permissions: {student: 'codeorga/*'},
@@ -61,7 +61,7 @@ describe User, organization_workspace: :test do
 
     context 'when final user has more information than original' do
       before { more_clauses.submit_solution! final, content: 'adasdsadas' }
-      before { original.copy_progress_to! final.reload }
+      before { original.transfer_progress_to! final.reload }
 
       let(:original) { create :user,
                               permissions: Mumukit::Auth::Permissions.new,
@@ -86,7 +86,7 @@ describe User, organization_workspace: :test do
     end
 
     context 'when both have information, but final is newer' do
-      before { original.copy_progress_to! final }
+      before { original.transfer_progress_to! final }
 
       let(:original) { create :user,
                               permissions: {student: 'codeorga/*'},
@@ -116,7 +116,7 @@ describe User, organization_workspace: :test do
     end
 
     context 'when both have information, but original is newer' do
-      before { original.copy_progress_to! final }
+      before { original.transfer_progress_to! final }
 
       let(:original) { create :user,
                               permissions: {student: 'codeorga/*'},
@@ -239,24 +239,6 @@ describe User, organization_workspace: :test do
         it { User.for_profile profile.to_h.merge(last_name: 'Doe').to_struct }
       end
 
-    end
-  end
-
-  describe '#resubmit!' do
-    let(:student) { create :user }
-    let(:exercises) { FactoryBot.create_list(:exercise, 5) }
-
-    let!(:chapter) {
-      build(:chapter, lessons: [
-        build(:lesson, exercises: exercises)]) }
-
-    before { reindex_current_organization! }
-
-    before { exercises.each { |it| it.submit_solution! student, content: '' } }
-
-    it do
-      student.assignments.each { |it| expect(it).to receive(:notify!).once }
-      student.resubmit! Organization.current.name
     end
   end
 
