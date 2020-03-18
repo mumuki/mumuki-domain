@@ -204,15 +204,6 @@ describe Book, organization_workspace: :test do
 
   # Scenarios:
   #
-  # - []
-  #
-
-
-  # - hide mumuki/t1 until 2020-10-10
-
-  # - disable mumuki/t1 at 2020-10-10
-  # - disable mumuki/t1 until 2020-10-10
-
   # - hide mumuki/t1 at 2020-10-10 with messagee 'dfsdfsdf'
   # - hide mumuki/t1 until 2020-10-10 with messagee 'dfsdfsdf'
 
@@ -279,6 +270,24 @@ describe Book, organization_workspace: :test do
 
         it { expect(book.public_chapters_of(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
         it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
+      end
+    end
+
+    context 'disable mumuki/t1 until 2020-10-10' do
+      before { organization.add_access_rule! AccessRule::Until.new(content: chapter_2, action: :disable, date: date) }
+
+      context 'after date' do
+        let(:date) { 5.minutes.ago }
+
+        it { expect(book.public_chapters_of(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
+      end
+
+      context 'before date' do
+        let(:date) { 5.minutes.since }
+
+        it { expect(book.public_chapters_of(workspace)).to eq [chapter_1, chapter_3] }
+        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :protected, chapter_3 => :public }
       end
     end
   end

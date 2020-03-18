@@ -34,5 +34,13 @@ class AccessRule < ApplicationRecord
       date.past?
     end
   end
+
+  class Until < AccessRule
+    self.table_name = 'access_rules'
+
+    def eval(_)
+      !date.past?
+    end
+  end
 end
 
