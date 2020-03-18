@@ -62,4 +62,55 @@ class Book < Content
   def structural_parent
     nil
   end
+
+  ## workspace
+
+  ## Answers the chapters that are members
+  ## of the given workspace
+  def chapter_memberships_of(workspace)
+    workspace.memberships_for(chapters)
+  end
+
+  def public_chapters_of(workspace)
+    chapter_memberships_of(workspace).select { |_, visibility| visibility.like? :public }.keys
+  end
+end
+
+class Never
+  def initialize(content:, visibility:)
+    @content = content
+    @visibility = visibility
+  end
+
+  def call(content)
+    content == @content ? @visibility : :public
+  end
+end
+
+module Visibility
+  PRIORITIES = [:private, :protected, :public]
+
+  def self.sort(visibilities)
+    visibilities.sort_by  { |it| PRIORITIES.index it }
+  end
+
+  def self.min(visibilities)
+    sort(visibilities).first || :public
+  end
+end
+
+
+class Workspace
+  def initialize(user, organization)
+    @user = user
+    @organization = organization
+  end
+
+  def audit(content)
+    Visibility.min @organization.access_rules.map { |it| it.call content }
+  end
+
+  def memberships_for(contents)
+    contents.map { |it| [it, audit(it)] }.to_h
+  end
 end

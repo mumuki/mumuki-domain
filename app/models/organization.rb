@@ -126,6 +126,14 @@ class Organization < ApplicationRecord
     super.merge(book: book.slug)
   end
 
+  def add_access_rule!(rule)
+    access_rules << rule
+  end
+
+  def access_rules
+    @access_rules ||= []
+  end
+
   private
 
   def ensure_consistent_public_login

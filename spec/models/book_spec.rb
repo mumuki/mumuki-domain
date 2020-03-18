@@ -200,4 +200,41 @@ describe Book, organization_workspace: :test do
       it { expect(Chapter.count).to eq 1 }
     end
   end
+
+  describe 'chapter_memberships_of' do
+    let(:book) { create(:book, chapters: [chapter_1, chapter_2, chapter_3 ]) }
+    let(:chapter_1) { build(:chapter) }
+    let(:chapter_2) { build(:chapter) }
+    let(:chapter_3) { build(:chapter) }
+
+    let(:user) { create(:user) }
+    let(:organization) { Organization.current }
+    let(:workspace) { Workspace.new user, organization }
+
+
+    it { expect(Visibility.sort %i(private public protected public private)).to eq %i(private private protected public public) }
+    it { expect(Visibility.min %i(private public protected public private)).to eq :private }
+
+    context 'when there are no access rules' do
+      it { expect(workspace.memberships_for(book.chapters)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
+
+      it { expect(book.public_chapters_of(workspace)).to eq book.chapters }
+      it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
+    end
+
+    context 'when there is a rule never-private' do
+      before { organization.add_access_rule! Never.new(content: chapter_1, visibility: :private) }
+
+      it { expect(book.public_chapters_of(workspace)).to eq [chapter_2, chapter_3] }
+      it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :private, chapter_2 => :public, chapter_3 => :public }
+    end
+
+    context 'when there is a rule never-protected' do
+      before { organization.add_access_rule! Never.new(content: chapter_1, visibility: :protected) }
+
+      it { expect(book.public_chapters_of(workspace)).to eq [chapter_2, chapter_3] }
+      it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :protected, chapter_2 => :public, chapter_3 => :public }
+    end
+  end
+
 end
