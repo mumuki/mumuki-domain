@@ -67,24 +67,24 @@ class Book < Content
 
   ## Answers the chapters that are members
   ## of the given workspace
-  def chapter_memberships_of(workspace)
-    workspace.memberships_for(chapters)
+  def chapter_access_levels_in(workspace)
+    workspace.access_levels_for(chapters)
   end
 
-  def public_chapters_of(workspace)
-    chapter_memberships_of(workspace).select { |_, visibility| visibility.like? :public }.keys
+  def enabled_chapters_of(workspace)
+    chapter_access_levels_in(workspace).select { |_, access_level| access_level.like? :enabled }.keys
   end
 end
 
-module Visibility
-  PRIORITIES = [:private, :protected, :public]
+module AccessLevel
+  PRIORITIES = [:hidden, :disabled, :enabled]
 
   def self.sort(visibilities)
     visibilities.sort_by  { |it| PRIORITIES.index it }
   end
 
   def self.min(visibilities)
-    sort(visibilities).first || :public
+    sort(visibilities).first || :enabled
   end
 end
 
@@ -96,10 +96,10 @@ class Workspace
   end
 
   def audit(content)
-    Visibility.min @organization.access_rules.map { |it| it.call content, self }
+    AccessLevel.min @organization.access_rules.map { |it| it.call content, self }
   end
 
-  def memberships_for(contents)
+  def access_levels_for(contents)
     contents.map { |it| [it, audit(it)] }.to_h
   end
 

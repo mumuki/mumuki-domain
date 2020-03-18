@@ -226,28 +226,28 @@ describe Book, organization_workspace: :test do
     let(:workspace) { Workspace.new user, organization }
 
 
-    it { expect(Visibility.sort %i(private public protected public private)).to eq %i(private private protected public public) }
-    it { expect(Visibility.min %i(private public protected public private)).to eq :private }
+    it { expect(AccessLevel.sort %i(hidden enabled disabled enabled hidden)).to eq %i(hidden hidden disabled enabled enabled) }
+    it { expect(AccessLevel.min %i(hidden enabled disabled enabled hidden)).to eq :hidden }
 
     context 'no access rules' do
-      it { expect(workspace.memberships_for(book.chapters)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
+      it { expect(workspace.access_levels_for(book.chapters)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
 
-      it { expect(book.public_chapters_of(workspace)).to eq book.chapters }
-      it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
+      it { expect(book.enabled_chapters_of(workspace)).to eq book.chapters }
+      it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
     end
 
     context 'hide mumuki/t1' do
       before { organization.add_access_rule! AccessRule::Always.new(content: chapter_1, action: :hide) }
 
-      it { expect(book.public_chapters_of(workspace)).to eq [chapter_2, chapter_3] }
-      it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :private, chapter_2 => :public, chapter_3 => :public }
+      it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_2, chapter_3] }
+      it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :hidden, chapter_2 => :enabled, chapter_3 => :enabled }
     end
 
     context 'disable mumuki/t1' do
       before { organization.add_access_rule! AccessRule::Always.new(content: chapter_1, action: :disable) }
 
-      it { expect(book.public_chapters_of(workspace)).to eq [chapter_2, chapter_3] }
-      it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :protected, chapter_2 => :public, chapter_3 => :public }
+      it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_2, chapter_3] }
+      it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :disabled, chapter_2 => :enabled, chapter_3 => :enabled }
     end
 
     context 'hide mumuki/t1 at 2020-10-10' do
@@ -256,15 +256,15 @@ describe Book, organization_workspace: :test do
       context 'after date' do
         let(:date) { 5.minutes.ago }
 
-        it { expect(book.public_chapters_of(workspace)).to eq [chapter_1, chapter_3] }
-        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :private, chapter_3 => :public }
+        it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_1, chapter_3] }
+        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :hidden, chapter_3 => :enabled }
       end
 
       context 'before date' do
         let(:date) { 5.minutes.since }
 
-        it { expect(book.public_chapters_of(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
-        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
+        it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
       end
     end
 
@@ -274,15 +274,15 @@ describe Book, organization_workspace: :test do
       context 'after date' do
         let(:date) { 5.minutes.ago }
 
-        it { expect(book.public_chapters_of(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
-        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
+        it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
       end
 
       context 'before date' do
         let(:date) { 5.minutes.since }
 
-        it { expect(book.public_chapters_of(workspace)).to eq [chapter_1, chapter_3] }
-        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :protected, chapter_3 => :public }
+        it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_1, chapter_3] }
+        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :disabled, chapter_3 => :enabled }
       end
     end
 
@@ -292,17 +292,17 @@ describe Book, organization_workspace: :test do
       context 'with role' do
         before { user.add_permission! :teacher, organization.slug }
 
-        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
+        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
       end
 
       context 'with upper role' do
         before { user.add_permission! :headmaster, organization.slug }
 
-        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
+        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
       end
 
       context 'without roles' do
-        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :private }
+        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :hidden }
       end
     end
   end

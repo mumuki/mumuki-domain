@@ -9,9 +9,9 @@ class AccessRule < ApplicationRecord
 
   def call(content, workspace)
     if match? content, workspace
-      hide? ? :private : :protected
+      hide? ? :hidden : :disabled
     else
-      :public
+      :enabled
     end
   end
 
