@@ -1,9 +1,8 @@
 class AccessRule < ApplicationRecord
-  self.abstract_class = true
-
   enum action: %i(hide disable)
 
   belongs_to :chapter
+  belongs_to :organization
 
   alias_attribute :content, :chapter
 
@@ -19,35 +18,46 @@ class AccessRule < ApplicationRecord
     self.content == content && eval(content, workspace)
   end
 
-  class Always < AccessRule
-    self.table_name = 'access_rules'
+  def to_s
+    [action, content.slug, to_condition_s].compact.join(' ')
+  end
 
+  class Always < AccessRule
     def eval(*)
       true
+    end
+
+    def to_condition_s
     end
   end
 
   class At < AccessRule
-    self.table_name = 'access_rules'
-
     def eval(*)
       date.past?
+    end
+
+    def to_condition_s
+      "at #{date}"
     end
   end
 
   class Until < AccessRule
-    self.table_name = 'access_rules'
-
     def eval(*)
       !date.past?
+    end
+
+    def to_condition_s
+      "until #{date}"
     end
   end
 
   class Unless < AccessRule
-    self.table_name = 'access_rules'
-
     def eval(_content, workspace)
       !workspace.has_role? role
+    end
+
+    def to_condition_s
+      "unless #{role}"
     end
   end
 end

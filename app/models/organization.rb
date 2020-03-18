@@ -14,6 +14,7 @@ class Organization < ApplicationRecord
 
   belongs_to :book
   has_many :usages
+  has_many :access_rules
 
   validates_presence_of :contact_email, :locale
   validates :name, uniqueness: true,
@@ -128,10 +129,6 @@ class Organization < ApplicationRecord
 
   def add_access_rule!(rule)
     access_rules << rule
-  end
-
-  def access_rules
-    @access_rules ||= []
   end
 
   private
