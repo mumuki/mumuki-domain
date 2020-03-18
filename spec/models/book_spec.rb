@@ -213,12 +213,7 @@ describe Book, organization_workspace: :test do
   # - hide mumuki/t1 until previous content finished
   # - disable mumuki/t1 until previous content finished
 
-  # - hide mumuki/t1 for permission
-  # - disable mumuki/t1 except for permission
-
-  # - hide mumuki/t1 until 2020-10-10
-  #   hide bar/baz except for permission baz/baz
-
+  # - hide * until previous content finished
 
   describe 'access rules' do
     let(:book) { create(:book, chapters: [chapter_1, chapter_2, chapter_3 ]) }
@@ -288,6 +283,26 @@ describe Book, organization_workspace: :test do
 
         it { expect(book.public_chapters_of(workspace)).to eq [chapter_1, chapter_3] }
         it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :protected, chapter_3 => :public }
+      end
+    end
+
+    context 'hide mumuki/t1 unless teacher' do
+      before { organization.add_access_rule! AccessRule::Unless.new(content: chapter_3, action: :hide, role: :teacher) }
+
+      context 'with role' do
+        before { user.add_permission! :teacher, organization.slug }
+
+        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
+      end
+
+      context 'with upper role' do
+        before { user.add_permission! :headmaster, organization.slug }
+
+        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
+      end
+
+      context 'without roles' do
+        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :private }
       end
     end
   end

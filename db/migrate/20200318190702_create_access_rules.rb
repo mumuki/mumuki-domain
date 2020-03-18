@@ -6,6 +6,7 @@ class CreateAccessRules < ActiveRecord::Migration[5.1]
       t.integer :action, default: 0, null: false
       t.integer :action, default: 0, null: false
       t.datetime :date, null: true
+      t.string :role, null: true
       t.string :type, null: false
 
       t.timestamps

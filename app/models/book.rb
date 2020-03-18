@@ -96,10 +96,14 @@ class Workspace
   end
 
   def audit(content)
-    Visibility.min @organization.access_rules.map { |it| it.call content }
+    Visibility.min @organization.access_rules.map { |it| it.call content, self }
   end
 
   def memberships_for(contents)
     contents.map { |it| [it, audit(it)] }.to_h
+  end
+
+  def has_role?(role)
+    @user.has_permission? role, @organization.slug
   end
 end

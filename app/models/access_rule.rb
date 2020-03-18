@@ -7,22 +7,22 @@ class AccessRule < ApplicationRecord
 
   alias_attribute :content, :chapter
 
-  def call(content)
-    visibility_for(self.content == content && eval(content))
-  end
-
-  def visibility_for(match)
-    if match
+  def call(content, workspace)
+    if match? content, workspace
       hide? ? :private : :protected
     else
       :public
     end
   end
 
+  def match?(content, workspace)
+    self.content == content && eval(content, workspace)
+  end
+
   class Always < AccessRule
     self.table_name = 'access_rules'
 
-    def eval(_)
+    def eval(*)
       true
     end
   end
@@ -30,7 +30,7 @@ class AccessRule < ApplicationRecord
   class At < AccessRule
     self.table_name = 'access_rules'
 
-    def eval(_)
+    def eval(*)
       date.past?
     end
   end
@@ -38,8 +38,16 @@ class AccessRule < ApplicationRecord
   class Until < AccessRule
     self.table_name = 'access_rules'
 
-    def eval(_)
+    def eval(*)
       !date.past?
+    end
+  end
+
+  class Unless < AccessRule
+    self.table_name = 'access_rules'
+
+    def eval(_content, workspace)
+      !workspace.has_role? role
     end
   end
 end
