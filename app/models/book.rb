@@ -76,17 +76,6 @@ class Book < Content
   end
 end
 
-class Never
-  def initialize(content:, visibility:)
-    @content = content
-    @visibility = visibility
-  end
-
-  def call(content)
-    content == @content ? @visibility : :public
-  end
-end
-
 module Visibility
   PRIORITIES = [:private, :protected, :public]
 

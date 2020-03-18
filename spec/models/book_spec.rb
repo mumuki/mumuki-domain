@@ -206,36 +206,34 @@ describe Book, organization_workspace: :test do
   #
   # - []
   #
-  # - hide foo/bar
-  # - disable foo/bar
 
-  # - hide foo/bar at 2020-10-10
-  # - hide foo/bar until 2020-10-10
 
-  # - disable foo/bar at 2020-10-10
-  # - disable foo/bar until 2020-10-10
+  # - hide mumuki/t1 until 2020-10-10
 
-  # - hide foo/bar at 2020-10-10 with messagee 'dfsdfsdf'
-  # - hide foo/bar until 2020-10-10 with messagee 'dfsdfsdf'
+  # - disable mumuki/t1 at 2020-10-10
+  # - disable mumuki/t1 until 2020-10-10
 
-  # - disable foo/bar at 2020-10-10 with messagee 'dfsdfsdf'
-  # - disable foo/bar until 2020-10-10 with messagee 'dfsdfsdf'
+  # - hide mumuki/t1 at 2020-10-10 with messagee 'dfsdfsdf'
+  # - hide mumuki/t1 until 2020-10-10 with messagee 'dfsdfsdf'
 
-  # - hide foo/bar until previous content finished
-  # - disable foo/bar until previous content finished
+  # - disable mumuki/t1 at 2020-10-10 with messagee 'dfsdfsdf'
+  # - disable mumuki/t1 until 2020-10-10 with messagee 'dfsdfsdf'
 
-  # - hide foo/bar for permission
-  # - disable foo/bar except for permission
+  # - hide mumuki/t1 until previous content finished
+  # - disable mumuki/t1 until previous content finished
 
-  # - hide foo/bar until 2020-10-10
+  # - hide mumuki/t1 for permission
+  # - disable mumuki/t1 except for permission
+
+  # - hide mumuki/t1 until 2020-10-10
   #   hide bar/baz except for permission baz/baz
 
 
-  describe 'chapter_memberships_of' do
+  describe 'access rules' do
     let(:book) { create(:book, chapters: [chapter_1, chapter_2, chapter_3 ]) }
-    let(:chapter_1) { build(:chapter) }
-    let(:chapter_2) { build(:chapter) }
-    let(:chapter_3) { build(:chapter) }
+    let(:chapter_1) { build(:chapter, slug: 'mumuki/t1') }
+    let(:chapter_2) { build(:chapter, slug: 'mumuki/t2') }
+    let(:chapter_3) { build(:chapter, slug: 'mumuki/t3') }
 
     let(:user) { create(:user) }
     let(:organization) { Organization.current }
@@ -245,25 +243,43 @@ describe Book, organization_workspace: :test do
     it { expect(Visibility.sort %i(private public protected public private)).to eq %i(private private protected public public) }
     it { expect(Visibility.min %i(private public protected public private)).to eq :private }
 
-    context 'when there are no access rules' do
+    context 'no access rules' do
       it { expect(workspace.memberships_for(book.chapters)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
 
       it { expect(book.public_chapters_of(workspace)).to eq book.chapters }
       it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
     end
 
-    context 'when there is a rule never-private' do
-      before { organization.add_access_rule! Never.new(content: chapter_1, visibility: :private) }
+    context 'hide mumuki/t1' do
+      before { organization.add_access_rule! AccessRule::Always.new(content: chapter_1, action: :hide) }
 
       it { expect(book.public_chapters_of(workspace)).to eq [chapter_2, chapter_3] }
       it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :private, chapter_2 => :public, chapter_3 => :public }
     end
 
-    context 'when there is a rule never-protected' do
-      before { organization.add_access_rule! Never.new(content: chapter_1, visibility: :protected) }
+    context 'disable mumuki/t1' do
+      before { organization.add_access_rule! AccessRule::Always.new(content: chapter_1, action: :disable) }
 
       it { expect(book.public_chapters_of(workspace)).to eq [chapter_2, chapter_3] }
       it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :protected, chapter_2 => :public, chapter_3 => :public }
+    end
+
+    context 'hide mumuki/t1 at 2020-10-10' do
+      before { organization.add_access_rule! AccessRule::At.new(content: chapter_2, action: :hide, date: date) }
+
+      context 'after date' do
+        let(:date) { 5.minutes.ago }
+
+        it { expect(book.public_chapters_of(workspace)).to eq [chapter_1, chapter_3] }
+        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :private, chapter_3 => :public }
+      end
+
+      context 'before date' do
+        let(:date) { 5.minutes.since }
+
+        it { expect(book.public_chapters_of(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+        it { expect(book.chapter_memberships_of(workspace)).to eq chapter_1 => :public, chapter_2 => :public, chapter_3 => :public }
+      end
     end
   end
 
