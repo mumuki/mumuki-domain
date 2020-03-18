@@ -201,6 +201,36 @@ describe Book, organization_workspace: :test do
     end
   end
 
+
+  # Scenarios:
+  #
+  # - []
+  #
+  # - hide foo/bar
+  # - disable foo/bar
+
+  # - hide foo/bar at 2020-10-10
+  # - hide foo/bar until 2020-10-10
+
+  # - disable foo/bar at 2020-10-10
+  # - disable foo/bar until 2020-10-10
+
+  # - hide foo/bar at 2020-10-10 with messagee 'dfsdfsdf'
+  # - hide foo/bar until 2020-10-10 with messagee 'dfsdfsdf'
+
+  # - disable foo/bar at 2020-10-10 with messagee 'dfsdfsdf'
+  # - disable foo/bar until 2020-10-10 with messagee 'dfsdfsdf'
+
+  # - hide foo/bar until previous content finished
+  # - disable foo/bar until previous content finished
+
+  # - hide foo/bar for permission
+  # - disable foo/bar except for permission
+
+  # - hide foo/bar until 2020-10-10
+  #   hide bar/baz except for permission baz/baz
+
+
   describe 'chapter_memberships_of' do
     let(:book) { create(:book, chapters: [chapter_1, chapter_2, chapter_3 ]) }
     let(:chapter_1) { build(:chapter) }
