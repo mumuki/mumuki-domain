@@ -41,6 +41,7 @@ class Mumuki::Domain::Submission::Base
 
   def save_submission!(assignment)
     assignment.content = content
+    assignment.organization = Organization.current
     assignment.save!
   end
 

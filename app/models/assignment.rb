@@ -40,6 +40,12 @@ class Assignment < Progress
   alias_method :user, :submitter
 
   after_save :dirty_parent_by_submission!, if: :completion_changed?
+  before_save :set_current_organization, unless: :organization
+
+  # TODO: Momentary as some assignments may not have an associated organization
+  def set_current_organization
+    self.organization = Organization.current
+  end
 
   def completion_changed?
     completed_before_last_save? != completed?
@@ -206,11 +212,6 @@ class Assignment < Progress
 
   def files
     exercise.files_for(current_content)
-  end
-
-  def save!(*)
-    self.organization = Organization.current
-    super
   end
 
   private
