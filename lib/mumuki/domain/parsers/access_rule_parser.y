@@ -1,17 +1,19 @@
 class Mumuki::Domain::Parsers::AccessRuleParser
 rule
-  target: action content condition { result = {action: val[0], content: val[1].to_mumukit_grant, condition: val[2]} }
+  target: action grant condition { result = {action: val[0], grant: val[1].to_mumukit_grant}.merge(val[2]) }
+
+  # class, grant, *rest
 
   action: 'hide'  { result = :hide }
         | 'disable' { result = :disable }
 
-  content: STRING
+  grant: STRING
 
-  condition:  /* nothing */ { result = {kind: :always} }
-              | 'unless' role { result = {kind: :unless_role, role: val[1].to_sym} }
-              | 'while' 'unready' { result = {kind: :while_unready} }
-              | 'until' STRING { result = {kind: :until_date, date: DateTime.parse(val[1])} }
-              | 'at' STRING { result = {kind: :at_date, date: DateTime.parse(val[1])} }
+  condition:  /* nothing */ { result = {class: AccessRule::Always } }
+              | 'unless' role { result = {class: AccessRule::Unless, role: val[1].to_sym} }
+              | 'while' 'unready' { result = {class: AccessRule::WhileUnready} }
+              | 'until' STRING { result = {class: AccessRule::Until, date: DateTime.parse(val[1])} }
+              | 'at' STRING { result = {class: AccessRule::At, date: DateTime.parse(val[1])} }
 
   role: 'student' | 'teacher' | 'headmaster' | 'writer' | 'editor' | 'janitor' | 'moderator' | 'admin' | 'owner'
 

@@ -12,7 +12,7 @@ module Mumuki
     module Parsers
       class AccessRuleParser < Racc::Parser
 
-module_eval(<<'...end access_rule_parser.y/module_eval...', 'access_rule_parser.y', 21)
+module_eval(<<'...end access_rule_parser.y/module_eval...', 'access_rule_parser.y', 23)
 
   def parse(string)
     @q = tokenize(string)
@@ -155,7 +155,7 @@ Racc_token_to_s_table = [
   "$start",
   "target",
   "action",
-  "content",
+  "grant",
   "condition",
   "role" ]
 
@@ -167,19 +167,19 @@ Racc_debug_parser = false
 
 module_eval(<<'.,.,', 'access_rule_parser.y', 2)
   def _reduce_1(val, _values, result)
-     result = {action: val[0], content: val[1].to_mumukit_grant, condition: val[2]}
+     result = {action: val[0], grant: val[1].to_mumukit_grant}.merge(val[2])
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'access_rule_parser.y', 4)
+module_eval(<<'.,.,', 'access_rule_parser.y', 6)
   def _reduce_2(val, _values, result)
      result = :hide
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'access_rule_parser.y', 5)
+module_eval(<<'.,.,', 'access_rule_parser.y', 7)
   def _reduce_3(val, _values, result)
      result = :disable
     result
@@ -188,37 +188,37 @@ module_eval(<<'.,.,', 'access_rule_parser.y', 5)
 
 # reduce 4 omitted
 
-module_eval(<<'.,.,', 'access_rule_parser.y', 9)
-  def _reduce_5(val, _values, result)
-     result = {kind: :always}
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'access_rule_parser.y', 10)
-  def _reduce_6(val, _values, result)
-     result = {kind: :unless_role, role: val[1].to_sym}
-    result
-  end
-.,.,
-
 module_eval(<<'.,.,', 'access_rule_parser.y', 11)
-  def _reduce_7(val, _values, result)
-     result = {kind: :while_unready}
+  def _reduce_5(val, _values, result)
+     result = {class: AccessRule::Always }
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'access_rule_parser.y', 12)
-  def _reduce_8(val, _values, result)
-     result = {kind: :until_date, date: DateTime.parse(val[1])}
+  def _reduce_6(val, _values, result)
+     result = {class: AccessRule::Unless, role: val[1].to_sym}
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'access_rule_parser.y', 13)
+  def _reduce_7(val, _values, result)
+     result = {class: AccessRule::WhileUnready}
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'access_rule_parser.y', 14)
+  def _reduce_8(val, _values, result)
+     result = {class: AccessRule::Until, date: DateTime.parse(val[1])}
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'access_rule_parser.y', 15)
   def _reduce_9(val, _values, result)
-     result = {kind: :at_date, date: DateTime.parse(val[1])}
+     result = {class: AccessRule::At, date: DateTime.parse(val[1])}
     result
   end
 .,.,
