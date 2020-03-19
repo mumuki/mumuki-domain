@@ -36,7 +36,7 @@ class User < ApplicationRecord
   before_validation :set_uid!
   validates :uid, presence: true
 
-  resource_fields :uid, :social_id, :image_url, :email, :permissions, *profile_fields
+  resource_fields :uid, :social_id, :image_url, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
 
   def last_lesson
     last_guide.try(:lesson)
@@ -103,6 +103,13 @@ class User < ApplicationRecord
 
   def import_from_resource_h!(json)
     update! self.class.slice_resource_h json
+    verify_name!
+  end
+
+  def verify_name!
+    self.verified_first_name ||= first_name
+    self.verified_last_name ||= last_name
+    save!
   end
 
   def unsubscribe_from_reminders!
