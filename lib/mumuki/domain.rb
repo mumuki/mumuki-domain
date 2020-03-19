@@ -35,7 +35,8 @@ require_relative './domain/organization'
 require_relative './domain/helpers'
 require_relative './domain/syncable'
 require_relative './domain/store'
-require_relative './domain/parsers'
+require_relative './domain/access'
+require_relative './domain/workspace'
 
 class Mumukit::Assistant
   def self.valid?(rules)

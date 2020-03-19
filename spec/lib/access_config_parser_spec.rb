@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
-describe Mumuki::Domain::Parsers::AccessRuleParser do
-  let(:parser) { Mumuki::Domain::Parsers::AccessRuleParser.new }
+describe Mumuki::Domain::Access::ConfigParser do
+  let(:parser) { Mumuki::Domain::Access::ConfigParser.new }
 
   it { expect(parser.parse 'disable "*" while unready;').to eq [{action: :disable, class: AccessRule::WhileUnready, grant: '*'.to_mumukit_grant}] }
   it { expect(parser.tokenize 'disable "*" while unready;').to eq [['disable', 'disable'], [:STRING, '*'], ['while', 'while'], ['unready', 'unready'], [';', ';']] }

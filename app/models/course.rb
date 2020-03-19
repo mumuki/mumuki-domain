@@ -1,10 +1,13 @@
 class Course < ApplicationRecord
   include Mumuki::Domain::Syncable
   include Mumuki::Domain::Helpers::Course
+  include WithAccessRules
 
   validates_presence_of :slug, :shifts, :code, :days, :period, :description, :organization_id
   validates_uniqueness_of :slug
   belongs_to :organization
+
+  delegate :book, to: :organization
 
   has_many :invitations
 

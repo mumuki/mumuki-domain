@@ -1,6 +1,7 @@
 class Organization < ApplicationRecord
   include Mumuki::Domain::Syncable
   include Mumuki::Domain::Helpers::Organization
+  include WithAccessRules
 
   include Mumukit::Login::OrganizationHelpers
 
@@ -125,10 +126,6 @@ class Organization < ApplicationRecord
 
   def to_resource_h
     super.merge(book: book.slug)
-  end
-
-  def add_access_rule!(rule)
-    access_rules << rule
   end
 
   private

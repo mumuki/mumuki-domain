@@ -9,10 +9,10 @@ require 'racc/parser.rb'
 #
 module Mumuki
   module Domain
-    module Parsers
-      class AccessRuleParser < Racc::Parser
+    module Access
+      class ConfigParser < Racc::Parser
 
-module_eval(<<'...end access_rule_parser.y/module_eval...', 'access_rule_parser.y', 24)
+module_eval(<<'...end config_parser.y/module_eval...', 'config_parser.y', 24)
 
   def parse(string)
     @q = tokenize(string)
@@ -31,7 +31,7 @@ module_eval(<<'...end access_rule_parser.y/module_eval...', 'access_rule_parser.
   def next_token
     @q.shift
   end
-...end access_rule_parser.y/module_eval...
+...end config_parser.y/module_eval...
 ##### State transition tables begin ###
 
 racc_action_table = [
@@ -170,35 +170,35 @@ Racc_debug_parser = false
 
 # reduce 0 omitted
 
-module_eval(<<'.,.,', 'access_rule_parser.y', 2)
+module_eval(<<'.,.,', 'config_parser.y', 2)
   def _reduce_1(val, _values, result)
      result = []
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'access_rule_parser.y', 3)
+module_eval(<<'.,.,', 'config_parser.y', 3)
   def _reduce_2(val, _values, result)
      result = [val[0]] + val[1]
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'access_rule_parser.y', 5)
+module_eval(<<'.,.,', 'config_parser.y', 5)
   def _reduce_3(val, _values, result)
      result = {action: val[0], grant: val[1].to_mumukit_grant}.merge(val[2])
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'access_rule_parser.y', 7)
+module_eval(<<'.,.,', 'config_parser.y', 7)
   def _reduce_4(val, _values, result)
      result = :hide
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'access_rule_parser.y', 8)
+module_eval(<<'.,.,', 'config_parser.y', 8)
   def _reduce_5(val, _values, result)
      result = :disable
     result
@@ -207,35 +207,35 @@ module_eval(<<'.,.,', 'access_rule_parser.y', 8)
 
 # reduce 6 omitted
 
-module_eval(<<'.,.,', 'access_rule_parser.y', 12)
+module_eval(<<'.,.,', 'config_parser.y', 12)
   def _reduce_7(val, _values, result)
      result = {class: AccessRule::Always }
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'access_rule_parser.y', 13)
+module_eval(<<'.,.,', 'config_parser.y', 13)
   def _reduce_8(val, _values, result)
      result = {class: AccessRule::Unless, role: val[1].to_sym}
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'access_rule_parser.y', 14)
+module_eval(<<'.,.,', 'config_parser.y', 14)
   def _reduce_9(val, _values, result)
      result = {class: AccessRule::WhileUnready}
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'access_rule_parser.y', 15)
+module_eval(<<'.,.,', 'config_parser.y', 15)
   def _reduce_10(val, _values, result)
      result = {class: AccessRule::Until, date: DateTime.parse(val[1])}
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'access_rule_parser.y', 16)
+module_eval(<<'.,.,', 'config_parser.y', 16)
   def _reduce_11(val, _values, result)
      result = {class: AccessRule::At, date: DateTime.parse(val[1])}
     result
@@ -264,7 +264,7 @@ def _reduce_none(val, _values, result)
   val[0]
 end
 
-      end   # class AccessRuleParser
-    end   # module Parsers
+      end   # class ConfigParser
+    end   # module Access
   end   # module Domain
 end   # module Mumuki

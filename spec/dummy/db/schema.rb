@@ -15,6 +15,21 @@ ActiveRecord::Schema.define(version: 20200527180729) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "access_rules", force: :cascade do |t|
+    t.bigint "chapter_id"
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.boolean "active", default: true, null: false
+    t.integer "action", default: 0, null: false
+    t.datetime "date"
+    t.string "role"
+    t.string "type", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chapter_id"], name: "index_access_rules_on_chapter_id"
+    t.index ["owner_type", "owner_id"], name: "index_access_rules_on_owner_type_and_owner_id"
+  end
+
   create_table "api_clients", force: :cascade do |t|
     t.string "description"
     t.string "token"
@@ -94,6 +109,7 @@ ActiveRecord::Schema.define(version: 20200527180729) do
     t.integer "organization_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "access_config"
   end
 
   create_table "discussions", force: :cascade do |t|
@@ -298,6 +314,7 @@ ActiveRecord::Schema.define(version: 20200527180729) do
     t.text "settings", default: "{}", null: false
     t.text "theme", default: "{}", null: false
     t.text "profile", default: "{}", null: false
+    t.text "access_config"
     t.index ["book_id"], name: "index_organizations_on_book_id"
     t.index ["name"], name: "index_organizations_on_name", unique: true
   end

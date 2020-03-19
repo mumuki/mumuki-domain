@@ -1,4 +1,4 @@
-class Mumuki::Domain::Parsers::AccessRuleParser
+class Mumuki::Domain::Access::ConfigParser
 rule
   target: /* nothing */ { result = [] }
     | access_rule target { result = [val[0]] + val[1]}

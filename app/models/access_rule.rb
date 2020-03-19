@@ -2,7 +2,7 @@ class AccessRule < ApplicationRecord
   enum action: %i(hide disable)
 
   belongs_to :chapter
-  belongs_to :organization
+  belongs_to :owner, polymorphic: true
 
   alias_attribute :content, :chapter
 

@@ -215,7 +215,7 @@ describe Book, organization_workspace: :test do
 
   # - hide * until previous content finished
 
-  # todo: compile, add to course, create workspaces, reify AccessLevel and Action, active/inactive support, source_code
+  # todo: compile, add to course, create workspaces, reify Mumuki::Domain::Access::Level and Action, active/inactive support, source_code
 
   describe 'access rules' do
     let(:book) { create(:book, chapters: [chapter_1, chapter_2, chapter_3 ]) }
@@ -226,12 +226,12 @@ describe Book, organization_workspace: :test do
     let(:user) { create(:user) }
     let(:organization) { Organization.current }
 
-    it { expect(AccessLevel.sort %i(hidden enabled disabled enabled hidden)).to eq %i(hidden hidden disabled enabled enabled) }
-    it { expect(AccessLevel.min %i(hidden enabled disabled enabled hidden)).to eq :hidden }
+    it { expect(Mumuki::Domain::Access::Level.sort %i(hidden enabled disabled enabled hidden)).to eq %i(hidden hidden disabled enabled enabled) }
+    it { expect(Mumuki::Domain::Access::Level.min %i(hidden enabled disabled enabled hidden)).to eq :hidden }
 
 
     describe 'in organization' do
-      let(:workspace) { Workspace.new user, organization }
+      let(:workspace) { OrganizationWorkspace.new user, organization }
       context 'no access rules' do
         it { expect(workspace.access_levels_for(book.chapters)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
 
@@ -325,7 +325,7 @@ describe Book, organization_workspace: :test do
     end
 
     describe 'in course' do
-      let(:course) { create(:course, organization: organization) }
+      let(:course) { create(:course, slug: 'mumuki/a-course', organization: organization) }
       let(:workspace) { CourseWorkspace.new user, course }
 
       context 'no access rules' do

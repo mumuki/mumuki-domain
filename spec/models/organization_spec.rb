@@ -212,4 +212,33 @@ describe Organization, organization_workspace: :test do
 
     it { expect(organization.description_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
   end
+
+  describe 'access_config' do
+    let(:organization) { Organization.current }
+    let(:config) { 'hide "*" while unready;' }
+    before do
+      create(:chapter)
+      create(:chapter)
+      reindex_current_organization!
+    end
+
+    describe 'access_config=' do
+      before { organization.access_config = config }
+
+      context 'before recompiling' do
+        it { expect(organization.access_rules.size).to eq 0 }
+      end
+
+      context 'after recompiling' do
+        before { organization.recompile_access_config! }
+        it { expect(organization.access_rules.size).to eq organization.book.chapters.size }
+      end
+    end
+
+    describe 'configure_access!' do
+      before { organization.configure_access! config }
+      it { expect(organization.access_rules.size).to eq organization.book.chapters.size }
+      it { expect(organization.access_config).to eq config }
+    end
+  end
 end
