@@ -225,101 +225,119 @@ describe Book, organization_workspace: :test do
 
     let(:user) { create(:user) }
     let(:organization) { Organization.current }
-    let(:workspace) { Workspace.new user, organization }
-
 
     it { expect(AccessLevel.sort %i(hidden enabled disabled enabled hidden)).to eq %i(hidden hidden disabled enabled enabled) }
     it { expect(AccessLevel.min %i(hidden enabled disabled enabled hidden)).to eq :hidden }
 
 
-    context 'no access rules' do
-      it { expect(workspace.access_levels_for(book.chapters)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
+    describe 'in organization' do
+      let(:workspace) { Workspace.new user, organization }
+      context 'no access rules' do
+        it { expect(workspace.access_levels_for(book.chapters)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
 
-      it { expect(book.enabled_chapters_of(workspace)).to eq book.chapters }
-      it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
-    end
-
-    context 'hide mumuki/t1' do
-      let(:rule) { AccessRule::Always.new(content: chapter_1, action: :hide) }
-
-      before { organization.add_access_rule! rule }
-
-      it { expect(rule.to_s).to eq 'hide mumuki/t1' }
-      it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_2, chapter_3] }
-      it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :hidden, chapter_2 => :enabled, chapter_3 => :enabled }
-    end
-
-    context 'disable mumuki/t1' do
-      let(:rule) { AccessRule::Always.new(content: chapter_1, action: :disable) }
-      before { organization.add_access_rule! rule }
-
-      it { expect(rule.to_s).to eq 'disable mumuki/t1' }
-      it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_2, chapter_3] }
-      it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :disabled, chapter_2 => :enabled, chapter_3 => :enabled }
-    end
-
-    context 'hide mumuki/t1 at 2020-10-10' do
-      let(:rule) { AccessRule::At.new(content: chapter_2, action: :hide, date: date) }
-      before { organization.add_access_rule! rule }
-
-      context 'after date' do
-        let(:date) { 5.minutes.ago }
-
-        it { expect(rule.to_s).to eq "hide mumuki/t2 at #{date}" }
-        it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_1, chapter_3] }
-        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :hidden, chapter_3 => :enabled }
-      end
-
-      context 'before date' do
-        let(:date) { 5.minutes.since }
-
-        it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
-        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
-      end
-    end
-
-    context 'disable mumuki/t1 until 2020-10-10' do
-      let(:rule) { AccessRule::Until.new(content: chapter_2, action: :disable, date: date) }
-      before { organization.add_access_rule! rule }
-
-
-      context 'after date' do
-        let(:date) { 5.minutes.ago }
-
-        it { expect(rule.to_s).to eq "disable mumuki/t2 until #{date}" }
-        it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+        it { expect(book.enabled_chapters_of(workspace)).to eq book.chapters }
         it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
       end
 
-      context 'before date' do
-        let(:date) { 5.minutes.since }
+      context 'hide mumuki/t1' do
+        let(:rule) { AccessRule::Always.new(content: chapter_1, action: :hide) }
 
-        it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_1, chapter_3] }
-        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :disabled, chapter_3 => :enabled }
+        before { organization.add_access_rule! rule }
+
+        it { expect(rule.to_s).to eq 'hide mumuki/t1' }
+        it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_2, chapter_3] }
+        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :hidden, chapter_2 => :enabled, chapter_3 => :enabled }
+      end
+
+      context 'disable mumuki/t1' do
+        let(:rule) { AccessRule::Always.new(content: chapter_1, action: :disable) }
+        before { organization.add_access_rule! rule }
+
+        it { expect(rule.to_s).to eq 'disable mumuki/t1' }
+        it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_2, chapter_3] }
+        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :disabled, chapter_2 => :enabled, chapter_3 => :enabled }
+      end
+
+      context 'hide mumuki/t1 at 2020-10-10' do
+        let(:rule) { AccessRule::At.new(content: chapter_2, action: :hide, date: date) }
+        before { organization.add_access_rule! rule }
+
+        context 'after date' do
+          let(:date) { 5.minutes.ago }
+
+          it { expect(rule.to_s).to eq "hide mumuki/t2 at #{date}" }
+          it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_1, chapter_3] }
+          it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :hidden, chapter_3 => :enabled }
+        end
+
+        context 'before date' do
+          let(:date) { 5.minutes.since }
+
+          it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+          it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
+        end
+      end
+
+      context 'disable mumuki/t1 until 2020-10-10' do
+        let(:rule) { AccessRule::Until.new(content: chapter_2, action: :disable, date: date) }
+        before { organization.add_access_rule! rule }
+
+
+        context 'after date' do
+          let(:date) { 5.minutes.ago }
+
+          it { expect(rule.to_s).to eq "disable mumuki/t2 until #{date}" }
+          it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+          it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
+        end
+
+        context 'before date' do
+          let(:date) { 5.minutes.since }
+
+          it { expect(book.enabled_chapters_of(workspace)).to eq [chapter_1, chapter_3] }
+          it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :disabled, chapter_3 => :enabled }
+        end
+      end
+
+      context 'hide mumuki/t1 unless teacher' do
+        let(:rule) { AccessRule::Unless.new(content: chapter_3, action: :hide, role: :teacher) }
+        before { organization.add_access_rule! rule }
+
+
+        it { expect(rule.to_s).to eq 'hide mumuki/t3 unless teacher' }
+
+        context 'with role' do
+          before { user.add_permission! :teacher, organization.slug }
+
+          it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
+        end
+
+        context 'with upper role' do
+          before { user.add_permission! :headmaster, organization.slug }
+
+          it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
+        end
+
+        context 'without roles' do
+          it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :hidden }
+        end
       end
     end
 
-    context 'hide mumuki/t1 unless teacher' do
-      let(:rule) { AccessRule::Unless.new(content: chapter_3, action: :hide, role: :teacher) }
-      before { organization.add_access_rule! rule }
+    describe 'in course' do
+      let(:course) { create(:course, organization: organization) }
+      let(:workspace) { CourseWorkspace.new user, course }
 
-
-      it { expect(rule.to_s).to eq 'hide mumuki/t3 unless teacher' }
-
-      context 'with role' do
-        before { user.add_permission! :teacher, organization.slug }
-
+      context 'no access rules' do
         it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
       end
 
-      context 'with upper role' do
-        before { user.add_permission! :headmaster, organization.slug }
+      context 'hide mumuki/t1' do
+        let(:rule) { AccessRule.compile 'hide mumuki/t1' }
 
-        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :enabled }
-      end
+        before { course.add_access_rule! rule }
 
-      context 'without roles' do
-        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :enabled, chapter_2 => :enabled, chapter_3 => :hidden }
+        it { expect(book.chapter_access_levels_in(workspace)).to eq chapter_1 => :hidden, chapter_2 => :enabled, chapter_3 => :enabled }
       end
     end
   end

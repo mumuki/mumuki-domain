@@ -1,8 +1,9 @@
 class Mumuki::Domain::Parsers::AccessRuleParser
 rule
-  target: action grant condition { result = {action: val[0], grant: val[1].to_mumukit_grant}.merge(val[2]) }
+  target: /* nothing */ { result = [] }
+    | access_rule target { result = [val[0]] + val[1]}
 
-  # class, grant, *rest
+  access_rule: action grant condition ';' { result = {action: val[0], grant: val[1].to_mumukit_grant}.merge(val[2]) }
 
   action: 'hide'  { result = :hide }
         | 'disable' { result = :disable }
@@ -29,7 +30,7 @@ rule
 
   def tokenize(string)
     string
-      .scan(/"([^"]*)"|(\w+)/)
+      .scan(/"([^"]*)"|(\w+|;)/)
       .map do |str, token|
         str ? [:STRING, str] : [token, token]
       end
