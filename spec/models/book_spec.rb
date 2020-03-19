@@ -215,6 +215,8 @@ describe Book, organization_workspace: :test do
 
   # - hide * until previous content finished
 
+  # todo: compile, add to course, create workspaces, reify AccessLevel and Action, active/inactive support, source_code
+
   describe 'access rules' do
     let(:book) { create(:book, chapters: [chapter_1, chapter_2, chapter_3 ]) }
     let(:chapter_1) { build(:chapter, slug: 'mumuki/t1') }
