@@ -216,6 +216,10 @@ class Exercise < ApplicationRecord
     guide.settings.deep_merge super
   end
 
+  def pending_siblings_for(user)
+    guide.pending_exercises(user)
+  end
+
   private
 
   def evaluation_class

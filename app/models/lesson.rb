@@ -17,4 +17,8 @@ class Lesson < ApplicationRecord
   def structural_parent
     topic
   end
+
+  def pending_siblings_for(user)
+    topic.pending_lessons(user)
+  end
 end
