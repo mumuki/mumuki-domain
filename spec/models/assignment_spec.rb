@@ -173,8 +173,9 @@ describe Assignment, organization_workspace: :test do
     end
 
     context 'when solution is submitted after the assignment was created without an organization' do
-      before { assignment = exercise.assignment_for(user); assignment.organization = nil; assignment.save(validate: false) }
-
+      before { exercise.assignment_for(user).update_column(:organization_id, nil) }
+      before { exercise.submit_solution!(user, content: 'foo') }
+      
       it 'should persist what organization it was submitted in' do
         expect(exercise.assignment_for(user).organization).to eq Organization.current
       end
