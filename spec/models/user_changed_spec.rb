@@ -16,8 +16,7 @@ describe User do
     it { expect(user.name).to eq 'Foo Bar' }
 
     context  'when user is created with no verified name' do
-      it { expect(user.verified_first_name).to eq 'Foo' }
-      it { expect(user.verified_last_name).to eq 'Bar' }
+      it { expect(user.verified_first_name).to be_nil }
     end
   end
 
