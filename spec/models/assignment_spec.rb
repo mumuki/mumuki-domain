@@ -238,4 +238,125 @@ describe Assignment, organization_workspace: :test do
     it { expect(assignment.extra).to eq "some_email\nsome_first_name\nsome_last_name\n" }
   end
 
+  describe 'submission status' do
+    let(:exercise) { create(:indexed_exercise) }
+    let(:assignment) { create(:assignment, exercise: exercise, status: submission_status) }
+
+    context 'pending' do
+      let(:submission_status) { :pending }
+
+      it 'does not need retrying' do
+        expect(assignment.should_retry?).to be false
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'running' do
+      let(:submission_status) { :running }
+
+      it 'does not need retrying' do
+        expect(assignment.should_retry?).to be false
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'passed' do
+      let(:submission_status) { :passed }
+
+      it 'does not need retrying' do
+        expect(assignment.should_retry?).to be false
+      end
+
+      it 'is solved and completed' do
+        expect(assignment.solved?).to be true
+        expect(assignment.completed?).to be true
+      end
+    end
+
+    context 'failed' do
+      let(:submission_status) { :failed }
+
+      it 'needs retrying' do
+        expect(assignment.should_retry?).to be true
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'errored' do
+      let(:submission_status) { :errored }
+
+      it 'needs retrying' do
+        expect(assignment.should_retry?).to be true
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'aborted' do
+      let(:submission_status) { :aborted }
+
+      it 'does not need retrying' do
+        expect(assignment.should_retry?).to be false
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'passed with warnings' do
+      let(:submission_status) { :passed_with_warnings }
+
+      it 'needs retrying' do
+        expect(assignment.should_retry?).to be true
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'manual evaluation pending' do
+      let(:submission_status) { :manual_evaluation_pending }
+
+      it 'does not need retrying' do
+        expect(assignment.should_retry?).to be false
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'skipped' do
+      let(:submission_status) { :skipped }
+
+      it 'does not need retrying' do
+        expect(assignment.should_retry?).to be false
+      end
+
+      it 'is solved and completed' do
+        expect(assignment.solved?).to be true
+        expect(assignment.completed?).to be true
+      end
+    end
+  end
 end
