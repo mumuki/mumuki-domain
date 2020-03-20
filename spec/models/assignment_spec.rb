@@ -116,6 +116,12 @@ describe Assignment, organization_workspace: :test do
       it { expect(assignment.result).to eq('took more thn 4 seconds') }
     end
 
+    context 'when run skips unstructured' do
+      before { assignment.run_update! { {result: 'skip', status: :skipped} } }
+      it { expect(assignment.status).to eq(:skipped) }
+      it { expect(assignment.result).to eq('skip') }
+    end
+
     context 'when run passes with warnings unstructured' do
       let(:runner_response) do
         {status: :passed_with_warnings,
