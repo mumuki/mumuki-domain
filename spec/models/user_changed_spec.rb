@@ -14,6 +14,17 @@ describe User do
     before { User.import_from_resource_h! user_json }
     it { expect(user.uid).to eq 'foo@bar.com' }
     it { expect(user.name).to eq 'Foo Bar' }
+
+    context  'when user is created with no verified name' do
+      it { expect(user.verified_first_name).to be_nil }
+    end
+  end
+
+  context 'when user is created with verified names' do
+    let(:verified_user_json) { user_json.merge(verified_first_name: 'Baz', verified_last_name: 'Foobar') }
+    before { User.import_from_resource_h! verified_user_json }
+    it { expect(user.verified_first_name).to eq 'Baz' }
+    it { expect(user.verified_last_name).to eq 'Foobar' }
   end
 
   context 'when user exists' do
