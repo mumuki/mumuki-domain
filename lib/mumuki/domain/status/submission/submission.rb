@@ -38,6 +38,10 @@ module Mumuki::Domain::Status::Submission
   end
 
   def completed?
-    passed?
+    solved?
+  end
+
+  def solved?
+    passed? || skipped?
   end
 end
