@@ -103,7 +103,6 @@ class User < ApplicationRecord
 
   def import_from_resource_h!(json)
     update! self.class.slice_resource_h json
-    verify_name!
   end
 
   def verify_name!
