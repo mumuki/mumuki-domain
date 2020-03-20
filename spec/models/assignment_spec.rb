@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Assignment, organization_workspace: :test do
-
   describe 'messages' do
     let(:student) { create(:user) }
     let(:problem) { create(:problem, manual_evaluation: true) }
@@ -67,11 +66,13 @@ describe Assignment, organization_workspace: :test do
   describe '#expectation_results_visible?' do
     let(:haskell) { create(:language, visible_success_output: true) }
     let(:exercise) { create(:exercise) }
+
     context 'should show expectation with failed submissions' do
       let(:failed_submission) { create(:assignment, status: :failed, expectation_results: [{binding: "foo", inspection: "HasBinding", result: :failed}]) }
       it { expect(failed_submission.expectation_results_visible?).to be true }
       it { expect(failed_submission.failed_expectation_results.size).to eq 1 }
     end
+
     context 'should show expectation with errored submissions' do
       let(:errored_submission) { create(:assignment, status: :errored, expectation_results: [{binding: "foo", inspection: "HasBinding", result: :failed}]) }
       it { expect(errored_submission.expectation_results_visible?).to be true }
@@ -96,6 +97,7 @@ describe Assignment, organization_workspace: :test do
   describe '#run_update!' do
     let(:exercise) { create(:indexed_exercise) }
     let(:assignment) { create(:assignment, exercise: exercise) }
+
     context 'when run passes unstructured' do
       before { assignment.run_update! { {result: 'ok', status: :passed} } }
       it { expect(assignment.status).to eq(:passed) }
@@ -131,6 +133,7 @@ describe Assignment, organization_workspace: :test do
       it { expect(assignment.expectation_results).to eq(runner_response[:expectation_results]) }
       it { expect(assignment.feedback).to eq('foo') }
     end
+
     context 'when run raises exception' do
       before do
         begin
@@ -166,7 +169,6 @@ describe Assignment, organization_workspace: :test do
     before { exercise.submit_solution!(user, content: 'foo') }
 
     context 'when solution is submitted for the first time' do
-
       it 'should persist what organization it was submitted in' do
         expect(exercise.assignment_for(user).organization).to eq Organization.current
       end
@@ -211,7 +213,6 @@ describe Assignment, organization_workspace: :test do
   end
 
   describe '#evaluate_manually!' do
-
     let(:user) { create(:user) }
     let(:exercise) { create(:exercise, manual_evaluation: true, test: nil, expectations: []) }
     let(:assignment) { exercise.submit_solution!(user, content: '') }
