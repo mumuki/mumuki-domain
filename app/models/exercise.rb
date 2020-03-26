@@ -55,6 +55,10 @@ class Exercise < ApplicationRecord
     guide.done_for?(user)
   end
 
+  def choice?
+    false
+  end
+
   def previous
     sibling_at number.pred
   end
@@ -192,8 +196,15 @@ class Exercise < ApplicationRecord
     end
   end
 
+  # An exercises with hidden results cannot be limited
+  # as those exercises can be submitted as many times as the
+  # student wants because not result output is given
   def limited?
-    navigable_parent.limited_for?(self)
+    !results_hidden? && navigable_parent.limited_for?(self)
+  end
+
+  def results_hidden?
+    navigable_parent&.results_hidden_for?(self)
   end
 
   def files_for(current_content)
