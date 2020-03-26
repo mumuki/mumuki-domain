@@ -198,7 +198,7 @@ class Exercise < ApplicationRecord
 
   # An exercises with hidden results cannot be limited
   # as those exercises can be submitted as many times as the
-  # student wants because not result output is given
+  # student wants because no result output is given
   def limited?
     !results_hidden? && navigable_parent.limited_for?(self)
   end
