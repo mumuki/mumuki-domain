@@ -522,4 +522,68 @@ describe Exercise, organization_workspace: :test do
     it { expect(files[1].highlight_mode).to eq 'javascript' }
     it { expect(files.to_json).to eq assignment.files.to_json }
   end
+
+  describe 'limited? && results_hidden?' do
+    let(:choice) { create(:multiple_choice) }
+    let(:problem) { create(:problem) }
+    let(:guide) { create(:guide, exercises: [choice, problem]) }
+
+    context 'in regular guide' do
+      let!(:chapter) { create(:chapter, lessons: [create(:lesson, guide: guide)]) }
+      before { reindex_current_organization! }
+
+      it { expect(choice.limited?).to eq false }
+      it { expect(problem.limited?).to eq false }
+      it { expect(choice.results_hidden?).to eq false }
+      it { expect(problem.results_hidden?).to eq false }
+    end
+
+    context 'in choice capped exam' do
+      let!(:exam) {create(:exam, max_choice_submissions: 2, guide: guide)}
+      it { expect(choice.limited?).to eq true }
+      it { expect(problem.limited?).to eq false }
+      it { expect(choice.results_hidden?).to eq false }
+      it { expect(problem.results_hidden?).to eq false }
+    end
+
+    context 'in problem capped exam' do
+      let!(:exam) {create(:exam, max_problem_submissions: 2, guide: guide)}
+      it { expect(choice.limited?).to eq false }
+      it { expect(problem.limited?).to eq true }
+      it { expect(choice.results_hidden?).to eq false }
+      it { expect(problem.results_hidden?).to eq false }
+    end
+
+    context 'in problem capped exam with results hidden for choice' do
+      let!(:exam) {create(:exam, max_problem_submissions: 2, results_hidden_for_choices: true, guide: guide)}
+      it { expect(choice.limited?).to eq false }
+      it { expect(problem.limited?).to eq true }
+      it { expect(choice.results_hidden?).to eq true }
+      it { expect(problem.results_hidden?).to eq false }
+    end
+
+    context 'in choice capped exam with results hidden for choice' do
+      let!(:exam) {create(:exam, max_choice_submissions: 2, results_hidden_for_choices: true, guide: guide)}
+      it { expect(choice.limited?).to eq false }
+      it { expect(problem.limited?).to eq false }
+      it { expect(choice.results_hidden?).to eq true }
+      it { expect(problem.results_hidden?).to eq false }
+    end
+
+    context 'in non-capped exam' do
+      let!(:exam) {create(:exam, guide: guide)}
+      it { expect(choice.limited?).to eq false }
+      it { expect(problem.limited?).to eq false }
+      it { expect(choice.results_hidden?).to eq false }
+      it { expect(problem.results_hidden?).to eq false }
+    end
+
+    context 'in non-capped exam with results hidden for choice' do
+      let!(:exam) {create(:exam, results_hidden_for_choices: true, guide: guide)}
+      it { expect(choice.limited?).to eq false }
+      it { expect(problem.limited?).to eq false }
+      it { expect(choice.results_hidden?).to eq true }
+      it { expect(problem.results_hidden?).to eq false }
+    end
+  end
 end

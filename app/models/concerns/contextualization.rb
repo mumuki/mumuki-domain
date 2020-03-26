@@ -43,8 +43,13 @@ module Contextualization
     output_content_type.to_html test_results.first[:result]
   end
 
-  def results_visible?
-    (visible_success_output? || !passed?) && !exercise.choices? && !manual_evaluation_pending?
+  # It tells whether the results body should be hidden or not.
+  # The results body shouldn't be displayed when:
+  # * The contextualization passes and it shouldn't output anything on success.
+  # * It's a choice exercise.
+  # * It hasn't been evaluated manually yet.
+  def results_body_hidden?
+    (passed? && !visible_success_output?) || exercise.choice? || manual_evaluation_pending?
   end
 
   def result_preview
