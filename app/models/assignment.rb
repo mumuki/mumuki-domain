@@ -53,6 +53,14 @@ class Assignment < Progress
     update! status: teacher_evaluation[:status], manual_evaluation_comment: teacher_evaluation[:manual_evaluation]
   end
 
+  def visible_status
+    if results_hidden? && !pending?
+      :manual_evaluation_pending.to_submission_status
+    else
+      super
+    end
+  end
+
   def persist_submission!(submission)
     transaction do
       messages.destroy_all if submission_id.present?

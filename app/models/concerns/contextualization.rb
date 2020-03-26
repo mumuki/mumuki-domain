@@ -56,6 +56,14 @@ module Contextualization
     result.truncate(100) unless passed?
   end
 
+  def visible_status
+    status
+  end
+
+  def iconize
+    visible_status.iconize
+  end
+
   def result_html
     output_content_type.to_html(result)
   end
