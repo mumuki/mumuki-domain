@@ -4,7 +4,7 @@ module Mumuki::Domain::Helpers::Organization
 
   included do
     delegate *Mumuki::Domain::Organization::Theme.accessors, to: :theme
-    delegate *Mumuki::Domain::Organization::Settings.accessors, :private?, :login_settings, to: :settings
+    delegate *Mumuki::Domain::Organization::Settings.accessors, :private?, :login_settings, :archived?, to: :settings
     delegate *Mumuki::Domain::Organization::Profile.accessors, :locale_json, to: :profile
   end
 

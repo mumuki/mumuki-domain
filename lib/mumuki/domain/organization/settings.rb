@@ -11,7 +11,9 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
                       :embeddable?,
                       :immersive?,
                       :forum_enabled?,
-                      :report_issue_enabled?
+                      :report_issue_enabled?,
+                      :archiving_enabled?,
+                      :archive_from
 
   def private?
     !public?
@@ -23,5 +25,9 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
 
   def forum_discussions_minimal_role
     (@forum_discussions_minimal_role || 'student').to_sym
+  end
+
+  def archived?
+    archiving_enabled? && archive_from.to_datetime < DateTime.now
   end
 end
