@@ -89,7 +89,7 @@ class User < ApplicationRecord
     make_student_of! invitation.course_slug
   end
 
-  def copy_progress_to!(another)
+  def transfer_progress_to!(another)
     transaction do
       assignments.update_all(submitter_id: another.id)
       if another.never_submitted? || last_submission_date.try { |it| it > another.last_submission_date }
@@ -132,12 +132,6 @@ class User < ApplicationRecord
       'user_first_name' => first_name,
       'user_last_name' => last_name
     }
-  end
-
-  def resubmit!(organization = nil)
-    organization = Organization.find_by_name(organization) || main_organization
-    organization.switch!
-    assignments.each { |it| it.notify! rescue nil }
   end
 
   def currently_in_exam?
