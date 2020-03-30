@@ -196,7 +196,7 @@ class Exercise < ApplicationRecord
     end
   end
 
-  # An exercises with hidden results cannot be limited
+  # An exercise with hidden results cannot be limited
   # as those exercises can be submitted as many times as the
   # student wants because no result output is given
   def limited?
