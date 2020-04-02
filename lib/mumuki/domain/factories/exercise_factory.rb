@@ -51,6 +51,13 @@ FactoryBot.define do
     test { 'dont care' }
   end
 
+  factory :multiple_choice, parent: :problem do
+    name { 'A multiple choice problem' }
+    editor { :multiple_choice }
+    description { 'Simple multiple choice problem' }
+    choices { [{value: 'a', checked: true}, {value: 'b', checked: false }] }
+  end
+
   factory :interactive, class: Interactive, parent: :challenge do
     name { 'An interactive problem' }
     description { 'Simple interactive problem' }

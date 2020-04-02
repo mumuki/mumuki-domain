@@ -161,6 +161,10 @@ class Exam < ApplicationRecord
     max_attempts_for(exercise).present?
   end
 
+  def results_hidden_for?(exercise)
+    exercise.choice? && results_hidden_for_choices?
+  end
+
   def resettable?
     false
   end

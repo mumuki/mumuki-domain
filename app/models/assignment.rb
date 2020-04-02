@@ -18,7 +18,7 @@ class Assignment < Progress
   validates_presence_of :exercise, :submitter
 
   delegate :language, :name, :navigable_parent, :settings,
-           :limited?, :input_kids?, :choice?, to: :exercise
+           :limited?, :input_kids?, :choice?, :results_hidden?, to: :exercise
 
   alias_attribute :status, :submission_status
   alias_attribute :attempts_count, :attemps_count
@@ -57,6 +57,14 @@ class Assignment < Progress
 
   def evaluate_manually!(teacher_evaluation)
     update! status: teacher_evaluation[:status], manual_evaluation_comment: teacher_evaluation[:manual_evaluation]
+  end
+
+  def visible_status
+    if results_hidden? && !pending?
+      :manual_evaluation_pending.to_submission_status
+    else
+      super
+    end
   end
 
   def persist_submission!(submission)
@@ -190,7 +198,7 @@ class Assignment < Progress
     navigable_parent.attempts_left_for(self)
   end
 
-  # Tells wether the submitter of this
+  # Tells whether the submitter of this
   # assignment can keep on sending submissions
   # which is true for non limited or for assignments
   # that have not reached their submissions limit

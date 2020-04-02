@@ -43,12 +43,20 @@ module Contextualization
     output_content_type.to_html test_results.first[:result]
   end
 
-  def results_visible?
-    (visible_success_output? || !passed?) && !exercise.choices? && !manual_evaluation_pending?
+  def results_body_hidden?
+    (passed? && !visible_success_output?) || exercise.choice? || manual_evaluation_pending?
   end
 
   def result_preview
     result.truncate(100) unless passed?
+  end
+
+  def visible_status
+    status
+  end
+
+  def iconize
+    visible_status.iconize
   end
 
   def result_html

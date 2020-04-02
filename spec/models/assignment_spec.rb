@@ -57,11 +57,11 @@ describe Assignment, organization_workspace: :test do
     let(:passed_submission_with_visible_output_language) { create(:assignment, status: :passed, exercise: gobstones_exercise) }
     let(:manual_evaluation_pending_submission) { create(:assignment, status: :manual_evaluation_pending) }
 
-    it { expect(passed_submission.results_visible?).to be false }
+    it { expect(passed_submission.results_body_hidden?).to be true }
     it { expect(failed_submission.should_retry?).to be true }
-    it { expect(failed_submission.results_visible?).to be true }
-    it { expect(passed_submission_with_visible_output_language.results_visible?).to be true }
-    it { expect(manual_evaluation_pending_submission.results_visible?).to be false }
+    it { expect(failed_submission.results_body_hidden?).to be false }
+    it { expect(passed_submission_with_visible_output_language.results_body_hidden?).to be false }
+    it { expect(manual_evaluation_pending_submission.results_body_hidden?).to be true }
   end
 
   describe '#expectation_results_visible?' do
