@@ -47,7 +47,7 @@ describe Assignment, organization_workspace: :test do
     it { expect(assignment.status).to eq :manual_evaluation_pending }
   end
 
-  describe '#results_visible?' do
+  describe '#results_body_hidden?' do
     let(:gobstones) { create(:language, visible_success_output: true) }
     let(:gobstones_exercise) { create(:indexed_exercise, language: gobstones) }
     let(:exercise) { create(:indexed_exercise, language: create(:haskell)) }
@@ -175,7 +175,7 @@ describe Assignment, organization_workspace: :test do
     context 'when solution is submitted after the assignment was created without an organization' do
       before { exercise.assignment_for(user).update_column(:organization_id, nil) }
       before { exercise.submit_solution!(user, content: 'foo') }
-      
+
       it 'should persist what organization it was submitted in' do
         expect(exercise.assignment_for(user).organization).to eq Organization.current
       end
