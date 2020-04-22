@@ -44,7 +44,7 @@ module Contextualization
   end
 
   def results_body_hidden?
-    (solved? && !visible_success_output?) || exercise.choice? || manual_evaluation_pending?
+    (passed? && !visible_success_output?) || exercise.choice? || manual_evaluation_pending? || skipped?
   end
 
   def visible_status
