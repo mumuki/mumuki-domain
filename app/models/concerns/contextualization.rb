@@ -25,7 +25,7 @@ module Contextualization
 
     delegate :visible_success_output?, to: :exercise
     delegate :output_content_type, to: :language
-    delegate :should_retry?, :to_submission_status, :completed?, *Mumuki::Domain::Status::Submission.test_selectors, to: :submission_status
+    delegate :should_retry?, :to_submission_status, :completed?, :solved?, *Mumuki::Domain::Status::Submission.test_selectors, to: :submission_status
     delegate :inspection_keywords, to: :exercise
   end
 
@@ -44,11 +44,7 @@ module Contextualization
   end
 
   def results_body_hidden?
-    (passed? && !visible_success_output?) || exercise.choice? || manual_evaluation_pending?
-  end
-
-  def result_preview
-    result.truncate(100) unless passed?
+    (solved? && !visible_success_output?) || exercise.choice? || manual_evaluation_pending?
   end
 
   def visible_status

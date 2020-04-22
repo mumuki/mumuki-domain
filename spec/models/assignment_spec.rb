@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Assignment, organization_workspace: :test do
-
   describe 'messages' do
     let(:student) { create(:user) }
     let(:problem) { create(:problem, manual_evaluation: true) }
@@ -54,11 +53,12 @@ describe Assignment, organization_workspace: :test do
 
     let(:failed_submission) { create(:assignment, status: :failed) }
     let(:passed_submission) { create(:assignment, status: :passed, expectation_results: [], exercise: exercise) }
+    let(:skipped_submission) { create(:assignment, status: :skipped, expectation_results: [], exercise: exercise) }
     let(:passed_submission_with_visible_output_language) { create(:assignment, status: :passed, exercise: gobstones_exercise) }
     let(:manual_evaluation_pending_submission) { create(:assignment, status: :manual_evaluation_pending) }
 
     it { expect(passed_submission.results_body_hidden?).to be true }
-    it { expect(failed_submission.should_retry?).to be true }
+    it { expect(skipped_submission.results_body_hidden?).to be true }
     it { expect(failed_submission.results_body_hidden?).to be false }
     it { expect(passed_submission_with_visible_output_language.results_body_hidden?).to be false }
     it { expect(manual_evaluation_pending_submission.results_body_hidden?).to be true }
@@ -67,11 +67,13 @@ describe Assignment, organization_workspace: :test do
   describe '#expectation_results_visible?' do
     let(:haskell) { create(:language, visible_success_output: true) }
     let(:exercise) { create(:exercise) }
+
     context 'should show expectation with failed submissions' do
       let(:failed_submission) { create(:assignment, status: :failed, expectation_results: [{binding: "foo", inspection: "HasBinding", result: :failed}]) }
       it { expect(failed_submission.expectation_results_visible?).to be true }
       it { expect(failed_submission.failed_expectation_results.size).to eq 1 }
     end
+
     context 'should show expectation with errored submissions' do
       let(:errored_submission) { create(:assignment, status: :errored, expectation_results: [{binding: "foo", inspection: "HasBinding", result: :failed}]) }
       it { expect(errored_submission.expectation_results_visible?).to be true }
@@ -96,6 +98,7 @@ describe Assignment, organization_workspace: :test do
   describe '#run_update!' do
     let(:exercise) { create(:indexed_exercise) }
     let(:assignment) { create(:assignment, exercise: exercise) }
+
     context 'when run passes unstructured' do
       before { assignment.run_update! { {result: 'ok', status: :passed} } }
       it { expect(assignment.status).to eq(:passed) }
@@ -112,6 +115,12 @@ describe Assignment, organization_workspace: :test do
       before { assignment.run_update! { {result: 'took more thn 4 seconds', status: :aborted} } }
       it { expect(assignment.status).to eq(:aborted) }
       it { expect(assignment.result).to eq('took more thn 4 seconds') }
+    end
+
+    context 'when run skips unstructured' do
+      before { assignment.run_update! { {result: 'skip', status: :skipped} } }
+      it { expect(assignment.status).to eq(:skipped) }
+      it { expect(assignment.result).to eq('skip') }
     end
 
     context 'when run passes with warnings unstructured' do
@@ -131,6 +140,7 @@ describe Assignment, organization_workspace: :test do
       it { expect(assignment.expectation_results).to eq(runner_response[:expectation_results]) }
       it { expect(assignment.feedback).to eq('foo') }
     end
+
     context 'when run raises exception' do
       before do
         begin
@@ -166,7 +176,6 @@ describe Assignment, organization_workspace: :test do
     before { exercise.submit_solution!(user, content: 'foo') }
 
     context 'when solution is submitted for the first time' do
-
       it 'should persist what organization it was submitted in' do
         expect(exercise.assignment_for(user).organization).to eq Organization.current
       end
@@ -211,7 +220,6 @@ describe Assignment, organization_workspace: :test do
   end
 
   describe '#evaluate_manually!' do
-
     let(:user) { create(:user) }
     let(:exercise) { create(:exercise, manual_evaluation: true, test: nil, expectations: []) }
     let(:assignment) { exercise.submit_solution!(user, content: '') }
@@ -231,4 +239,125 @@ describe Assignment, organization_workspace: :test do
     it { expect(assignment.extra).to eq "some_email\nsome_first_name\nsome_last_name\n" }
   end
 
+  describe 'submission status' do
+    let(:exercise) { create(:indexed_exercise) }
+    let(:assignment) { create(:assignment, exercise: exercise, status: submission_status) }
+
+    context 'pending' do
+      let(:submission_status) { :pending }
+
+      it 'does not need retrying' do
+        expect(assignment.should_retry?).to be false
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'running' do
+      let(:submission_status) { :running }
+
+      it 'does not need retrying' do
+        expect(assignment.should_retry?).to be false
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'passed' do
+      let(:submission_status) { :passed }
+
+      it 'does not need retrying' do
+        expect(assignment.should_retry?).to be false
+      end
+
+      it 'is solved and completed' do
+        expect(assignment.solved?).to be true
+        expect(assignment.completed?).to be true
+      end
+    end
+
+    context 'failed' do
+      let(:submission_status) { :failed }
+
+      it 'needs retrying' do
+        expect(assignment.should_retry?).to be true
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'errored' do
+      let(:submission_status) { :errored }
+
+      it 'needs retrying' do
+        expect(assignment.should_retry?).to be true
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'aborted' do
+      let(:submission_status) { :aborted }
+
+      it 'does not need retrying' do
+        expect(assignment.should_retry?).to be false
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'passed with warnings' do
+      let(:submission_status) { :passed_with_warnings }
+
+      it 'needs retrying' do
+        expect(assignment.should_retry?).to be true
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'manual evaluation pending' do
+      let(:submission_status) { :manual_evaluation_pending }
+
+      it 'does not need retrying' do
+        expect(assignment.should_retry?).to be false
+      end
+
+      it 'is not solved nor completed' do
+        expect(assignment.solved?).to be false
+        expect(assignment.completed?).to be false
+      end
+    end
+
+    context 'skipped' do
+      let(:submission_status) { :skipped }
+
+      it 'does not need retrying' do
+        expect(assignment.should_retry?).to be false
+      end
+
+      it 'is solved and completed' do
+        expect(assignment.solved?).to be true
+        expect(assignment.completed?).to be true
+      end
+    end
+  end
 end

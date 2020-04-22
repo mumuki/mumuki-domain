@@ -5,10 +5,6 @@ module Mumuki::Domain::Status::Submission::Skipped
     true
   end
 
-  def self.passed?
-    true
-  end
-
   def self.iconize
     {class: :success, type: 'check-circle'}
   end
