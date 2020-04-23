@@ -64,7 +64,7 @@ module Contextualization
   end
 
   def failed_expectation_results
-    expectation_results.to_a.select { |it| it[:result].failed? }
+    expectation_results.to_a.select { |it| it[:result].failed? }.uniq
   end
 
   def expectation_results_visible?
