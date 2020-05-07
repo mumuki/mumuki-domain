@@ -35,11 +35,25 @@ module Contextualization
     end
   end
 
+  # deprecated: this method does hidden assumptions about the UI not wanting
+  # non-empty titles to not be displayed. Also it incorrectly uses the term `visual` instead of `visible`
   def single_visual_result?
-    test_results.size == 1 && test_results.first[:title].blank? && visible_success_output?
+    warn 'use single_visible_test_result? instead'
+    single_visible_test_result? && test_results.first[:title].blank?
   end
 
+  # deprecated: this method does not validate nor depends on any `visible` condition
+  # Also, it incorrectly uses the term `visual` instead of `visible`
   def single_visual_result_html
+    warn 'use first_test_result_html intead'
+    first_test_result_html
+  end
+
+  def single_visible_test_result?
+    test_results.size == 1 && visible_success_output?
+  end
+
+  def first_test_result_html
     test_result_html test_results.first
   end
 
