@@ -39,7 +39,7 @@ module Contextualization
   # non-empty titles to not be displayed. Also it incorrectly uses the term `visual` instead of `visible`
   def single_visual_result?
     warn 'use single_visible_test_result? instead'
-    single_visible_test_result? && test_results.first[:title].blank?
+    single_visible_test_result? && first_test_result[:title].blank?
   end
 
   # deprecated: this method does not validate nor depends on any `visible` condition
@@ -53,8 +53,12 @@ module Contextualization
     test_results.size == 1 && visible_success_output?
   end
 
+  def first_test_result
+    test_results.first
+  end
+
   def first_test_result_html
-    test_result_html test_results.first
+    test_result_html first_test_result
   end
 
   def test_result_html(test_result)
