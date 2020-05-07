@@ -40,7 +40,11 @@ module Contextualization
   end
 
   def single_visual_result_html
-    output_content_type.to_html test_results.first[:result]
+    test_result_html test_results.first
+  end
+
+  def test_result_html(test_result)
+    output_content_type.to_html test_result[:result]
   end
 
   def results_body_hidden?
