@@ -33,6 +33,8 @@ class User < ApplicationRecord
 
   enum gender: %i(female male other)
 
+  belongs_to :avatar, optional: true
+
   before_validation :set_uid!
   validates :uid, presence: true
 
