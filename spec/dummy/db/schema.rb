@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200312181842) do
+ActiveRecord::Schema.define(version: 20200508191543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,6 +49,11 @@ ActiveRecord::Schema.define(version: 20200312181842) do
     t.index ["parent_id"], name: "index_assignments_on_parent_id"
     t.index ["submission_id"], name: "index_assignments_on_submission_id"
     t.index ["submitter_id"], name: "index_assignments_on_submitter_id"
+  end
+
+  create_table "avatars", force: :cascade do |t|
+    t.string "image_url"
+    t.string "description"
   end
 
   create_table "books", id: :serial, force: :cascade do |t|
