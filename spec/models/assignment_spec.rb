@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Assignment, organization_workspace: :test do
+
+  let(:gobstones) { create(:language, visible_success_output: true) }
+  let(:haskell) { create(:haskell) }
+
   describe 'messages' do
     let(:student) { create(:user) }
     let(:problem) { create(:problem, manual_evaluation: true) }
@@ -46,10 +50,30 @@ describe Assignment, organization_workspace: :test do
     it { expect(assignment.status).to eq :manual_evaluation_pending }
   end
 
-  describe '#results_body_hidden?' do
-    let(:gobstones) { create(:language, visible_success_output: true) }
+  describe '#single_visual_result?' do
     let(:gobstones_exercise) { create(:indexed_exercise, language: gobstones) }
-    let(:exercise) { create(:indexed_exercise, language: create(:haskell)) }
+    let(:haskell_exercise) { create(:indexed_exercise, language: haskell) }
+
+    let(:failed_submission_single_untitled_test) { create(:assignment, exercise: gobstones_exercise, status: :failed, test_results: [{status: :failed, title: '', result: 'result'}]) }
+    let(:failed_submission_single_test) { create(:assignment, exercise: gobstones_exercise, status: :failed, test_results: [{status: :failed, title: 'ups', result: 'result'}]) }
+    let(:failed_submission_multi_test) { create(:assignment, exercise: gobstones_exercise, status: :failed, test_results: [{status: :failed, title: 'ups', result: 'result'}, {status: :failed, title: 'upsy', result: 'result'}]) }
+    let(:failed_submission_single_test_non_visual_exercise) { create(:assignment, exercise: haskell_exercise, status: :failed, test_results: [{status: :failed, title: 'ups', result: 'result'}]) }
+
+    it { expect(failed_submission_single_untitled_test).to be_single_visual_result }
+    it { expect(failed_submission_single_test).to_not be_single_visual_result }
+
+    it { expect(failed_submission_single_untitled_test).to be_single_visible_test_result }
+    it { expect(failed_submission_single_test).to be_single_visible_test_result }
+
+    it { expect(failed_submission_single_test_non_visual_exercise).to_not be_single_visible_test_result }
+    it { expect(failed_submission_multi_test).to_not be_single_visible_test_result }
+
+    it { expect(failed_submission_single_test.first_test_result_html).to eq '<pre>result</pre>' }
+  end
+
+  describe '#results_body_hidden?' do
+    let(:gobstones_exercise) { create(:indexed_exercise, language: gobstones) }
+    let(:exercise) { create(:indexed_exercise, language: haskell) }
 
     let(:failed_submission) { create(:assignment, status: :failed) }
     let(:passed_submission) { create(:assignment, status: :passed, expectation_results: [], exercise: exercise) }
@@ -67,7 +91,6 @@ describe Assignment, organization_workspace: :test do
   end
 
   describe '#expectation_results_visible?' do
-    let(:haskell) { create(:language, visible_success_output: true) }
     let(:exercise) { create(:exercise) }
 
     context 'should show expectation with failed submissions' do
