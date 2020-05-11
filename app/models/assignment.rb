@@ -168,7 +168,7 @@ class Assignment < Progress
                     language: {only: [:name]}},
                 },
                 exercise: {only: [:name, :number]},
-                submitter: {only: [:email, :image_url, :social_id, :uid], methods: [:name]}}).
+                submitter: {only: [:email, :social_id, :uid], methods: [:name, :profile_picture]}}).
       deep_merge(
         'organization' => Organization.current.name,
         'sid' => submission_id,

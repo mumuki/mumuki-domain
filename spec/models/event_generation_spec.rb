@@ -6,7 +6,7 @@ describe '#to_resource_h', organization_workspace: :test do
       create(:user,
         id: 2, email: 'foo@bar.com',
         first_name: 'Homer', last_name: 'Simpson',
-        provider: 'auth0', social_id: 'github|gh1234') }
+        provider: 'auth0', social_id: 'github|gh1234', image_url: 'user_shape.png') }
     describe 'lesson type' do
       let(:lesson) { chapter.lessons.fourth }
       let(:guide) { lesson.guide }
@@ -69,7 +69,7 @@ describe '#to_resource_h', organization_workspace: :test do
                              name: 'Homer Simpson',
                              email: 'foo@bar.com',
                              uid: assignment.submitter.uid,
-                             image_url: 'user_shape.png'},
+                             profile_picture: 'user_shape.png'},
                            sid: 'abcd1234',
                            created_at: assignment.updated_at,
                            content: 'x = 2',
@@ -121,7 +121,7 @@ describe '#to_resource_h', organization_workspace: :test do
                              social_id: 'github|gh1234',
                              name: 'Homer Simpson',
                              email: 'foo@bar.com',
-                             image_url: 'user_shape.png',
+                             profile_picture: 'user_shape.png',
                              uid: assignment.submitter.uid},
                            sid: 'abcd1234',
                            created_at: assignment.updated_at,
@@ -175,7 +175,7 @@ describe '#to_resource_h', organization_workspace: :test do
                            submitter: {
                              name: 'Homer Simpson',
                              email: 'foo@bar.com',
-                             image_url: 'user_shape.png',
+                             profile_picture: 'user_shape.png',
                              uid: assignment.submitter.uid,
                              social_id: 'github|gh1234'},
                            sid: 'abcd1234',

@@ -38,7 +38,7 @@ class User < ApplicationRecord
   before_validation :set_uid!
   validates :uid, presence: true
 
-  resource_fields :uid, :social_id, :image_url, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
+  resource_fields :uid, :social_id, :profile_picture, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
 
   def last_lesson
     last_guide.try(:lesson)
