@@ -105,4 +105,33 @@ module Contextualization
       }
     end
   end
+
+
+  ####################
+  ## Affable results
+  ####################
+
+  def affable_expectation_results
+    visible_expectation_results.map do |it|
+      {
+        result: it[:result],
+        explanation: Mulang::Expectation.parse(it).translate(inspection_keywords).affable
+      }
+    end
+  end
+
+  def affable_tips
+    tips.map(&:affable)
+  end
+
+  def affable_test_results
+    test_results.map do |it|
+      {
+        title: test_result[:title].affable,
+        result: test_result[:result].sanitized,
+        status: test_result[:status],
+        summary: test_result.dig(:summary, :message).affable
+      }
+    end
+  end
 end
