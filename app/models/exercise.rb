@@ -166,7 +166,7 @@ class Exercise < ApplicationRecord
   end
 
   def description_context
-    Mumukit::ContentType::Markdown.to_html splitted_description.first
+    splitted_description.first.markdownified
   end
 
   def splitted_description
@@ -174,7 +174,7 @@ class Exercise < ApplicationRecord
   end
 
   def description_task
-    Mumukit::ContentType::Markdown.to_html splitted_description.drop(1).join("\n")
+    splitted_description.drop(1).join("\n").markdownified
   end
 
   def custom?
