@@ -38,15 +38,24 @@ end
 #  * markdownified: interpretes markdown in message and generates HTML
 #  * sanitized: sanitizes results HTML
 #  * affable: changes structure to hide low level details
+#
+# Other classes may polymorphically implement they own
+# markdownified, sanitized and affable methods with similar semantics
+# to extend this pipeline to non-strings
 class String
+
+  # Creates a humman representation - but not necessary UI - representation
+  # of this strings by interpreting its markdown as a one-liner and sanitizing it
   def affable
     markdownified(one_liner: true).sanitized
   end
 
+  # Interprets the markdown on this string, and converts it into HTML
   def markdownified(**options)
     Mumukit::ContentType::Markdown.to_html self, options
   end
 
+  # Sanitizes this string, escaping unsafe HTML sequences
   def sanitized
     Mumukit::ContentType::Sanitizer.sanitize self
   end

@@ -98,6 +98,7 @@ module Contextualization
   end
 
   def humanized_expectation_results
+    warn "Don't use humanized_expectation_results. Use affable_expectation_results, which also handles markdown an sanitization"
     visible_expectation_results.map do |it|
       {
         result: it[:result],

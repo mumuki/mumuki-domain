@@ -132,7 +132,7 @@ class Exercise < ApplicationRecord
       .merge(settings: self[:settings])
       .merge(RANDOMIZED_FIELDS.map { |it| [it, self[it]] }.to_h)
       .symbolize_keys
-      .tap { |it| it.markdownify!(:hint, :corollary, :description, :teacher_info) if options[:markdownified] }
+      .tap { |it| it.markdownified!(:hint, :corollary, :description, :teacher_info) if options[:markdownified] }
   end
 
   def reset!
