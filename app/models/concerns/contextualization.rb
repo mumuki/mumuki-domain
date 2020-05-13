@@ -107,7 +107,6 @@ module Contextualization
     end
   end
 
-
   ####################
   ## Affable results
   ####################
@@ -127,12 +126,12 @@ module Contextualization
 
   def affable_test_results
     test_results.map do |it|
-      {
-        title: test_result[:title].affable,
-        result: test_result[:result].sanitized,
-        status: test_result[:status],
-        summary: test_result.dig(:summary, :message).affable
-      }
+      { summary: it.dig(:summary, :message).affable }
+        .compact
+        .merge(
+          title: it[:title].affable,
+          result: it[:result].sanitized,
+          status: it[:status])
     end
   end
 end
