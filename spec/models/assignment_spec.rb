@@ -286,6 +286,29 @@ describe Assignment, organization_workspace: :test do
     end
   end
 
+  describe '#affable_tips' do
+    let(:exercise) { create(:exercise, assistance_rules: assistance_rules) }
+    let(:assignment) { create(:assignment, exercise: exercise, solution: '') }
+
+    context 'plain explanation' do
+      let(:assistance_rules) { [{when: 'content_empty', then: 'oops, please write something in the editor'}] }
+
+      it { expect(assignment.affable_tips.first).to include 'please write something in the editor'  }
+    end
+
+    context 'html explanation' do
+      let(:assistance_rules) { [{when: 'content_empty', then: 'oops, please write <strong>something</strong> in the editor'}] }
+
+      it { expect(assignment.affable_tips.first).to include 'please write <strong>something</strong> in the editor'  }
+    end
+
+    context 'markdown explanation' do
+      let(:assistance_rules) { [{when: 'content_empty', then: 'oops, please write **something** in the editor'}] }
+
+      it { expect(assignment.affable_tips.first).to include 'please write <strong>something</strong> in the editor'  }
+    end
+  end
+
   describe '#affable_test_results' do
     let(:assignment) { create(:assignment, test_results: test_results) }
 
