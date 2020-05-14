@@ -125,7 +125,7 @@ module Contextualization
   end
 
   def affable_test_results
-    test_results.map do |it|
+    test_results.to_a.map do |it|
       { summary: it.dig(:summary, :message).affable }
         .compact
         .merge(

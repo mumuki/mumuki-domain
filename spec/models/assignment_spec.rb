@@ -268,6 +268,11 @@ describe Assignment, organization_workspace: :test do
     let(:assignment) { create(:assignment, expectation_results: expectation_results) }
 
     context 'plain explanation' do
+      let(:expectation_results) { nil }
+      it { expect(assignment.affable_expectation_results).to be_empty  }
+    end
+
+    context 'plain explanation' do
       let(:expectation_results) { [{result: :failed, binding: '<<custom>>', inspection: 'foo uses composition'}] }
 
       it { expect(assignment.affable_expectation_results).to eq [{result: :failed, explanation: 'foo uses composition'}]  }
@@ -290,6 +295,12 @@ describe Assignment, organization_workspace: :test do
     let(:exercise) { create(:exercise, assistance_rules: assistance_rules) }
     let(:assignment) { create(:assignment, exercise: exercise, solution: '') }
 
+
+    context 'no assistance rules' do
+      let(:assistance_rules) { nil }
+      it { expect(assignment.affable_tips).to be_empty  }
+    end
+
     context 'plain explanation' do
       let(:assistance_rules) { [{when: 'content_empty', then: 'oops, please write something in the editor'}] }
 
@@ -311,6 +322,12 @@ describe Assignment, organization_workspace: :test do
 
   describe '#affable_test_results' do
     let(:assignment) { create(:assignment, test_results: test_results) }
+
+    context 'no results' do
+      let(:test_results) { nil }
+      it { expect(assignment.affable_test_results).to be_empty  }
+    end
+
 
     context 'plain title or summary' do
       let(:test_results) do
