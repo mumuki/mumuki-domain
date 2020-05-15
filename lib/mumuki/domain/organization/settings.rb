@@ -13,7 +13,9 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
                       :forum_enabled?,
                       :report_issue_enabled?,
                       :archiving_enabled?,
-                      :archive_from
+                      :archive_from,
+                      :unavailable?,
+                      :unavailable_to
 
   def private?
     !public?
@@ -29,5 +31,9 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
 
   def archived?
     archiving_enabled? && archive_from.to_datetime < DateTime.now
+  end
+
+  def disabled?
+    unavailable? && unavailable_to.to_datetime > DateTime.now
   end
 end

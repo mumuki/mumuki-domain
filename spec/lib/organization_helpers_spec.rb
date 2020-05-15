@@ -23,6 +23,8 @@ describe Mumukit::Platform::Organization do
         report_issue_enabled: true,
         public: false,
         immersive: false,
+        unavailable: true,
+        unavailable_to: 1.minute.ago,
         archiving_enabled: true,
         archive_from: 1.minute.ago,
         login_methods: %w{facebook twitter google},
@@ -96,6 +98,7 @@ describe Mumukit::Platform::Organization do
         it { expect(subject.embeddable?).to eq false }
         it { expect(subject.immersive?).to eq false }
         it { expect(subject.archived?).to eq true }
+        it { expect(subject.disabled?).to eq false }
 
         it { expect(Mumuki::Domain::Organization::Settings.parse(nil)).to be_empty }
       end
@@ -103,6 +106,8 @@ describe Mumukit::Platform::Organization do
         let(:settings) { Mumuki::Domain::Organization::Settings.new(
                             public: true,
                             embeddable: true,
+                            unavailable: true,
+                            unavailable_to: 1.minute.since,
                             archiving_enabled: true,
                             archive_from: 1.minute.since,
                             immersive: true,
@@ -125,6 +130,7 @@ describe Mumukit::Platform::Organization do
         it { expect(subject.embeddable?).to eq true }
         it { expect(subject.immersive?).to eq true }
         it { expect(subject.archived?).to eq false }
+        it { expect(subject.disabled?).to eq true }
 
         it { expect(Mumuki::Domain::Organization::Settings.load(nil)).to be_empty }
       end

@@ -4,7 +4,7 @@ module Mumuki::Domain::Helpers::Organization
 
   included do
     delegate *Mumuki::Domain::Organization::Theme.accessors, to: :theme
-    delegate *Mumuki::Domain::Organization::Settings.accessors, :private?, :login_settings, :archived?, to: :settings
+    delegate *Mumuki::Domain::Organization::Settings.accessors, :private?, :login_settings, :archived?, :disabled?, to: :settings
     delegate *Mumuki::Domain::Organization::Profile.accessors, :locale_json, to: :profile
   end
 
@@ -63,10 +63,10 @@ module Mumuki::Domain::Helpers::Organization
 
     def parse(json)
       json
-        .slice(:name)
-        .merge(theme: Mumuki::Domain::Organization::Theme.parse(json[:theme]))
-        .merge(settings: Mumuki::Domain::Organization::Settings.parse(json[:settings]))
-        .merge(profile: Mumuki::Domain::Organization::Profile.parse(json[:profile]))
+          .slice(:name)
+          .merge(theme: Mumuki::Domain::Organization::Theme.parse(json[:theme]))
+          .merge(settings: Mumuki::Domain::Organization::Settings.parse(json[:settings]))
+          .merge(profile: Mumuki::Domain::Organization::Profile.parse(json[:profile]))
     end
   end
 end
