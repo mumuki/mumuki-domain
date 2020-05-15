@@ -5,7 +5,7 @@ class Hash
   end
 
   def markdownified!(*keys, **options)
-    keys.each { |it| self[it] = self[it].markdownified }
+    keys.each { |it| self[it] = self[it].markdownified(**options) }
   end
 
   def markdownified(*keys, **options)
