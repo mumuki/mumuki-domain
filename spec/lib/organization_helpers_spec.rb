@@ -23,10 +23,8 @@ describe Mumukit::Platform::Organization do
         report_issue_enabled: true,
         public: false,
         immersive: false,
-        unavailable: true,
-        unavailable_to: 1.minute.ago,
-        archiving_enabled: true,
-        archive_from: 1.minute.ago,
+        in_preparation_until: 1.minute.ago,
+        disabled_from: 1.minute.ago,
         login_methods: %w{facebook twitter google},
         login_provider: 'google',
         login_provider_settings: { token: '123' }
@@ -97,8 +95,8 @@ describe Mumukit::Platform::Organization do
         it { expect(subject.public?).to eq false }
         it { expect(subject.embeddable?).to eq false }
         it { expect(subject.immersive?).to eq false }
-        it { expect(subject.archived?).to eq true }
-        it { expect(subject.disabled?).to eq false }
+        it { expect(subject.disabled?).to eq true }
+        it { expect(subject.in_preparation?).to eq false }
 
         it { expect(Mumuki::Domain::Organization::Settings.parse(nil)).to be_empty }
       end
@@ -106,10 +104,8 @@ describe Mumukit::Platform::Organization do
         let(:settings) { Mumuki::Domain::Organization::Settings.new(
                             public: true,
                             embeddable: true,
-                            unavailable: true,
-                            unavailable_to: 1.minute.since,
-                            archiving_enabled: true,
-                            archive_from: 1.minute.since,
+                            in_preparation_until: 1.minute.since,
+                            disabled_from: 1.minute.since,
                             immersive: true,
                             raise_hand_enabled: false,
                             report_issue_enabled: false,
@@ -129,8 +125,8 @@ describe Mumukit::Platform::Organization do
         it { expect(subject.public?).to eq true }
         it { expect(subject.embeddable?).to eq true }
         it { expect(subject.immersive?).to eq true }
-        it { expect(subject.archived?).to eq false }
-        it { expect(subject.disabled?).to eq true }
+        it { expect(subject.disabled?).to eq false }
+        it { expect(subject.in_preparation?).to eq true }
 
         it { expect(Mumuki::Domain::Organization::Settings.load(nil)).to be_empty }
       end
