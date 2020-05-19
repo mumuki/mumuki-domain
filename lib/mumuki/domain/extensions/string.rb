@@ -39,13 +39,13 @@ end
 #  * sanitized: sanitizes results HTML
 #  * affable: changes structure to hide low level details
 #
-# Other classes may polymorphically implement they own
+# Other classes may polymorphically implement their own
 # markdownified, sanitized and affable methods with similar semantics
 # to extend this pipeline to non-strings
 class String
 
   # Creates a humman representation - but not necessary UI - representation
-  # of this strings by interpreting its markdown as a one-liner and sanitizing it
+  # of this string by interpreting its markdown as a one-liner and sanitizing it
   def affable
     markdownified(one_liner: true).sanitized
   end
