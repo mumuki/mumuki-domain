@@ -104,7 +104,7 @@ class Guide < Content
       .merge(super)
       .merge(exercises: exercises.map { |it| it.to_resource_h(options) })
       .merge(language: language.to_embedded_resource_h)
-      .tap { |it| it.markdownify!(:corollary, :description, :teacher_info) if options[:markdownified] }
+      .tap { |it| it.markdownified!(:corollary, :description, :teacher_info) if options[:markdownified] }
   end
 
   def to_markdownified_resource_h

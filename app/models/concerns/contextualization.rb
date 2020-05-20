@@ -98,11 +98,40 @@ module Contextualization
   end
 
   def humanized_expectation_results
+    warn "Don't use humanized_expectation_results. Use affable_expectation_results, which also handles markdown and sanitization"
     visible_expectation_results.map do |it|
       {
         result: it[:result],
         explanation: Mulang::Expectation.parse(it).translate(inspection_keywords)
       }
+    end
+  end
+
+  ####################
+  ## Affable results
+  ####################
+
+  def affable_expectation_results
+    visible_expectation_results.map do |it|
+      {
+        result: it[:result],
+        explanation: Mulang::Expectation.parse(it).translate(inspection_keywords).affable
+      }
+    end
+  end
+
+  def affable_tips
+    tips.map(&:affable)
+  end
+
+  def affable_test_results
+    test_results.to_a.map do |it|
+      { summary: it.dig(:summary, :message).affable }
+        .compact
+        .merge(
+          title: it[:title].affable,
+          result: it[:result].sanitized,
+          status: it[:status])
     end
   end
 end

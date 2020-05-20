@@ -19,7 +19,7 @@ module WithEditor
       struct id: "content_choice_#{index}",
              index: index,
              value: choice,
-             text: Mumukit::ContentType::Markdown.to_html(choice_text(choice))
+             text: choice_text(choice).markdownified
     end
   end
 

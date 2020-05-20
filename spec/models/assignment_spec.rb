@@ -13,7 +13,7 @@ describe Assignment, organization_workspace: :test do
 
     before { problem.submit_solution! student, content: '...' }
 
-    describe '.send_question!' do
+    describe '#submit_question!' do
       before { problem.submit_question! student, content: 'How can i solve this?' }
 
       it { expect(assignment.new_record?).to be false }
@@ -27,7 +27,7 @@ describe Assignment, organization_workspace: :test do
       it { expect(assignment.organization).to eq Organization.current }
     end
 
-    describe '.receive_answer!' do
+    describe '#receive_answer!' do
       before { problem.submit_question! student, content: 'How can i solve this?' }
       before { assignment.receive_answer! sender: 'bot@mumuki.org', content: 'Check this link' }
 
@@ -262,6 +262,108 @@ describe Assignment, organization_workspace: :test do
     let(:assignment) { exercise.submit_solution!(user, content: '') }
 
     it { expect(assignment.extra).to eq "some_email\nsome_first_name\nsome_last_name\n" }
+  end
+
+  describe '#affable_expectation_results' do
+    let(:assignment) { create(:assignment, expectation_results: expectation_results) }
+
+    context 'plain explanation' do
+      let(:expectation_results) { nil }
+      it { expect(assignment.affable_expectation_results).to be_empty  }
+    end
+
+    context 'plain explanation' do
+      let(:expectation_results) { [{result: :failed, binding: '<<custom>>', inspection: 'foo uses composition'}] }
+
+      it { expect(assignment.affable_expectation_results).to eq [{result: :failed, explanation: 'foo uses composition'}]  }
+    end
+
+    context 'html explanation' do
+      let(:expectation_results) { [{result: :failed, binding: '*', inspection: 'UsesIf'}] }
+
+      it { expect(assignment.affable_expectation_results).to eq [{result: :failed, explanation: 'solution must use <i>if</i>'}]  }
+    end
+
+    context 'markdown explanation' do
+      let(:expectation_results) { [{result: :failed, binding: '<<custom>>', inspection: 'you must call `fooBar`'}] }
+
+      it { expect(assignment.affable_expectation_results).to eq [{result: :failed, explanation: 'you must call <code>fooBar</code>'}]  }
+    end
+  end
+
+  describe '#affable_tips' do
+    let(:exercise) { create(:exercise, assistance_rules: assistance_rules) }
+    let(:assignment) { create(:assignment, exercise: exercise, solution: '') }
+
+
+    context 'no assistance rules' do
+      let(:assistance_rules) { nil }
+      it { expect(assignment.affable_tips).to be_empty  }
+    end
+
+    context 'plain explanation' do
+      let(:assistance_rules) { [{when: 'content_empty', then: 'oops, please write something in the editor'}] }
+
+      it { expect(assignment.affable_tips.first).to include 'please write something in the editor'  }
+    end
+
+    context 'html explanation' do
+      let(:assistance_rules) { [{when: 'content_empty', then: 'oops, please write <strong>something</strong> in the editor'}] }
+
+      it { expect(assignment.affable_tips.first).to include 'please write <strong>something</strong> in the editor'  }
+    end
+
+    context 'markdown explanation' do
+      let(:assistance_rules) { [{when: 'content_empty', then: 'oops, please write **something** in the editor'}] }
+
+      it { expect(assignment.affable_tips.first).to include 'please write <strong>something</strong> in the editor'  }
+    end
+  end
+
+  describe '#affable_test_results' do
+    let(:assignment) { create(:assignment, test_results: test_results) }
+
+    context 'no results' do
+      let(:test_results) { nil }
+      it { expect(assignment.affable_test_results).to be_empty  }
+    end
+
+
+    context 'plain title or summary' do
+      let(:test_results) do
+        [ {status: :failed, title: 'first test', result: 'result'},
+          {status: :failed, title: 'second test', result: 'result', summary: {message: 'you are using a function you have not declared'}} ]
+      end
+
+      it { expect(assignment.affable_test_results).to eq [{status: :failed, title: 'first test', result: 'result'},
+                                                          {status: :failed, title: 'second test', result: 'result', summary: 'you are using a function you have not declared'} ]  }
+    end
+
+    context 'html title or summary' do
+      before { Mumukit::ContentType::Sanitizer.should_sanitize = true }
+      after { Mumukit::ContentType::Sanitizer.should_sanitize = false }
+
+      let(:test_results) do
+        [ {status: :failed, title: '<script>muahaha</script>bad test', result: 'result'},
+          {status: :failed, title: 'first <strong>test</strong>', result: 'result'},
+          {status: :failed, title: 'second test', result: 'result', summary: {message: 'you are using a <code>function</code> you have not declared'}} ]
+      end
+
+
+      it { expect(assignment.affable_test_results).to eq [{status: :failed, title: 'bad test', result: 'result'},
+                                                          {status: :failed, title: 'first <strong>test</strong>', result: 'result'},
+                                                          {status: :failed, title: 'second test', result: 'result', summary: 'you are using a <code>function</code> you have not declared'} ]  }
+    end
+
+    context 'markdown title or summary' do
+      let(:test_results) do
+        [ {status: :failed, title: '_first_ test', result: 'result'},
+          {status: :failed, title: 'second test', result: 'result', summary: {message: 'you are using a function **you have not declared**'}} ]
+      end
+
+      it { expect(assignment.affable_test_results).to eq [{status: :failed, title: '<em>first</em> test', result: 'result'},
+                                                          {status: :failed, title: 'second test', result: 'result', summary: 'you are using a function <strong>you have not declared</strong>'} ]  }
+    end
   end
 
   describe 'submission status' do

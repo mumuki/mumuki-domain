@@ -132,7 +132,7 @@ class Exercise < ApplicationRecord
       .merge(settings: self[:settings])
       .merge(RANDOMIZED_FIELDS.map { |it| [it, self[it]] }.to_h)
       .symbolize_keys
-      .tap { |it| it.markdownify!(:hint, :corollary, :description, :teacher_info) if options[:markdownified] }
+      .tap { |it| it.markdownified!(:hint, :corollary, :description, :teacher_info) if options[:markdownified] }
   end
 
   def reset!
@@ -166,7 +166,7 @@ class Exercise < ApplicationRecord
   end
 
   def description_context
-    Mumukit::ContentType::Markdown.to_html splitted_description.first
+    splitted_description.first.markdownified
   end
 
   def splitted_description
@@ -174,7 +174,7 @@ class Exercise < ApplicationRecord
   end
 
   def description_task
-    Mumukit::ContentType::Markdown.to_html splitted_description.drop(1).join("\n")
+    splitted_description.drop(1).join("\n").markdownified
   end
 
   def custom?
