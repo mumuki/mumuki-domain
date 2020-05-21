@@ -41,7 +41,35 @@ describe Mumuki::Domain::Helpers::User do
   end
 
   describe 'to_resource_h' do
-    it { expect(user.to_resource_h).to json_eq json }
+    context 'when user has no avatar' do
+      it { expect(user.to_resource_h)
+               .to json_eq(
+                       uid: json[:uid],
+                       profile_picture: json[:image_url],
+                       email: json[:email],
+                       first_name: json[:first_name],
+                       last_name: json[:last_name],
+                       permissions: json[:permissions]
+                   )
+      }
+    end
+
+    context 'when user has avatar' do
+      let(:avatar) { Avatar.new(image_url: 'avatar.png') }
+
+      before { json[:avatar] = avatar }
+
+      it { expect(user.to_resource_h)
+               .to json_eq(
+                       uid: json[:uid],
+                       profile_picture: avatar.image_url,
+                       email: json[:email],
+                       first_name: json[:first_name],
+                       last_name: json[:last_name],
+                       permissions: json[:permissions]
+                   )
+      }
+    end
   end
 
   describe 'student_here?' do

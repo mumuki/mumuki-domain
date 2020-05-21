@@ -33,10 +33,12 @@ class User < ApplicationRecord
 
   enum gender: %i(female male other)
 
+  belongs_to :avatar, optional: true
+
   before_validation :set_uid!
   validates :uid, presence: true
 
-  resource_fields :uid, :social_id, :image_url, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
+  resource_fields :uid, :social_id, :profile_picture, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
 
   def last_lesson
     last_guide.try(:lesson)
@@ -138,6 +140,10 @@ class User < ApplicationRecord
     exams.any? { |e| e.in_progress_for? self }
   end
 
+  def profile_picture
+    avatar&.image_url || image_url
+  end
+
   private
 
   def set_uid!
@@ -145,7 +151,7 @@ class User < ApplicationRecord
   end
 
   def init
-    self.image_url ||= "user_shape.png"
+    self.avatar = Avatar.sample unless profile_picture.present?
   end
 
   def self.sync_key_id_field
