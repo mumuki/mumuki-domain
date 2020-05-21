@@ -49,8 +49,8 @@ module Mumuki::Domain::Helpers::Organization
   end
 
   def validate_active!
-    raise Mumuki::Domain::ArchivedOrganizationError if disabled?
-    raise Mumuki::Domain::DisabledOrganizationError if in_preparation?
+    raise Mumuki::Domain::DisabledOrganizationError if disabled?
+    raise Mumuki::Domain::InPreparationOrganizationError if in_preparation?
   end
 
   ## API Exposure
@@ -68,10 +68,10 @@ module Mumuki::Domain::Helpers::Organization
 
     def parse(json)
       json
-          .slice(:name)
-          .merge(theme: Mumuki::Domain::Organization::Theme.parse(json[:theme]))
-          .merge(settings: Mumuki::Domain::Organization::Settings.parse(json[:settings]))
-          .merge(profile: Mumuki::Domain::Organization::Profile.parse(json[:profile]))
+        .slice(:name)
+        .merge(theme: Mumuki::Domain::Organization::Theme.parse(json[:theme]))
+        .merge(settings: Mumuki::Domain::Organization::Settings.parse(json[:settings]))
+        .merge(profile: Mumuki::Domain::Organization::Profile.parse(json[:profile]))
     end
   end
 end
