@@ -157,6 +157,16 @@ describe Organization, organization_workspace: :test do
       it { expect(organization.has_login_method? 'github').to be true }
       it { expect(organization.has_login_method? 'google').to be false }
     end
+
+    context 'is invalid when activity range is not valid' do
+      let(:organization) { build :organization, in_preparation_until: 2.minutes.since, disabled_from: 1.minute.ago }
+      it { expect(organization.valid?).to be false }
+    end
+
+    context 'is valid when activity range is valid' do
+      let(:organization) { build :organization, in_preparation_until: 2.minutes.ago, disabled_from: 1.minute.since }
+      it { expect(organization.valid?).to be true }
+    end
   end
 
   describe 'in_path' do
