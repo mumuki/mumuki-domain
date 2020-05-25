@@ -50,7 +50,7 @@ module Mumuki::Domain::Helpers::Organization
 
   def validate_active!
     raise Mumuki::Domain::DisabledOrganizationError if disabled?
-    raise Mumuki::Domain::InPreparationOrganizationError if in_preparation?
+    raise Mumuki::Domain::UnpreparedOrganizationError if in_preparation?
   end
 
   ## API Exposure

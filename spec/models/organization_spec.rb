@@ -169,6 +169,28 @@ describe Organization, organization_workspace: :test do
     end
   end
 
+  describe '#validate_active!' do
+    context 'disabled?' do
+      let(:organization) { build(:organization, disabled_from: 5.minutes.ago) }
+      it { expect(organization.disabled?).to be true }
+      it { expect { organization.validate_active! }.to raise_error(Mumuki::Domain::DisabledOrganizationError) }
+    end
+
+    context 'in_preparation?' do
+      let(:organization) { build(:organization, in_preparation_until: 5.minutes.since) }
+      it { expect(organization.in_preparation?).to be true }
+      it { expect { organization.validate_active! }.to raise_error(Mumuki::Domain::UnpreparedOrganizationError) }
+    end
+
+    context 'active' do
+      let(:organization) { build(:organization, disabled_from: 5.minutes.since, in_preparation_until: 2.minutes.ago) }
+      it { expect(organization.in_preparation?).to be false }
+      it { expect(organization.disabled?).to be false }
+      it { expect { organization.validate_active! }.to_not raise_error }
+    end
+  end
+
+
   describe 'in_path' do
     let(:organization) { create :public_organization, name: 'main' }
     let!(:other_organization) { create :public_organization, name: 'other' }
