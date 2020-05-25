@@ -27,3 +27,4 @@ en:
           attributes:
             base:
               consistent_public_login: 'A public organization can not restrict login methods'
+              invalid_activity_range: 'The organization activity range are not valid'
