@@ -11,15 +11,16 @@ module Disableable
 
   included do
     include Discard::Model
+
+    alias_method :enabled?, :kept?
+    alias_method :disabled?, :discarded?
   end
 
   def disable!
-    discard!
-    bury!
-  end
-
-  def disabled?
-    discarded?
+    transaction do
+      discard!
+      bury!
+    end
   end
 
   # override to perform additional

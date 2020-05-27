@@ -264,14 +264,31 @@ describe User, organization_workspace: :test do
     it { expect(student_in_exam.currently_in_exam?).to be true }
   end
 
-  describe '#disable!' do
+
+  describe 'disableable' do
     let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
 
-    before { user.disable! }
+    shared_context "soft delete" do
+      it { expect(user).to be_disabled }
+      it { expect(user.accepts_reminders).to be false }
+      it { expect(user.name).to eq 'shibi' }
+      it { expect(user.email).to eq 'shibi@mumuki.org' }
+      it { expect(user.reload.name).to eq 'shibi' }
+    end
 
-    it { expect(user).to be_disabled }
-    it { expect(user).to eq to_accepts_reminders }
-    it { expect(user.name).to eq 'yurei' }
-    it { expect(user.email).to eq 'yurei@mumuki.org' }
+    describe '#disable!' do
+      before { user.disable! }
+      it_behaves_like "soft delete"
+    end
+
+    describe '#destroy!' do
+      before { user.destroy! }
+      it_behaves_like "soft delete"
+    end
+
+    describe '#destroy' do
+      before { user.destroy! }
+      it_behaves_like "soft delete"
+    end
   end
 end

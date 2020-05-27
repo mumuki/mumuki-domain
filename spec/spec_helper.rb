@@ -52,3 +52,5 @@ def reindex_current_organization!
 end
 
 SimpleCov.start
+
+User.configure_buried_profile! first_name: 'shibi', last_name: '', email: 'shibi@mumuki.org'

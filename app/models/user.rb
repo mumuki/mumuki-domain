@@ -150,11 +150,11 @@ class User < ApplicationRecord
   end
 
   def bury!
-    # TODO change avatar and
-    update! accepts_reminders: false,
-            first_name: 'yurei',
-            last_name: '',
-            email: 'yurei@mumuki.org'
+    # TODO change avatar
+    update!(self.class
+            .buried_profile
+            .slice(:first_name, :last_name, :email)
+            .merge(accepts_reminders: false))
   end
 
   private
@@ -181,5 +181,13 @@ class User < ApplicationRecord
   def self.create_if_necessary(user)
     user[:uid] ||= user[:email]
     where(uid: user[:uid]).first_or_create(user)
+  end
+
+  class << self
+    attr_accessor :buried_profile
+
+    def configure_buried_profile!(profile)
+      self.buried_profile = profile
+    end
   end
 end
