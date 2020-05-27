@@ -6,7 +6,7 @@
 #  * adds a `bury!`  hook method that allows further modification of the object after being discarded within disable!
 #  * aliases `destroy!` and `destroy` to `disable!`, but still keeps `delete` and friends
 #
-module Disableable
+module Disabling
   extend ActiveSupport::Concern
 
   included do

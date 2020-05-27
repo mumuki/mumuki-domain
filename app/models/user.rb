@@ -4,7 +4,7 @@ class User < ApplicationRecord
           WithUserNavigation,
           WithReminders,
           WithDiscussionCreation,
-          Disableable,
+          Disabling,
           Mumuki::Domain::Helpers::User
 
   serialize :permissions, Mumukit::Auth::Permissions

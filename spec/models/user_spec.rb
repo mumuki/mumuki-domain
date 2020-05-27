@@ -265,7 +265,7 @@ describe User, organization_workspace: :test do
   end
 
 
-  describe 'disableable' do
+  describe 'disabling' do
     let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
 
     shared_context "soft delete" do
