@@ -1,5 +1,6 @@
 require "mumuki/domain/engine"
 
+require 'discard'
 require 'mumukit/core'
 require 'mumukit/core/activemodel'
 require 'mumukit/assistant'

@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'mumukit-sync', '~> 1.0'
   s.add_dependency 'mumukit-login', '~> 7.0'
 
+  s.add_dependency 'discard', '~> 1.2'
   s.add_dependency 'mulang', '~> 5.0'
   s.add_dependency 'mumukit-inspection', '~> 5.1'
 

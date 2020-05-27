@@ -263,4 +263,15 @@ describe User, organization_workspace: :test do
     it { expect(student_not_in_exam.currently_in_exam?).to be false }
     it { expect(student_in_exam.currently_in_exam?).to be true }
   end
+
+  describe '#disable!' do
+    let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
+
+    before { user.disable! }
+
+    it { expect(user).to be_disabled }
+    it { expect(user).to eq to_accepts_reminders }
+    it { expect(user.name).to eq 'yurei' }
+    it { expect(user.email).to eq 'yurei@mumuki.org' }
+  end
 end

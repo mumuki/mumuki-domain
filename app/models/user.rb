@@ -4,6 +4,7 @@ class User < ApplicationRecord
           WithUserNavigation,
           WithReminders,
           WithDiscussionCreation,
+          Disableable,
           Mumuki::Domain::Helpers::User
 
   serialize :permissions, Mumukit::Auth::Permissions
@@ -146,6 +147,14 @@ class User < ApplicationRecord
 
   def profile_picture
     avatar&.image_url || image_url
+  end
+
+  def bury!
+    # TODO change avatar and
+    update! accepts_reminders: false,
+            first_name: 'yurei',
+            last_name: '',
+            email: 'yurei@mumuki.org'
   end
 
   private
