@@ -278,6 +278,8 @@ describe User, organization_workspace: :test do
         it { expect(user.accepts_reminders).to be false }
         it { expect(user.name).to eq 'shibi' }
         it { expect(user.email).to eq 'shibi@mumuki.org' }
+        it { expect(user.gender).to be nil }
+        it { expect(user.birthdate).to be nil }
         it { expect(user.reload.name).to eq 'shibi' }
         it { expect(user.disabled_at).to_not be nil }
         it { expect { user.ensure_enabled! }.to raise_error(Mumuki::Domain::DisabledError) }

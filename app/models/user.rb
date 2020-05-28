@@ -151,7 +151,7 @@ class User < ApplicationRecord
 
   def bury!
     # TODO change avatar
-    update! self.class.buried_profile.merge(accepts_reminders: false)
+    update! self.class.buried_profile.merge(accepts_reminders: false, gender: nil, birthdate: nil)
   end
 
   private
