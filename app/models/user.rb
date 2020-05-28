@@ -180,6 +180,8 @@ class User < ApplicationRecord
     where(uid: user[:uid]).first_or_create(user)
   end
 
+  # Call this method once as part of application initialization
+  # in order to enable user profile override as part of disabling process
   def self.configure_buried_profile!(profile)
     @buried_profile = profile
   end
