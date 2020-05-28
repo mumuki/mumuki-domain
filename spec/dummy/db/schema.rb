@@ -373,8 +373,8 @@ ActiveRecord::Schema.define(version: 20200527180729) do
     t.string "verified_first_name"
     t.string "verified_last_name"
     t.bigint "avatar_id"
-    t.datetime "discarded_at"
-    t.index ["discarded_at"], name: "index_users_on_discarded_at"
+    t.datetime "disabled_at"
+    t.index ["disabled_at"], name: "index_users_on_disabled_at"
     t.index ["last_organization_id"], name: "index_users_on_last_organization_id"
     t.index ["uid"], name: "index_users_on_uid", unique: true
   end

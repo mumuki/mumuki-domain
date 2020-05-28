@@ -274,6 +274,7 @@ describe User, organization_workspace: :test do
       it { expect(user.name).to eq 'shibi' }
       it { expect(user.email).to eq 'shibi@mumuki.org' }
       it { expect(user.reload.name).to eq 'shibi' }
+      it { expect(user.disabled_at).to_not be nil }
     end
 
     describe '#disable!' do
