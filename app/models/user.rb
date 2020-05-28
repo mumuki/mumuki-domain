@@ -151,10 +151,7 @@ class User < ApplicationRecord
 
   def bury!
     # TODO change avatar
-    update!(self.class
-            .buried_profile
-            .slice(:first_name, :last_name, :email)
-            .merge(accepts_reminders: false))
+    update! self.class.buried_profile.merge(accepts_reminders: false)
   end
 
   private
@@ -183,11 +180,11 @@ class User < ApplicationRecord
     where(uid: user[:uid]).first_or_create(user)
   end
 
-  class << self
-    attr_accessor :buried_profile
+  def self.configure_buried_profile!(profile)
+    @buried_profile = profile
+  end
 
-    def configure_buried_profile!(profile)
-      self.buried_profile = profile
-    end
+  def self.buried_profile
+    (@buried_profile || {}).slice(:first_name, :last_name, :email)
   end
 end
