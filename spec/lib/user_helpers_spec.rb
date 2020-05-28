@@ -45,7 +45,7 @@ describe Mumuki::Domain::Helpers::User do
       it { expect(user.to_resource_h)
                .to json_eq(
                        uid: json[:uid],
-                       profile_picture: json[:image_url],
+                       image_url: json[:image_url],
                        email: json[:email],
                        first_name: json[:first_name],
                        last_name: json[:last_name],
@@ -62,7 +62,7 @@ describe Mumuki::Domain::Helpers::User do
       it { expect(user.to_resource_h)
                .to json_eq(
                        uid: json[:uid],
-                       profile_picture: avatar.image_url,
+                       image_url: avatar.image_url,
                        email: json[:email],
                        first_name: json[:first_name],
                        last_name: json[:last_name],

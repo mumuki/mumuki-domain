@@ -38,7 +38,7 @@ class User < ApplicationRecord
   before_validation :set_uid!
   validates :uid, presence: true
 
-  resource_fields :uid, :social_id, :profile_picture, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
+  resource_fields :uid, :social_id, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
 
   def last_lesson
     last_guide.try(:lesson)
@@ -107,6 +107,10 @@ class User < ApplicationRecord
     update! self.class.slice_resource_h json
   end
 
+  def to_resource_h
+    super.merge(image_url: profile_picture)
+  end
+
   def verify_name!
     self.verified_first_name ||= first_name
     self.verified_last_name ||= last_name
@@ -153,7 +157,7 @@ class User < ApplicationRecord
   def init
     # Temporarily keep using image_url until avatars are created
     # self.avatar = Avatar.sample unless profile_picture.present?
-    
+
     self.image_url ||= "user_shape.png"
   end
 
