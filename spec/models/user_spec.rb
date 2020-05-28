@@ -296,7 +296,7 @@ describe User, organization_workspace: :test do
       end
 
       describe '#destroy' do
-        before { user.destroy! }
+        before { user.destroy }
         it_behaves_like "disabled and buried user"
       end
     end
