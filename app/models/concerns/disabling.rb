@@ -28,7 +28,7 @@ module Disabling
   end
 
   def ensure_enabled!
-    raise Mumuki::Domain::ForbiddenError if disabled?
+    raise Mumuki::Domain::DisabledError if disabled?
   end
 
   alias_method :destroy!,  :disable!
