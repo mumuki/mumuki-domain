@@ -1,6 +1,6 @@
 # The disposable module is a soft-delete helper that:
 #
-#  * adds `disable!` method that set a `disabled_at` attribute anden then _buries_ the object
+#  * adds `disable!` method that set a `disabled_at` attribute and then _buries_ the object
 #  * adds a `bury!`  hook method that allows further modification when disabling
 #  * aliases `destroy!` and `destroy` to `disable!`, but still keeps `delete` and friends
 #
