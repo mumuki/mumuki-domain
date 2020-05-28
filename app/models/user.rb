@@ -151,7 +151,10 @@ class User < ApplicationRecord
   end
 
   def init
-    self.avatar = Avatar.sample unless profile_picture.present?
+    # Temporarily keep using image_url until avatars are created
+    # self.avatar = Avatar.sample unless profile_picture.present?
+    
+    self.image_url ||= "user_shape.png"
   end
 
   def self.sync_key_id_field
