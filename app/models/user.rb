@@ -4,6 +4,7 @@ class User < ApplicationRecord
           WithUserNavigation,
           WithReminders,
           WithDiscussionCreation,
+          Disabling,
           Mumuki::Domain::Helpers::User
 
   serialize :permissions, Mumukit::Auth::Permissions
@@ -148,6 +149,11 @@ class User < ApplicationRecord
     avatar&.image_url || image_url
   end
 
+  def bury!
+    # TODO change avatar
+    update! self.class.buried_profile.merge(accepts_reminders: false, gender: nil, birthdate: nil)
+  end
+
   private
 
   def set_uid!
@@ -172,5 +178,15 @@ class User < ApplicationRecord
   def self.create_if_necessary(user)
     user[:uid] ||= user[:email]
     where(uid: user[:uid]).first_or_create(user)
+  end
+
+  # Call this method once as part of application initialization
+  # in order to enable user profile override as part of disabling process
+  def self.configure_buried_profile!(profile)
+    @buried_profile = profile
+  end
+
+  def self.buried_profile
+    (@buried_profile || {}).slice(:first_name, :last_name, :email)
   end
 end

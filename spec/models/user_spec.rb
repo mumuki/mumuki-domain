@@ -263,4 +263,42 @@ describe User, organization_workspace: :test do
     it { expect(student_not_in_exam.currently_in_exam?).to be false }
     it { expect(student_in_exam.currently_in_exam?).to be true }
   end
+
+
+  describe 'disabling' do
+    let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
+
+    context 'enabled' do
+      it { expect { user.ensure_enabled! }.to_not raise_error }
+    end
+
+    context 'disabled' do
+      shared_context "disabled and buried user" do
+        it { expect(user).to be_disabled }
+        it { expect(user.accepts_reminders).to be false }
+        it { expect(user.name).to eq 'shibi' }
+        it { expect(user.email).to eq 'shibi@mumuki.org' }
+        it { expect(user.gender).to be nil }
+        it { expect(user.birthdate).to be nil }
+        it { expect(user.reload.name).to eq 'shibi' }
+        it { expect(user.disabled_at).to_not be nil }
+        it { expect { user.ensure_enabled! }.to raise_error(Mumuki::Domain::DisabledError) }
+      end
+
+      describe '#disable!' do
+        before { user.disable! }
+        it_behaves_like "disabled and buried user"
+      end
+
+      describe '#destroy!' do
+        before { user.destroy! }
+        it_behaves_like "disabled and buried user"
+      end
+
+      describe '#destroy' do
+        before { user.destroy }
+        it_behaves_like "disabled and buried user"
+      end
+    end
+  end
 end
