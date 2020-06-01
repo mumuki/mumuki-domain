@@ -14,7 +14,7 @@ class Course < ApplicationRecord
   resource_fields :slug, :shifts, :code, :days, :period, :description
 
   def current_invitation
-    invitations.where('expiration_date > ?', Time.now).take
+    invitations.where('expiration_date > ?', Time.now).first
   end
 
   def import_from_resource_h!(resource_h)
@@ -22,16 +22,14 @@ class Course < ApplicationRecord
   end
 
   def slug=(slug)
-    s = Mumukit::Auth::Slug.parse(slug)
-
-    self[:slug] = slug
-    self[:code] = s.course
+    s = slug.to_mumukit_slug
+    self[:slug] = slug.to_s
     self[:organization_id] = Organization.locate!(s.organization).id
   end
 
   def invite!(expiration_date)
     if closed?
-      generate_invitation! expiration_date
+      create_invitation_for expiration_date
     else
       current_invitation
     end
@@ -41,9 +39,9 @@ class Course < ApplicationRecord
     current_invitation.blank? || current_invitation.expired?
   end
 
-  def generate_invitation!(expiration_date)
-    invitation = invitations.build expiration_date: expiration_date, course: self
-    invitation.save_and_notify!
+  def create_invitation_for(expiration_date)
+    invitations.create expiration_date: expiration_date, course: self
+    current_invitation
   end
 
   def self.sync_key_id_field
@@ -52,5 +50,9 @@ class Course < ApplicationRecord
 
   def to_organization
     organization
+  end
+
+  def self.allowed(organization, permissions)
+    where(organization: organization).select { |course| permissions.has_permission? :teacher, course.slug }
   end
 end
