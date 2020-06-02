@@ -8,7 +8,7 @@ group :test do
   gem 'rspec-rails', '~> 3.6'
   gem 'factory_bot_rails'
   gem 'rake', '~> 12.3'
-  gem 'faker', '~> 1.5'
+  gem 'faker', '~> 2.2'
 end
 
 gem 'codeclimate-test-reporter', :group => :test, :require => nil

@@ -11,8 +11,8 @@ FactoryBot.define do
   trait :guide_container do
     transient do
       exercises { [] }
-      name { Faker::Lorem.sentence(3) }
-      description { Faker::Lorem.sentence(10) }
+      name { Faker::Lorem.sentence(word_count: 3) }
+      description { Faker::Lorem.sentence(word_count: 10) }
       language { create(:language) }
       slug { "mumuki/mumuki-test-lesson-#{SecureRandom.uuid}" }
     end

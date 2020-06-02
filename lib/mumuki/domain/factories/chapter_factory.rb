@@ -1,12 +1,12 @@
 FactoryBot.define do
 
   factory :chapter do
-    number { Faker::Number.between(1, 40) }
+    number { Faker::Number.between(from: 1, to: 40) }
     book { Organization.current.book rescue nil }
 
     transient do
       lessons { [] }
-      name { Faker::Lorem.sentence(3) }
+      name { Faker::Lorem.sentence(word_count: 3) }
       slug { "mumuki/mumuki-test-topic-#{SecureRandom.uuid}" }
     end
 
