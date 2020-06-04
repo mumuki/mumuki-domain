@@ -143,7 +143,11 @@ ActiveRecord::Schema.define(version: 20200608132959) do
     t.integer "max_problem_submissions"
     t.integer "max_choice_submissions"
     t.boolean "results_hidden_for_choices", default: false
+    t.bigint "course_id"
+    t.integer "passing_criterion_type"
+    t.integer "passing_criterion_value"
     t.index ["classroom_id"], name: "index_exams_on_classroom_id", unique: true
+    t.index ["course_id"], name: "index_exams_on_course_id"
     t.index ["guide_id"], name: "index_exams_on_guide_id"
     t.index ["organization_id"], name: "index_exams_on_organization_id"
   end
@@ -382,6 +386,7 @@ ActiveRecord::Schema.define(version: 20200608132959) do
 
   add_foreign_key "chapters", "topics"
   add_foreign_key "complements", "guides"
+  add_foreign_key "exams", "courses"
   add_foreign_key "exams", "guides"
   add_foreign_key "lessons", "guides"
   add_foreign_key "organizations", "books"

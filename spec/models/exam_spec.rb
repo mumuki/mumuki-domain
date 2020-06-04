@@ -3,14 +3,15 @@ require 'spec_helper'
 describe Exam, organization_workspace: :test do
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
+  let(:course) { create(:course, slug: 'test/foo') }
 
   describe '#upsert' do
     let(:guide) { create(:guide) }
-    let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [], organization: 'test'} }
+    let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [], organization: 'test', course: course.slug, passing_criterion_type: 'none'} }
     let!(:exam) { Exam.import_from_resource_h! exam_json }
     context 'when new exam and the guide is the same' do
       let(:guide2) { create(:guide) }
-      let(:exam_json2) { {eid: '2', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [], organization: 'test'} }
+      let(:exam_json2) { {eid: '2', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [], organization: 'test', course: course.slug, passing_criterion_type: 'none'} }
       let!(:exam2) { Exam.import_from_resource_h! exam_json2 }
       context 'and the organization is the same' do
         it { expect(Exam.count).to eq 1 }
@@ -24,7 +25,7 @@ describe Exam, organization_workspace: :test do
 
   describe '#validate_accessible_for!' do
     context 'not enabled' do
-      let(:exam) { create(:exam, start_time: 5.minutes.since, end_time: 10.minutes.since) }
+      let(:exam) { create(:exam, start_time: 5.minutes.since, end_time: 10.minutes.since, course: course) }
 
       it { expect(exam.enabled?).to be false }
 
@@ -38,7 +39,7 @@ describe Exam, organization_workspace: :test do
     end
 
     context 'enabled' do
-      let(:exam) { create(:exam, start_time: 5.minutes.ago, end_time: 10.minutes.since) }
+      let(:exam) { create(:exam, start_time: 5.minutes.ago, end_time: 10.minutes.since, course: course) }
 
       it { expect(exam.enabled?).to be true }
 
@@ -58,7 +59,7 @@ describe Exam, organization_workspace: :test do
         let(:user2) { create(:user, uid: 'auth0|2') }
         let(:guide) { create(:guide) }
         let(:duration) { 150 }
-        let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: duration, language: 'haskell', name: 'foo', uids: [user.uid], organization: 'test'} }
+        let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: duration, language: 'haskell', name: 'foo', uids: [user.uid], organization: 'test', course: course.slug, passing_criterion_type: 'none'} }
         before { Exam.import_from_resource_h! exam_json }
 
         context 'new exam' do
@@ -74,7 +75,7 @@ describe Exam, organization_workspace: :test do
         end
 
         context 'existing exam' do
-          let(:exam_json2) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [user2.uid], organization: 'test'} }
+          let(:exam_json2) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [user2.uid], organization: 'test', course: course.slug, passing_criterion_type: 'none'} }
           before { Exam.import_from_resource_h! exam_json2 }
 
           it { expect(Exam.count).to eq 1 }
@@ -87,7 +88,7 @@ describe Exam, organization_workspace: :test do
       context 'real_end_time' do
         let(:user) { create(:user, uid: 'auth0|1') }
         let(:guide) { create(:guide) }
-        let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: duration, language: 'haskell', name: 'foo', uids: [user.uid], organization: 'test'} }
+        let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: duration, language: 'haskell', name: 'foo', uids: [user.uid], organization: 'test', course: course.slug, passing_criterion_type: 'none'} }
         let(:exam) { Exam.import_from_resource_h! exam_json }
         before { exam.start! user }
 
@@ -113,7 +114,7 @@ describe Exam, organization_workspace: :test do
       context 'update exam does not change user started_at' do
         let(:user) { create(:user, uid: 'auth0|1') }
         let(:guide) { create(:guide) }
-        let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [user.uid], organization: 'test'} }
+        let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [user.uid], organization: 'test', course: course.slug, passing_criterion_type: 'none'} }
         let(:exam) { Exam.import_from_resource_h! exam_json }
         before { exam.start! user }
         before { Exam.import_from_resource_h! exam_json.merge(organization: 'test') }
@@ -124,7 +125,7 @@ describe Exam, organization_workspace: :test do
 
       context 'create exam with non existing user' do
         let(:guide) { create(:guide) }
-        let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [user.uid], organization: 'test'} }
+        let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [user.uid], organization: 'test', course: course.slug, passing_criterion_type: 'none'} }
         let(:exam) { Exam.import_from_resource_h! exam_json }
 
         it { expect { Exam.import_from_resource_h! exam_json.merge(organization: 'test') }.not_to raise_error }
@@ -139,7 +140,7 @@ describe Exam, organization_workspace: :test do
       context 'teacher does not start exams' do
         let(:teacher) { create(:user, uid: 'auth0|1') }
         let(:guide) { create(:guide) }
-        let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [], organization: 'test'} }
+        let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [], organization: 'test', course: course.slug, passing_criterion_type: 'none'} }
         let(:exam) { Exam.import_from_resource_h! exam_json }
 
         context 'exam_authorization do not receive start method' do

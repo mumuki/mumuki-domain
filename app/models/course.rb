@@ -52,6 +52,10 @@ class Course < ApplicationRecord
     organization
   end
 
+  def to_s
+    slug.to_s
+  end
+
   def self.allowed(organization, permissions)
     where(organization: organization).select { |course| permissions.has_permission? :teacher, course.slug }
   end
