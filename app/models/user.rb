@@ -32,7 +32,7 @@ class User < ApplicationRecord
 
   after_initialize :init
 
-  enum gender: %i(female male other)
+  enum gender: %i(female male other unspecified)
 
   belongs_to :avatar, optional: true
 
