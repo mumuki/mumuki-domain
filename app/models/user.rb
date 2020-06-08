@@ -154,6 +154,12 @@ class User < ApplicationRecord
     update! self.class.buried_profile.merge(accepts_reminders: false, gender: nil, birthdate: nil)
   end
 
+  # Takes a didactic - ordered - sequence of content containers
+  # and returns those that have been completed
+  def completed_containers(sequence, organization)
+    sequence.take_while { |it| it.content.completed_for?(self, organization) }
+  end
+
   private
 
   def set_uid!

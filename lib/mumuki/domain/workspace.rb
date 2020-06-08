@@ -16,15 +16,18 @@ class Mumuki::Domain::Workspace
     user.teacher_of? scope
   end
 
-  # Tells the enabled chapters for this user in this workspaces
+  # Takes a didactic sequence of chapters and retuns the enabled chapters for this user
+  # in this workspace.
+  #
   # This method does not check the user is actually member of the scope,
   # you should check that before sending this message
+  #
   def enabled_chapters(chapters_sequence)
     return chapters_sequence if annonymous? || teacher?
 
     # TODO refactor when introducing access rules
     if scope.progressive_display_lookahead
-      completed = chapters_sequence.take_while { |it| it.content.completed_for?(user, scope) }
+      completed = user.completed_containers(chapters_sequence, scope)
       chapters_sequence[0..completed.size + scope.progressive_display_lookahead - 1]
     else
       chapters_sequence
