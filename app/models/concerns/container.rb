@@ -1,4 +1,4 @@
-module WithContent
+module Container
   extend ActiveSupport::Concern
 
   included do
