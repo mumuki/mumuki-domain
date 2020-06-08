@@ -20,6 +20,10 @@ module Mumuki::Domain::Helpers::Organization
     slug.to_mumukit_grant
   end
 
+  def to_mumukit_slug
+    slug
+  end
+
   def central?
     name == 'central'
   end

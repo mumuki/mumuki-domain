@@ -28,9 +28,9 @@ module Mumuki::Domain::Helpers::User
     role_here = "#{role}_here?"
 
     # Tells whether this user has #{role} permissions in
-    # the given organization
-    define_method role_of do |organization|
-      has_permission? role, organization.slug
+    # the given `slug_like`
+    define_method role_of do |slug_like|
+      has_permission? role, slug_like.to_mumukit_slug
     end
 
     # Tells whether this user has #{role} permissions in
@@ -49,9 +49,9 @@ module Mumuki::Domain::Helpers::User
   (Mumukit::Auth::Roles::ROLES - [:owner]).each do |role|
 
     # Assignes the #{role} role to this user
-    # for the given slug
-    define_method "make_#{role}_of!" do |slug|
-      add_permission! role, slug
+    # for the given `grant_like`
+    define_method "make_#{role}_of!" do |grant_like|
+      add_permission! role, grant_like.to_mumukit_grant
     end
   end
 

@@ -208,45 +208,64 @@ describe Book, organization_workspace: :test do
 
     before { book.rebuild_chapters! [chapter_1, chapter_2, chapter_3] }
 
-    let(:workspace) { Mumuki::Domain::Workspace::WithinOrganization.new(user, Organization.current) }
+    let(:organization) { Organization.current }
+    let(:workspace) { Mumuki::Domain::Workspace::WithinOrganization.new(user, organization) }
+
+    shared_examples_for 'full display' do
+      it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+    end
 
     context 'non-progressive display' do
       context 'when annonymous user' do
         let(:user) { nil }
-        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+        it_behaves_like 'full display'
       end
 
       context 'when fresh user' do
         let(:user) { create(:user) }
-        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+        it_behaves_like 'full display'
       end
     end
 
     context 'progressive display-1' do
-      before { Organization.current.enable_progressive_display! }
+      before { organization.enable_progressive_display! }
 
       context 'when annonymous user' do
         let(:user) { nil }
-        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+        it_behaves_like 'full display'
       end
 
       context 'when fresh user' do
         let(:user) { create(:user) }
         it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1] }
       end
+
+      context 'when teacher user' do
+        let(:user) { create(:user) }
+        before { user.make_teacher_of! organization }
+
+        it_behaves_like 'full display'
+      end
     end
 
     context 'progressive display-2' do
-      before { Organization.current.enable_progressive_display! lookahead: 2 }
+      before { organization.enable_progressive_display! lookahead: 2 }
 
       context 'when annonymous user' do
         let(:user) { nil }
-        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+        it_behaves_like 'full display'
       end
 
       context 'when fresh user' do
         let(:user) { create(:user) }
         it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2] }
+      end
+
+      context 'when teacher user' do
+        let(:user) { create(:user) }
+        before { user.make_teacher_of! organization }
+
+        it_behaves_like 'full display'
       end
     end
   end

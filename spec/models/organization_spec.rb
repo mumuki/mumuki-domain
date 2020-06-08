@@ -47,7 +47,7 @@ describe Organization, organization_workspace: :test do
       end
 
       context 'when user meets minimal permissions' do
-        before { user.make_student_of! organization.slug }
+        before { user.make_student_of! organization }
         it { expect(organization.ask_for_help_enabled? user).to be true }
         it { expect(organization.ask_for_help_enabled?).to be true }
       end
