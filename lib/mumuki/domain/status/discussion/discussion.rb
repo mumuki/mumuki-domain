@@ -41,4 +41,8 @@ module Mumuki::Domain::Status::Discussion
   def allowed_statuses_for(user, discussion)
     STATUSES.select { |it| it.allowed_for?(user, discussion) }
   end
+
+  def as_json(_options={})
+    to_s
+  end
 end
