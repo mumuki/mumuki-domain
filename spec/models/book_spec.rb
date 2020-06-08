@@ -209,7 +209,7 @@ describe Book, organization_workspace: :test do
     before { book.rebuild_chapters! [chapter_1, chapter_2, chapter_3] }
 
     let(:organization) { Organization.current }
-    let(:workspace) { Mumuki::Domain::Workspace::WithinOrganization.new(user, organization) }
+    let(:workspace) { Mumuki::Domain::Workspace.new(user, organization) }
 
     shared_examples_for 'full display' do
       it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
