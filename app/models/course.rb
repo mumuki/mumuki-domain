@@ -1,6 +1,7 @@
 class Course < ApplicationRecord
   include Mumuki::Domain::Syncable
   include Mumuki::Domain::Helpers::Course
+  include Mumuki::Domain::Area
 
   validates_presence_of :slug, :shifts, :code, :days, :period, :description, :organization_id
   validates_uniqueness_of :slug
@@ -47,5 +48,9 @@ class Course < ApplicationRecord
 
   def self.sync_key_id_field
     :slug
+  end
+
+  def to_organization
+    organization
   end
 end

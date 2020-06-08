@@ -16,14 +16,6 @@ module Mumuki::Domain::Helpers::Organization
     Mumukit::Auth::Slug.join_s name
   end
 
-  def to_mumukit_grant
-    slug.to_mumukit_grant
-  end
-
-  def to_mumukit_slug
-    slug
-  end
-
   def central?
     name == 'central'
   end
