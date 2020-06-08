@@ -126,7 +126,8 @@ class Organization < ApplicationRecord
     super.merge(book: book.slug)
   end
 
-  def enable_progressive_display!
+  def enable_progressive_display!(lookahead: 1)
+    update! progressive_display_lookahead: lookahead
   end
 
   private

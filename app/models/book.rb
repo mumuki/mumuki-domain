@@ -66,6 +66,6 @@ class Book < Content
   ## progressive display
 
   def enabled_chapters_in(workspace)
-    chapters
+    workspace.enabled_chapters(chapters)
   end
 end

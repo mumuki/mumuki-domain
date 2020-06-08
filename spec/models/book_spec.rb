@@ -204,18 +204,50 @@ describe Book, organization_workspace: :test do
   describe 'enabled chapters' do
     let(:chapter_1) { build(:chapter, lessons: [create(:lesson)]) }
     let(:chapter_2) { build(:chapter, lessons: [create(:lesson)]) }
+    let(:chapter_3) { build(:chapter, lessons: [create(:lesson)]) }
 
-    before { book.rebuild_chapters! [chapter_1, chapter_2] }
-
-    before { Organization.current.enable_progressive_display! }
+    before { book.rebuild_chapters! [chapter_1, chapter_2, chapter_3] }
 
     let(:workspace) { Mumuki::Domain::Workspace::WithinOrganization.new(user, Organization.current) }
 
-    context 'when annonymous user' do
-      let(:user) { nil }
+    context 'non-progressive display' do
+      context 'when annonymous user' do
+        let(:user) { nil }
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+      end
 
-      it { expect(book.chapters).to_not be_empty }
-      it { expect(book.enabled_chapters_in(workspace)).to eq book.chapters }
+      context 'when fresh user' do
+        let(:user) { create(:user) }
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+      end
+    end
+
+    context 'progressive display-1' do
+      before { Organization.current.enable_progressive_display! }
+
+      context 'when annonymous user' do
+        let(:user) { nil }
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+      end
+
+      context 'when fresh user' do
+        let(:user) { create(:user) }
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1] }
+      end
+    end
+
+    context 'progressive display-2' do
+      before { Organization.current.enable_progressive_display! lookahead: 2 }
+
+      context 'when annonymous user' do
+        let(:user) { nil }
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+      end
+
+      context 'when fresh user' do
+        let(:user) { create(:user) }
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2] }
+      end
     end
   end
 end
