@@ -27,8 +27,7 @@ class Mumuki::Domain::Workspace
 
     # TODO refactor when introducing access rules
     if scope.progressive_display_lookahead
-      completed = user.completed_containers(chapters_sequence, scope)
-      chapters_sequence[0..completed.size + scope.progressive_display_lookahead - 1]
+      user.completed_containers_with_lookahead(chapters_sequence, scope, lookahead: scope.progressive_display_lookahead)
     else
       chapters_sequence
     end
