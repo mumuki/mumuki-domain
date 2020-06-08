@@ -200,4 +200,22 @@ describe Book, organization_workspace: :test do
       it { expect(Chapter.count).to eq 1 }
     end
   end
+
+  describe 'enabled chapters' do
+    let(:chapter_1) { build(:chapter, lessons: [create(:lesson)]) }
+    let(:chapter_2) { build(:chapter, lessons: [create(:lesson)]) }
+
+    before { book.rebuild_chapters! [chapter_1, chapter_2] }
+
+    before { Organization.current.enable_progressive_display! }
+
+    let(:workspace) { Mumuki::Domain::Workspace::WithinOrganization.new(user, Organization.current) }
+
+    context 'when annonymous user' do
+      let(:user) { nil }
+
+      it { expect(book.chapters).to_not be_empty }
+      it { expect(book.enabled_chapters_in(workspace)).to eq book.chapters }
+    end
+  end
 end

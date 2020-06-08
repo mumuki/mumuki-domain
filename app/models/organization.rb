@@ -126,6 +126,9 @@ class Organization < ApplicationRecord
     super.merge(book: book.slug)
   end
 
+  def enable_progressive_display!
+  end
+
   private
 
   def ensure_consistent_public_login

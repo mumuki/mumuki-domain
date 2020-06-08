@@ -62,4 +62,10 @@ class Book < Content
   def structural_parent
     nil
   end
+
+  ## progressive display
+
+  def enabled_chapters_in(workspace)
+    chapters
+  end
 end
