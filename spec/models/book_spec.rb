@@ -202,8 +202,12 @@ describe Book, organization_workspace: :test do
   end
 
   describe 'enabled chapters' do
-    let(:chapter_1) { build(:chapter, lessons: [create(:lesson)]) }
-    let(:chapter_2) { build(:chapter, lessons: [create(:lesson)]) }
+    let(:exercise_1) { create(:exercise) }
+    let(:exercise_2) { create(:exercise) }
+    let(:exercise_3) { create(:exercise) }
+
+    let(:chapter_1) { build(:chapter, lessons: [create(:lesson, exercises: [exercise_1])]) }
+    let(:chapter_2) { build(:chapter, lessons: [create(:lesson, exercises: [exercise_2, exercise_3])]) }
     let(:chapter_3) { build(:chapter, lessons: [create(:lesson)]) }
 
     before { book.rebuild_chapters! [chapter_1, chapter_2, chapter_3] }
@@ -238,6 +242,50 @@ describe Book, organization_workspace: :test do
       context 'when fresh user' do
         let(:user) { create(:user) }
         it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1] }
+      end
+
+      context 'when user with incomplete progress in first chapter' do
+        let(:user) { create(:user) }
+
+        before do
+          exercise_1.submit_solution!(user)
+        end
+
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1] }
+      end
+
+      context 'when user with full progress in first chapter' do
+        let(:user) { create(:user) }
+
+        before do
+          exercise_1.submit_solution!(user).passed!
+        end
+
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2] }
+      end
+
+      context 'when user with incomplete progress in second chapter' do
+        let(:user) { create(:user) }
+
+        before do
+          exercise_1.submit_solution!(user).passed!
+          exercise_2.submit_solution!(user).passed!
+        end
+
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2] }
+      end
+
+
+      context 'when user with incomplete progress in third chapter' do
+        let(:user) { create(:user) }
+
+        before do
+          exercise_1.submit_solution!(user).passed!
+          exercise_2.submit_solution!(user).passed!
+          exercise_3.submit_solution!(user).passed!
+        end
+
+        it_behaves_like 'full display'
       end
 
       context 'when teacher user' do

@@ -24,7 +24,8 @@ class Mumuki::Domain::Workspace
 
     # TODO refactor when introducing access rules
     if scope.progressive_display_lookahead
-      chapters_sequence.take(scope.progressive_display_lookahead)
+      completed = chapters_sequence.take_while { |it| it.content.completed_for?(user, scope) }
+      chapters_sequence[0..completed.size + scope.progressive_display_lookahead - 1]
     else
       chapters_sequence
     end
