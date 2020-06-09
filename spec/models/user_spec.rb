@@ -146,6 +146,30 @@ describe User, organization_workspace: :test do
     end
   end
 
+  describe '#completed_containers_with_lookahead' do
+    let(:student) { create :user }
+
+    let(:organization) { Organization.current }
+
+    let(:exercise_1) { create(:exercise) }
+    let(:exercise_2) { create(:exercise) }
+
+    let(:lesson_1) { create :lesson, exercises: [exercise_1] }
+    let(:lesson_2) { create :lesson, exercises: [exercise_2] }
+
+    context 'lookahead 0' do
+      it { expect { student.completed_containers_with_lookahead([lesson_1, lesson_2], organization, lookahead: 0) }.to raise_error('invalid lookahead')  }
+    end
+
+    context 'no items completed' do
+      it { expect(student.completed_containers_with_lookahead([lesson_1, lesson_2], organization)).to eq [lesson_1] }
+    end
+
+    context 'no items with lookahead 2' do
+      it { expect(student.completed_containers_with_lookahead([lesson_1, lesson_2], organization, lookahead: 2)).to eq [lesson_1, lesson_2] }
+    end
+  end
+
   describe '#visit!' do
     let(:user) { build(:user) }
 

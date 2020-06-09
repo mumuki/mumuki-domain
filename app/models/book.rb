@@ -62,4 +62,17 @@ class Book < Content
   def structural_parent
     nil
   end
+
+  ## progressive display
+
+  def enabled_chapters_in(workspace)
+    workspace.enabled_containers(chapters)
+  end
+
+  # experimental API - it may change in the future.
+  # This method assumes no gaps in the sequences are introduced
+  # by enabled_chapters_in
+  def chapter_visibilities_in(workspace)
+    chapters.zip(enabled_chapters_in(workspace)).map { |chapter, enabled| [chapter, !enabled.nil?] }
+  end
 end

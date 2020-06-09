@@ -25,6 +25,7 @@ Mumukit::Platform.configure do |config|
   config.organization_class_name = 'Organization'
 end
 
+require_relative './domain/area'
 require_relative './domain/evaluation'
 require_relative './domain/submission'
 require_relative './domain/status'
@@ -32,6 +33,7 @@ require_relative './domain/exceptions'
 require_relative './domain/file'
 require_relative './domain/extensions'
 require_relative './domain/organization'
+require_relative './domain/workspace'
 require_relative './domain/helpers'
 require_relative './domain/syncable'
 require_relative './domain/store'

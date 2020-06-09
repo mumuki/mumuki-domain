@@ -200,4 +200,125 @@ describe Book, organization_workspace: :test do
       it { expect(Chapter.count).to eq 1 }
     end
   end
+
+  describe 'enabled chapters' do
+    let(:exercise_1) { create(:exercise) }
+    let(:exercise_2) { create(:exercise) }
+    let(:exercise_3) { create(:exercise) }
+
+    let(:chapter_1) { build(:chapter, lessons: [create(:lesson, exercises: [exercise_1])]) }
+    let(:chapter_2) { build(:chapter, lessons: [create(:lesson, exercises: [exercise_2, exercise_3])]) }
+    let(:chapter_3) { build(:chapter, lessons: [create(:lesson)]) }
+
+    before { book.rebuild_chapters! [chapter_1, chapter_2, chapter_3] }
+
+    let(:organization) { Organization.current }
+    let(:workspace) { Mumuki::Domain::Workspace.new(user, organization) }
+
+    shared_examples_for 'full display' do
+      it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+      it { expect(book.chapter_visibilities_in(workspace)).to eq [[chapter_1, true], [chapter_2, true], [chapter_3, true]] }
+    end
+
+    context 'non-progressive display' do
+      context 'when annonymous user' do
+        let(:user) { nil }
+        it_behaves_like 'full display'
+      end
+
+      context 'when fresh user' do
+        let(:user) { create(:user) }
+        it_behaves_like 'full display'
+      end
+    end
+
+    context 'progressive display-1' do
+      before { organization.enable_progressive_display! }
+
+      context 'when annonymous user' do
+        let(:user) { nil }
+        it_behaves_like 'full display'
+      end
+
+      context 'when fresh user' do
+        let(:user) { create(:user) }
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1] }
+      end
+
+      context 'when user with incomplete progress in first chapter' do
+        let(:user) { create(:user) }
+
+        before do
+          exercise_1.submit_solution!(user)
+        end
+
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1] }
+        it { expect(book.chapter_visibilities_in(workspace)).to eq [[chapter_1, true], [chapter_2, false], [chapter_3, false]] }
+      end
+
+      context 'when user with full progress in first chapter' do
+        let(:user) { create(:user) }
+
+        before do
+          exercise_1.submit_solution!(user).passed!
+        end
+
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2] }
+        it { expect(book.chapter_visibilities_in(workspace)).to eq [[chapter_1, true], [chapter_2, true], [chapter_3, false]] }
+      end
+
+      context 'when user with incomplete progress in second chapter' do
+        let(:user) { create(:user) }
+
+        before do
+          exercise_1.submit_solution!(user).passed!
+          exercise_2.submit_solution!(user).passed!
+        end
+
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2] }
+        it { expect(book.chapter_visibilities_in(workspace)).to eq [[chapter_1, true], [chapter_2, true], [chapter_3, false]] }
+      end
+
+
+      context 'when user with incomplete progress in third chapter' do
+        let(:user) { create(:user) }
+
+        before do
+          exercise_1.submit_solution!(user).passed!
+          exercise_2.submit_solution!(user).passed!
+          exercise_3.submit_solution!(user).passed!
+        end
+
+        it_behaves_like 'full display'
+      end
+
+      context 'when teacher user' do
+        let(:user) { create(:user) }
+        before { user.make_teacher_of! organization }
+
+        it_behaves_like 'full display'
+      end
+    end
+
+    context 'progressive display-2' do
+      before { organization.enable_progressive_display! lookahead: 2 }
+
+      context 'when annonymous user' do
+        let(:user) { nil }
+        it_behaves_like 'full display'
+      end
+
+      context 'when fresh user' do
+        let(:user) { create(:user) }
+        it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2] }
+      end
+
+      context 'when teacher user' do
+        let(:user) { create(:user) }
+        before { user.make_teacher_of! organization }
+
+        it_behaves_like 'full display'
+      end
+    end
+  end
 end

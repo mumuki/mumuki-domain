@@ -19,6 +19,10 @@ module WithProgress
     self
   end
 
+  def completed_for?(user, organization)
+    progress_for(user, organization).completed?
+  end
+
   private
 
   def structural_children_changed?(old_structural_children)

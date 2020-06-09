@@ -1,6 +1,7 @@
 class Organization < ApplicationRecord
   include Mumuki::Domain::Syncable
   include Mumuki::Domain::Helpers::Organization
+  include Mumuki::Domain::Area
 
   include Mumukit::Login::OrganizationHelpers
 
@@ -124,6 +125,14 @@ class Organization < ApplicationRecord
 
   def to_resource_h
     super.merge(book: book.slug)
+  end
+
+  def to_organization
+    self
+  end
+
+  def enable_progressive_display!(lookahead: 1)
+    update! progressive_display_lookahead: lookahead
   end
 
   private

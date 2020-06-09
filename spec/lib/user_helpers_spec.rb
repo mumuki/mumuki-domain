@@ -31,13 +31,13 @@ describe Mumuki::Domain::Helpers::User do
   end
 
   describe 'make_student_of!' do
-    before { user.make_student_of! organization.slug }
+    before { user.make_student_of! organization }
 
     it { expect(user.student?).to be true }
     it { expect(user.student? 'bar/_').to be false }
 
     it { expect(user.student_of? organization).to be true }
-    it { expect(user.student_of? struct(slug: 'bar/_')).to be false }
+    it { expect(user.student_of? 'bar/_').to be false }
   end
 
   describe 'to_resource_h' do
@@ -83,7 +83,7 @@ describe Mumuki::Domain::Helpers::User do
       before { Mumukit::Platform::Organization.switch! organization }
 
       context 'when in organization' do
-        before { user.make_student_of! organization.slug }
+        before { user.make_student_of! organization }
         it { expect(user.student_here?).to be true }
       end
 
@@ -111,7 +111,7 @@ describe Mumuki::Domain::Helpers::User do
         end
 
         context 'when in organization as student' do
-          before { user.make_student_of! organization.slug }
+          before { user.make_student_of! organization }
           it { expect(user.discusser_here?).to be true }
         end
       end
@@ -124,12 +124,12 @@ describe Mumuki::Domain::Helpers::User do
         end
 
         context 'when in organization as student' do
-          before { user.make_student_of! organization.slug }
+          before { user.make_student_of! organization }
           it { expect(user.discusser_here?).to be false }
         end
 
         context 'when in organization as teacher' do
-          before { user.make_teacher_of! organization.slug }
+          before { user.make_teacher_of! organization }
           it { expect(user.discusser_here?).to be true }
         end
       end
@@ -151,7 +151,7 @@ describe Mumuki::Domain::Helpers::User do
     end
 
     context 'with organization' do
-      before { user.make_student_of! organization.slug }
+      before { user.make_student_of! organization }
       before { expect(Mumukit::Platform.organization_class).to receive(:find_by_name!).and_return(organization)}
 
       it { expect(user.student_granted_organizations).to eq [organization] }

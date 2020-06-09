@@ -1,6 +1,6 @@
 module TopicContainer
   extend ActiveSupport::Concern
-  include WithContent
+  include Container
 
   included do
     associated_content :topic
