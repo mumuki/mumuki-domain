@@ -217,6 +217,7 @@ describe Book, organization_workspace: :test do
 
     shared_examples_for 'full display' do
       it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2, chapter_3] }
+      it { expect(book.chapter_visibilities_in(workspace)).to eq [[chapter_1, true], [chapter_2, true], [chapter_3, true]] }
     end
 
     context 'non-progressive display' do
@@ -252,6 +253,7 @@ describe Book, organization_workspace: :test do
         end
 
         it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1] }
+        it { expect(book.chapter_visibilities_in(workspace)).to eq [[chapter_1, true], [chapter_2, false], [chapter_3, false]] }
       end
 
       context 'when user with full progress in first chapter' do
@@ -262,6 +264,7 @@ describe Book, organization_workspace: :test do
         end
 
         it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2] }
+        it { expect(book.chapter_visibilities_in(workspace)).to eq [[chapter_1, true], [chapter_2, true], [chapter_3, false]] }
       end
 
       context 'when user with incomplete progress in second chapter' do
@@ -273,6 +276,7 @@ describe Book, organization_workspace: :test do
         end
 
         it { expect(book.enabled_chapters_in(workspace)).to eq [chapter_1, chapter_2] }
+        it { expect(book.chapter_visibilities_in(workspace)).to eq [[chapter_1, true], [chapter_2, true], [chapter_3, false]] }
       end
 
 

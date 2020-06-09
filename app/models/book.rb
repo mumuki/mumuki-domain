@@ -66,6 +66,13 @@ class Book < Content
   ## progressive display
 
   def enabled_chapters_in(workspace)
-    workspace.enabled_chapters(chapters)
+    workspace.enabled_containers(chapters)
+  end
+
+  # experimental API - it may change in the future.
+  # This method assumes no gaps in the sequences are introduced
+  # by enabled_chapters_in
+  def chapter_visibilities_in(workspace)
+    chapters.zip(enabled_chapters_in(workspace)).map { |chapter, enabled| [chapter, !enabled.nil?] }
   end
 end
