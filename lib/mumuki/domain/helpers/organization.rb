@@ -4,7 +4,7 @@ module Mumuki::Domain::Helpers::Organization
 
   included do
     delegate *Mumuki::Domain::Organization::Theme.accessors, to: :theme
-    delegate *Mumuki::Domain::Organization::Settings.accessors, :private?, :login_settings, to: :settings
+    delegate *Mumuki::Domain::Organization::Settings.accessors, :private?, :login_settings, :in_preparation?, :disabled?, to: :settings
     delegate *Mumuki::Domain::Organization::Profile.accessors, :locale_json, to: :profile
   end
 
@@ -46,6 +46,11 @@ module Mumuki::Domain::Helpers::Organization
 
   def domain
     Mumukit::Platform.application.organic_domain(name)
+  end
+
+  def validate_active!
+    raise Mumuki::Domain::DisabledOrganizationError if disabled?
+    raise Mumuki::Domain::UnpreparedOrganizationError if in_preparation?
   end
 
   ## API Exposure

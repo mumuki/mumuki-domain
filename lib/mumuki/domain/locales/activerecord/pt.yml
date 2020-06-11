@@ -27,3 +27,4 @@ pt:
           attributes:
             base:
               consistent_public_login: 'Uma organização pública não pode restringir métodos de login'
+              invalid_activity_range: 'O intervalo de atividades da organização não é válido'

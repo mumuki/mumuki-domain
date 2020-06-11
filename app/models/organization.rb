@@ -12,6 +12,7 @@ class Organization < ApplicationRecord
   markdown_on :description
 
   validate :ensure_consistent_public_login
+  validate :ensure_valid_activity_range
 
   belongs_to :book
   has_many :usages
@@ -139,6 +140,12 @@ class Organization < ApplicationRecord
 
   def ensure_consistent_public_login
     errors.add(:base, :consistent_public_login) if settings.customized_login_methods? && public?
+  end
+
+  def ensure_valid_activity_range
+    if in_preparation_until.present? && disabled_from.present?
+      errors.add(:base, :invalid_activity_range) if in_preparation_until.to_datetime >= disabled_from.to_datetime
+    end
   end
 
   def notify_assignments!(assignments)

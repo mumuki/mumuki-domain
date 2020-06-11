@@ -11,7 +11,9 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
                       :embeddable?,
                       :immersive?,
                       :forum_enabled?,
-                      :report_issue_enabled?
+                      :report_issue_enabled?,
+                      :disabled_from,
+                      :in_preparation_until
 
   def private?
     !public?
@@ -23,5 +25,13 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
 
   def forum_discussions_minimal_role
     (@forum_discussions_minimal_role || 'student').to_sym
+  end
+
+  def disabled?
+    disabled_from.present? && disabled_from.to_datetime < DateTime.now
+  end
+
+  def in_preparation?
+    in_preparation_until.present? && in_preparation_until.to_datetime > DateTime.now
   end
 end

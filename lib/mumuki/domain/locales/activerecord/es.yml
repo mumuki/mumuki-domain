@@ -44,6 +44,7 @@ es:
           attributes:
             base:
               consistent_public_login: 'Una organización pública no puede restringir los métodos de login'
+              invalid_activity_range: 'La fecha de deshabilitación no puede ser anterior a la de inicio del recorrido'
     models:
       exercise:
         one: Ejercicio
