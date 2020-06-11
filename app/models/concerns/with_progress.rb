@@ -3,8 +3,8 @@ module WithProgress
     Indicator.find_or_initialize_by(user: user, organization: organization, content: self)
   end
 
-  def completion_percentage_for(user, organization=Organization.current)
-    progress_for(user, organization).completion_percentage
+  def completion_ratio_for(user, organization=Organization.current)
+    progress_for(user, organization).completion_ratio
   end
 
   def dirty_progresses!
@@ -19,8 +19,9 @@ module WithProgress
     self
   end
 
-  def completed_for?(user, organization)
-    progress_for(user, organization).completed?
+  def completed_for?(user, organization, ratio: 1)
+    progress = progress_for(user, organization)
+    ratio == 1 ? progress.completed? : completion_ratio > ratio
   end
 
   private

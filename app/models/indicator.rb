@@ -47,7 +47,7 @@ class Indicator < Progress
     self.children_passed_count = children.count(&:completed?)
   end
 
-  def completion_percentage
+  def completion_ratio
     rebuild!
     children_passed_count.fdiv children_count
   end
@@ -72,6 +72,8 @@ class Indicator < Progress
   end
 
   def parent_content
-    content.usage_in_organization(organization).structural_parent
+    usage = content.usage_in_organization(organization)
+    raise "content #{content.name} is not in use in #{organization}" unless usage
+    usage.structural_parent
   end
 end
