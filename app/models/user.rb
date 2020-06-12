@@ -156,16 +156,16 @@ class User < ApplicationRecord
 
   # Takes a didactic - ordered - sequence of content containers
   # and returns those that have been completed
-  def completed_containers(sequence, organization)
-    sequence.take_while { |it| it.content.completed_for?(self, organization) }
+  def completed_containers(sequence, organization, ratio: 1)
+    sequence.take_while { |it| it.content.completed_for?(self, organization, ratio: ratio) }
   end
 
   # Like `completed_containers`, returns a slice of the completed containers
   # in the sequence, but adding a configurable number of trailing, non-completed contaienrs
-  def completed_containers_with_lookahead(sequence, organization, lookahead: 1)
+  def completed_containers_with_lookahead(sequence, organization, lookahead: 1, ratio: 1)
     raise 'invalid lookahead' if lookahead < 1
 
-    count = completed_containers(sequence, organization).size
+    count = completed_containers(sequence, organization, ratio: ratio).size
     sequence[0..count + lookahead - 1]
   end
 
