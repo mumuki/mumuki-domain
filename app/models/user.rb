@@ -45,6 +45,8 @@ class User < ApplicationRecord
 
   resource_fields :uid, :social_id, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
 
+  after_save :notify_permissions_changed!, if: :saved_change_to_permissions?
+
   def last_lesson
     last_guide.try(:lesson)
   end
@@ -139,9 +141,9 @@ class User < ApplicationRecord
 
   def interpolations
     {
-      'user_email' => email,
-      'user_first_name' => first_name,
-      'user_last_name' => last_name
+        'user_email' => email,
+        'user_first_name' => first_name,
+        'user_last_name' => last_name
     }
   end
 
@@ -249,6 +251,14 @@ class User < ApplicationRecord
     else
       main_organization
     end
+  end
+
+  def notify_permissions_changed!
+    Mumukit::Nuntius.notify_event! 'UserChanged', user: {
+        uid: uid,
+        old_permissions: permissions_before_last_save.as_json,
+        new_permissions: permissions.as_json
+    }
   end
 
   private
