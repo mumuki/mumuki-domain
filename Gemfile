@@ -6,7 +6,7 @@ gemspec
 
 group :test do
   gem 'rspec-rails', '~> 3.6'
-  gem 'factory_bot_rails'
+  gem 'factory_bot_rails', '~> 5.0'
   gem 'rake', '~> 12.3'
   gem 'faker', '~> 2.2'
 end
