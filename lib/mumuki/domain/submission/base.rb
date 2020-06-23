@@ -48,6 +48,7 @@ class Mumuki::Domain::Submission::Base
   def save_results!(results, assignment)
     assignment.assign_attributes results
     assignment.increment_attempts!
+    assignment.award_experience_points!
     assignment.save! results
   end
 
