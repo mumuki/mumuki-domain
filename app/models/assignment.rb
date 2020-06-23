@@ -1,6 +1,7 @@
 class Assignment < Progress
   include Contextualization
   include WithMessages
+  include Gamified
 
   markdown_on :extra_preview
 
