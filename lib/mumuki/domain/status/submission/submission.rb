@@ -42,4 +42,8 @@ module Mumuki::Domain::Status::Submission
   def solved?
     passed? || skipped?
   end
+
+  def exp_given
+    0
+  end
 end
