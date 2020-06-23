@@ -8,4 +8,8 @@ module Mumuki::Domain::Status::Submission::Passed
   def self.iconize
     {class: :success, type: 'check-circle'}
   end
+
+  def self.exp_given
+    100
+  end
 end
