@@ -228,6 +228,10 @@ class Assignment < Progress
     exercise.files_for(current_content)
   end
 
+  def update_top_submission!
+    self.update! top_submission_status: submission_status unless submission_status.improved_by?(top_submission_status)
+  end
+
   private
 
   def update_submissions_count!
