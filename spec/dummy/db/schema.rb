@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200608132959) do
+ActiveRecord::Schema.define(version: 20200616160640) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -351,6 +351,14 @@ ActiveRecord::Schema.define(version: 20200608132959) do
     t.index ["item_type", "item_id"], name: "index_usages_on_item_type_and_item_id"
     t.index ["organization_id"], name: "index_usages_on_organization_id"
     t.index ["parent_item_type", "parent_item_id"], name: "index_usages_on_parent_item_type_and_parent_item_id"
+  end
+
+  create_table "user_stats", force: :cascade do |t|
+    t.integer "exp", default: 0
+    t.bigint "user_id"
+    t.bigint "organization_id"
+    t.index ["organization_id"], name: "index_user_stats_on_organization_id"
+    t.index ["user_id"], name: "index_user_stats_on_user_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
