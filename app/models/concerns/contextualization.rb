@@ -16,6 +16,7 @@ module Contextualization
   end
 
   included do
+    serialize :top_submission_status, Mumuki::Domain::Status::Submission
     serialize :submission_status, Mumuki::Domain::Status::Submission
     validates_presence_of :submission_status
 
