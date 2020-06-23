@@ -12,4 +12,8 @@ module Mumuki::Domain::Status::Submission::PassedWithWarnings
   def self.iconize
     {class: :warning, type: 'exclamation-circle'}
   end
+
+  def self.exp_given
+    50
+  end
 end
