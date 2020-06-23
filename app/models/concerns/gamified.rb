@@ -1,8 +1,16 @@
 module Gamified
   def award_experience_points!
-    stats = user_stats_for(submitter, organization)
-    stats.exp += submission_status.exp_given
-    stats.save!
+    points = net_experience
+
+    if points > 0
+      stats = user_stats_for(submitter, organization)
+      stats.add_exp!(points)
+      stats.save!
+    end
+  end
+
+  def net_experience
+    submission_status.exp_given - top_submission_status.exp_given
   end
 
   def user_stats_for(user, organization)
