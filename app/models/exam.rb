@@ -144,7 +144,7 @@ class Exam < ApplicationRecord
   end
 
   def passing_criterion
-    ExamPassingCriterion.parse(passing_criterion_type, passing_criterion_value)
+    @passing_criterion ||= ExamPassingCriterion.parse(passing_criterion_type, passing_criterion_value)
   end
 
   # FIXME only provisional
