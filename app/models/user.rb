@@ -45,8 +45,6 @@ class User < ApplicationRecord
 
   resource_fields :uid, :social_id, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
 
-  after_save :notify_permissions_changed!, if: :saved_change_to_permissions?
-
   def last_lesson
     last_guide.try(:lesson)
   end
@@ -253,12 +251,20 @@ class User < ApplicationRecord
     end
   end
 
-  def notify_permissions_changed!
-    Mumukit::Nuntius.notify_event! 'UserChanged', user: {
+  def notify_permissions_changed!(old_permissions)
+    return if old_permissions == permissions
+    Mumukit::Nuntius.notify! 'user-permissions-changed', user: {
         uid: uid,
-        old_permissions: permissions_before_last_save.as_json,
+        old_permissions: old_permissions.as_json,
         new_permissions: permissions.as_json
     }
+  end
+
+  def save_and_notify!
+    old_permissions = self.permissions
+    save!
+    notify_permissions_changed! old_permissions
+    self
   end
 
   private
