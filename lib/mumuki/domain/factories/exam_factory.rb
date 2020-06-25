@@ -6,6 +6,5 @@ FactoryBot.define do
     course { create(:course) }
     start_time { 5.minutes.ago }
     end_time { 10.minutes.since }
-    passing_criterion_type { 'none' }
   end
 end

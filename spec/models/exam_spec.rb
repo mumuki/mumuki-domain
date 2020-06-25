@@ -134,6 +134,47 @@ describe Exam, organization_workspace: :test do
 
       end
 
+      context '.passing_criterion' do
+        let(:criterion_value) { 75 }
+        let(:criterion_type) { 'none' }
+        let(:exam) { create(:exam, passing_criterion_type: criterion_type, passing_criterion_value: criterion_value) }
+        context 'passing_criterion_type' do
+          context 'percentage criterion' do
+            let(:criterion_type) { 'percentage' }
+            it { expect(exam.passing_criterion).to be_an_instance_of Exam::PassingCriterion::Percentage }
+          end
+          context 'passed_exercises criterion' do
+            let(:criterion_type) { 'passed_exercises' }
+            it { expect(exam.passing_criterion).to be_an_instance_of Exam::PassingCriterion::PassedExercises }
+          end
+          context 'none criterion' do
+            let(:criterion_type) { 'none' }
+            it { expect(exam.passing_criterion).to be_an_instance_of Exam::PassingCriterion::None }
+          end
+          context 'nil criterion' do
+            let(:criterion_type) { nil }
+            it { expect(exam.passing_criterion).to be_an_instance_of Exam::PassingCriterion::None }
+          end
+          context 'invalid criterion' do
+            let(:criterion_type) { 'unsupported' }
+            it { expect { exam.passing_criterion }.to raise_error ArgumentError }
+          end
+        end
+        context 'passing_criterion_value' do
+          context 'with invalid percentage' do
+            let(:criterion_type) { 'percentage'}
+            let(:criterion_value) { 101 }
+            it { expect { exam.passing_criterion }.to raise_error("Invalid criterion value #{criterion_value} for #{criterion_type}") }
+          end
+          context 'with invalid passed_exercises' do
+            let(:criterion_type) { 'passed_exercises'}
+            let(:criterion_value) { -1 }
+            it { expect { exam.passing_criterion }.to raise_error("Invalid criterion value #{criterion_value} for #{criterion_type}") }
+          end
+        end
+      end
+
+
       context 'unauthorized user does not start' do
         let(:exam) { create(:exam) }
         it { expect { exam.start! user }.to raise_error Mumuki::Domain::ForbiddenError }

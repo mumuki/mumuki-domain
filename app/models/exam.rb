@@ -14,12 +14,13 @@ class Exam < ApplicationRecord
 
   validates_presence_of :start_time, :end_time
   validates_numericality_of :max_problem_submissions, :max_choice_submissions, greater_than_or_equal_to: 1, allow_nil: true
-  validate :passing_criterion
 
-  before_create :set_classroom_id!
+  before_create :set_classroom_id
 
   after_destroy { |record| Usage.destroy_usages_for record }
   after_create :reindex_usages!
+
+  before_save :set_default_criterion_type
 
   def used_in?(organization)
     organization == self.organization
@@ -139,12 +140,16 @@ class Exam < ApplicationRecord
     false
   end
 
-  def set_classroom_id!
+  def set_classroom_id
     self.classroom_id ||= SecureRandom.hex(8)
   end
 
   def passing_criterion
     @passing_criterion ||= Exam::PassingCriterion.parse(passing_criterion_type, passing_criterion_value)
+  end
+
+  def set_default_criterion_type
+    self.passing_criterion_type ||= :none
   end
 
   # FIXME only provisional
@@ -186,8 +191,6 @@ class Exam < ApplicationRecord
     exam[:start_time] = exam[:start_time].to_time
     exam[:end_time] = exam[:end_time].to_time
     exam[:classroom_id] = exam[:eid] if exam[:eid].present?
-    exam[:passing_criterion_type] = exam[:passing_criterion_type] if exam[:passing_criterion_type].present?
-    exam[:passing_criterion_value] = exam[:passing_criterion_value] if exam[:passing_criterion_value].present?
   end
 
   def self.remove_previous_version(eid, guide_id)
