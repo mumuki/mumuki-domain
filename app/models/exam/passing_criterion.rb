@@ -14,12 +14,12 @@ class Exam::PassingCriterion
     {type: type, value: value}
   end
 
-  def ensure_valid_criterion!
+  def ensure_valid!
     raise "Invalid criterion value #{value} for #{type}" unless valid_passing_grade?
   end
 
   def self.parse(type, value)
-    parse_criterion_type(type, value).tap(&:ensure_valid_criterion!)
+    parse_criterion_type(type, value)
   end
 
   def self.parse_criterion_type(type, value)

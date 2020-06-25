@@ -15,12 +15,13 @@ class Exam < ApplicationRecord
   validates_presence_of :start_time, :end_time
   validates_numericality_of :max_problem_submissions, :max_choice_submissions, greater_than_or_equal_to: 1, allow_nil: true
 
+  before_save :set_default_criterion_type
+  before_save :ensure_valid_passing_criterion!
+
   before_create :set_classroom_id
 
   after_destroy { |record| Usage.destroy_usages_for record }
   after_create :reindex_usages!
-
-  before_save :set_default_criterion_type
 
   def used_in?(organization)
     organization == self.organization
@@ -148,18 +149,12 @@ class Exam < ApplicationRecord
     @passing_criterion ||= Exam::PassingCriterion.parse(passing_criterion_type, passing_criterion_value)
   end
 
-  def set_default_criterion_type
-    self.passing_criterion_type ||= :none
+  def ensure_valid_passing_criterion!
+    passing_criterion.ensure_valid!
   end
 
-  # FIXME only provisional
-  def as_classroom_json
-    as_json
-        .merge(eid: classroom_id, name: guide.name, language: guide.language.name, slug: guide.slug,
-               uids: users.map(&:uid), course: course.slug, organization: organization.name,
-               passing_criterion: passing_criterion.as_json)
-        .except(:classroom_id, :guide_id, :course_id, :organization_id,
-                :passing_criterion_type, :passing_criterion_value)
+  def set_default_criterion_type
+    self.passing_criterion_type ||= :none
   end
 
   def self.import_from_resource_h!(json)
@@ -199,13 +194,6 @@ class Exam < ApplicationRecord
       Rails.logger.info "Deleting exams with ORG_ID:#{Organization.current.id} - GUIDE_ID:#{guide_id} - CLASSROOM_ID:#{eid}"
       exams.destroy_all
     end
-  end
-
-  # FIXME only provisional
-  def self.from_classroom_json(json)
-    exam = json.with_indifferent_access
-    adapt_json_values exam
-    whitelist_attributes exam
   end
 
   private
