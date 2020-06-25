@@ -207,13 +207,6 @@ class Exam < ApplicationRecord
     end
   end
 
-  # FIXME only provisional
-  def self.from_classroom_json(json)
-    exam = json.with_indifferent_access
-    adapt_json_values exam
-    whitelist_attributes exam
-  end
-
   private
 
   def max_attempts_for(exercise)
