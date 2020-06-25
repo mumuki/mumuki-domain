@@ -82,6 +82,8 @@ describe Exam, organization_workspace: :test do
           it { expect(Usage.where(organization: Organization.current, item: guide).count).to eq 1 }
           it { expect { Exam.find_by(classroom_id: '1').validate_accessible_for! user }.to raise_error(Mumuki::Domain::ForbiddenError) }
           it { expect { Exam.find_by(classroom_id: '1').validate_accessible_for! user2 }.to_not raise_error }
+          it { expect { Exam.last.passing_criterion }.to_not raise_error }
+
         end
       end
 

@@ -1,4 +1,4 @@
-class ExamPassingCriterion
+class Exam::PassingCriterion
 
   attr_reader :value
 
@@ -14,23 +14,23 @@ class ExamPassingCriterion
     {type: type, value: value}
   end
 
+  def ensure_valid_criterion!
+    raise "Invalid criterion value #{value} for #{type}" unless valid_passing_grade?
+  end
+
   def self.parse(type, value)
-    passing_criterion = parse_criterion_type(type, value)
-    unless passing_criterion.valid_passing_grade?
-      raise "Invalid criterion value #{value} for #{type}"
-    end
-    passing_criterion
+    parse_criterion_type(type, value).tap(&:ensure_valid_criterion!)
   end
 
   def self.parse_criterion_type(type, value)
-    "ExamPassingCriterion::#{type.camelize}".constantize.new(value)
+    "Exam::PassingCriterion::#{type.camelize}".constantize.new(value)
   rescue
     raise "Invalid criterion type #{type}"
   end
 
 end
 
-class ExamPassingCriterion::None < ExamPassingCriterion
+class Exam::PassingCriterion::None < Exam::PassingCriterion
   def initialize(_)
     @value = nil
   end
@@ -40,13 +40,13 @@ class ExamPassingCriterion::None < ExamPassingCriterion
   end
 end
 
-class ExamPassingCriterion::Percentage < ExamPassingCriterion
+class Exam::PassingCriterion::Percentage < Exam::PassingCriterion
   def valid_passing_grade?
     value.between? 0, 100
   end
 end
 
-class ExamPassingCriterion::PassedExercises < ExamPassingCriterion
+class Exam::PassingCriterion::PassedExercises < Exam::PassingCriterion
   def valid_passing_grade?
     value >= 0
   end
