@@ -366,6 +366,37 @@ describe Assignment, organization_workspace: :test do
     end
   end
 
+  describe '#update_top_submission!' do
+    context 'when an exercise is failed, passed with warnings, errored, passed, then failed' do
+      let(:evaluation) { double Mumuki::Domain::Evaluation::Automated }
+      let(:student) { create(:user) }
+      let(:exercise) { create(:indexed_exercise) }
+
+      before do
+        allow(Mumuki::Domain::Evaluation::Automated).to receive(:new).and_return(evaluation)
+        allow(evaluation)
+            .to receive(:evaluate!)
+            .and_return( { status: :failed, result: 'bad' },
+                         { status: :passed_with_warnings, result: 'mmm...' },
+                         { status: :errored, result: 'X.X' },
+                         { status: :passed, result: 'good' },
+                         { status: :failed, result: 'bad' }
+            )
+      end
+
+      it 'updates top submission status until passed status is reached' do
+        assignments = []
+        5.times { assignments.push(exercise.submit_solution!(student, content: '')) }
+
+        expect(assignments.first  .top_submission_status).to eq Mumuki::Domain::Status::Submission::Failed
+        expect(assignments.second .top_submission_status).to eq Mumuki::Domain::Status::Submission::PassedWithWarnings
+        expect(assignments.third  .top_submission_status).to eq Mumuki::Domain::Status::Submission::PassedWithWarnings
+        expect(assignments.fourth .top_submission_status).to eq Mumuki::Domain::Status::Submission::Passed
+        expect(assignments.fifth  .top_submission_status).to eq Mumuki::Domain::Status::Submission::Passed
+      end
+    end
+  end
+
   describe 'submission status' do
     let(:exercise) { create(:indexed_exercise) }
     let(:assignment) { create(:assignment, exercise: exercise, status: submission_status) }
