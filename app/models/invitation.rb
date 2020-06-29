@@ -1,7 +1,6 @@
 class Invitation < ApplicationRecord
   include Mumuki::Domain::Syncable
 
-  before_create :ensure_not_expired
   belongs_to :course
 
   validate :ensure_not_expired, on: :create
@@ -32,7 +31,7 @@ class Invitation < ApplicationRecord
   end
 
   def to_resource_h
-    { code: code, course: course_slug, expiration_date: expiration_date }
+    {code: code, course: course_slug, expiration_date: expiration_date}
   end
 
   def navigation_end?
