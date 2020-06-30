@@ -22,6 +22,7 @@ describe Mumukit::Platform::Organization do
         forum_enabled: true,
         report_issue_enabled: true,
         public: false,
+        gamification_enabled: true,
         immersive: false,
         in_preparation_until: 1.minute.ago,
         disabled_from: 1.minute.ago,
@@ -93,6 +94,7 @@ describe Mumukit::Platform::Organization do
         it { expect(subject.forum_enabled?).to be true }
         it { expect(subject.feedback_suggestions_enabled?).to be true }
         it { expect(subject.public?).to eq false }
+        it { expect(subject.gamification_enabled?).to be true }
         it { expect(subject.embeddable?).to eq false }
         it { expect(subject.immersive?).to eq false }
         it { expect(subject.disabled?).to eq true }
@@ -111,6 +113,7 @@ describe Mumukit::Platform::Organization do
                             report_issue_enabled: false,
                             forum_enabled: false,
                             forum_discussions_minimal_role: 'teacher',
+                            gamification_enabled: false,
                             login_methods: [:google]) }
         let(:dump) { Mumuki::Domain::Organization::Settings.dump(settings) }
 
@@ -126,6 +129,7 @@ describe Mumukit::Platform::Organization do
         it { expect(subject.embeddable?).to eq true }
         it { expect(subject.immersive?).to eq true }
         it { expect(subject.disabled?).to eq false }
+        it { expect(subject.gamification_enabled?).to eq false }
         it { expect(subject.in_preparation?).to eq true }
 
         it { expect(Mumuki::Domain::Organization::Settings.load(nil)).to be_empty }
