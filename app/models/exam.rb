@@ -181,7 +181,6 @@ class Exam < ApplicationRecord
   def self.adapt_json_values(exam)
     exam[:guide_id] = Guide.locate!(exam[:slug]).id
     exam[:organization_id] = Organization.current.id
-    exam[:course_id] = Course.locate!(exam[:course].to_s).id
     exam[:users] = User.where(uid: exam[:uids])
     exam[:start_time] = exam[:start_time].to_time
     exam[:end_time] = exam[:end_time].to_time
