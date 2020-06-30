@@ -11,7 +11,4 @@ group :test do
   gem 'faker', '~> 2.2'
 end
 
-
 gem 'codeclimate-test-reporter', :group => :test, :require => nil
-
-gem 'mumukit-platform', github: 'mumuki/mumukit-platform', branch: 'use-classroom-as-gem'
