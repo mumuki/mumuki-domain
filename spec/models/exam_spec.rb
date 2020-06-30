@@ -7,16 +7,18 @@ describe Exam, organization_workspace: :test do
 
   describe '#upsert' do
     let(:guide) { create(:guide) }
-    let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [], organization: 'test', course: course.slug, passing_criterion_type: 'none'} }
+    let(:exam_json) { {eid: '1', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [], organization: 'test', course: course.slug, passing_criterion: {type: 'none'}} }
     let!(:exam) { Exam.import_from_resource_h! exam_json }
     context 'when new exam and the guide is the same' do
       let(:guide2) { create(:guide) }
-      let(:exam_json2) { {eid: '2', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [], organization: 'test', course: course.slug, passing_criterion_type: 'none'} }
+      let(:exam_json2) { {eid: '2', slug: guide.slug, start_time: 5.minutes.ago, end_time: 10.minutes.since, duration: 150, language: 'haskell', name: 'foo', uids: [], organization: 'test', course: course.slug, passing_criterion: {type: 'percentage', value: 75}} }
       let!(:exam2) { Exam.import_from_resource_h! exam_json2 }
       context 'and the organization is the same' do
         it { expect(Exam.count).to eq 1 }
         it { expect(Usage.where(item: guide, parent_item: exam).count).to eq 0 }
         it { expect(Usage.where(item: guide, parent_item: exam2).count).to eq 1 }
+        it { expect(exam2.passing_criterion_type).to eq 'percentage' }
+        it { expect(exam2.passing_criterion_value).to eq 75 }
         it { expect(ExamAuthorization.where(exam: exam).count).to eq 0 }
       end
     end
