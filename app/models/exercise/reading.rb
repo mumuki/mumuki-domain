@@ -11,6 +11,10 @@ class Reading < Exercise
     false
   end
 
+  def layout=(layout)
+    raise 'can not set a layout different to input_bottom on readings' unless layout.like? :input_bottom
+  end
+
   def queriable?
     false
   end
