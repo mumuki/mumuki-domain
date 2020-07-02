@@ -15,10 +15,10 @@ class Exam < ApplicationRecord
   validates_presence_of :start_time, :end_time
   validates_numericality_of :max_problem_submissions, :max_choice_submissions, greater_than_or_equal_to: 1, allow_nil: true
 
-  before_save :set_default_criterion_type
+  before_save :set_default_criterion_type!
   before_save :ensure_valid_passing_criterion!
 
-  before_create :set_classroom_id
+  before_create :set_classroom_id!
 
   after_destroy { |record| Usage.destroy_usages_for record }
   after_create :reindex_usages!
@@ -141,7 +141,7 @@ class Exam < ApplicationRecord
     false
   end
 
-  def set_classroom_id
+  def set_classroom_id!
     self.classroom_id ||= SecureRandom.hex(8)
   end
 
@@ -153,7 +153,7 @@ class Exam < ApplicationRecord
     passing_criterion.ensure_valid!
   end
 
-  def set_default_criterion_type
+  def set_default_criterion_type!
     self.passing_criterion_type ||= :none
   end
 
