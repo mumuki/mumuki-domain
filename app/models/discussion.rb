@@ -10,13 +10,14 @@ class Discussion < ApplicationRecord
   has_many :upvotes
 
   scope :by_language, -> (language) { includes(:exercise).joins(exercise: :language).where(languages: {name: language}) }
+  scope :order_by_responses_count, -> (direction) { reorder(useful_messages_count: direction, messages_count: opposite(direction)) }
 
   before_save :capitalize_title
   validates_presence_of :title
 
   markdown_on :description
 
-  sortable :created_at, :upvotes_count, default: :created_at_desc
+  sortable :created_at, :upvotes_count, :responses_count, default: :created_at_desc
   filterable :status, :language
   pageable
 
@@ -129,6 +130,16 @@ class Discussion < ApplicationRecord
     # FIXME this is buggy, because the extra
     # may have changed since the submission of this discussion
     exercise.assignment_for(initiator).extra_preview_html
+  end
+
+  def update_counters_and_timestamps!
+    messages_query = messages.reorder(updated_at: :desc)
+    useful_messages = messages_query.select &:useful?
+    self.messages_count = messages_query.count
+    self.useful_messages_count = useful_messages.count
+    self.last_initiator_message_at = messages_query.find(&:from_initiator?)&.updated_at
+    self.last_moderator_message_at = useful_messages.first&.updated_at
+    save!
   end
 
   def self.debatable_for(klazz, params)
