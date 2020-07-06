@@ -17,7 +17,7 @@ class Discussion < ApplicationRecord
 
   markdown_on :description
 
-  sortable :created_at, :upvotes_count, :responses_count, default: :created_at_desc
+  sortable :responses_count, :upvotes_count, :created_at, default: :created_at_desc
   filterable :status, :language
   pageable
 
