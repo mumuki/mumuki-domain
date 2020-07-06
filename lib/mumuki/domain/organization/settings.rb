@@ -13,7 +13,8 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
                       :forum_enabled?,
                       :report_issue_enabled?,
                       :disabled_from,
-                      :in_preparation_until
+                      :in_preparation_until,
+                      :gamification_enabled?
 
   def private?
     !public?
