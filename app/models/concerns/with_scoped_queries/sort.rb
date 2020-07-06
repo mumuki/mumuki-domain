@@ -10,10 +10,7 @@ module WithScopedQueries::Sort
     normalized_params = normalize_params(sort_param)
     if sort_param.present? && klass.sorting_params_allowed?(*normalized_params)
       sort_method_for(klass, scope, *normalized_params)
-    else    def opposite(direction)
-      dir = direction.to_s.downcase.to_sym
-      [:asc, :desc].find { |it| it != dir}
-    end
+    else
       scope
     end
   end
@@ -39,7 +36,7 @@ module WithScopedQueries::Sort
   class_methods do
     def opposite(direction)
       dir = direction.to_s.downcase.to_sym
-      [:asc, :desc].find { |it| it != dir}
+      [:asc, :desc].find { |it| it != dir }
     end
 
     def sorting_filters
