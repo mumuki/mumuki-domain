@@ -135,11 +135,10 @@ class Discussion < ApplicationRecord
   def update_counters_and_timestamps!
     messages_query = messages.reorder(updated_at: :desc)
     useful_messages = messages_query.select &:useful?
-    self.messages_count = messages_query.count
-    self.useful_messages_count = useful_messages.count
-    self.last_initiator_message_at = messages_query.find(&:from_initiator?)&.updated_at
-    self.last_moderator_message_at = useful_messages.first&.updated_at
-    save!
+    update! messages_count: messages_query.count,
+            useful_messages_count: useful_messages.count,
+            last_initiator_message_at: messages_query.find(&:from_initiator?)&.updated_at,
+            last_moderator_message_at: useful_messages.first&.updated_at
   end
 
   def self.debatable_for(klazz, params)
