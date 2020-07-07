@@ -2,7 +2,7 @@ module WithEditor
   extend ActiveSupport::Concern
 
   included do
-    enum editor: [:code, :upload, :text, :single_choice, :multiple_choice, :hidden, :multiple_files, :custom, :free_form]
+    enum editor: [:code, :upload, :text, :single_choice, :multiple_choice, :hidden, :multiple_files, :custom, :free_form, :puzzle]
     validate :ensure_has_choices, if: :choice?
   end
 
