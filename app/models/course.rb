@@ -29,7 +29,7 @@ class Course < ApplicationRecord
 
   def invite!(expiration_date)
     if closed?
-      create_invitation_for expiration_date
+      generate_invitation! expiration_date
     else
       current_invitation
     end
@@ -39,7 +39,7 @@ class Course < ApplicationRecord
     current_invitation.blank? || current_invitation.expired?
   end
 
-  def create_invitation_for(expiration_date)
+  def generate_invitation!(expiration_date)
     invitations.create expiration_date: expiration_date, course: self
     current_invitation
   end
