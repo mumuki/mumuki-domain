@@ -115,7 +115,7 @@ describe Assignment, organization_workspace: :test do
     end
 
     context 'should show only the first failed expectation result for kids problems' do
-      let(:problem) { create(:problem, layout: 'input_kids') }
+      let(:problem) { create(:problem, layout: 'input_primary') }
       it { expect(failed_submission.visible_expectation_results.size).to eq 1 }
     end
   end

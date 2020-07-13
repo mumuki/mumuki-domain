@@ -45,6 +45,12 @@ class Problem < QueriableChallenge
     own_expectations.present? || own_custom_expectations.present?
   end
 
+  # Sets the layout. This method accepts input_kids as a synonym of input_primary
+  # for historical reasons
+  def layout=(layout)
+    self[:layout] = layout.like?(:input_kids) ? :input_primary : layout
+  end
+
   private
 
   def ensure_evaluation_criteria

@@ -20,6 +20,6 @@ class Challenge < Exercise
 
   def defaults
     super
-    self.layout = self.class.default_layout
+    self.layout ||= self.class.default_layout
   end
 end

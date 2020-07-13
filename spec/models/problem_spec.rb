@@ -82,4 +82,10 @@ describe Problem, organization_workspace: :test do
 
   end
 
+  describe 'layout' do
+    it { expect(Problem.new(layout: :input_bottom).layout).to be_like :input_bottom }
+    it { expect(Problem.new(layout: :input_primary).layout).to be_like :input_primary }
+    it { expect(Problem.new(layout: :input_kids).layout).to be_like :input_primary }
+    it { expect(Problem.new(layout: :input_kindergarten).layout).to be_like :input_kindergarten }
+  end
 end
