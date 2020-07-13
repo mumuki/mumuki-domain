@@ -1,89 +1,97 @@
 require 'spec_helper'
 
 describe Gamified, organization_workspace: :test do
-
-  def award_experience_points!(assignment, status)
-    assignment.status = status
-    assignment.award_experience_points!
-    assignment.update_top_submission!
-  end
-
   let(:student) { create(:user) }
   let(:exercise) { create(:indexed_exercise) }
   let(:assignment) { create(:assignment, submitter: student, exercise: exercise)}
-  let(:experience_points) { assignment.user_stats_for(student, Organization.current) }
+  let(:exp) { assignment.user_stats_for(student, Organization.current).exp }
+
+  let(:evaluation) { double Mumuki::Domain::Evaluation::Automated }
+
+  before do
+    allow(Mumuki::Domain::Evaluation::Automated).to receive(:new).and_return(evaluation)
+  end
+
+  def submit_on!(exercise, status)
+    allow(evaluation).to receive(:evaluate!).and_return({ status: status })
+    exercise.submit_solution!(student)
+  end
 
   describe '#award_experience_points!' do
-    context 'no passed exercises' do
+    context 'no solutions sent' do
       it 'has no experience points for that user' do
-        expect(experience_points.exp).to eq 0
+        expect(exp).to eq 0
       end
     end
 
-    context 'one passed exercise' do
-      it 'does not award points for a failed exercise' do
-        award_experience_points!(assignment, :failed)
+    context 'solutions sent on one exercise' do
+      context 'failed' do
+        before { submit_on!(exercise, :failed) }
 
-        expect(experience_points.exp).to eq 0
+        it 'does not award points' do
+          expect(exp).to eq 0
+        end
       end
 
-      it 'awards points for a passed with warnings exercise' do
-        award_experience_points!(assignment, :passed_with_warnings)
+      context 'passed_with_warnings' do
+        before { submit_on!(exercise, :passed_with_warnings) }
 
-        expect(experience_points.exp).to eq Mumuki::Domain::Status::Submission::PassedWithWarnings.exp_given
+        it 'awards points' do
+          expect(exp).to eq Mumuki::Domain::Status::Submission::PassedWithWarnings.exp_given
+        end
+
+        it 'does not take points away if errored afterwards' do
+          submit_on!(exercise, :errored)
+
+          expect(exp).to eq Mumuki::Domain::Status::Submission::PassedWithWarnings.exp_given
+        end
       end
 
-      it 'awards points for a passed exercise' do
-        award_experience_points!(assignment, :passed)
+      context 'passed' do
+        before { submit_on!(exercise, :passed) }
 
-        expect(experience_points.exp).to eq Mumuki::Domain::Status::Submission::Passed.exp_given
+        it 'awards points if passed once' do
+          expect(exp).to eq Mumuki::Domain::Status::Submission::Passed.exp_given
+        end
+
+        it 'awards same amount of points if passed multiple times' do
+          3.times { submit_on!(exercise, :passed) }
+
+          expect(exp).to eq Mumuki::Domain::Status::Submission::Passed.exp_given
+        end
+
+        it 'does not take points away if failed afterwards' do
+          submit_on!(exercise, :failed)
+
+          expect(exp).to eq Mumuki::Domain::Status::Submission::Passed.exp_given
+        end
       end
 
-      it 'awards max points once even if passed multiple times' do
-        award_experience_points!(assignment, :passed)
-        award_experience_points!(assignment, :passed)
-        award_experience_points!(assignment, :passed)
+      context 'gradually improving' do
+        before do
+          submit_on!(exercise, :failed)
+          submit_on!(exercise, :passed_with_warnings)
+          submit_on!(exercise, :passed)
+        end
 
-        expect(experience_points.exp).to eq Mumuki::Domain::Status::Submission::Passed.exp_given
-      end
-
-      it 'awards max points once even if gradually improved' do
-        award_experience_points!(assignment, :failed)
-        award_experience_points!(assignment, :passed_with_warnings)
-        award_experience_points!(assignment, :passed)
-
-        expect(experience_points.exp).to eq Mumuki::Domain::Status::Submission::Passed.exp_given
-      end
-
-      it 'does not take points away even if failed after passing' do
-        award_experience_points!(assignment, :passed)
-        award_experience_points!(assignment, :failed)
-
-        expect(experience_points.exp).to eq Mumuki::Domain::Status::Submission::Passed.exp_given
-      end
-
-      it 'does not take points away even if errored after passing with warnings' do
-        award_experience_points!(assignment, :passed_with_warnings)
-        award_experience_points!(assignment, :errored)
-
-        expect(experience_points.exp).to eq Mumuki::Domain::Status::Submission::PassedWithWarnings.exp_given
+        it 'awards max points once' do
+          expect(exp).to eq Mumuki::Domain::Status::Submission::Passed.exp_given
+        end
       end
     end
 
-    context 'many passed exercises' do
+    context 'solutions sent on many exercises' do
       let(:another_exercise) { create(:indexed_exercise) }
-      let(:another_assignment) { create(:assignment, submitter: student, exercise: exercise)}
       let(:one_more_exercise) { create(:indexed_exercise) }
-      let(:one_more_assignment) { create(:assignment, submitter: student, exercise: exercise)}
 
       before do
-        award_experience_points!(assignment, :passed)
-        award_experience_points!(another_assignment, :passed)
-        award_experience_points!(one_more_assignment, :passed)
+        submit_on!(exercise, :passed)
+        submit_on!(another_exercise, :passed)
+        submit_on!(one_more_exercise, :passed)
       end
 
       it 'adds up experience' do
-        expect(experience_points.exp).to eq Mumuki::Domain::Status::Submission::Passed.exp_given * 3
+        expect(exp).to eq Mumuki::Domain::Status::Submission::Passed.exp_given * 3
       end
     end
   end
