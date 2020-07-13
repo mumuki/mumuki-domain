@@ -42,6 +42,7 @@ class Assignment < Progress
   alias_method :parent_content, :guide
   alias_method :user, :submitter
 
+  before_save :award_experience_points!, :update_top_submission!, if: :submission_status_changed?
   after_save :dirty_parent_by_submission!, if: :completion_changed?
   before_validation :set_current_organization!, unless: :organization
 
@@ -229,7 +230,7 @@ class Assignment < Progress
   end
 
   def update_top_submission!
-    self.update! top_submission_status: submission_status unless submission_status.improved_by?(top_submission_status)
+    self.top_submission_status = submission_status unless submission_status.improved_by?(top_submission_status)
   end
 
   private
