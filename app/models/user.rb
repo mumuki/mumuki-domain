@@ -39,6 +39,8 @@ class User < ApplicationRecord
   before_validation :set_uid!
   validates :uid, presence: true
 
+  after_save :welcome_to_new_organizations!, if: :gained_access_to_new_orga?
+
   resource_fields :uid, :social_id, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
 
   def last_lesson
@@ -214,6 +216,24 @@ class User < ApplicationRecord
   end
 
   private
+
+  def welcome_to_new_organizations!
+    new_accessible_organizations.each do |organization|
+      UserMailer.welcome_email(self, organization).deliver_later if organization.greet_new_users?
+    end
+  end
+
+  def gained_access_to_new_orga?
+    new_accessible_organizations.present?
+  end
+
+  def new_accessible_organizations
+    return [] unless saved_change_to_permissions?
+
+    old, new = saved_change_to_permissions
+    new_organizations = (new.any_granted_organizations - old.any_granted_organizations).to_a
+    Organization.where(name: new_organizations)
+  end
 
   def set_uid!
     self.uid ||= email
