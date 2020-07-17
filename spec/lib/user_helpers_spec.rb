@@ -142,6 +142,7 @@ describe Mumuki::Domain::Helpers::User do
 
   describe 'student_granted_organizations' do
     before { Mumukit::Platform.config.organization_class = class_double('UserSpecDemoOrganization') }
+    after { Mumukit::Platform.config.organization_class = nil }
 
     context 'no organization' do
       it { expect(user.student_granted_organizations).to eq [] }
