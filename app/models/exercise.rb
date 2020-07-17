@@ -19,8 +19,10 @@ class Exercise < ApplicationRecord
   include Submittable,
           Questionable
 
-  include SiblingsNavigation,
-          ParentNavigation
+  include Mumukit::Flow::SiblingsNavigation,
+          Mumukit::Flow::ParentNavigation
+
+  include Mumukit::Flow::AdaptiveItem
 
   belongs_to :guide
 
@@ -36,8 +38,12 @@ class Exercise < ApplicationRecord
   validates_presence_of :submissions_count,
                         :guide, :bibliotheca_id
 
+  alias_attribute :tags, :tag_list
+
   randomize(*RANDOMIZED_FIELDS)
   delegate :timed?, to: :navigable_parent
+
+  enum purpose: %i(learning practice reinforcement)
 
   def console?
     queriable?

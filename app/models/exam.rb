@@ -12,7 +12,7 @@ class Exam < ApplicationRecord
   after_destroy { |record| Usage.destroy_usages_for record }
   after_create :reindex_usages!
 
-  include TerminalNavigation
+  include Mumukit::Flow::TerminalNavigation
 
   def used_in?(organization)
     organization == self.organization

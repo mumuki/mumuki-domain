@@ -1,17 +1,18 @@
 require "mumuki/domain/engine"
 
-require 'mumukit/core'
-require 'mumukit/core/activemodel'
 require 'mumukit/assistant'
 require 'mumukit/auth'
 require 'mumukit/bridge'
 require 'mumukit/content_type'
+require 'mumukit/core'
+require 'mumukit/core/activemodel'
 require 'mumukit/directives'
+require 'mumukit/flow'
+require 'mumukit/inspection'
+require 'mumukit/login'
 require 'mumukit/platform'
 require 'mumukit/randomizer'
 require 'mumukit/sync'
-require 'mumukit/login'
-require 'mumukit/inspection'
 
 I18n.load_translations_path File.join(__dir__, 'domain', 'locales', '**', '*.yml')
 

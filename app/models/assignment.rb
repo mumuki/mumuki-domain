@@ -2,6 +2,8 @@ class Assignment < Progress
   include Contextualization
   include WithMessages
 
+  include Mumukit::Flow::AdaptiveAssignment
+
   markdown_on :extra_preview
 
   belongs_to :exercise
@@ -22,6 +24,7 @@ class Assignment < Progress
 
   alias_attribute :status, :submission_status
   alias_attribute :attempts_count, :attemps_count
+  alias_attribute :item, :exercise
 
   scope :by_exercise_ids, -> (exercise_ids) {
     where(exercise_id: exercise_ids) if exercise_ids
@@ -220,6 +223,10 @@ class Assignment < Progress
 
   def files
     exercise.files_for(current_content)
+  end
+
+  def skip_if_pending!
+    skipped! if pending?
   end
 
   private

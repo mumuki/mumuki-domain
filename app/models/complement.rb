@@ -6,7 +6,7 @@ class Complement < ApplicationRecord
 
   belongs_to :book
 
-  include TerminalNavigation
+  include Mumukit::Flow::TerminalNavigation
 
   def used_in?(organization)
     organization.book == book

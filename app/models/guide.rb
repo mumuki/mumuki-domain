@@ -8,11 +8,13 @@ class Guide < Content
           WithExpectations,
           WithLanguage
 
+  include Mumukit::Flow::AdaptiveItem
+
   markdown_on :corollary, :sources, :learn_more, :teacher_info
 
   numbered :exercises
   has_many :exercises, -> { order(number: :asc) }, dependent: :destroy
-
+  
   serialize :settings, Hash
 
   self.inheritance_column = nil
@@ -121,6 +123,10 @@ class Guide < Content
 
   def resettable?
     usage_in_organization.resettable?
+  end
+
+  def exercise_assignments_for(user)
+    exercises.map { |exercise| exercise.find_assignment_for user, Organization.current }
   end
 
   ## Forking
