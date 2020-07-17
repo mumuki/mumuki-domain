@@ -13,6 +13,8 @@ module Mumuki::Domain::Helpers::User
            :protect!,
            :protect_delegation!,
            :protect_permissions_assignment!,
+           :student_granted_organizations,
+           :any_granted_organizations,
            to: :permissions
 
   def platform_class_name
@@ -73,12 +75,8 @@ module Mumuki::Domain::Helpers::User
 
   ## Accessible organizations
 
-  [:any_granted_organizations, :student_granted_organizations].each do |granted_organization_method|
-    define_method(granted_organization_method) do
-      permissions.send(granted_organization_method).map do |org|
-        Mumukit::Platform::Organization.find_by_name!(org) rescue nil
-      end.compact
-    end
+  revamp_accessor :any_granted_organizations, :student_granted_organizations do |_, _, result|
+    result.map { |org| Mumukit::Platform::Organization.find_by_name!(org) rescue nil }.compact
   end
 
   def has_student_granted_organizations?
@@ -87,10 +85,6 @@ module Mumuki::Domain::Helpers::User
 
   def main_organization
     student_granted_organizations.first || any_granted_organizations.first
-  end
-
-  def has_main_organization?
-    student_granted_organizations.length == 1
   end
 
   def has_immersive_main_organization?
