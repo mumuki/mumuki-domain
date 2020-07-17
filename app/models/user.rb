@@ -31,13 +31,13 @@ class User < ApplicationRecord
   has_many :exams, through: :exam_authorizations
 
   enum gender: %i(female male other unspecified)
-
   belongs_to :avatar, optional: true
 
   before_validation :set_uid!
   validates :uid, presence: true
-
+  
   after_save :welcome_to_new_organizations!, if: :gained_access_to_new_orga?
+  after_initialize :init
   PLACEHOLDER_IMAGE_URL = 'user_shape.png'.freeze
 
   resource_fields :uid, :social_id, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
@@ -146,8 +146,12 @@ class User < ApplicationRecord
     exams.any? { |e| e.in_progress_for? self }
   end
 
+  def custom_profile_picture
+    avatar&.image_url || image_url
+  end
+
   def profile_picture
-    avatar&.image_url || image_url || placeholder_image_url
+    custom_profile_picture || placeholder_image_url
   end
 
   def bury!
@@ -243,7 +247,7 @@ class User < ApplicationRecord
   end
 
   def init
-    self.avatar ||= Avatar.sample_for(self)
+    self.avatar = Avatar.sample_for(self) unless custom_profile_picture.present?
   end
 
   def self.sync_key_id_field
