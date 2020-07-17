@@ -1,5 +1,6 @@
 require_relative './factories/api_client_factory'
 require_relative './factories/assignments_factory'
+require_relative './factories/avatar_factory'
 require_relative './factories/book_factory'
 require_relative './factories/chapter_factory'
 require_relative './factories/complement_factory'
