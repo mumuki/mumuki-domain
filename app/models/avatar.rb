@@ -1,7 +1,11 @@
 class Avatar < ApplicationRecord
   include WithTargetVisualIdentity
 
+  def self.sample_for(user)
+    with_current_visual_identity_for(user).sample
+  end
+
   def self.sample
-    with_current_visual_identity.order('RANDOM()').first
+    order('RANDOM()').first
   end
 end

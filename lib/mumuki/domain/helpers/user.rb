@@ -71,12 +71,14 @@ module Mumuki::Domain::Helpers::User
     "#{full_name} <#{email}> [#{uid}]"
   end
 
-  ## Accesible organizations
+  ## Accessible organizations
 
-  def student_granted_organizations
-    permissions.student_granted_organizations.map do |org|
-      Mumukit::Platform::Organization.find_by_name!(org) rescue nil
-    end.compact
+  [:any_granted_organizations, :student_granted_organizations].each do |granted_organization_method|
+    define_method(granted_organization_method) do
+      permissions.send(granted_organization_method).map do |org|
+        Mumukit::Platform::Organization.find_by_name!(org) rescue nil
+      end.compact
+    end
   end
 
   def has_student_granted_organizations?
@@ -84,7 +86,7 @@ module Mumuki::Domain::Helpers::User
   end
 
   def main_organization
-    student_granted_organizations.first
+    student_granted_organizations.first || any_granted_organizations.first
   end
 
   def has_main_organization?
