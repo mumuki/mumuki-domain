@@ -27,8 +27,8 @@ describe 'CourseChanged', organization_workspace: :test do
     end
 
     context 'when an invitation has been created' do
-      let(:expiration_date) { 2.days.since }
-      let!(:invitation) { course.invite! expiration_date  }
+      let(:expiration_date) { 2.days.since.beginning_of_day }
+      let!(:invitation) { course.invite! expiration_date }
 
       it { expect(invitation.expiration_date).to eq expiration_date }
       it { expect(invitation.code).to_not be nil }
@@ -41,7 +41,7 @@ describe 'CourseChanged', organization_workspace: :test do
       let(:old_expiration) { 1.day.since.beginning_of_day }
 
       before { course.invite! old_expiration }
-      let!(:invitation) { course.invite! 2.days.since  }
+      let!(:invitation) { course.invite! 2.days.since }
 
       # This behaviour is debatable, but it is the current expected behaviour
       it { expect(invitation.expiration_date).to eq old_expiration }
@@ -54,8 +54,8 @@ describe 'CourseChanged', organization_workspace: :test do
     context 'when an invitation has been created and then re-created after expiration' do
       before { course.invite! 1.day.ago }
 
-      let(:new_expiration) { 2.days.since }
-      let!(:invitation) { course.invite! new_expiration  }
+      let(:new_expiration) { 2.days.since.beginning_of_day }
+      let!(:invitation) { course.invite! new_expiration }
 
       it { expect(invitation.expiration_date).to eq new_expiration }
       it { expect(invitation.code).to_not be nil }

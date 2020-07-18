@@ -1,18 +1,27 @@
 class Exam < ApplicationRecord
+
   include GuideContainer
   include FriendlyName
-
-  validates_presence_of :start_time, :end_time
+  include TerminalNavigation
 
   belongs_to :organization
+  belongs_to :course, optional: true
 
   has_many :authorizations, class_name: 'ExamAuthorization', dependent: :destroy
   has_many :users, through: :authorizations
 
+  enum passing_criterion_type: [:none, :percentage, :passed_exercises], _prefix: :passing_criterion
+
+  validates_presence_of :start_time, :end_time
+  validates_numericality_of :max_problem_submissions, :max_choice_submissions, greater_than_or_equal_to: 1, allow_nil: true
+
+  before_save :set_default_criterion_type!
+  before_save :ensure_valid_passing_criterion!
+
+  before_create :set_classroom_id!
+
   after_destroy { |record| Usage.destroy_usages_for record }
   after_create :reindex_usages!
-
-  include TerminalNavigation
 
   def used_in?(organization)
     organization == self.organization
@@ -116,10 +125,41 @@ class Exam < ApplicationRecord
     index_usage! organization
   end
 
+  def attempts_left_for(assignment)
+    max_attempts_for(assignment.exercise) - (assignment.attempts_count || 0)
+  end
+
+  def limited_for?(exercise)
+    max_attempts_for(exercise).present?
+  end
+
+  def results_hidden_for?(exercise)
+    exercise.choice? && results_hidden_for_choices?
+  end
+
+  def resettable?
+    false
+  end
+
+  def set_classroom_id!
+    self.classroom_id ||= SecureRandom.hex(8)
+  end
+
+  def passing_criterion
+    @passing_criterion ||= Exam::PassingCriterion.parse(passing_criterion_type, passing_criterion_value)
+  end
+
+  def ensure_valid_passing_criterion!
+    passing_criterion.ensure_valid!
+  end
+
+  def set_default_criterion_type!
+    self.passing_criterion_type ||= :none
+  end
+
   def self.import_from_resource_h!(json)
     exam_data = json.with_indifferent_access
-    organization = Organization.locate! exam_data[:organization]
-    organization.switch!
+    Organization.locate!(exam_data[:organization].to_s).switch!
     adapt_json_values exam_data
     remove_previous_version exam_data[:eid], exam_data[:guide_id]
     exam = where(classroom_id: exam_data[:eid]).update_or_create!(whitelist_attributes(exam_data))
@@ -141,8 +181,13 @@ class Exam < ApplicationRecord
   def self.adapt_json_values(exam)
     exam[:guide_id] = Guide.locate!(exam[:slug]).id
     exam[:organization_id] = Organization.current.id
+    exam[:course_id] = Course.locate!(exam[:course].to_s).id
     exam[:users] = User.where(uid: exam[:uids])
-    [:start_time, :end_time].each { |param| exam[param] = exam[param].to_time }
+    exam[:start_time] = exam[:start_time].to_time
+    exam[:end_time] = exam[:end_time].to_time
+    exam[:classroom_id] = exam[:eid] if exam[:eid].present?
+    exam[:passing_criterion_type] = exam.dig(:passing_criterion, :type)
+    exam[:passing_criterion_value] = exam.dig(:passing_criterion, :value)
   end
 
   def self.remove_previous_version(eid, guide_id)
@@ -153,25 +198,10 @@ class Exam < ApplicationRecord
     end
   end
 
-  def attempts_left_for(assignment)
-    max_attempts_for(assignment.exercise) - (assignment.attempts_count || 0)
-  end
-
-  def limited_for?(exercise)
-    max_attempts_for(exercise).present?
-  end
-
-  def results_hidden_for?(exercise)
-    exercise.choice? && results_hidden_for_choices?
-  end
-
-  def resettable?
-    false
-  end
-
   private
 
   def max_attempts_for(exercise)
     exercise.choice? ? max_choice_submissions : max_problem_submissions
   end
+
 end

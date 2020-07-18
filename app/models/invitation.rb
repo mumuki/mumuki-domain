@@ -2,10 +2,16 @@ class Invitation < ApplicationRecord
   include Mumuki::Domain::Syncable
 
   belongs_to :course
+
+  validate :ensure_not_expired, on: :create
   validates_uniqueness_of :code
 
   defaults do
     self.code ||= self.class.generate_code
+  end
+
+  def ensure_not_expired
+    errors.add(:base, :invitation_expired) if expired?
   end
 
   def import_from_resource_h!(json)
@@ -25,7 +31,7 @@ class Invitation < ApplicationRecord
   end
 
   def to_resource_h
-    { code: code, course: course_slug, expiration_date: expiration_date }
+    {code: code, course: course_slug, expiration_date: expiration_date}
   end
 
   def navigation_end?

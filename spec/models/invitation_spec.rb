@@ -12,13 +12,14 @@ describe Invitation, organization_workspace: :test do
   end
 
   describe '#unexpired' do
-    let(:invitation) { create(:invitation, expiration_date: expiration, course: course) }
+    let(:invitation) { create(:invitation, expiration_date: 5.minutes.since, course: course) }
     context 'when expired' do
-      let(:expiration) { 5.minutes.ago }
-      it { expect { invitation.unexpired }.to raise_error Mumuki::Domain::GoneError }
+      it do
+        invitation.update! expiration_date: 5.minutes.ago
+        expect { invitation.reload.unexpired }.to raise_error Mumuki::Domain::GoneError
+      end
     end
     context 'when not expired' do
-      let(:expiration) { 5.minutes.since }
       it { expect(invitation.unexpired).to eq invitation }
     end
   end
