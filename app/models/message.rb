@@ -6,6 +6,10 @@ class Message < ApplicationRecord
 
   validates_presence_of :content, :sender
   validates_presence_of :submission_id, :unless => :discussion_id?
+
+  after_save :update_counters_cache!
+  after_destroy :update_counters_cache!
+
   markdown_on :content
 
   def notify!
@@ -14,6 +18,10 @@ class Message < ApplicationRecord
 
   def from_initiator?
     sender_user == discussion&.initiator
+  end
+
+  def from_moderator?
+    sender_user.moderator_here?
   end
 
   def from_user?(user)
@@ -44,6 +52,14 @@ class Message < ApplicationRecord
 
   def toggle_approved!
     toggle! :approved
+  end
+
+  def useful?
+    approved? || from_moderator?
+  end
+
+  def update_counters_cache!
+    discussion&.update_counters_and_timestamps!
   end
 
   def self.parse_json(json)

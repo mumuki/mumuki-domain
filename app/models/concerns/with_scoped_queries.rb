@@ -16,8 +16,8 @@ module WithScopedQueries
   end
 
   class_methods do
-    def query_methods
-      queriable_attributes.keys
+    def query_methods(excluded_methods)
+      queriable_attributes.keys - excluded_methods.to_a
     end
 
     def scoped_query_module(method)
@@ -28,19 +28,19 @@ module WithScopedQueries
       queriable_attributes.values.flatten
     end
 
-    def actual_params(params, excluded_param)
-      params.reject { |it| it == excluded_param.to_s }
+    def actual_params(params, excluded_params)
+      params.except(*excluded_params)
     end
 
-    def scoped_query_by(params, excluded_param=nil)
-      query_methods.inject(all) do |scope, method|
-        valid_params = valid_params_for(method, params, excluded_param)
+    def scoped_query_by(params, **options)
+      query_methods(options[:excluded_methods]).inject(all) do |scope, method|
+        valid_params = valid_params_for(method, params, options[:excluded_params])
         scoped_query_module(method).query_by valid_params, scope, self
       end
     end
 
-    def valid_params_for(method, params, excluded_param)
-      actual_params = actual_params(params, excluded_param)
+    def valid_params_for(method, params, excluded_params)
+      actual_params = actual_params(params, excluded_params)
       actual_params.permit queriable_attributes[method]
     end
   end

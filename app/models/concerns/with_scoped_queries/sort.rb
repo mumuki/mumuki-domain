@@ -34,13 +34,18 @@ module WithScopedQueries::Sort
   end
 
   class_methods do
+    def opposite(direction)
+      dir = direction.to_s.downcase.to_sym
+      [:asc, :desc].find { |it| it != dir }
+    end
+
     def sorting_filters
       sorting_fields.product([:asc, :desc]).map do |it|
         "#{it.first}_#{it.second}"
       end
     end
 
-    def sorting_params_allowed?(sort_param, direction_param=nil)
+    def sorting_params_allowed?(sort_param, direction_param = nil)
       sorting_fields.include?(sort_param.to_sym) && [:asc, :desc].include?(direction_param&.to_sym)
     end
   end
