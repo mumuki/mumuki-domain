@@ -35,7 +35,7 @@ class User < ApplicationRecord
 
   before_validation :set_uid!
   validates :uid, presence: true
-  
+
   after_save :welcome_to_new_organizations!, if: :gained_access_to_new_orga?
   after_initialize :init
   PLACEHOLDER_IMAGE_URL = 'user_shape.png'.freeze
