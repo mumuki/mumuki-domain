@@ -247,7 +247,10 @@ class User < ApplicationRecord
   end
 
   def init
-    self.avatar = Avatar.sample_for(self) unless custom_profile_picture.present?
+    if custom_profile_picture.blank?
+      self.avatar = Avatar.sample_for(self)
+      save if persisted?
+    end
   end
 
   def self.sync_key_id_field
