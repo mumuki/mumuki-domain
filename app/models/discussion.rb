@@ -12,8 +12,6 @@ class Discussion < ApplicationRecord
   scope :by_language, -> (language) { includes(:exercise).joins(exercise: :language).where(languages: {name: language}) }
   scope :order_by_responses_count, -> (direction) { reorder(useful_messages_count: direction, messages_count: opposite(direction)) }
 
-  before_save :capitalize_title
-  validates_presence_of :title
   after_create :subscribe_initiator!
 
   markdown_on :description
@@ -37,10 +35,6 @@ class Discussion < ApplicationRecord
     if opened?
       update! status: reachable_statuses_for(initiator).first
     end
-  end
-
-  def capitalize_title
-    title.capitalize!
   end
 
   def used_in?(organization)
@@ -68,7 +62,7 @@ class Discussion < ApplicationRecord
   end
 
   def friendly
-    title
+    initiator.name
   end
 
   def subscription_for(user)
