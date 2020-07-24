@@ -14,6 +14,7 @@ class Discussion < ApplicationRecord
 
   before_save :capitalize_title
   validates_presence_of :title
+  after_create :subscribe_initiator!
 
   markdown_on :description
 
@@ -124,6 +125,10 @@ class Discussion < ApplicationRecord
 
   def has_responses?
     responses_count > 0
+  end
+
+  def subscribe_initiator!
+    initiator.subscribe_to! self
   end
 
   def extra_preview_html
