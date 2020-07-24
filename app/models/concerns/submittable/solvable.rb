@@ -10,7 +10,9 @@ module Solvable
   end
 
   def solution_for(submission_attributes)
-    submission_attributes[:content].to_mumuki_solution(language)
+    submission_attributes[:content]
+      .to_mumuki_solution(language)
+      .with_client_result(submission_attributes[:client_result])
   end
 end
 

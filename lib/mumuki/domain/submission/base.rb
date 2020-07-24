@@ -9,6 +9,7 @@ class Mumuki::Domain::Submission::Base
                 :submission_id, :queries, :query_results, :manual_evaluation_comment]
 
   attr_accessor *ATTRIBUTES
+  attr_accessor :client_result
 
   def self.from_attributes(*args)
     new ATTRIBUTES.zip(args).to_h
@@ -24,6 +25,11 @@ class Mumuki::Domain::Submission::Base
     save_results! results, assignment
     notify_results! results, assignment
     results
+  end
+
+  def with_client_result(result)
+    self.client_result = result if result.present?
+    self
   end
 
   def evaluate!(assignment)
