@@ -173,8 +173,12 @@ class User < ApplicationRecord
     sequence[0..count + lookahead - 1]
   end
 
-  def current_visual_identity
-    current_organic_context&.target_visual_identity
+  def current_audience
+    current_organic_context&.target_audience
+  end
+
+  def placeholder_image_url
+    PLACEHOLDER_IMAGE_URL
   end
 
   private
@@ -211,10 +215,6 @@ class User < ApplicationRecord
 
   def self.buried_profile
     (@buried_profile || {}).slice(:first_name, :last_name, :email)
-  end
-
-  def placeholder_image_url
-    PLACEHOLDER_IMAGE_URL
   end
 
   def current_organic_context
