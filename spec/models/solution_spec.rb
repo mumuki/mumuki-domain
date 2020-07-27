@@ -37,12 +37,56 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
   describe '#submit_solution!' do
 
     before { expect_any_instance_of(Challenge).to receive(:automated_evaluation_class).and_return(Mumuki::Domain::Evaluation::Automated) }
-    before { expect_any_instance_of(Language).to receive(:run_tests!).and_return(bridge_response) }
-    let(:assignment) { exercise.submit_solution! user }
+    before { expect_any_instance_of(Language).to receive(:run_tests!).with(bridge_request).and_return(bridge_response) }
+    let(:submission_attributes) { {} }
+    let(:assignment) { exercise.submit_solution! user, submission_attributes }
 
     context 'when results have no expectation' do
       let(:exercise) { create(:indexed_exercise) }
+      let(:bridge_request) do
+        {
+          content: nil,
+          custom_expectations: "\n",
+          expectations: [],
+          extra: "",
+          locale: "en",
+          settings: {},
+          test: "dont care"
+        }
+      end
       let(:bridge_response) { {result: '0 failures', status: :passed} }
+
+      it { expect(assignment.status).to eq(:passed) }
+      it { expect(assignment.result).to include('0 failures') }
+    end
+
+    context 'when submissions has client result' do
+      let(:exercise) { create(:indexed_exercise) }
+      let(:bridge_request) do
+        {
+          content: 'x = 2',
+          custom_expectations: "\n",
+          expectations: [],
+          extra: "",
+          locale: "en",
+          settings: {},
+          test: "dont care",
+          client_result: {
+            status: :passed,
+            test_results: [{title: 'true is true', status: :passed, result: ''}]
+          }
+        }
+      end
+      let(:bridge_response) { {result: '0 failures', status: :passed} }
+      let(:submission_attributes) do
+        {
+          content: 'x = 2',
+          client_result: {
+            status: :passed,
+            test_results: [{title: 'true is true', status: :passed, result: ''}]
+          }
+        }
+      end
 
       it { expect(assignment.status).to eq(:passed) }
       it { expect(assignment.result).to include('0 failures') }
@@ -51,6 +95,17 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
     context 'when results have standard expectations' do
       let(:exercise) {
         create(:indexed_exercise, expectations: [{binding: :foo, inspection: :HasComposition}]) }
+      let(:bridge_request) do
+        {
+          content: nil,
+          custom_expectations: "\n",
+          expectations: [{"binding"=>:foo, "inspection"=>:HasComposition}],
+          extra: "",
+          locale: "en",
+          settings: {},
+          test: "dont care"
+        }
+      end
       let(:bridge_response) { {
           result: '0 failures',
           status: :passed,
@@ -61,9 +116,19 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
       it { expect(assignment.expectation_results).to eq([{binding: 'foo', inspection: 'HasBinding', result: :passed}]) }
     end
 
-
     context 'when results have custom expectations' do
       let(:exercise) { create(:indexed_exercise, custom_expectations: 'expectation "foo uses composition": `foo` uses composition;') }
+      let(:bridge_request) do
+        {
+          content: nil,
+          custom_expectations: "expectation \"foo uses composition\": `foo` uses composition;\n",
+          expectations: [],
+          extra: "",
+          locale: "en",
+          settings: {},
+          test: "dont care"
+        }
+      end
       let(:bridge_response) { {
           result: '0 failures',
           status: :passed,
