@@ -142,11 +142,11 @@ describe Mumuki::Domain::Helpers::User do
 
   describe 'student_granted_organizations' do
     before { Mumukit::Platform.config.organization_class = class_double('UserSpecDemoOrganization') }
+    after { Mumukit::Platform.config.organization_class = nil }
 
     context 'no organization' do
       it { expect(user.student_granted_organizations).to eq [] }
       it { expect(user.has_student_granted_organizations?).to be false }
-      it { expect(user.has_main_organization?).to be false }
       it { expect(user.has_immersive_main_organization?).to be false }
     end
 
@@ -156,7 +156,6 @@ describe Mumuki::Domain::Helpers::User do
 
       it { expect(user.student_granted_organizations).to eq [organization] }
       it { expect(user.has_student_granted_organizations?).to be true }
-      it { expect(user.has_main_organization?).to be true }
       it { expect(user.has_immersive_main_organization?).to be false }
 
       context 'when immersive' do

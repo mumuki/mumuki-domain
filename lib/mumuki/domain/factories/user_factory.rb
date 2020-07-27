@@ -6,6 +6,5 @@ FactoryBot.define do
     last_name { Faker::Name.last_name }
     gender { 1 }
     birthdate { Date.today }
-    avatar { Avatar.new image_url: 'user_shape.png' }
   end
 end
