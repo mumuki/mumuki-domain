@@ -2,7 +2,7 @@ class Avatar < ApplicationRecord
   include WithTargetVisualIdentity
 
   def self.sample_for(user)
-    with_current_visual_identity_for(user).sample
+    with_current_audience_for(user).sample
   end
 
   def self.sample

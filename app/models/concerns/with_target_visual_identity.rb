@@ -2,12 +2,12 @@ module WithTargetVisualIdentity
   extend ActiveSupport::Concern
 
   included do
-    enum target_visual_identity: [:grown_ups, :kids]
+    enum target_audience: [:grown_ups, :kids]
   end
 
   class_methods do
-    def with_current_visual_identity_for(user)
-      where(target_visual_identity: user.current_visual_identity)
+    def with_current_audience_for(user)
+      where(target_audience: user.current_audience)
     end
   end
 end
