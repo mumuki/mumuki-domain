@@ -226,6 +226,10 @@ class User < ApplicationRecord
     PLACEHOLDER_IMAGE_URL
   end
 
+  def age
+    @age ||= (Time.now.to_s(:number).to_i - birthdate.to_time.to_s(:number).to_i) / 10e9.to_i
+  end
+
   private
 
   def welcome_to_new_organizations!
