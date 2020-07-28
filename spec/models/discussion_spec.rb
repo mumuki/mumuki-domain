@@ -17,7 +17,7 @@ describe Discussion, organization_workspace: :test do
     it { expect(discussion.item).to eq problem }
     it { expect(initiator.subscribed_to? discussion).to be true }
     it { expect(discussion.status).to eq :opened }
-    it { expect(discussion.reachable_statuses_for initiator).to eq [:closed] }
+    it { expect(discussion.reachable_statuses_for initiator).to eq [] }
     it { expect(discussion.reachable_statuses_for moderator).to eq [:closed] }
     it { expect(discussion.reachable_statuses_for student).to eq [] }
     it { expect(discussion.commentable_by? student).to be true }
@@ -29,18 +29,18 @@ describe Discussion, organization_workspace: :test do
       it { expect(discussion.has_responses?).to be false }
       it { expect(discussion.messages.first.content).to eq 'I forgot to say this' }
       it { expect(initiator.unread_discussions).to eq [] }
-      it { expect(discussion.reachable_statuses_for initiator).to eq [:closed] }
+      it { expect(discussion.reachable_statuses_for initiator).to eq [] }
       it { expect(discussion.reachable_statuses_for moderator).to eq [:closed] }
       it { expect(discussion.reachable_statuses_for student).to eq [] }
 
-      describe 'and closes the discussion' do
+      describe 'and closes the discussion then status can not be updated' do
         before { discussion.update_status!(:closed, initiator) }
 
-        it { expect(discussion.status).to eq :closed }
+        it { expect(discussion.status).to eq :opened }
         it { expect(discussion.reachable_statuses_for initiator).to eq [] }
-        it { expect(discussion.reachable_statuses_for moderator).to eq [:opened, :solved] }
+        it { expect(discussion.reachable_statuses_for moderator).to eq [:closed] }
         it { expect(discussion.reachable_statuses_for student).to eq [] }
-        it { expect(discussion.commentable_by? student).to be false }
+        it { expect(discussion.commentable_by? student).to be true }
         it { expect(discussion.commentable_by? moderator).to be true }
       end
     end
@@ -51,19 +51,19 @@ describe Discussion, organization_workspace: :test do
       it { expect(discussion.has_responses?).to be true }
       it { expect(initiator.unread_discussions).to include discussion }
       it { expect(discussion.messages.first.content).to eq 'You should do this' }
-      it { expect(discussion.reachable_statuses_for initiator).to eq [:pending_review] }
+      it { expect(discussion.reachable_statuses_for initiator).to eq [] }
       it { expect(discussion.reachable_statuses_for moderator).to eq [:closed, :solved] }
       it { expect(discussion.reachable_statuses_for student).to eq [] }
       it { expect(student.subscribed_to? discussion).to be true }
 
-      describe 'gets updated to pending_review by initiator' do
+      describe 'gets updated to pending_review by initiator but he can not do it' do
         before { discussion.update_status!(:pending_review, initiator) }
 
-        it { expect(discussion.status).to eq :pending_review }
+        it { expect(discussion.status).to eq :opened }
         it { expect(discussion.reachable_statuses_for initiator).to eq [] }
-        it { expect(discussion.reachable_statuses_for moderator).to eq [:opened, :closed, :solved] }
+        it { expect(discussion.reachable_statuses_for moderator).to eq [:closed, :solved] }
         it { expect(discussion.reachable_statuses_for student).to eq [] }
-        it { expect(discussion.commentable_by? student).to be false }
+        it { expect(discussion.commentable_by? student).to be true }
         it { expect(discussion.commentable_by? moderator).to be true }
       end
 
