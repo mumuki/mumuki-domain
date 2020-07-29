@@ -24,7 +24,7 @@ describe Discussion, organization_workspace: :test do
     it { expect(discussion.commentable_by? moderator).to be true }
 
     describe 'initiator sends a message' do
-      before { discussion.submit_message!({content: 'I forgot to say this'}, initiator)  }
+      before { discussion.submit_message!({content: 'I forgot to say this'}, initiator) }
 
       it { expect(discussion.has_responses?).to be false }
       it { expect(discussion.messages.first.content).to eq 'I forgot to say this' }
@@ -46,7 +46,7 @@ describe Discussion, organization_workspace: :test do
     end
 
     describe 'receive message from helper' do
-      before { discussion.submit_message!({content: 'You should do this'}, student)  }
+      before { discussion.submit_message!({content: 'You should do this'}, student) }
 
       it { expect(discussion.has_responses?).to be true }
       it { expect(initiator.unread_discussions).to include discussion }
@@ -138,7 +138,7 @@ describe Discussion, organization_workspace: :test do
     let(:exercise) { create(:problem) }
 
     let!(:public_discussions) { [:opened, :solved].map { |it| exercise.discuss!(initiator, {status: it, title: 'A disc'}) } }
-    let!(:private_discussions ) { [:pending_review, :closed].map { |it| exercise.discuss!(initiator, {status: it, title: 'A disc'}) } }
+    let!(:private_discussions) { [:pending_review, :closed].map { |it| exercise.discuss!(initiator, {status: it, title: 'A disc'}) } }
     let!(:other_discussion) { exercise.discuss!(other_user, {status: :closed, title: 'A disc'}) }
 
     context 'as student' do
@@ -166,11 +166,54 @@ describe Discussion, organization_workspace: :test do
     let(:other_user) { create(:user) }
     let(:problem) { create(:problem) }
     let(:assignment) { problem.submit_solution! user }
-    let(:discussion) { problem.discuss!(user, {title: 'A discussion'})}
+    let(:discussion) { problem.discuss!(user, {title: 'A discussion'}) }
 
     before { discussion.submit_message!({content: 'You should do this'}, user) }
     before { problem.submit_solution! other_user }
 
     it { expect(discussion.messages.count).to eq 1 }
+  end
+
+  describe '#requires_moderator_response!' do
+    let(:initiator) { create(:user) }
+    let(:other_user) { create(:user) }
+    let(:problem) { create(:problem) }
+    let(:moderator) { create(:user, permissions: {moderator: 'test/*'}) }
+    let(:assignment) { problem.submit_solution! initiator }
+    let(:discussion) { problem.discuss!(initiator, {title: 'A discussion'}) }
+
+    context 'when discussion is created requires moderator response' do
+      it { expect(discussion.requires_moderator_response?).to eq true }
+    end
+
+    context 'when moderator respond discussion not requires moderator response' do
+      before { discussion.submit_message!({content: 'it is ok'}, moderator) }
+
+      it { expect(discussion.reload.requires_moderator_response?).to eq false }
+    end
+
+    context 'when moderator and other user respond discussion not requires moderator response' do
+      before { discussion.submit_message!({content: 'it is ok'}, moderator) }
+      before { discussion.submit_message!({content: 'same question'}, other_user) }
+
+      it { expect(discussion.reload.requires_moderator_response?).to eq false }
+    end
+
+    context 'when moderator and initiator respond discussion not requires moderator response' do
+      before { discussion.submit_message!({content: 'it is ok'}, moderator) }
+      before { discussion.submit_message!({content: 'need more help'}, initiator) }
+      before { discussion.submit_message!({content: 'same question'}, other_user) }
+
+      it { expect(discussion.reload.requires_moderator_response?).to eq true }
+    end
+
+    context 'when moderator and initiator respond discussion not requires moderator response' do
+      before { discussion.submit_message!({content: 'it is ok'}, moderator) }
+      before { discussion.submit_message!({content: 'need more help'}, initiator) }
+      before { discussion.messages.last.update! not_actually_a_question: true }
+      before { discussion.submit_message!({content: 'same question'}, other_user) }
+
+      it { expect(discussion.reload.requires_moderator_response?).to eq false }
+    end
   end
 end

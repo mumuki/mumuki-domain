@@ -60,6 +60,7 @@ describe Message, organization_workspace: :test do
                            sender: 'teacher@mumuki.org',
                            read: false,
                            exercise: {bibliotheca_id: problem.bibliotheca_id},
+                           not_actually_a_question: false,
                            organization: 'test' }
       it { expect(final_assignment.has_messages?).to be true }
     end

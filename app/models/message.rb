@@ -8,7 +8,10 @@ class Message < ApplicationRecord
   validates_presence_of :submission_id, :unless => :discussion_id?
 
   after_save :update_counters_cache!
+  after_save :update_requires_moderator_response!
+
   after_destroy :update_counters_cache!
+  after_destroy :update_requires_moderator_response!
 
   markdown_on :content
 
@@ -43,7 +46,7 @@ class Message < ApplicationRecord
   def to_resource_h
     as_json(except: [:id, :type, :discussion_id, :approved],
             include: {exercise: {only: [:bibliotheca_id]}})
-      .merge(organization: Organization.current.name)
+        .merge(organization: Organization.current.name)
   end
 
   def read!
@@ -54,6 +57,10 @@ class Message < ApplicationRecord
     toggle! :approved
   end
 
+  def toggle_not_actually_a_question!
+    toggle! :not_actually_a_question
+  end
+
   def useful?
     approved? || from_moderator?
   end
@@ -62,11 +69,19 @@ class Message < ApplicationRecord
     discussion&.update_counters_and_timestamps!
   end
 
+  def update_requires_moderator_response!
+    discussion&.update_requires_moderator_response!
+  end
+
+  def question?
+    from_initiator? && !not_actually_a_question?
+  end
+
   def self.parse_json(json)
     message = json.delete 'message'
     json
-      .except('uid', 'exercise_id')
-      .merge(message)
+        .except('uid', 'exercise_id')
+        .merge(message)
   end
 
   def self.read_all!

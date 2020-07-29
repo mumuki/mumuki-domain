@@ -11,13 +11,14 @@ class Discussion < ApplicationRecord
 
   scope :by_language, -> (language) { includes(:exercise).joins(exercise: :language).where(languages: {name: language}) }
   scope :order_by_responses_count, -> (direction) { reorder(useful_messages_count: direction, messages_count: opposite(direction)) }
+  scope :by_requires_moderator_response, -> (boolean) { where(requires_moderator_response: boolean.to_boolean) }
 
   after_create :subscribe_initiator!
 
   markdown_on :description
 
   sortable :responses_count, :upvotes_count, :created_at, default: :created_at_desc
-  filterable :status, :language
+  filterable :status, :language, :requires_moderator_response
   pageable
 
   delegate :language, to: :item
@@ -132,7 +133,7 @@ class Discussion < ApplicationRecord
   end
 
   def update_counters_and_timestamps!
-    messages_query = messages.reorder(updated_at: :desc)
+    messages_query = messages_by_updated_at
     useful_messages = messages_query.select &:useful?
     update! messages_count: messages_query.count,
             useful_messages_count: useful_messages.count,
@@ -140,8 +141,19 @@ class Discussion < ApplicationRecord
             last_moderator_message_at: useful_messages.first&.updated_at
   end
 
+  def update_requires_moderator_response!
+    requires_moderator_response = messages_by_updated_at.find { |it| it.useful? || it.question? }&.from_initiator?
+    update! requires_moderator_response: requires_moderator_response
+  end
+
   def self.debatable_for(klazz, params)
     debatable_id = params[:"#{klazz.underscore}_id"]
     klazz.constantize.find(debatable_id)
+  end
+
+  private
+
+  def messages_by_updated_at(direction = :desc)
+    messages.reorder(updated_at: direction)
   end
 end
