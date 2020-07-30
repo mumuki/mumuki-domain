@@ -288,6 +288,64 @@ describe User, organization_workspace: :test do
     it { expect(student_in_exam.currently_in_exam?).to be true }
   end
 
+  describe '#discusser_of?' do
+    let(:student) { create(:user, permissions: { student: 'test/*' }) }
+    let(:teacher) { create(:user, permissions: { teacher: 'test/*' }) }
+
+    context 'when organization has no forum minimal role' do
+      it { expect(student.discusser_of?(Organization.current)).to be true }
+      it { expect(teacher.discusser_of?(Organization.current)).to be true }
+    end
+
+    context 'when organization has a forum minimal role of student' do
+      before { Organization.current.update! forum_discussions_minimal_role: 'student' }
+
+      it { expect(student.discusser_of?(Organization.current)).to be true }
+      it { expect(teacher.discusser_of?(Organization.current)).to be true }
+    end
+
+    context 'when organization has a forum minimal role of teacher' do
+      before { Organization.current.update! forum_discussions_minimal_role: 'teacher' }
+
+      it { expect(student.discusser_of?(Organization.current)).to be false }
+      it { expect(teacher.discusser_of?(Organization.current)).to be true }
+    end
+  end
+
+  describe '#can_discuss_in?' do
+    let(:student) { create(:user, permissions: { student: 'test/*' }) }
+    let(:teacher) { create(:user, permissions: { teacher: 'test/*' }) }
+    let(:test_organization) { Organization.locate! 'test' }
+
+    context 'when organization has no forum minimal role and forum not enabled' do
+      it { expect(student.can_discuss_in?(test_organization)).to be false }
+      it { expect(teacher.can_discuss_in?(test_organization)).to be false }
+    end
+
+    context 'when organization has forum enabled and not trusted requirements' do
+      before { test_organization.forum_enabled = true }
+
+      it { expect(student.can_discuss_in?(test_organization)).to be true }
+      it { expect(teacher.can_discuss_in?(test_organization)).to be true }
+    end
+
+    context 'when organization has forum enabled and trusted requirements and user is not trusted' do
+      before { test_organization.forum_enabled = true }
+      before { test_organization.forum_only_for_trusted = true }
+
+      it { expect(student.can_discuss_in?(test_organization)).to be false }
+      it { expect(teacher.can_discuss_in?(test_organization)).to be false }
+    end
+
+    context 'when organization has forum enabled and trusted requirements and student is trusted' do
+      before { test_organization.forum_enabled = true }
+      before { test_organization.forum_only_for_trusted = true }
+      before { student.trusted_for_forum = true }
+
+      it { expect(student.can_discuss_in?(test_organization)).to be true }
+      it { expect(teacher.can_discuss_in?(test_organization)).to be false }
+    end
+  end
 
   describe 'disabling' do
     let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }

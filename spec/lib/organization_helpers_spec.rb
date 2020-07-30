@@ -20,6 +20,7 @@ describe Mumukit::Platform::Organization do
         feedback_suggestions_enabled: true,
         raise_hand_enabled: true,
         forum_enabled: true,
+        forum_only_for_trusted: true,
         report_issue_enabled: true,
         public: false,
         gamification_enabled: true,
@@ -92,6 +93,7 @@ describe Mumukit::Platform::Organization do
         it { expect(subject.raise_hand_enabled?).to be true }
         it { expect(subject.report_issue_enabled?).to be true }
         it { expect(subject.forum_enabled?).to be true }
+        it { expect(subject.forum_only_for_trusted?).to be true }
         it { expect(subject.feedback_suggestions_enabled?).to be true }
         it { expect(subject.public?).to eq false }
         it { expect(subject.gamification_enabled?).to be true }
@@ -112,6 +114,7 @@ describe Mumukit::Platform::Organization do
                             raise_hand_enabled: false,
                             report_issue_enabled: false,
                             forum_enabled: false,
+                            forum_only_for_trusted: false,
                             forum_discussions_minimal_role: 'teacher',
                             gamification_enabled: false,
                             login_methods: [:google]) }
@@ -123,6 +126,7 @@ describe Mumukit::Platform::Organization do
         it { expect(subject.forum_discussions_minimal_role).to be :teacher }
         it { expect(subject.raise_hand_enabled?).to be false }
         it { expect(subject.forum_enabled?).to be false }
+        it { expect(subject.forum_only_for_trusted?).to be false }
         it { expect(subject.report_issue_enabled?).to be false }
         it { expect(subject.feedback_suggestions_enabled?).to be false }
         it { expect(subject.public?).to eq true }
