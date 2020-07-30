@@ -41,7 +41,7 @@ class Message < ApplicationRecord
   end
 
   def to_resource_h
-    as_json(except: [:id, :type, :discussion_id, :approved],
+    as_json(except: [:id, :type, :discussion_id, :approved, :not_actually_a_question],
             include: {exercise: {only: [:bibliotheca_id]}})
         .merge(organization: Organization.current.name)
   end
