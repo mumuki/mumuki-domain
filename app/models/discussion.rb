@@ -10,7 +10,7 @@ class Discussion < ApplicationRecord
   has_many :upvotes
 
   scope :by_language, -> (language) { includes(:exercise).joins(exercise: :language).where(languages: {name: language}) }
-  scope :order_by_responses_count, -> (direction) { reorder(useful_messages_count: direction, messages_count: opposite(direction)) }
+  scope :order_by_responses_count, -> (direction) { reorder(validated_messages_count: direction, messages_count: opposite(direction)) }
   scope :by_requires_moderator_response, -> (boolean) { where(requires_moderator_response: boolean.to_boolean) }
 
   after_create :subscribe_initiator!
@@ -134,15 +134,15 @@ class Discussion < ApplicationRecord
 
   def update_counters_and_timestamps!
     messages_query = messages_by_updated_at
-    useful_messages = messages_query.select &:useful?
+    validated_messages = messages_query.select &:validated?
     update! messages_count: messages_query.count,
-            useful_messages_count: useful_messages.count,
+            validated_messages_count: validated_messages.count,
             last_initiator_message_at: messages_query.find(&:from_initiator?)&.updated_at,
-            last_moderator_message_at: useful_messages.first&.updated_at
+            last_moderator_message_at: validated_messages.first&.updated_at
   end
 
   def update_requires_moderator_response!
-    requires_moderator_response = messages_by_updated_at.find { |it| it.useful? || it.question? }&.from_initiator?
+    requires_moderator_response = messages_by_updated_at.find { |it| it.validated? || it.question? }&.from_initiator?
     update! requires_moderator_response: requires_moderator_response
   end
 

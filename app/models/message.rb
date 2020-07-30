@@ -61,7 +61,7 @@ class Message < ApplicationRecord
     toggle! :not_actually_a_question
   end
 
-  def useful?
+  def validated?
     approved? || from_moderator?
   end
 
