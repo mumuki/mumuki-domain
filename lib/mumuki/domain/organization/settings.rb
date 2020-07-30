@@ -15,7 +15,8 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
                       :login_provider_settings,
                       :public?,
                       :raise_hand_enabled?,
-                      :report_issue_enabled?
+                      :report_issue_enabled?,
+                      :email_verification_policy
 
   def private?
     !public?
@@ -35,5 +36,9 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
 
   def in_preparation?
     in_preparation_until.present? && in_preparation_until.to_datetime > DateTime.now
+  end
+
+  def email_verification_policy
+    Mumuki::Domain::Organization::EmailVerificationPolicy.parse(@email_verification_policy)
   end
 end
