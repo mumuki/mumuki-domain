@@ -174,7 +174,7 @@ describe Discussion, organization_workspace: :test do
     it { expect(discussion.messages.count).to eq 1 }
   end
 
-  describe '#requires_moderator_response!' do
+  describe '#update_counters_cache!' do
     let(:initiator) { create(:user) }
     let(:other_user) { create(:user) }
     let(:problem) { create(:problem) }
@@ -182,38 +182,83 @@ describe Discussion, organization_workspace: :test do
     let(:assignment) { problem.submit_solution! initiator }
     let(:discussion) { problem.discuss!(initiator, {title: 'A discussion'}) }
 
-    context 'when discussion is created requires moderator response' do
-      it { expect(discussion.requires_moderator_response?).to eq true }
+    context 'when discussion is created' do
+      it { expect(discussion.requires_moderator_response?).to be true }
+      it { expect(discussion.validated_messages_count).to eq 0 }
+      it { expect(discussion.messages_count).to eq 0 }
     end
 
-    context 'when moderator respond discussion not requires moderator response' do
+    context 'when moderator responds' do
       before { discussion.submit_message!({content: 'it is ok'}, moderator) }
 
-      it { expect(discussion.reload.requires_moderator_response?).to eq false }
+      it { expect(discussion.reload.requires_moderator_response?).to be false }
+      it { expect(discussion.reload.validated_messages_count).to eq 1 }
+      it { expect(discussion.reload.messages_count).to eq 1 }
     end
 
-    context 'when moderator and other user respond discussion not requires moderator response' do
+    context 'when moderator and other user responds' do
       before { discussion.submit_message!({content: 'it is ok'}, moderator) }
       before { discussion.submit_message!({content: 'same question'}, other_user) }
 
-      it { expect(discussion.reload.requires_moderator_response?).to eq false }
+      it { expect(discussion.reload.requires_moderator_response?).to be false }
+      it { expect(discussion.reload.validated_messages_count).to eq 1 }
+      it { expect(discussion.reload.messages_count).to eq 2 }
     end
 
-    context 'when moderator and initiator respond discussion not requires moderator response' do
+    context 'when moderator and initiator responds' do
       before { discussion.submit_message!({content: 'it is ok'}, moderator) }
       before { discussion.submit_message!({content: 'need more help'}, initiator) }
       before { discussion.submit_message!({content: 'same question'}, other_user) }
 
-      it { expect(discussion.reload.requires_moderator_response?).to eq true }
+      it { expect(discussion.reload.requires_moderator_response?).to be true }
+      it { expect(discussion.reload.validated_messages_count).to eq 1 }
+      it { expect(discussion.reload.messages_count).to eq 3 }
     end
 
-    context 'when moderator and initiator respond discussion not requires moderator response' do
+    context 'when moderator and initiator responds but the latter is not a question' do
       before { discussion.submit_message!({content: 'it is ok'}, moderator) }
       before { discussion.submit_message!({content: 'need more help'}, initiator) }
       before { discussion.messages.last.update! not_actually_a_question: true }
       before { discussion.submit_message!({content: 'same question'}, other_user) }
 
-      it { expect(discussion.reload.requires_moderator_response?).to eq false }
+      it { expect(discussion.reload.requires_moderator_response?).to be false }
+      it { expect(discussion.reload.validated_messages_count).to eq 1 }
+      it { expect(discussion.reload.messages_count).to eq 3 }
+    end
+
+    context 'when moderator and initiator responds twice' do
+      before { discussion.submit_message!({content: 'it is ok'}, moderator) }
+      before { discussion.submit_message!({content: 'need more help'}, initiator) }
+      before { discussion.messages.last.update! not_actually_a_question: true }
+      before { discussion.submit_message!({content: 'same question'}, initiator) }
+
+      it { expect(discussion.reload.requires_moderator_response?).to be true }
+      it { expect(discussion.reload.validated_messages_count).to eq 1 }
+      it { expect(discussion.reload.messages_count).to eq 3 }
+    end
+
+    context 'when message gets deleted' do
+      before { discussion.submit_message!({content: 'it is ok'}, moderator) }
+      before { discussion.submit_message!({content: 'another question'}, initiator) }
+      before { discussion.messages.last.destroy! }
+
+      it { expect(discussion.reload.requires_moderator_response?).to be false }
+      it { expect(discussion.reload.validated_messages_count).to eq 1 }
+      it { expect(discussion.reload.messages_count).to eq 1 }
+    end
+
+    context 'long discussion' do
+      before { discussion.submit_message!({content: 'it is ok'}, moderator) }
+      before { discussion.submit_message!({content: 'need more help'}, initiator) }
+      before { discussion.messages.last.update! not_actually_a_question: true }
+      before { discussion.submit_message!({content: 'same question'}, initiator) }
+      before { discussion.submit_message!({content: 'do it like this'}, moderator) }
+      before { discussion.submit_message!({content: 'thanks'}, initiator) }
+      before { discussion.messages.last.update! not_actually_a_question: true }
+
+      it { expect(discussion.reload.requires_moderator_response?).to be false }
+      it { expect(discussion.reload.validated_messages_count).to eq 2 }
+      it { expect(discussion.reload.messages_count).to eq 5 }
     end
   end
 end

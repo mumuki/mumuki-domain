@@ -119,8 +119,6 @@ ActiveRecord::Schema.define(version: 20200728163038) do
     t.bigint "organization_id"
     t.integer "messages_count", default: 0
     t.integer "validated_messages_count", default: 0
-    t.datetime "last_initiator_message_at"
-    t.datetime "last_moderator_message_at"
     t.boolean "requires_moderator_response", default: true
     t.index ["initiator_id"], name: "index_discussions_on_initiator_id"
     t.index ["item_type", "item_id"], name: "index_discussions_on_item_type_and_item_id"

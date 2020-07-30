@@ -132,18 +132,13 @@ class Discussion < ApplicationRecord
     exercise.assignment_for(initiator).extra_preview_html
   end
 
-  def update_counters_and_timestamps!
+  def update_counters!
     messages_query = messages_by_updated_at
     validated_messages = messages_query.select &:validated?
+    requires_moderator_response = messages_query.find { |it| it.validated? || it.question? }&.from_initiator?
     update! messages_count: messages_query.count,
             validated_messages_count: validated_messages.count,
-            last_initiator_message_at: messages_query.find(&:from_initiator?)&.updated_at,
-            last_moderator_message_at: validated_messages.first&.updated_at
-  end
-
-  def update_requires_moderator_response!
-    requires_moderator_response = messages_by_updated_at.find { |it| it.validated? || it.question? }&.from_initiator?
-    update! requires_moderator_response: requires_moderator_response
+            requires_moderator_response: requires_moderator_response
   end
 
   def self.debatable_for(klazz, params)

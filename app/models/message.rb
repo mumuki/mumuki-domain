@@ -8,10 +8,7 @@ class Message < ApplicationRecord
   validates_presence_of :submission_id, :unless => :discussion_id?
 
   after_save :update_counters_cache!
-  after_save :update_requires_moderator_response!
-
   after_destroy :update_counters_cache!
-  after_destroy :update_requires_moderator_response!
 
   markdown_on :content
 
@@ -66,11 +63,7 @@ class Message < ApplicationRecord
   end
 
   def update_counters_cache!
-    discussion&.update_counters_and_timestamps!
-  end
-
-  def update_requires_moderator_response!
-    discussion&.update_requires_moderator_response!
+    discussion&.update_counters!
   end
 
   def question?
