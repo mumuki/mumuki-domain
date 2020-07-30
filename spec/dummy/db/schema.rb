@@ -118,7 +118,9 @@ ActiveRecord::Schema.define(version: 20200804191643) do
     t.integer "upvotes_count", default: 0
     t.bigint "organization_id"
     t.integer "messages_count", default: 0
-    t.integer "validated_messages_count", default: 0
+    t.integer "useful_messages_count", default: 0
+    t.datetime "last_initiator_message_at"
+    t.datetime "last_moderator_message_at"
     t.boolean "requires_moderator_response", default: true
     t.string "last_moderator_access_by_id"
     t.datetime "last_moderator_access_at"
@@ -386,6 +388,8 @@ ActiveRecord::Schema.define(version: 20200804191643) do
     t.string "verified_last_name"
     t.bigint "avatar_id"
     t.datetime "disabled_at"
+    t.boolean "email_verified", default: false
+    t.datetime "verification_requested_date"
     t.boolean "trusted_for_forum"
     t.index ["disabled_at"], name: "index_users_on_disabled_at"
     t.index ["last_organization_id"], name: "index_users_on_last_organization_id"
