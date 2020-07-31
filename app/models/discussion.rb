@@ -25,6 +25,8 @@ class Discussion < ApplicationRecord
   delegate :language, to: :item
   delegate :to_discussion_status, to: :status
 
+  MODERATOR_REVIEW_AVERAGE_TIME = 10.minutes
+
   scope :for_user, -> (user) do
     if user.try(:moderator_here?)
       all
@@ -142,19 +144,23 @@ class Discussion < ApplicationRecord
             requires_moderator_response: requires_moderator_response
   end
 
-  def update_moderator_access!(user)
-    unless last_access_period_visible_for?(user)
+  def update_last_moderator_access!(user)
+    unless last_moderator_access_visible_for?(user)
       update! last_moderator_access_at: Time.now,
               last_moderator_access_by: user
     end
   end
 
-  def last_access_period_enabled?
-    last_moderator_access_at.present? && last_moderator_access_at > Time.now - 10.minutes.ago
+  def being_accessed_by_moderator?
+    last_moderator_access_at.present? && last_moderator_access_at > Time.now - MODERATOR_REVIEW_AVERAGE_TIME
   end
 
-  def last_access_period_visible_for?(user)
-    user&.moderator_here? && last_access_period_enabled?
+  def last_moderator_access_visible_for?(user)
+    show_last_moderator_access_for?(user) && being_accessed_by_moderator?
+  end
+
+  def show_last_moderator_access_for?(user)
+    user&.moderator_here? && last_moderator_access_by != user
   end
 
   def self.debatable_for(klazz, params)
