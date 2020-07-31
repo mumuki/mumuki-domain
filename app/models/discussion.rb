@@ -145,7 +145,7 @@ class Discussion < ApplicationRecord
   end
 
   def update_last_moderator_access!(user)
-    unless last_moderator_access_visible_for?(user)
+    if user&.moderator_here? && !last_moderator_access_visible_for?(user)
       update! last_moderator_access_at: Time.now,
               last_moderator_access_by: user
     end
