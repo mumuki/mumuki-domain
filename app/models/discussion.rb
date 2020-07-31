@@ -4,6 +4,7 @@ class Discussion < ApplicationRecord
   belongs_to :item, polymorphic: true
   has_many :messages, -> { order(:created_at) }, dependent: :destroy
   belongs_to :initiator, class_name: 'User'
+  belongs_to :last_moderator_access_by, class_name: 'User', optional: true
   belongs_to :exercise, foreign_type: :exercise, foreign_key: 'item_id'
   belongs_to :organization
   has_many :subscriptions
@@ -139,6 +140,21 @@ class Discussion < ApplicationRecord
     update! messages_count: messages_query.count,
             validated_messages_count: validated_messages.count,
             requires_moderator_response: requires_moderator_response
+  end
+
+  def update_moderator_access!(user)
+    unless last_access_period_visible_for?(user)
+      update! last_moderator_access_at: Time.now,
+              last_moderator_access_by: user
+    end
+  end
+
+  def last_access_period_enabled?
+    last_moderator_access_at.present? && last_moderator_access_at > Time.now - 10.minutes.ago
+  end
+
+  def last_access_period_visible_for?(user)
+    user&.moderator_here? && last_access_period_enabled?
   end
 
   def self.debatable_for(klazz, params)
