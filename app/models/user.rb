@@ -169,6 +169,10 @@ class User < ApplicationRecord
     sequence[0..count + lookahead - 1]
   end
 
+  def name_initials
+    name.split.map(&:first).map(&:capitalize).join(' ')
+  end
+
   private
 
   def set_uid!

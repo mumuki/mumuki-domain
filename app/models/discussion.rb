@@ -4,25 +4,28 @@ class Discussion < ApplicationRecord
   belongs_to :item, polymorphic: true
   has_many :messages, -> { order(:created_at) }, dependent: :destroy
   belongs_to :initiator, class_name: 'User'
+  belongs_to :last_moderator_access_by, class_name: 'User', optional: true
   belongs_to :exercise, foreign_type: :exercise, foreign_key: 'item_id'
   belongs_to :organization
   has_many :subscriptions
   has_many :upvotes
 
   scope :by_language, -> (language) { includes(:exercise).joins(exercise: :language).where(languages: {name: language}) }
-  scope :order_by_responses_count, -> (direction) { reorder(useful_messages_count: direction, messages_count: opposite(direction)) }
+  scope :order_by_responses_count, -> (direction) { reorder(validated_messages_count: direction, messages_count: opposite(direction)) }
+  scope :by_requires_moderator_response, -> (boolean) { where(requires_moderator_response: boolean.to_boolean) }
 
-  before_save :capitalize_title
-  validates_presence_of :title
+  after_create :subscribe_initiator!
 
   markdown_on :description
 
   sortable :responses_count, :upvotes_count, :created_at, default: :created_at_desc
-  filterable :status, :language
+  filterable :status, :language, :requires_moderator_response
   pageable
 
   delegate :language, to: :item
   delegate :to_discussion_status, to: :status
+
+  MODERATOR_REVIEW_AVERAGE_TIME = 10.minutes
 
   scope :for_user, -> (user) do
     if user.try(:moderator_here?)
@@ -36,10 +39,6 @@ class Discussion < ApplicationRecord
     if opened?
       update! status: reachable_statuses_for(initiator).first
     end
-  end
-
-  def capitalize_title
-    title.capitalize!
   end
 
   def used_in?(organization)
@@ -67,7 +66,7 @@ class Discussion < ApplicationRecord
   end
 
   def friendly
-    title
+    initiator.name
   end
 
   def subscription_for(user)
@@ -126,23 +125,52 @@ class Discussion < ApplicationRecord
     responses_count > 0
   end
 
+  def subscribe_initiator!
+    initiator.subscribe_to! self
+  end
+
   def extra_preview_html
     # FIXME this is buggy, because the extra
     # may have changed since the submission of this discussion
     exercise.assignment_for(initiator).extra_preview_html
   end
 
-  def update_counters_and_timestamps!
-    messages_query = messages.reorder(updated_at: :desc)
-    useful_messages = messages_query.select &:useful?
+  def update_counters!
+    messages_query = messages_by_updated_at
+    validated_messages = messages_query.select &:validated?
+    requires_moderator_response = messages_query.find { |it| it.validated? || it.question? }&.from_initiator?
     update! messages_count: messages_query.count,
-            useful_messages_count: useful_messages.count,
-            last_initiator_message_at: messages_query.find(&:from_initiator?)&.updated_at,
-            last_moderator_message_at: useful_messages.first&.updated_at
+            validated_messages_count: validated_messages.count,
+            requires_moderator_response: requires_moderator_response
+  end
+
+  def update_last_moderator_access!(user)
+    unless last_moderator_access_visible_for?(user)
+      update! last_moderator_access_at: Time.now,
+              last_moderator_access_by: user
+    end
+  end
+
+  def being_accessed_by_moderator?
+    last_moderator_access_at.present? && last_moderator_access_at > Time.now - MODERATOR_REVIEW_AVERAGE_TIME
+  end
+
+  def last_moderator_access_visible_for?(user)
+    show_last_moderator_access_for?(user) && being_accessed_by_moderator?
+  end
+
+  def show_last_moderator_access_for?(user)
+    user&.moderator_here? && last_moderator_access_by != user
   end
 
   def self.debatable_for(klazz, params)
     debatable_id = params[:"#{klazz.underscore}_id"]
     klazz.constantize.find(debatable_id)
+  end
+
+  private
+
+  def messages_by_updated_at(direction = :desc)
+    messages.reorder(updated_at: direction)
   end
 end

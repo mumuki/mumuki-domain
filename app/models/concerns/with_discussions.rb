@@ -7,11 +7,7 @@ module WithDiscussions
   end
 
   def discuss!(user, discussion, organization = Organization.current)
-    discussion.merge!(initiator_id: user.id, organization: organization)
-    discussion.merge!(submission: submission_for(user)) if submission_for(user).present?
-    created_discussion = discussions.create discussion
-    user.subscribe_to! created_discussion
-    created_discussion
+    new_discussion_for(user, discussion, organization).tap &:save!
   end
 
   def submission_for(_)
@@ -21,4 +17,11 @@ module WithDiscussions
   def try_solve_discussions(user)
     discussions.where(initiator: user).map(&:try_solve!)
   end
+
+  def new_discussion_for(user, discussion_h = {}, organization = Organization.current)
+    discussion_h.merge!(initiator_id: user.id, organization: organization)
+    discussion_h.merge!(submission: submission_for(user)) if submission_for(user).present?
+    discussions.new discussion_h
+  end
+
 end

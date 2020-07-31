@@ -41,9 +41,9 @@ class Message < ApplicationRecord
   end
 
   def to_resource_h
-    as_json(except: [:id, :type, :discussion_id, :approved],
+    as_json(except: [:id, :type, :discussion_id, :approved, :not_actually_a_question],
             include: {exercise: {only: [:bibliotheca_id]}})
-      .merge(organization: Organization.current.name)
+        .merge(organization: Organization.current.name)
   end
 
   def read!
@@ -54,19 +54,27 @@ class Message < ApplicationRecord
     toggle! :approved
   end
 
-  def useful?
+  def toggle_not_actually_a_question!
+    toggle! :not_actually_a_question
+  end
+
+  def validated?
     approved? || from_moderator?
   end
 
   def update_counters_cache!
-    discussion&.update_counters_and_timestamps!
+    discussion&.update_counters!
+  end
+
+  def question?
+    from_initiator? && !not_actually_a_question?
   end
 
   def self.parse_json(json)
     message = json.delete 'message'
     json
-      .except('uid', 'exercise_id')
-      .merge(message)
+        .except('uid', 'exercise_id')
+        .merge(message)
   end
 
   def self.read_all!
