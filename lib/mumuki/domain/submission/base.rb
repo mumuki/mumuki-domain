@@ -21,10 +21,14 @@ class Mumuki::Domain::Submission::Base
 
   def run!(assignment, evaluation)
     save_submission! assignment
-    results = evaluation.evaluate! assignment, self
+    results = dry_run! assignment, evaluation
     save_results! results, assignment
     notify_results! results, assignment
     results
+  end
+
+  def dry_run!(assignment, evaluation)
+    evaluation.evaluate! assignment, self
   end
 
   def with_client_result(result)

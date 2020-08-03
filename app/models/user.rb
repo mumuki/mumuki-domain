@@ -201,6 +201,10 @@ class User < ApplicationRecord
     content.pending_siblings_for(self)
   end
 
+  def run_submission!(submission, assignment, evaluation)
+    submission.run! assignment, evaluation
+  end
+
   private
 
   def set_uid!

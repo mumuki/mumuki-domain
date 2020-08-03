@@ -31,4 +31,22 @@ describe Mumuki::Domain::NilUser do
 
     it { expect(exercise.next_for(user)).to be nil }
   end
+
+  describe 'try_submit_solution!', organization_workspace: :test do
+    let(:problem) { create(:problem) }
+    let!(:chapter) do
+      create(:chapter, name: 'Functional Programming', lessons: [
+        create(:lesson, exercises: [problem])
+      ])
+    end
+    let(:bridge_response) { {result: '0 failures', status: :passed} }
+
+    before { reindex_current_organization! }
+    before { expect_any_instance_of(Language).to receive(:run_tests!).and_return(bridge_response) }
+
+    let!(:assignment) { problem.try_submit_solution!(user) }
+
+    it { expect(assignment).to_not be nil }
+    it { expect(assignment.status).to be_like :passed }
+  end
 end

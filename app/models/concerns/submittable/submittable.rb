@@ -5,7 +5,7 @@ module Submittable
 
   def find_assignment_and_submit!(user, submission)
     assignment = assignment_for user
-    results = submission.run! assignment, evaluation_class.new
+    results = user.run_submission! submission, assignment, evaluation_class.new
     [assignment, results]
   end
 end

@@ -75,6 +75,12 @@ module Mumuki::Domain
       []
     end
 
+    def run_submission!(submission, assignment, evaluation)
+      results = submission.dry_run! assignment, evaluation
+      assignment.assign_attributes results
+      results
+    end
+
     def self.primary_key
       'id'
     end
