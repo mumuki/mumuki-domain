@@ -189,6 +189,18 @@ class User < ApplicationRecord
     name.split.map(&:first).map(&:capitalize).join(' ')
   end
 
+  def progress_at(content, organization)
+    Indicator.find_or_initialize_by(user: self, organization: organization, content: content)
+  end
+
+  def build_assignment(exercise, organization)
+    assignments.build(exercise: exercise, organization: organization)
+  end
+
+  def pending_siblings_at(content)
+    content.pending_siblings_for(self)
+  end
+
   private
 
   def set_uid!

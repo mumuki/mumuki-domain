@@ -1,6 +1,6 @@
 module WithProgress
   def progress_for(user, organization)
-    Indicator.find_or_initialize_by(user: user, organization: organization, content: self)
+    user.progress_at(self, organization)
   end
 
   def completion_percentage_for(user, organization=Organization.current)
