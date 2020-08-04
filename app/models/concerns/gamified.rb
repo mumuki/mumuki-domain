@@ -3,7 +3,7 @@ module Gamified
     points = net_experience
 
     if points > 0
-      stats = user_stats_for(submitter, organization)
+      stats = UserStats.stats_for(submitter)
       stats.add_exp!(points)
       stats.save!
     end
@@ -11,9 +11,5 @@ module Gamified
 
   def net_experience
     submission_status.exp_given - top_submission_status.exp_given
-  end
-
-  def user_stats_for(user, organization)
-    UserStats.find_or_initialize_by(user: user, organization: organization)
   end
 end

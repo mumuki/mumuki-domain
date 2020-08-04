@@ -4,7 +4,7 @@ describe Gamified, organization_workspace: :test do
   let(:student) { create(:user) }
   let(:exercise) { create(:indexed_exercise) }
   let(:assignment) { create(:assignment, submitter: student, exercise: exercise)}
-  let(:exp) { assignment.user_stats_for(student, Organization.current).exp }
+  let(:exp) { UserStats.exp_for(student) }
 
   let(:evaluation) { double Mumuki::Domain::Evaluation::Automated }
 
