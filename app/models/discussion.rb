@@ -105,10 +105,6 @@ class Discussion < ApplicationRecord
     reachable_statuses_for(user).include? status
   end
 
-  def allowed_statuses_for(user)
-    status.allowed_statuses_for(user, self)
-  end
-
   def update_status!(status, user)
     update!(status: status) if reachable_status_for?(user, status)
   end
@@ -123,6 +119,10 @@ class Discussion < ApplicationRecord
 
   def has_responses?
     responses_count > 0
+  end
+
+  def has_validated_responses?
+    validated_messages_count > 0
   end
 
   def subscribe_initiator!
