@@ -205,6 +205,10 @@ class User < ApplicationRecord
     submission.run! assignment, evaluation
   end
 
+  def incognito?
+    false
+  end
+
   private
 
   def set_uid!

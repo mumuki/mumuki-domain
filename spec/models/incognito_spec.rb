@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Mumuki::Domain::NilUser do
-  let(:user) { Mumuki::Domain::NilUser }
+describe Mumuki::Domain::Incognito do
+  let(:user) { Mumuki::Domain::Incognito }
   let(:organization) { create(:organization) }
 
   it 'can mock an AR relation' do
@@ -24,6 +24,16 @@ describe Mumuki::Domain::NilUser do
 
       it { expect(assignment.current_content).to eq '...' }
     end
+  end
+
+  describe 'ensure_enabled!' do
+    it { expect { user.ensure_enabled! }.to_not raise_error }
+  end
+
+  describe 'completion_percentage_for', organization_workspace: :test do
+    let(:guide) { create(:guide) }
+
+    it { expect(guide.completion_percentage_for(user)).to be_nan }
   end
 
   describe 'next_for' do

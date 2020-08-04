@@ -1,8 +1,12 @@
 module Mumuki::Domain
-  class NilUserClass
+  class IncognitoClass
     def id
-      '<none>'
+      '<icognito>'
     end
+
+    # ============
+    # Permissions
+    # ============
 
     def ensure_enabled!
     end
@@ -15,27 +19,12 @@ module Mumuki::Domain
       false
     end
 
-    def profile_completed?
-      true
-    end
-
-    def visit!(*)
-    end
-
     def teacher_of?(*)
       false
     end
 
-    def completed_containers_with_lookahead(*)
-      raise 'Unsupported operation. Userless mode and progressive display modes are incompatible'
-    end
-
-    def progress_at(content, organization)
-      Indicator.new content: content, organization: organization
-    end
-
-    def profile_picture
-      "user_shape.png"
+    def profile_completed?
+      true
     end
 
     def writer?
@@ -46,12 +35,19 @@ module Mumuki::Domain
       false
     end
 
-    def watched_discussions
-      []
+    # ========
+    # Visiting
+    # ========
+
+    def visit!(*)
     end
 
-    def assignments
-      []
+    # def completed_containers_with_lookahead(*)
+    #   raise 'Unsupported operation. Userless mode and progressive display modes are incompatible'
+    # end
+
+    def progress_at(content, organization)
+      Indicator.new content: content, organization: organization
     end
 
     def build_assignment(exercise, organization)
@@ -81,6 +77,10 @@ module Mumuki::Domain
       results
     end
 
+    def incognito?
+      true
+    end
+
     def self.primary_key
       'id'
     end
@@ -88,5 +88,5 @@ module Mumuki::Domain
 
   end
 
-  NilUser = NilUserClass.new
+  Incognito = IncognitoClass.new
 end
