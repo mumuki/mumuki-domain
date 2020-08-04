@@ -356,4 +356,32 @@ describe User, organization_workspace: :test do
       end
     end
   end
+
+  describe '#discussed_on_current_assignemnt?' do
+
+    let(:user) { create :user }
+    let(:debatable) { create :indexed_exercise }
+
+    before { stub_runner! status: :passed, result: 'passed!' }
+
+    context 'if user has no assignment created' do
+      it { expect(user.discussed_on_current_assignment? debatable).to eq false }
+    end
+
+    context 'if current discussion assignment is the last one' do
+      before { debatable.submit_solution! user, content: 'foo'  }
+      before { debatable.discuss! user, {} }
+
+      it { expect(user.discussed_on_current_assignment? debatable).to eq true }
+    end
+
+    context 'if current discussion assignment is not the last one' do
+      before { debatable.submit_solution! user, content: 'foo'  }
+      before { debatable.discuss! user, {} }
+      before { debatable.submit_solution! user, content: 'bar'  }
+
+      it { expect(user.discussed_on_current_assignment? debatable.reload).to eq false }
+    end
+  end
+
 end
