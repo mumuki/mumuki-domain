@@ -24,4 +24,8 @@ module WithDiscussions
     discussions.new discussion_h
   end
 
+  def current_discussion_for(user)
+    discussions.find_by(initiator: user, status: Mumuki::Domain::Status::Discussion::Opened)
+  end
+
 end
