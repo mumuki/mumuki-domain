@@ -20,6 +20,8 @@ class Assignment < Progress
   delegate :language, :name, :navigable_parent, :settings,
            :limited?, :input_kids?, :choice?, :results_hidden?, to: :exercise
 
+  delegate :completed?, :solved?, to: :submission_status
+
   alias_attribute :status, :submission_status
   alias_attribute :attempts_count, :attemps_count
 
