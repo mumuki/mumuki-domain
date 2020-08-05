@@ -347,6 +347,38 @@ describe User, organization_workspace: :test do
     end
   end
 
+  describe '#name_initials' do
+    context 'with first_name and last_name' do
+      let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
+
+      it { expect(user.name_initials).to eq 'J D' }
+    end
+
+    context 'with just first_name' do
+      let(:user) { create(:user, first_name: 'John', last_name: nil) }
+
+      it { expect(user.name_initials).to eq 'J' }
+    end
+
+    context 'with just last_name' do
+      let(:user) { create(:user, first_name: nil, last_name: 'Doe') }
+
+      it { expect(user.name_initials).to eq 'D' }
+    end
+
+    context 'with no first_name or last_name' do
+      let(:user) { create(:user, first_name: nil, last_name: nil) }
+
+      it { expect(user.name_initials).to eq '' }
+    end
+
+    context 'with several names' do
+      let(:user) { create(:user, first_name: 'John George', last_name: 'Doe Foo') }
+
+      it { expect(user.name_initials).to eq 'J G D F' }
+    end
+  end
+
   describe 'disabling' do
     let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
 

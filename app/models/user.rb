@@ -185,6 +185,10 @@ class User < ApplicationRecord
     can_discuss_in? Organization.current
   end
 
+  def name_initials
+    name.split.map(&:first).map(&:capitalize).join(' ')
+  end
+
   private
 
   def set_uid!
