@@ -24,18 +24,15 @@ describe Organization, organization_workspace: :test do
 
     context 'when non assistance medium present' do
       it { expect(organization.ask_for_help_enabled? user).to be false }
-      it { expect(organization.ask_for_help_enabled?).to be false }
     end
 
     context 'when can report issues' do
       before { organization.report_issue_enabled = true }
       it { expect(organization.ask_for_help_enabled? user).to be true }
-      it { expect(organization.ask_for_help_enabled?).to be true }
     end
     context 'when there is a community link' do
       before { organization.community_link = 'https://an-external-mumuki-forum.org' }
       it { expect(organization.ask_for_help_enabled? user).to be true }
-      it { expect(organization.ask_for_help_enabled?).to be true }
     end
 
     context 'when forum is enabled' do
@@ -43,13 +40,11 @@ describe Organization, organization_workspace: :test do
 
       context 'when user does not meet minimal permissions' do
         it { expect(organization.ask_for_help_enabled? user).to be false }
-        it { expect(organization.ask_for_help_enabled?).to be true }
       end
 
       context 'when user meets minimal permissions' do
         before { user.make_student_of! organization }
         it { expect(organization.ask_for_help_enabled? user).to be true }
-        it { expect(organization.ask_for_help_enabled?).to be true }
       end
     end
   end

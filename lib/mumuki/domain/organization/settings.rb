@@ -1,20 +1,21 @@
 class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
   include Mumukit::Login::LoginSettingsHelpers
 
-  model_attr_accessor :login_methods,
+  model_attr_accessor :disabled_from,
+                      :embeddable?,
+                      :feedback_suggestions_enabled?,
+                      :forum_discussions_minimal_role,
+                      :forum_enabled?,
+                      :forum_only_for_trusted?,
+                      :gamification_enabled?,
+                      :immersive?,
+                      :in_preparation_until,
+                      :login_methods,
                       :login_provider,
                       :login_provider_settings,
-                      :forum_discussions_minimal_role,
-                      :raise_hand_enabled?,
-                      :feedback_suggestions_enabled?,
                       :public?,
-                      :embeddable?,
-                      :immersive?,
-                      :forum_enabled?,
-                      :report_issue_enabled?,
-                      :disabled_from,
-                      :in_preparation_until,
-                      :gamification_enabled?
+                      :raise_hand_enabled?,
+                      :report_issue_enabled?
 
   def private?
     !public?

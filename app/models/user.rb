@@ -169,6 +169,22 @@ class User < ApplicationRecord
     sequence[0..count + lookahead - 1]
   end
 
+  # Tells if the given user can discuss in an organization
+  #
+  # This is true only when this organization has the forum enabled and the user
+  # has the discusser pseudo-permission and the discusser is trusted
+  def can_discuss_in?(organization)
+    organization.forum_enabled? && discusser_of?(organization) && trusted_as_discusser_in?(organization)
+  end
+
+  def trusted_as_discusser_in?(organization)
+    trusted_for_forum? || !organization.forum_only_for_trusted?
+  end
+
+  def can_discuss_here?
+    can_discuss_in? Organization.current
+  end
+
   def name_initials
     name.split.map(&:first).map(&:capitalize).join(' ')
   end
