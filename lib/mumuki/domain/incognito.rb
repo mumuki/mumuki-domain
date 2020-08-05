@@ -1,7 +1,8 @@
 module Mumuki::Domain
   class IncognitoClass
-    def id
-      '<icognito>'
+
+    def incognito?
+      true
     end
 
     # ============
@@ -42,6 +43,14 @@ module Mumuki::Domain
     def visit!(*)
     end
 
+    # ========
+    # Progress
+    # ========
+
+    def next_exercise_at(guide)
+      guide.exercises.first
+    end
+
     # def completed_containers_with_lookahead(*)
     #   raise 'Unsupported operation. Userless mode and progressive display modes are incompatible'
     # end
@@ -54,6 +63,18 @@ module Mumuki::Domain
       Assignment.new exercise: exercise, organization: organization, submitter: self
     end
 
+    def pending_siblings_at(content)
+      []
+    end
+
+    # ============
+    # ActiveRecord
+    # ============
+
+    def id
+      '<incognito>'
+    end
+
     def is_a?(other)
       other.is_a?(Class) && other.name == 'User' || super
     end
@@ -63,11 +84,15 @@ module Mumuki::Domain
       raise "unknown attribute #{key}"
     end
 
-    def interpolations
-      []
+    def self.primary_key
+      'id'
     end
 
-    def pending_siblings_at(content)
+    # ==========
+    # Evaluation
+    # ==========
+
+    def interpolations
       []
     end
 
@@ -76,15 +101,6 @@ module Mumuki::Domain
       assignment.assign_attributes results
       results
     end
-
-    def incognito?
-      true
-    end
-
-    def self.primary_key
-      'id'
-    end
-
 
   end
 

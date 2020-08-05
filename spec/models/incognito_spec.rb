@@ -8,7 +8,11 @@ describe Mumuki::Domain::Incognito do
     Assignment.new submitter: user
   end
 
-  describe 'assignment' do
+  describe 'ensure_enabled!' do
+    it { expect { user.ensure_enabled! }.to_not raise_error }
+  end
+
+  describe 'assignment fooling' do
     let(:assignment) { user.build_assignment(exercise, organization) }
 
     context 'when exercise has no default content' do
@@ -26,37 +30,42 @@ describe Mumuki::Domain::Incognito do
     end
   end
 
-  describe 'ensure_enabled!' do
-    it { expect { user.ensure_enabled! }.to_not raise_error }
-  end
+  describe 'guide fooling' do
+    let(:guide) { create(:guide, exercises: [ create(:exercise), create(:exercise) ]) }
 
-  describe 'completion_percentage_for', organization_workspace: :test do
-    let(:guide) { create(:guide) }
-
-    it { expect(guide.completion_percentage_for(user)).to be_nan }
-  end
-
-  describe 'next_for' do
-    let(:exercise) { create(:exercise) }
-
-    it { expect(exercise.next_for(user)).to be nil }
-  end
-
-  describe 'try_submit_solution!', organization_workspace: :test do
-    let(:problem) { create(:problem) }
-    let!(:chapter) do
-      create(:chapter, name: 'Functional Programming', lessons: [
-        create(:lesson, exercises: [problem])
-      ])
+    describe 'completion_percentage_for', organization_workspace: :test do
+      it { expect(guide.completion_percentage_for(user)).to eq 0 }
     end
-    let(:bridge_response) { {result: '0 failures', status: :passed} }
 
-    before { reindex_current_organization! }
-    before { expect_any_instance_of(Language).to receive(:run_tests!).and_return(bridge_response) }
+    describe 'next_exercise', organization_workspace: :test do
+      # TODO this looks weird. Why do we need a non-polymorphic
+      # next_exercise? Aren't indicators not enought?
+      it { expect(guide.next_exercise(user)).to eq guide.exercises.first }
+    end
+  end
 
-    let!(:assignment) { problem.try_submit_solution!(user) }
+  describe 'exercise fooling' do
+    let(:problem) { create(:problem) }
 
-    it { expect(assignment).to_not be nil }
-    it { expect(assignment.status).to be_like :passed }
+    describe 'next_for' do
+      it { expect(problem.next_for(user)).to be nil }
+    end
+
+    describe 'try_submit_solution!', organization_workspace: :test do
+      let!(:chapter) do
+        create(:chapter, name: 'Functional Programming', lessons: [
+          create(:lesson, exercises: [problem])
+        ])
+      end
+      let(:bridge_response) { {result: '0 failures', status: :passed} }
+
+      before { reindex_current_organization! }
+      before { expect_any_instance_of(Language).to receive(:run_tests!).and_return(bridge_response) }
+
+      let!(:assignment) { problem.try_submit_solution!(user) }
+
+      it { expect(assignment).to_not be nil }
+      it { expect(assignment.status).to be_like :passed }
+    end
   end
 end

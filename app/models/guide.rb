@@ -42,7 +42,7 @@ class Guide < Content
   end
 
   def next_exercise(user)
-    pending_exercises(user).order('public.exercises.number asc').first
+    user.next_exercise_at(self)
   end
 
   # TODO: Make use of pending_siblings logic
@@ -52,7 +52,8 @@ class Guide < Content
                 on assignments.exercise_id = exercises.id
                 and assignments.submitter_id = #{user.id}
                 and assignments.submission_status = #{Mumuki::Domain::Status::Submission::Passed.to_i}").
-        where('assignments.id is null')
+        where('assignments.id is null').
+        order('public.exercises.number asc')
   end
 
   def first_exercise

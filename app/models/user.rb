@@ -201,6 +201,10 @@ class User < ApplicationRecord
     content.pending_siblings_for(self)
   end
 
+  def next_exercise_at(guide)
+    guide.pending_exercises(self).first
+  end
+
   def run_submission!(submission, assignment, evaluation)
     submission.run! assignment, evaluation
   end
