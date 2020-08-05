@@ -14,10 +14,6 @@ module Mumuki::Domain::Status::Discussion
     define_method(selector) { false }
   end
 
-  def allowed_for?(*)
-    true
-  end
-
   def reachable_statuses_for_moderator(*)
     []
   end
@@ -36,10 +32,6 @@ module Mumuki::Domain::Status::Discussion
     else
       reachable_statuses_for_initiator(discussion)
     end
-  end
-
-  def allowed_statuses_for(user, discussion)
-    STATUSES.select { |it| it.allowed_for?(user, discussion) }
   end
 
   def as_json(_options={})
