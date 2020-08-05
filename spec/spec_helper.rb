@@ -51,7 +51,27 @@ def reindex_current_organization!
   reindex_organization! Organization.current
 end
 
+# ===============
+# Runner stubbing
+# ===============
+
+Language.class_eval do
+  patch :run_tests! do |*args, hyper|
+    warn 'You are calling Language#run_tests! which will perform a network hit. This is slow and unexpected things will happen if you do in a test context'
+    warn 'Please use `stub_runner!` to avoid this and properly setup your expectations'
+    warn 'Called from: '
+    warn caller.grep /academia/
+    warn ''
+    hyper.call
+  end
+end
+
+def stub_runner!(stubbed_response)
+  allow_any_instance_of(Language).to receive(:run_tests!).and_return stubbed_response
+end
+
 SimpleCov.start
 
 # shibi 「死び」 is the ghost cousin of kibi 「きび」
 User.configure_buried_profile! first_name: 'shibi', last_name: '', email: 'shibi@mumuki.org'
+
