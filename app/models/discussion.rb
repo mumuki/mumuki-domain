@@ -121,6 +121,10 @@ class Discussion < ApplicationRecord
     responses_count > 0
   end
 
+  def has_validated_responses?
+    validated_messages_count > 0
+  end
+
   def subscribe_initiator!
     initiator.subscribe_to! self
   end
