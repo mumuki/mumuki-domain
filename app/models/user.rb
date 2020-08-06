@@ -122,6 +122,9 @@ class User < ApplicationRecord
     update! accepts_reminders: false
   end
 
+  def verify_email!
+    update! email_verified: true
+  end
 
   def attach!(role, course)
     add_permission! role, course.slug
@@ -227,8 +230,16 @@ class User < ApplicationRecord
     :uid
   end
 
-  def self.unsubscription_verifier
-    Rails.application.message_verifier(:unsubscribe)
+  def self.unsubscribe!(encoded_id)
+    for_verifier(:unsubscribe, encoded_id).unsubscribe_from_reminders!
+  end
+
+  def self.verify_email!(encoded_id)
+    for_verifier(:verify_email, encoded_id).verify_email!
+  end
+
+  def self.for_verifier(message, encoded_id)
+    find(Rails.application.message_verifier(message).verify(encoded_id))
   end
 
   def self.create_if_necessary(user)
