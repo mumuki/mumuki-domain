@@ -23,9 +23,10 @@ describe Discussion, organization_workspace: :test do
     it { expect(discussion.reachable_statuses_for student).to eq [] }
     it { expect(discussion.commentable_by? student).to be true }
     it { expect(discussion.commentable_by? moderator).to be true }
+    it { expect(discussion.requires_moderator_response).to be true }
 
     describe 'initiator sends a message' do
-      before { discussion.submit_message!({content: 'I forgot to say this'}, initiator) }
+      before { discussion.submit_message!({content: 'I forgot to say this'}, initiator); discussion.reload }
 
       it { expect(discussion.has_responses?).to be false }
       it { expect(discussion.has_validated_responses?).to be false }
@@ -34,6 +35,7 @@ describe Discussion, organization_workspace: :test do
       it { expect(discussion.reachable_statuses_for initiator).to eq [:closed] }
       it { expect(discussion.reachable_statuses_for moderator).to eq [:closed] }
       it { expect(discussion.reachable_statuses_for student).to eq [] }
+      it { expect(discussion.requires_moderator_response).to be true }
 
       describe 'and closes the discussion' do
         before { discussion.update_status!(:closed, initiator) }
@@ -61,7 +63,7 @@ describe Discussion, organization_workspace: :test do
     end
 
     describe 'receive message from another student' do
-      before { discussion.submit_message!({content: 'You should do this'}, student) }
+      before { discussion.submit_message!({content: 'You should do this'}, student); discussion.reload }
 
       it { expect(discussion.has_responses?).to be true }
       it { expect(discussion.has_validated_responses?).to be false }
@@ -71,6 +73,7 @@ describe Discussion, organization_workspace: :test do
       it { expect(discussion.reachable_statuses_for moderator).to eq [:closed, :solved] }
       it { expect(discussion.reachable_statuses_for student).to eq [] }
       it { expect(student.subscribed_to? discussion).to be true }
+      it { expect(discussion.requires_moderator_response).to be true }
 
       describe 'gets updated to pending_review by initiator but it can not do it' do
         it { expect { discussion.update_status!(:pending_review, initiator) }.not_to change(discussion, :status) }
@@ -104,6 +107,7 @@ describe Discussion, organization_workspace: :test do
         before { discussion.reload }
 
         it { expect(discussion.has_validated_responses?).to be true }
+        it { expect(discussion.requires_moderator_response).to be false }
 
         describe 'and submits a valid solution' do
           before { stub_runner! status: :passed, result: 'passed!' }
@@ -127,6 +131,7 @@ describe Discussion, organization_workspace: :test do
       it { expect(discussion.reachable_statuses_for moderator).to eq [:closed, :solved] }
       it { expect(discussion.reachable_statuses_for student).to eq [] }
       it { expect(moderator.subscribed_to? discussion).to be true }
+      it { expect(discussion.requires_moderator_response).to be false }
 
       describe 'gets updated to pending_review by initiator' do
         before { discussion.update_status!(:pending_review, initiator) }
@@ -163,8 +168,6 @@ describe Discussion, organization_workspace: :test do
       end
     end
   end
-
-
 
   describe '#toggle_subscription!' do
     let(:discussion) { create(:discussion, {organization: Organization.current}) }
