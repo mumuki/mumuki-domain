@@ -138,10 +138,10 @@ class Discussion < ApplicationRecord
   def update_counters!
     messages_query = messages_by_updated_at
     validated_messages = messages_query.select &:validated?
-    requires_moderator_response = messages_query.find { |it| it.validated? || it.question? }&.from_initiator?
+    has_moderator_response = messages_query.find { |it| it.validated? || it.question? }&.validated?
     update! messages_count: messages_query.count,
             validated_messages_count: validated_messages.count,
-            requires_moderator_response: requires_moderator_response
+            requires_moderator_response: !has_moderator_response
   end
 
   def update_last_moderator_access!(user)
