@@ -69,14 +69,14 @@ describe Discussion, organization_workspace: :test do
       it { expect(discussion.has_validated_responses?).to be false }
       it { expect(initiator.unread_discussions).to include discussion }
       it { expect(discussion.messages.first.content).to eq 'You should do this' }
-      it { expect(discussion.reachable_statuses_for initiator).to eq [:closed] }
+      it { expect(discussion.reachable_statuses_for initiator).to eq [:pending_review] }
       it { expect(discussion.reachable_statuses_for moderator).to eq [:closed, :solved] }
       it { expect(discussion.reachable_statuses_for student).to eq [] }
       it { expect(student.subscribed_to? discussion).to be true }
       it { expect(discussion.requires_moderator_response).to be true }
 
-      describe 'gets updated to pending_review by initiator but it can not do it' do
-        it { expect { discussion.update_status!(:pending_review, initiator) }.not_to change(discussion, :status) }
+      describe 'gets updated to closed by initiator but it can not do it' do
+        it { expect { discussion.update_status!(:closed, initiator) }.not_to change(discussion, :status) }
       end
 
       describe 'initiator tries to solve it' do
@@ -99,7 +99,7 @@ describe Discussion, organization_workspace: :test do
         before { problem.submit_solution!(initiator, content: 'x = 2') }
         before { discussion.reload }
 
-        it { expect(discussion.status).to eq :closed }
+        it { expect(discussion.status).to eq :pending_review }
       end
 
       describe 'and that message gets approved' do
