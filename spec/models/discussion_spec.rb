@@ -5,66 +5,151 @@ describe Discussion, organization_workspace: :test do
   context 'when created' do
     let(:initiator) { create(:user) }
     let(:student) { create(:user) }
-    let(:problem) { create(:problem) }
+    let(:problem) { create(:indexed_exercise) }
     let(:discussion) { problem.discuss! initiator, title: 'Need help' }
     let(:moderator) { create(:user, permissions: {moderator: 'test/*'}) }
 
     it { expect(discussion.new_record?).to be false }
     it { expect(discussion.has_responses?).to be false }
+    it { expect(discussion.has_validated_responses?).to be false }
     it { expect(discussion.messages).to eq [] }
     it { expect(discussion.initiator).to eq initiator }
     it { expect(discussion.title).to eq 'Need help' }
     it { expect(discussion.item).to eq problem }
     it { expect(initiator.subscribed_to? discussion).to be true }
     it { expect(discussion.status).to eq :opened }
-    it { expect(discussion.reachable_statuses_for initiator).to eq [] }
+    it { expect(discussion.reachable_statuses_for initiator).to eq [:closed] }
     it { expect(discussion.reachable_statuses_for moderator).to eq [:closed] }
     it { expect(discussion.reachable_statuses_for student).to eq [] }
     it { expect(discussion.commentable_by? student).to be true }
     it { expect(discussion.commentable_by? moderator).to be true }
+    it { expect(discussion.requires_moderator_response).to be true }
 
     describe 'initiator sends a message' do
-      before { discussion.submit_message!({content: 'I forgot to say this'}, initiator) }
+      before { discussion.submit_message!({content: 'I forgot to say this'}, initiator); discussion.reload }
 
       it { expect(discussion.has_responses?).to be false }
+      it { expect(discussion.has_validated_responses?).to be false }
       it { expect(discussion.messages.first.content).to eq 'I forgot to say this' }
       it { expect(initiator.unread_discussions).to eq [] }
-      it { expect(discussion.reachable_statuses_for initiator).to eq [] }
+      it { expect(discussion.reachable_statuses_for initiator).to eq [:closed] }
       it { expect(discussion.reachable_statuses_for moderator).to eq [:closed] }
       it { expect(discussion.reachable_statuses_for student).to eq [] }
+      it { expect(discussion.requires_moderator_response).to be true }
 
-      describe 'and closes the discussion then status can not be updated' do
+      describe 'and closes the discussion' do
         before { discussion.update_status!(:closed, initiator) }
 
-        it { expect(discussion.status).to eq :opened }
+        it { expect(discussion.status).to eq :closed }
         it { expect(discussion.reachable_statuses_for initiator).to eq [] }
-        it { expect(discussion.reachable_statuses_for moderator).to eq [:closed] }
+        it { expect(discussion.reachable_statuses_for moderator).to eq [:opened, :solved] }
         it { expect(discussion.reachable_statuses_for student).to eq [] }
-        it { expect(discussion.commentable_by? student).to be true }
+        it { expect(discussion.commentable_by? student).to be false }
+        it { expect(discussion.commentable_by? moderator).to be true }
+      end
+
+      describe 'and submits a valid solution' do
+        before { stub_runner! status: :passed, result: 'passed!' }
+        before { problem.submit_solution!(initiator, content: 'x = 2') }
+        before { discussion.reload }
+
+        it { expect(discussion.status).to eq :closed }
+        it { expect(discussion.reachable_statuses_for initiator).to eq [] }
+        it { expect(discussion.reachable_statuses_for moderator).to eq [:opened, :solved] }
+        it { expect(discussion.reachable_statuses_for student).to eq [] }
+        it { expect(discussion.commentable_by? student).to be false }
         it { expect(discussion.commentable_by? moderator).to be true }
       end
     end
 
-    describe 'receive message from helper' do
-      before { discussion.submit_message!({content: 'You should do this'}, student) }
+    describe 'receive message from another student' do
+      before { discussion.submit_message!({content: 'You should do this'}, student); discussion.reload }
 
       it { expect(discussion.has_responses?).to be true }
+      it { expect(discussion.has_validated_responses?).to be false }
       it { expect(initiator.unread_discussions).to include discussion }
       it { expect(discussion.messages.first.content).to eq 'You should do this' }
-      it { expect(discussion.reachable_statuses_for initiator).to eq [] }
+      it { expect(discussion.reachable_statuses_for initiator).to eq [:closed] }
       it { expect(discussion.reachable_statuses_for moderator).to eq [:closed, :solved] }
       it { expect(discussion.reachable_statuses_for student).to eq [] }
       it { expect(student.subscribed_to? discussion).to be true }
+      it { expect(discussion.requires_moderator_response).to be true }
 
-      describe 'gets updated to pending_review by initiator but he can not do it' do
+      describe 'gets updated to pending_review by initiator but it can not do it' do
+        it { expect { discussion.update_status!(:pending_review, initiator) }.not_to change(discussion, :status) }
+      end
+
+      describe 'initiator tries to solve it' do
+        it { expect { discussion.update_status!(:solved, initiator) }.not_to change(discussion, :status) }
+      end
+
+      describe 'gets solved by moderator' do
+        before { discussion.update_status!(:solved, moderator) }
+
+        it { expect(discussion.status).to eq :solved }
+        it { expect(discussion.reachable_statuses_for initiator).to eq [] }
+        it { expect(discussion.reachable_statuses_for moderator).to eq [:opened, :closed] }
+        it { expect(discussion.reachable_statuses_for student).to eq [] }
+        it { expect(discussion.commentable_by? student).to be false }
+        it { expect(discussion.commentable_by? moderator).to be true }
+      end
+
+      describe 'and submits a valid solution' do
+        before { stub_runner! status: :passed, result: 'passed!' }
+        before { problem.submit_solution!(initiator, content: 'x = 2') }
+        before { discussion.reload }
+
+        it { expect(discussion.status).to eq :closed }
+      end
+
+      describe 'and that message gets approved' do
+        before { discussion.messages.last.update! approved: true }
+        before { discussion.reload }
+
+        it { expect(discussion.has_validated_responses?).to be true }
+        it { expect(discussion.requires_moderator_response).to be false }
+
+        describe 'and submits a valid solution' do
+          before { stub_runner! status: :passed, result: 'passed!' }
+          before { problem.submit_solution!(initiator, content: 'x = 2') }
+          before { discussion.reload }
+
+          it { expect(discussion.status).to eq :pending_review }
+        end
+      end
+    end
+
+    describe 'receives message from a moderator' do
+      before { discussion.submit_message!({content: 'I suggest doing this'}, moderator) }
+      before { discussion.reload }
+
+      it { expect(discussion.has_responses?).to be true }
+      it { expect(discussion.has_validated_responses?).to be true }
+      it { expect(initiator.unread_discussions).to include discussion }
+      it { expect(discussion.messages.last.content).to eq 'I suggest doing this' }
+      it { expect(discussion.reachable_statuses_for initiator).to eq [:pending_review] }
+      it { expect(discussion.reachable_statuses_for moderator).to eq [:closed, :solved] }
+      it { expect(discussion.reachable_statuses_for student).to eq [] }
+      it { expect(moderator.subscribed_to? discussion).to be true }
+      it { expect(discussion.requires_moderator_response).to be false }
+
+      describe 'gets updated to pending_review by initiator' do
         before { discussion.update_status!(:pending_review, initiator) }
 
-        it { expect(discussion.status).to eq :opened }
+        it { expect(discussion.status).to eq :pending_review }
         it { expect(discussion.reachable_statuses_for initiator).to eq [] }
-        it { expect(discussion.reachable_statuses_for moderator).to eq [:closed, :solved] }
+        it { expect(discussion.reachable_statuses_for moderator).to eq [:opened, :closed, :solved] }
         it { expect(discussion.reachable_statuses_for student).to eq [] }
-        it { expect(discussion.commentable_by? student).to be true }
+        it { expect(discussion.commentable_by? student).to be false }
         it { expect(discussion.commentable_by? moderator).to be true }
+      end
+
+      describe 'and submits a valid solution' do
+        before { stub_runner! status: :passed, result: 'passed!' }
+        before { problem.submit_solution!(initiator, content: 'x = 2') }
+        before { discussion.reload }
+
+        it { expect(discussion.status).to eq :pending_review }
       end
 
       describe 'initiator tries to solve it' do
@@ -164,11 +249,12 @@ describe Discussion, organization_workspace: :test do
   describe 'messages not being deleted' do
     let(:user) { create(:user) }
     let(:other_user) { create(:user) }
-    let(:problem) { create(:problem) }
+    let(:problem) { create(:indexed_exercise) }
     let(:assignment) { problem.submit_solution! user }
     let(:discussion) { problem.discuss!(user, {title: 'A discussion'}) }
 
     before { discussion.submit_message!({content: 'You should do this'}, user) }
+    before { stub_runner! status: :passed, result: 'passed!' }
     before { problem.submit_solution! other_user }
 
     it { expect(discussion.messages.count).to eq 1 }

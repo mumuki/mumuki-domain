@@ -8,8 +8,6 @@ class Book < Content
   has_many :complements, dependent: :destroy
 
   has_many :exercises, through: :chapters
-  has_many :discussions, through: :exercises
-  organic_on :discussions
 
   delegate :first_lesson, to: :first_chapter
 
@@ -17,6 +15,10 @@ class Book < Content
 
   def to_s
     slug
+  end
+
+  def discussions_in_organization(organization = Organization.current)
+    Discussion.where(organization: organization).includes(exercise: [:language, :guide])
   end
 
   def first_chapter

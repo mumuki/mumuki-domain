@@ -105,10 +105,6 @@ class Discussion < ApplicationRecord
     reachable_statuses_for(user).include? status
   end
 
-  def allowed_statuses_for(user)
-    status.allowed_statuses_for(user, self)
-  end
-
   def update_status!(status, user)
     update!(status: status) if reachable_status_for?(user, status)
   end
@@ -125,6 +121,10 @@ class Discussion < ApplicationRecord
     responses_count > 0
   end
 
+  def has_validated_responses?
+    validated_messages_count > 0
+  end
+
   def subscribe_initiator!
     initiator.subscribe_to! self
   end
@@ -138,10 +138,10 @@ class Discussion < ApplicationRecord
   def update_counters!
     messages_query = messages_by_updated_at
     validated_messages = messages_query.select &:validated?
-    requires_moderator_response = messages_query.find { |it| it.validated? || it.question? }&.from_initiator?
+    has_moderator_response = messages_query.find { |it| it.validated? || it.question? }&.validated?
     update! messages_count: messages_query.count,
             validated_messages_count: validated_messages.count,
-            requires_moderator_response: requires_moderator_response
+            requires_moderator_response: !has_moderator_response
   end
 
   def update_last_moderator_access!(user)

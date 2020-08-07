@@ -51,7 +51,16 @@ def reindex_current_organization!
   reindex_organization! Organization.current
 end
 
+# ===============
+# Runner stubbing
+# ===============
+
+def stub_runner!(stubbed_response)
+  allow_any_instance_of(Language).to receive(:run_tests!).and_return stubbed_response
+end
+
 SimpleCov.start
 
 # shibi 「死び」 is the ghost cousin of kibi 「きび」
 User.configure_buried_profile! first_name: 'shibi', last_name: '', email: 'shibi@mumuki.org'
+

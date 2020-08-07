@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :discussion do
-    title { 'A discussion' }
-    description { 'A discussion description' }
+    title { Faker::Lorem.sentence(word_count: 2) }
+    description { Faker::Lorem.sentence(word_count: 5) }
     initiator { create(:user) }
     item { create(:exercise) }
     organization { Organization.current rescue nil }

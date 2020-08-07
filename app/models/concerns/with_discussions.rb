@@ -14,7 +14,7 @@ module WithDiscussions
     nil
   end
 
-  def try_solve_discussions(user)
+  def try_solve_discussions!(user)
     discussions.where(initiator: user).map(&:try_solve!)
   end
 
