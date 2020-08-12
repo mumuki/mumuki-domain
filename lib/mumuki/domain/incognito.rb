@@ -36,6 +36,10 @@ module Mumuki::Domain
       false
     end
 
+    def can_discuss_here?
+      false
+    end
+
     # ========
     # Visiting
     # ========
