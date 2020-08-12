@@ -251,19 +251,18 @@ class User < ApplicationRecord
     end
   end
 
-  def notify_permissions_changed!(old_permissions)
-    return if old_permissions == permissions
+  def notify_permissions_changed!
+    return if permissions_before_last_save == permissions
     Mumukit::Nuntius.notify! 'user-permissions-changed', user: {
-        uid: uid,
-        old_permissions: old_permissions.as_json,
-        new_permissions: permissions.as_json
+      uid: uid,
+      old_permissions: permissions_before_last_save.as_json,
+      new_permissions: permissions.as_json
     }
   end
-
+  
   def save_and_notify!
-    old_permissions = self.permissions
     save!
-    notify_permissions_changed! old_permissions
+    notify_permissions_changed!
     self
   end
 
