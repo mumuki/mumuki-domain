@@ -18,6 +18,7 @@ class Organization < ApplicationRecord
   has_many :usages
 
   validates_presence_of :contact_email, :locale
+  validates_presence_of :welcome_email_template, if: :greet_new_users?
   validates :name, uniqueness: true,
                    presence: true,
                    format: { with: Mumukit::Platform::Organization.anchored_valid_name_regex }
