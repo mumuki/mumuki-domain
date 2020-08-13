@@ -1,11 +1,11 @@
 module SiblingsNavigation
 
   def next_for(user)
-    pending_siblings_for(user).select { |it| it.number > number }.sort_by(&:number).first
+    user.pending_siblings_at(self).select { |it| it.number > number }.sort_by(&:number).first
   end
 
   def restart(user)
-    pending_siblings_for(user).sort_by(&:number).first
+    user.pending_siblings_at(self).sort_by(&:number).first
   end
 
   def siblings

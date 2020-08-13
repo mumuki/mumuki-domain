@@ -42,7 +42,7 @@ class Guide < Content
   end
 
   def next_exercise(user)
-    pending_exercises(user).order('public.exercises.number asc').first
+    user.next_exercise_at(self)
   end
 
   # TODO: Make use of pending_siblings logic

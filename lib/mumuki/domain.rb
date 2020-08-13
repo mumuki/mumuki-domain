@@ -26,6 +26,7 @@ Mumukit::Platform.configure do |config|
 end
 
 require_relative './domain/area'
+require_relative './domain/incognito'
 require_relative './domain/evaluation'
 require_relative './domain/submission'
 require_relative './domain/status'

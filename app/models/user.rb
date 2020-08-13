@@ -189,6 +189,30 @@ class User < ApplicationRecord
     name.split.map(&:first).map(&:capitalize).join(' ')
   end
 
+  def progress_at(content, organization)
+    Indicator.find_or_initialize_by(user: self, organization: organization, content: content)
+  end
+
+  def build_assignment(exercise, organization)
+    assignments.build(exercise: exercise, organization: organization)
+  end
+
+  def pending_siblings_at(content)
+    content.pending_siblings_for(self)
+  end
+
+  def next_exercise_at(guide)
+    guide.pending_exercises(self).order('public.exercises.number asc').first
+  end
+
+  def run_submission!(submission, assignment, evaluation)
+    submission.run! assignment, evaluation
+  end
+
+  def incognito?
+    false
+  end
+
   private
 
   def set_uid!
