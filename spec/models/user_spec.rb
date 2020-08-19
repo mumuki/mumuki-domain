@@ -419,7 +419,7 @@ describe User, organization_workspace: :test do
   describe '#age' do
     let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
     before do
-      mocked_time = Time.parse('08/12/2020')
+      mocked_time = Time.parse('2020-12-08')
       allow(Time).to receive(:now).and_return(mocked_time)
     end
 
@@ -430,32 +430,32 @@ describe User, organization_workspace: :test do
 
     context 'with birthdate' do
       context 'in a leap year and the same month and day' do
-        before { user.birthdate = '08/12/2000' }
+        before { user.birthdate = '2000-12-08' }
         it { expect(user.age).to eq 20 }
       end
 
       context 'in a leap year one day before birthday' do
-        before { user.birthdate = '07/12/2000' }
+        before { user.birthdate = '2000-12-07' }
         it { expect(user.age).to eq 20 }
       end
 
       context 'in a leap year one day after birthday' do
-        before { user.birthdate = '09/12/2000' }
+        before { user.birthdate = '2000-12-09' }
         it { expect(user.age).to eq 19 }
       end
 
       context 'in a non-leap year and the same month and day' do
-        before { user.birthdate = '08/12/2002' }
+        before { user.birthdate = '2002-12-08' }
         it { expect(user.age).to eq 18 }
       end
 
       context 'in a non-leap year one day before birthday' do
-        before { user.birthdate = '07/12/2002' }
+        before { user.birthdate = '2002-12-07' }
         it { expect(user.age).to eq 18 }
       end
 
       context 'in a non-leap year one day after birthday' do
-        before { user.birthdate = '09/12/2002' }
+        before { user.birthdate = '2002-12-09' }
         it { expect(user.age).to eq 17 }
       end
     end
