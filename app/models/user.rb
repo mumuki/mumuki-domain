@@ -183,7 +183,7 @@ class User < ApplicationRecord
 
   def age
     if birthdate.present?
-      @age ||= (Time.now.to_s(:number).to_i - birthdate.to_time.to_s(:number).to_i) / 10e9.to_i
+      @age ||= Time.now.round_years_since(birthdate.to_time)
     end
   end
 
