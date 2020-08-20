@@ -1,17 +1,26 @@
 class Mumuki::Domain::Organization::EmailVerificationPolicy
+  TYPES = %i(lax strict grace_period)
+
+  attr_reader :options
+
   def self.parse(policy)
     return Mumuki::Domain::Organization::EmailVerificationPolicy::Lax.new unless policy
-    "Mumuki::Domain::Organization::EmailVerificationPolicy::#{policy[:type].capitalize}".constantize.new(policy[:options])
+    "Mumuki::Domain::Organization::EmailVerificationPolicy::#{policy[:type].as_module_name}".constantize.new(policy[:options])
   end
 
-  def initialize(*)
+  def initialize(options = {})
+    @options = struct(options.to_h)
   end
 
   def verify!(user)
-    raise MustVerifyEmailError unless user.email_verified? || meets_policy?(user)
+    raise Mumuki::Domain::MustVerifyEmailError unless user.email_verified? || meets_policy?(user)
+  end
+
+  def type
+    self.class.name.demodulize.snakecase
   end
 end
 
-require_relative 'policies/lax'
-require_relative 'policies/strict'
-require_relative 'policies/grace_period'
+Mumuki::Domain::Organization::EmailVerificationPolicy::TYPES.each do |it|
+  require_relative "policies/#{it}"
+end

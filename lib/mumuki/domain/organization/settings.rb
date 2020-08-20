@@ -39,6 +39,6 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
   end
 
   def email_verification_policy
-    Mumuki::Domain::Organization::EmailVerificationPolicy.parse(@email_verification_policy)
+    Mumuki::Domain::Organization::EmailVerificationPolicy.parse(@email_verification_policy&.with_indifferent_access)
   end
 end
