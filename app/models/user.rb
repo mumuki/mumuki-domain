@@ -216,6 +216,16 @@ class User < ApplicationRecord
     false
   end
 
+  %i(unsubscribe verify_email).each do |selector|
+    define_singleton_method "for_#{selector}_verifier" do |encoded_id|
+      find(verifier_for_message(selector).verify(encoded_id))
+    end
+
+    define_method "encoded_id_for_#{selector}" do
+      self.class.verifier_for_message(selector).generate(id)
+    end
+  end
+
   private
 
   def set_uid!
@@ -230,16 +240,8 @@ class User < ApplicationRecord
     :uid
   end
 
-  def self.unsubscribe!(encoded_id)
-    for_verifier(:unsubscribe, encoded_id).unsubscribe_from_reminders!
-  end
-
-  def self.verify_email!(encoded_id)
-    for_verifier(:verify_email, encoded_id).verify_email!
-  end
-
-  def self.for_verifier(message, encoded_id)
-    find(Rails.application.message_verifier(message).verify(encoded_id))
+  def self.verifier_for_message(message)
+    Rails.application.message_verifier(message)
   end
 
   def self.create_if_necessary(user)
