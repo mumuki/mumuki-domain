@@ -304,6 +304,40 @@ describe User, organization_workspace: :test do
     end
   end
 
+  describe '.notify_permissions_changed!' do
+    let(:user) { build(:user) }
+
+    context 'with no changes at all' do
+      before { expect_any_instance_of(Mumukit::Nuntius::NotificationMode::Deaf).to_not receive(:notify!) }
+      it { user.save_and_notify! }
+    end
+
+    context 'with name changes' do
+      before { expect_any_instance_of(Mumukit::Nuntius::NotificationMode::Deaf).to_not receive(:notify!) }
+      it { user.update_and_notify!(first_name: 'Mary', last_name: 'Doe') }
+    end
+
+    context 'with permission changes' do
+      let(:permissions_diff) { {
+        user: {
+          uid: user.uid,
+          old_permissions: {},
+          new_permissions: {student: 'example/foo'}.as_json
+        }
+      } }
+
+      context 'using update_and_notify!' do
+        before { expect_any_instance_of(Mumukit::Nuntius::NotificationMode::Deaf).to receive(:notify!).with('user-permissions-changed', permissions_diff) }
+        it { user.update_and_notify!(permissions: {student: 'example/foo'}) }
+      end
+
+      context 'using save_and_notify!' do
+        before { expect_any_instance_of(Mumukit::Nuntius::NotificationMode::Deaf).to receive(:notify!).with('user-permissions-changed', permissions_diff) }
+        it { user.add_permission! :student, 'example/foo'; user.save_and_notify! }
+      end
+    end
+
+  end
 
   describe '.for_profile' do
     let(:user) { create(:user, first_name: 'some name', last_name: 'some last name') }
@@ -314,21 +348,6 @@ describe User, organization_workspace: :test do
     it { expect(User.find(user.id).first_name).to eq 'some name' }
     it { expect(User.find(user.id).last_name).to eq 'some other last name' }
 
-    pending 'Notify event is no called anymore. TODO.. cretae more test to notify permissions' do
-      let(:user) { build(:user) }
-
-      context 'no changes' do
-        before { expect_any_instance_of(Mumukit::Nuntius::NotificationMode::Deaf).to_not receive(:notify_event!) }
-        it { User.for_profile profile }
-      end
-
-      context 'with changes' do
-        before { expect_any_instance_of(Mumukit::Nuntius::NotificationMode::Deaf).to receive(:notify_event!).exactly(1).times }
-        it { User.for_profile profile.to_h.merge(first_name: 'Mary').to_struct }
-        it { User.for_profile profile.to_h.merge(last_name: 'Doe').to_struct }
-      end
-
-    end
   end
 
   describe '#accept_invitation!' do
