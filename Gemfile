@@ -12,3 +12,5 @@ group :test do
 end
 
 gem 'codeclimate-test-reporter', :group => :test, :require => nil
+#
+gem 'mumukit-platform', github: 'mumuki/mumukit-platform', branch: 'add-chile-spanish-to-supported-locales'
