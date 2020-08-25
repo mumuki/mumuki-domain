@@ -157,16 +157,6 @@ class Exam < ApplicationRecord
     self.passing_criterion_type ||= :none
   end
 
-  # FIXME only provisional
-  def as_classroom_json
-    as_json
-        .merge(eid: classroom_id, name: guide.name, language: guide.language.name, slug: guide.slug,
-               uids: users.map(&:uid), course: course.slug, organization: organization.name,
-               passing_criterion: passing_criterion.as_json)
-        .except(:classroom_id, :guide_id, :course_id, :organization_id,
-                :passing_criterion_type, :passing_criterion_value)
-  end
-
   def self.import_from_resource_h!(json)
     exam_data = json.with_indifferent_access
     Organization.locate!(exam_data[:organization].to_s).switch!
