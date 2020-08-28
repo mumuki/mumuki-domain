@@ -4,10 +4,11 @@ class Content < ApplicationRecord
   include Mumuki::Domain::Syncable
   include WithDescription
   include WithLocale
-  include WithSlug
-  include WithUsages
+  include WithMedal
   include WithName
   include WithProgress
+  include WithSlug
+  include WithUsages
 
   def to_resource_h(*args)
     to_expanded_resource_h(*args).compact

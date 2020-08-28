@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200828152812) do
+ActiveRecord::Schema.define(version: 20200828162829) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 20200828152812) do
     t.text "description"
     t.string "slug"
     t.boolean "private", default: false
+    t.bigint "medal_id"
     t.index ["slug"], name: "index_books_on_slug", unique: true
   end
 
@@ -218,6 +219,7 @@ ActiveRecord::Schema.define(version: 20200828152812) do
     t.text "learn_more"
     t.text "settings"
     t.text "custom_expectations"
+    t.bigint "medal_id"
     t.index ["name"], name: "index_guides_on_name"
     t.index ["slug"], name: "index_guides_on_slug", unique: true
   end
@@ -348,6 +350,7 @@ ActiveRecord::Schema.define(version: 20200828152812) do
     t.text "appendix"
     t.string "slug"
     t.boolean "private", default: false
+    t.bigint "medal_id"
     t.index ["slug"], name: "index_topics_on_slug", unique: true
   end
 
