@@ -239,4 +239,20 @@ describe Organization, organization_workspace: :test do
 
     it { expect(organization.description_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
   end
+
+  describe '#display_name' do
+    let(:organization) { build(:organization, name: name) }
+
+    context 'regular organization name' do
+      let(:name) { 'central' }
+
+      it { expect(organization.display_name).to eq 'Central' }
+    end
+
+    context 'organization name with symbols' do
+      let(:name) { 'some.organization-with_symbols' }
+
+      it { expect(organization.display_name).to eq 'Some Organization With Symbols' }
+    end
+  end
 end
