@@ -128,6 +128,10 @@ class Organization < ApplicationRecord
     update! progressive_display_lookahead: lookahead
   end
 
+  def display_name
+    name.gsub(/\W/, ' ').titleize
+  end
+
   private
 
   def ensure_consistent_public_login
