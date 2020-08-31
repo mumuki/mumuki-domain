@@ -239,4 +239,20 @@ describe Organization, organization_workspace: :test do
 
     it { expect(organization.description_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
   end
+
+  describe '#display_name' do
+
+    context 'with name separated by dashes' do
+      let(:organization) { build(:organization, name: 'a-great-organization') }
+
+      it { expect(organization.display_name).to eq('A Great Organization') }
+    end
+
+    context 'with name separated by dots' do
+      let(:organization) { build(:organization, name: 'a.great.organization') }
+
+      it { expect(organization.display_name).to eq('A Great Organization') }
+    end
+
+  end
 end
