@@ -4,6 +4,7 @@ class User < ApplicationRecord
           WithUserNavigation,
           WithReminders,
           WithDiscussionCreation,
+          Awardee,
           Disabling,
           Mumuki::Domain::Helpers::User
 
