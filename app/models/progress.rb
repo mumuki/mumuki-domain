@@ -12,4 +12,12 @@ class Progress < ApplicationRecord
   def dirty_parent_by_submission!
     parent&.dirty_by_submission!
   end
+
+  def copy_to!(organization)
+    copy_on(organization).save!
+  end
+
+  def copy_on(organization)
+    dup.tap { |it| it.assign_attributes organization: organization, parent: nil }
+  end
 end

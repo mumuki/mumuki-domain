@@ -66,7 +66,17 @@ class Indicator < Progress
     where(content: content, organization: organization).delete_all
   end
 
+  def copy_on(organization)
+    super.tap { |it| it.assign_attributes indicators: indicators_on(organization), assignments: assignments_on(organization) }
+  end
+
   private
+
+  %i(indicators assignments).each do |selector|
+    define_method("#{selector}_on") do |organization|
+      send(selector).map { |it| it.copy_on(organization) }
+    end
+  end
 
   def children
     indicators.presence || assignments
