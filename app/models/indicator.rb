@@ -66,8 +66,21 @@ class Indicator < Progress
     where(content: content, organization: organization).delete_all
   end
 
+  def move_to!(organization)
+    transaction do
+      super
+      move_children_to!(organization.id)
+    end
+  end
+
   def copy_on(organization)
     super.tap { |it| it.assign_attributes indicators: indicators_on(organization), assignments: assignments_on(organization) }
+  end
+
+  def move_children_to!(organization_id)
+    children.update_all(organization_id: organization_id)
+
+    indicators.each { |it| it.move_children_to!(organization_id) }
   end
 
   private

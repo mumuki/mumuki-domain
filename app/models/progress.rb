@@ -17,6 +17,10 @@ class Progress < ApplicationRecord
     copy_on(organization).save!
   end
 
+  def move_to!(organization)
+    update! organization: organization, parent: nil
+  end
+
   def copy_on(organization)
     dup.tap { |it| it.assign_attributes organization: organization, parent: nil }
   end
