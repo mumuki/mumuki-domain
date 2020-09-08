@@ -14,14 +14,33 @@ class Progress < ApplicationRecord
   end
 
   def copy_to!(organization)
-    copy_on(organization).save!
+    dup.transfer_to!(organization)
   end
 
   def move_to!(organization)
-    update! organization: organization, parent: nil
+    transfer_to!(organization)
   end
 
-  def copy_on(organization)
-    dup.tap { |it| it.assign_attributes organization: organization, parent: nil }
+  def transfer_to!(organization)
+    relocate_on!(organization)
+    save!
+    delete_duplicates!
+    self
+  end
+
+  def relocate_on!(organization)
+    assign_attributes organization: organization, parent: nil
+  end
+
+  def duplicates
+    self.class.where(duplicates_key).where.not(id: id)
+  end
+
+  def has_duplicates?
+    duplicates.present?
+  end
+
+  def delete_duplicates!
+    duplicates.delete_all
   end
 end

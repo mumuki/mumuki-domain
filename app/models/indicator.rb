@@ -73,22 +73,24 @@ class Indicator < Progress
     end
   end
 
-  def copy_on(organization)
-    super.tap { |it| it.assign_attributes indicators: indicators_on(organization), assignments: assignments_on(organization) }
+  def copy_to!(organization)
+    transaction do
+      super
+      children.each { |it| it.copy_to! organization }
+    end
   end
 
   def move_children_to!(organization_id)
     children.update_all(organization_id: organization_id)
+    children.reload.each(&:delete_duplicates!)
 
     indicators.each { |it| it.move_children_to!(organization_id) }
   end
 
   private
 
-  %i(indicators assignments).each do |selector|
-    define_method("#{selector}_on") do |organization|
-      send(selector).map { |it| it.copy_on(organization) }
-    end
+  def duplicates_key
+    { organization: organization, content: content, user: user }
   end
 
   def children
