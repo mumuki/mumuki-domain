@@ -17,16 +17,14 @@ class Progress < ApplicationRecord
     dup.transfer_to!(organization)
   end
 
-  def move_to!(organization)
-    transfer_to!(organization)
-  end
-
   def transfer_to!(organization)
     relocate_on!(organization)
     save!
     delete_duplicates!
     self
   end
+
+  alias_method :move_to!, :transfer_to!
 
   def relocate_on!(organization)
     assign_attributes organization: organization, parent: nil

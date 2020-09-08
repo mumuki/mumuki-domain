@@ -87,6 +87,20 @@ class Indicator < Progress
     indicators.each { |it| it.move_children_to!(organization_id) }
   end
 
+  def delete_duplicates!
+    duplicates.each(&:cascade_delete_children!)
+    super
+  end
+
+  def cascade_delete_children!
+    indicators.each(&:cascade_delete_children!)
+    children.delete_all
+  end
+
+  def has_duplicates?
+    super || children.any?(&:has_duplicates?)
+  end
+
   private
 
   def duplicates_key
