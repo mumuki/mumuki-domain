@@ -1,6 +1,7 @@
 class Assignment < Progress
   include Contextualization
   include WithMessages
+  include Gamified
 
   markdown_on :extra_preview
 
@@ -41,6 +42,7 @@ class Assignment < Progress
   alias_method :parent_content, :guide
   alias_method :user, :submitter
 
+  before_save :award_experience_points!, :update_top_submission!, if: :submission_status_changed?
   after_save :dirty_parent_by_submission!, if: :completion_changed?
   before_validation :set_current_organization!, unless: :organization
 
@@ -161,7 +163,10 @@ class Assignment < Progress
   end
 
   def to_resource_h
-    as_json(except: %i(exercise_id submission_id organization_id id submitter_id solution created_at updated_at submission_status submitted_at parent_id),
+    excluded_fields = %i(created_at exercise_id id organization_id parent_id solution submission_id
+                         submission_status submitted_at submitter_id top_submission_status updated_at)
+
+    as_json(except: excluded_fields,
               include: {
                 guide: {
                   only: [:slug, :name],
@@ -222,6 +227,10 @@ class Assignment < Progress
 
   def files
     exercise.files_for(current_content)
+  end
+
+  def update_top_submission!
+    self.top_submission_status = submission_status unless submission_status.improved_by?(top_submission_status)
   end
 
   private

@@ -42,4 +42,12 @@ module Mumuki::Domain::Status::Submission
   def solved?
     passed? || skipped?
   end
+
+  def improved_by?(status)
+    self.exp_given < status.exp_given
+  end
+
+  def exp_given
+    0
+  end
 end

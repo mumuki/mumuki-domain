@@ -1,5 +1,11 @@
 class Avatar < ApplicationRecord
+  include WithTargetAudience
+
+  def self.sample_for(user)
+    with_current_audience_for(user).sample
+  end
+
   def self.sample
-    Avatar.order('RANDOM()').first
+    order('RANDOM()').first
   end
 end

@@ -30,16 +30,15 @@ class User < ApplicationRecord
 
   has_many :exams, through: :exam_authorizations
 
-  after_initialize :init
-
   enum gender: %i(female male other unspecified)
-
   belongs_to :avatar, optional: true
 
   before_validation :set_uid!
   validates :uid, presence: true
 
   after_save :welcome_to_new_organizations!, if: :gained_access_to_new_orga?
+  after_initialize :init
+  PLACEHOLDER_IMAGE_URL = 'user_shape.png'.freeze
 
   resource_fields :uid, :social_id, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
 
@@ -147,8 +146,12 @@ class User < ApplicationRecord
     exams.any? { |e| e.in_progress_for? self }
   end
 
-  def profile_picture
+  def custom_profile_picture
     avatar&.image_url || image_url
+  end
+
+  def profile_picture
+    custom_profile_picture || placeholder_image_url
   end
 
   def bury!
@@ -215,6 +218,20 @@ class User < ApplicationRecord
     false
   end
 
+  def current_audience
+    current_organic_context&.target_audience
+  end
+
+  def placeholder_image_url
+    PLACEHOLDER_IMAGE_URL
+  end
+
+  def age
+    if birthdate.present?
+      @age ||= Time.now.round_years_since(birthdate.to_time)
+    end
+  end
+
   private
 
   def welcome_to_new_organizations!
@@ -240,7 +257,10 @@ class User < ApplicationRecord
   end
 
   def init
-    self.avatar = Avatar.sample unless profile_picture.present?
+    if custom_profile_picture.blank?
+      self.avatar = Avatar.sample_for(self)
+      save if persisted?
+    end
   end
 
   def self.sync_key_id_field
@@ -264,5 +284,13 @@ class User < ApplicationRecord
 
   def self.buried_profile
     (@buried_profile || {}).slice(:first_name, :last_name, :email)
+  end
+
+  def current_organic_context
+    if Organization.current?
+      Organization.current
+    else
+      main_organization
+    end
   end
 end
