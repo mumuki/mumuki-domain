@@ -5,7 +5,7 @@ class Organization < ApplicationRecord
 
   include Mumukit::Login::OrganizationHelpers
 
-  include WithTargetVisualIdentity
+  include WithTargetAudience
 
   serialize :profile, Mumuki::Domain::Organization::Profile
   serialize :settings, Mumuki::Domain::Organization::Settings

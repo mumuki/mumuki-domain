@@ -1,4 +1,4 @@
-module WithTargetVisualIdentity
+module WithTargetAudience
   extend ActiveSupport::Concern
 
   included do

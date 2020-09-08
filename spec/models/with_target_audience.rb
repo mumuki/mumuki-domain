@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe WithTargetVisualIdentity do
+describe WithTargetAudience do
   let!(:kids_organization) { create(:organization, target_audience: :kids) }
   let!(:grown_ups_organization) { create(:organization, target_audience: :grown_ups, name: 'for_grown_ups') }
 
