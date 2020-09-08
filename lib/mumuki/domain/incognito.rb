@@ -40,6 +40,10 @@ module Mumuki::Domain
       false
     end
 
+    def can_discuss_in?(*)
+      false
+    end
+
     # ========
     # Visiting
     # ========
@@ -88,6 +92,10 @@ module Mumuki::Domain
       raise "unknown attribute #{key}"
     end
 
+    def new_record?
+      false
+    end
+
     def self.primary_key
       'id'
     end
@@ -105,7 +113,6 @@ module Mumuki::Domain
       assignment.assign_attributes results
       results
     end
-
   end
 
   Incognito = IncognitoClass.new
