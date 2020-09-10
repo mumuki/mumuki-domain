@@ -94,7 +94,7 @@ class Indicator < Progress
 
   def cascade_delete_children!
     indicators.each(&:cascade_delete_children!)
-    children.delete_all
+    children.delete_all(:delete_all)
   end
 
   def has_duplicates?
