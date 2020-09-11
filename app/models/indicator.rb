@@ -66,17 +66,17 @@ class Indicator < Progress
     where(content: content, organization: organization).delete_all
   end
 
-  def move_to!(organization)
+  def _move_to!(organization)
     transaction do
       super
       move_children_to!(organization.id)
     end
   end
 
-  def copy_to!(organization)
+  def _copy_to!(organization)
     transaction do
       super
-      children.each { |it| it.copy_to! organization }
+      children.each { |it| it._copy_to! organization }
     end
   end
 

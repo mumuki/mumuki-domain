@@ -13,19 +13,27 @@ class Progress < ApplicationRecord
     parent&.dirty_by_submission!
   end
 
-  def copy_to!(organization)
+  def _copy_to!(organization)
     dup.transfer_to!(organization)
   end
 
   def transfer_to!(organization)
-    raise "Transferred progress' content must be available in destination!" unless content_available_in?(organization)
     relocate_on!(organization)
-    save!
     delete_duplicates!
+    save!
     self
   end
 
-  alias_method :move_to!, :transfer_to!
+  alias_method :_move_to!, :transfer_to!
+
+  %i(copy_to! move_to!).each do |selector|
+    define_method(selector) do |organization|
+      raise "Transferred progress' content must be available in destination!" unless content_available_in?(organization)
+      dirty_parent_by_submission!
+      progress_item = send("_#{selector}", organization)
+      progress_item.dirty_parent_by_submission!
+    end
+  end
 
   def relocate_on!(organization)
     assign_attributes organization: organization, parent: nil
