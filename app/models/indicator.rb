@@ -97,10 +97,6 @@ class Indicator < Progress
     children.delete_all(:delete_all)
   end
 
-  def has_duplicates?
-    super || children.any?(&:has_duplicates?)
-  end
-
   private
 
   def duplicates_key
