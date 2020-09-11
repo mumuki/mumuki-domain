@@ -190,6 +190,10 @@ class User < ApplicationRecord
     can_discuss_in? Organization.current
   end
 
+  def can_access_teacher_info_in?(organization)
+    teacher_of?(organization) || organization.teacher_training?
+  end
+
   def name_initials
     name.split.map(&:first).map(&:capitalize).join(' ')
   end

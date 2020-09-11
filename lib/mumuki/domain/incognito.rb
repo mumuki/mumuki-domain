@@ -44,6 +44,10 @@ module Mumuki::Domain
       false
     end
 
+    def can_access_teacher_info_in?(*)
+      false
+    end
+
     # ========
     # Visiting
     # ========

@@ -8,6 +8,7 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
                       :forum_enabled?,
                       :forum_only_for_trusted?,
                       :gamification_enabled?,
+                      :greet_new_users?,
                       :immersive?,
                       :in_preparation_until,
                       :login_methods,
@@ -16,7 +17,7 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
                       :public?,
                       :raise_hand_enabled?,
                       :report_issue_enabled?,
-                      :greet_new_users?
+                      :teacher_training?
 
   def private?
     !public?
