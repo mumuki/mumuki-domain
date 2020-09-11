@@ -236,7 +236,7 @@ class User < ApplicationRecord
 
   def welcome_to_new_organizations!
     new_accessible_organizations.each do |organization|
-      UserMailer.welcome_email(self, organization).deliver_later if organization.greet_new_users?
+      UserMailer.welcome_email(self, organization).deliver_now rescue nil if organization.greet_new_users?
     end
   end
 
