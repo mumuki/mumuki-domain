@@ -18,6 +18,7 @@ class Progress < ApplicationRecord
   end
 
   def transfer_to!(organization)
+    raise "Transferred progress' content must be available in destination!" unless content_available_in?(organization)
     relocate_on!(organization)
     save!
     delete_duplicates!

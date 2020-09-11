@@ -97,6 +97,10 @@ class Indicator < Progress
     children.delete_all(:delete_all)
   end
 
+  def content_available_in?(organization)
+    content.usage_in_organization(organization).present?
+  end
+
   private
 
   def duplicates_key

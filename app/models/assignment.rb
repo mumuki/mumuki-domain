@@ -23,6 +23,8 @@ class Assignment < Progress
 
   delegate :completed?, :solved?, to: :submission_status
 
+  delegate :content_available_in?, to: :parent
+
   alias_attribute :status, :submission_status
   alias_attribute :attempts_count, :attemps_count
 
@@ -282,5 +284,4 @@ class Assignment < Progress
   def update_last_submission!
     submitter.update!(last_submission_date: DateTime.current, last_exercise: exercise)
   end
-
 end
