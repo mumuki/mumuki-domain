@@ -72,9 +72,9 @@ class Indicator < Progress
   end
 
   def _copy_to!(organization)
-    copy = super
+    progress_item = super
     children.each { |it| it._copy_to! organization }
-    copy
+    progress_item
   end
 
   def move_children_to!(organization)
@@ -94,13 +94,13 @@ class Indicator < Progress
 
   private
 
-  def delete_duplicates!
-    duplicates.each(&:cascade_delete_children!)
+  def delete_duplicates_in!(organization)
+    duplicates_in(organization).each(&:cascade_delete_children!)
     super
   end
 
   def duplicates_key
-    { organization: organization, content: content, user: user }
+    { content: content, user: user }
   end
 
   def children

@@ -26,37 +26,34 @@ class Progress < ApplicationRecord
 
   def copy_to!(organization)
     validate_transferrable_to!(organization)
+    delete_duplicates_in!(organization)
     progress_item = _copy_to!(organization)
-    progress_item.finalize_transfer!
+    progress_item.dirty_parent_by_submission!
   end
 
   def move_to!(organization)
     validate_transferrable_to!(organization)
+    delete_duplicates_in!(organization)
     dirty_parent_by_submission!
     _move_to!(organization)
-    finalize_transfer!
+    dirty_parent_by_submission!
   end
 
   def validate_transferrable_to!(organization)
     raise "Transferred progress' content must be available in destination!" unless content_available_in?(organization)
   end
 
-  def finalize_transfer!
-    dirty_parent_by_submission!
-    delete_duplicates!
-  end
-
-  def has_duplicates?
-    duplicates.present?
+  def has_duplicates_in?(organization)
+    duplicates_in(organization).present?
   end
 
   private
 
-  def duplicates
-    self.class.where(duplicates_key).where.not(id: id)
+  def duplicates_in(organization)
+    self.class.where(duplicates_key.merge(organization: organization)).where.not(id: id)
   end
 
-  def delete_duplicates!
-    duplicates.delete_all
+  def delete_duplicates_in!(organization)
+    duplicates_in(organization).delete_all
   end
 end

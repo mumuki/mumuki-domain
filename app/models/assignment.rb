@@ -266,7 +266,7 @@ class Assignment < Progress
   private
 
   def duplicates_key
-    { organization: organization, exercise: exercise, submitter: submitter }
+    { exercise: exercise, submitter: submitter }
   end
 
   def update_submissions_count!
