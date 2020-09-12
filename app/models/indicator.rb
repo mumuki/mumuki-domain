@@ -67,29 +67,20 @@ class Indicator < Progress
   end
 
   def _move_to!(organization)
-    transaction do
-      super
-      move_children_to!(organization.id)
-    end
+    move_children_to!(organization)
+    super
   end
 
   def _copy_to!(organization)
-    transaction do
-      super
-      children.each { |it| it._copy_to! organization }
-    end
+    copy = super
+    children.each { |it| it._copy_to! organization }
+    copy
   end
 
-  def move_children_to!(organization_id)
-    children.update_all(organization_id: organization_id)
-    children.reload.each(&:delete_duplicates!)
+  def move_children_to!(organization)
+    children.update_all(organization_id: organization.id)
 
-    indicators.each { |it| it.move_children_to!(organization_id) }
-  end
-
-  def delete_duplicates!
-    duplicates.each(&:cascade_delete_children!)
-    super
+    indicators.each { |it| it.move_children_to!(organization) }
   end
 
   def cascade_delete_children!
@@ -102,6 +93,11 @@ class Indicator < Progress
   end
 
   private
+
+  def delete_duplicates!
+    duplicates.each(&:cascade_delete_children!)
+    super
+  end
 
   def duplicates_key
     { organization: organization, content: content, user: user }
