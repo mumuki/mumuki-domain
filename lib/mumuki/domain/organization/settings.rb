@@ -30,11 +30,19 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
     (@forum_discussions_minimal_role || 'student').to_sym
   end
 
+  def disabled_from=(disabled_from)
+    @disabled_from = disabled_from.to_time
+  end
+
+  def in_preparation_until=(in_preparation_until)
+    @in_preparation_until = in_preparation_until.to_time
+  end
+
   def disabled?
-    disabled_from.present? && disabled_from.to_datetime < DateTime.now
+    disabled_from.present? && disabled_from < Time.now
   end
 
   def in_preparation?
-    in_preparation_until.present? && in_preparation_until.to_datetime > DateTime.now
+    in_preparation_until.present? && in_preparation_until > Time.now
   end
 end
