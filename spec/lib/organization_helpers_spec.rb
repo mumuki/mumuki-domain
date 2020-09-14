@@ -22,6 +22,7 @@ describe Mumukit::Platform::Organization do
         forum_enabled: true,
         forum_only_for_trusted: true,
         report_issue_enabled: true,
+        teacher_training: true,
         public: false,
         gamification_enabled: true,
         immersive: false,
@@ -101,6 +102,7 @@ describe Mumukit::Platform::Organization do
         it { expect(subject.immersive?).to eq false }
         it { expect(subject.disabled?).to eq true }
         it { expect(subject.in_preparation?).to eq false }
+        it { expect(subject.teacher_training?).to eq true }
 
         it { expect(Mumuki::Domain::Organization::Settings.parse(nil)).to be_empty }
       end
@@ -135,6 +137,7 @@ describe Mumukit::Platform::Organization do
         it { expect(subject.disabled?).to eq false }
         it { expect(subject.gamification_enabled?).to eq false }
         it { expect(subject.in_preparation?).to eq true }
+        it { expect(subject.teacher_training?).to eq false }
 
         it { expect(Mumuki::Domain::Organization::Settings.load(nil)).to be_empty }
       end

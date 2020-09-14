@@ -347,6 +347,24 @@ describe User, organization_workspace: :test do
     end
   end
 
+  describe '#can_access_teacher_info_in?' do
+    let(:student) { create(:user, permissions: { student: 'test/*' }) }
+    let(:teacher) { create(:user, permissions: { teacher: 'test/*' }) }
+    let(:test_organization) { Organization.locate! 'test' }
+
+    context 'when organization is not a teacher training' do
+      it { expect(student.can_access_teacher_info_in?(test_organization)).to be false }
+      it { expect(teacher.can_access_teacher_info_in?(test_organization)).to be true }
+    end
+
+    context 'when organization is a teacher training everyone can see teacher_info' do
+      before { test_organization.teacher_training = true }
+
+      it { expect(student.can_access_teacher_info_in?(test_organization)).to be true }
+      it { expect(teacher.can_access_teacher_info_in?(test_organization)).to be true }
+    end
+  end
+
   describe '#name_initials' do
     context 'with first_name and last_name' do
       let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
