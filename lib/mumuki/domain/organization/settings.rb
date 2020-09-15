@@ -32,11 +32,11 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
   end
 
   def disabled_from=(disabled_from)
-    @disabled_from = disabled_from.to_time
+    @disabled_from = disabled_from&.to_time
   end
 
   def in_preparation_until=(in_preparation_until)
-    @in_preparation_until = in_preparation_until.to_time
+    @in_preparation_until = in_preparation_until&.to_time
   end
 
   def disabled?
