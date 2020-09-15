@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200828162829) do
+ActiveRecord::Schema.define(version: 20200915123020) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -406,6 +406,8 @@ ActiveRecord::Schema.define(version: 20200828162829) do
     t.bigint "avatar_id"
     t.datetime "disabled_at"
     t.boolean "trusted_for_forum"
+    t.string "avatar_type", default: "Avatar"
+    t.index ["avatar_type", "avatar_id"], name: "index_users_on_avatar_type_and_avatar_id"
     t.index ["disabled_at"], name: "index_users_on_disabled_at"
     t.index ["last_organization_id"], name: "index_users_on_last_organization_id"
     t.index ["uid"], name: "index_users_on_uid", unique: true
