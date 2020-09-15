@@ -1,4 +1,6 @@
 class Avatar < ApplicationRecord
+  has_many :users, as: :avatar
+
   include WithTargetAudience
 
   def self.sample_for(user)
