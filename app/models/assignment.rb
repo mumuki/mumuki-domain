@@ -42,6 +42,7 @@ class Assignment < Progress
   alias_method :parent_content, :guide
   alias_method :user, :submitter
 
+  after_initialize :set_default_top_submission_status
   before_save :award_experience_points!, :update_top_submission!, if: :submission_status_changed?
   after_save :dirty_parent_by_submission!, if: :completion_changed?
   before_validation :set_current_organization!, unless: :organization
@@ -49,6 +50,10 @@ class Assignment < Progress
   # TODO: Momentary as some assignments may not have an associated organization
   def set_current_organization!
     self.organization = Organization.current
+  end
+
+  def set_default_top_submission_status
+    self.top_submission_status ||= 0
   end
 
   def completion_changed?
