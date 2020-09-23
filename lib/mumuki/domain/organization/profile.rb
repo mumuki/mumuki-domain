@@ -12,7 +12,8 @@ class Mumuki::Domain::Organization::Profile < Mumukit::Platform::Model
                       :terms_of_service,
                       :community_link,
                       :errors_explanations,
-                      :welcome_email_template
+                      :welcome_email_template,
+                      :welcome_email_sender
 
   def locale_json
     locale_h.to_json
