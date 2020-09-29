@@ -18,6 +18,10 @@ module Awardee
   end
 
   def current_indicators
-    Indicator.where(organization: Organization.current, user: self)
+    items_with_medals.map { |i| i.progress_for(self, Organization.current) }
+  end
+
+  def items_with_medals
+    Usage.where(organization: Organization.current).map(&:item).select(&:medal_id)
   end
 end

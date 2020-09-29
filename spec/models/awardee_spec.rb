@@ -29,8 +29,9 @@ describe Awardee do
       before { guide.exercises.first.submit_solution!(user, content: ':)').tap(&:passed!) }
 
       it { expect(user.acquired_medals).to be_empty }
-      it { expect(user.unacquired_medals.size).to eq 3 }
+      it { expect(user.unacquired_medals.size).to eq 4 }
       it { expect(user.unacquired_medals).to include guide_medal }
+      it { expect(user.unacquired_medals).to include another_guide_medal }
       it { expect(user.unacquired_medals).to include topic_medal }
       it { expect(user.unacquired_medals).to include book_medal }
     end
@@ -39,7 +40,8 @@ describe Awardee do
       before { guide.exercises.each { |e| e.submit_solution!(user, content: ':)').tap(&:passed!) } }
 
       it { expect(user.acquired_medals).to eq [guide_medal] }
-      it { expect(user.unacquired_medals.size).to eq 2 }
+      it { expect(user.unacquired_medals.size).to eq 3 }
+      it { expect(user.unacquired_medals).to include another_guide_medal }
       it { expect(user.unacquired_medals).to include topic_medal }
       it { expect(user.unacquired_medals).to include book_medal }
     end
@@ -50,14 +52,12 @@ describe Awardee do
         another_guide.exercises.each { |e| e.submit_solution!(user, content: ':)').tap(&:passed!) }
       end
 
-      it 'awards guide, topic and book medals' do
-        expect(user.acquired_medals.size).to eq 4
-        expect(user.acquired_medals).to include guide_medal
-        expect(user.acquired_medals).to include another_guide_medal
-        expect(user.acquired_medals).to include topic_medal
-        expect(user.acquired_medals).to include book_medal
-        expect(user.unacquired_medals).to be_empty
-      end
+      it { expect(user.acquired_medals.size).to eq 4 }
+      it { expect(user.acquired_medals).to include guide_medal }
+      it { expect(user.acquired_medals).to include another_guide_medal }
+      it { expect(user.acquired_medals).to include topic_medal }
+      it { expect(user.acquired_medals).to include book_medal }
+      it { expect(user.unacquired_medals).to be_empty }
     end
   end
 end
