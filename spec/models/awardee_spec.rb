@@ -46,6 +46,16 @@ describe Awardee do
       it { expect(user.unacquired_medals).to include book_medal }
     end
 
+    describe 'when a guide has been completely solved but then failed' do
+      before { guide.exercises.each { |e| e.submit_solution!(user, content: ':)').tap(&:passed!) } }
+
+      it 'does not revoke obtained medal' do
+        expect(user.acquired_medals).to eq [guide_medal]
+        guide.exercises.each { |e| e.submit_solution!(user, content: ':)').tap(&:failed!) }
+        expect(user.acquired_medals).to eq [guide_medal]
+      end
+    end
+
     describe 'when all content has been completely solved' do
       before do
         guide.exercises.each { |e| e.submit_solution!(user, content: ':)').tap(&:passed!) }

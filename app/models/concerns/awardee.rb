@@ -14,7 +14,7 @@ module Awardee
   end
 
   def all_medals
-    current_indicators.partition(&:completed?)
+    current_indicators.partition(&:once_completed?)
   end
 
   def current_indicators
