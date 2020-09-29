@@ -102,15 +102,19 @@ describe Indicator, organization_workspace: :test do
   context 'completion' do
     describe 'content is completed' do
       it { expect(guide_indicator).to be_completed }
+      it { expect(guide_indicator).to be_once_completed }
     end
 
-    describe 'content is not completed if failed afterwards' do
+    describe 'content was once completed if failed afterwards' do
       before do
+        assignment.reload
+        guide_indicator.reload.rebuild!
         assignment.failed!
         guide_indicator.reload.rebuild!
       end
 
       it { expect(guide_indicator).to_not be_completed }
+      it { expect(guide_indicator).to be_once_completed }
     end
   end
 end
