@@ -1,3 +1,9 @@
+[![Build Status](https://travis-ci.org/mumuki/mumuki-domain.svg?branch=master)](https://travis-ci.org/mumuki/mumuki-domain)
+[![Code Climate](https://codeclimate.com/github/mumuki/mumuki-domain/badges/gpa.svg)](https://codeclimate.com/github/mumuki/mumuki-domain)
+[![Test Coverage](https://codeclimate.com/github/mumuki/mumuki-domain/badges/coverage.svg)](https://codeclimate.com/github/mumuki/mumuki-domain)
+[![Issue Count](https://codeclimate.com/github/mumuki/mumuki-domain/badges/issue_count.svg)](https://codeclimate.com/github/mumuki/mumuki-domain)
+
+
 # Resource Hashes
 
 ## Runner Hashes
