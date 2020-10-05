@@ -254,5 +254,12 @@ describe Organization, organization_workspace: :test do
 
       it { expect(organization.display_name).to eq 'Some Organization With Symbols' }
     end
+
+    context 'does not break on empty name' do
+      let(:name) { nil }
+
+      it { expect { organization.display_name }.to_not raise_error }
+      it { expect(organization.display_name).to be_nil }
+    end
   end
 end
