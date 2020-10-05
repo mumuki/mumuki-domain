@@ -131,7 +131,7 @@ class Organization < ApplicationRecord
   end
 
   def display_name
-    name.gsub(/\W/, ' ').titleize
+    name.try { |it| it.gsub(/\W/, ' ').titleize }
   end
 
   private
