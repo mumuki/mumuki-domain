@@ -97,5 +97,13 @@ describe Indicator, organization_workspace: :test do
         it { expect(book_indicator).to_not be_dirty_by_submission }
       end
     end
+
+    context 'past children should not affect new progress tree' do
+      before { topic_indicator.send :children_count }
+      before { topic.import_from_resource_h!(topic.to_resource_h.merge lessons: []) }
+
+      it { expect(topic_indicator.reload.send :children_count).to eq 0 }
+      it { expect(topic_indicator.reload.send :children_passed_count).to eq 0 }
+    end
   end
 end
