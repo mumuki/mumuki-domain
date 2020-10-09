@@ -124,11 +124,12 @@ ActiveRecord::Schema.define(version: 20201009193949) do
     t.boolean "requires_moderator_response", default: true
     t.string "last_moderator_access_by_id"
     t.datetime "last_moderator_access_at"
-    t.string "status_updated_by_id"
+    t.bigint "status_updated_by_id"
     t.datetime "status_updated_at"
     t.index ["initiator_id"], name: "index_discussions_on_initiator_id"
     t.index ["item_type", "item_id"], name: "index_discussions_on_item_type_and_item_id"
     t.index ["organization_id"], name: "index_discussions_on_organization_id"
+    t.index ["status_updated_by_id"], name: "index_discussions_on_status_updated_by_id"
   end
 
   create_table "exam_authorizations", force: :cascade do |t|
