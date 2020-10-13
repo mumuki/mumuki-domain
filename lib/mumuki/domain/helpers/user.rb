@@ -88,7 +88,11 @@ module Mumuki::Domain::Helpers::User
   end
 
   def has_immersive_main_organization?
-    !!main_organization.try(&:immersive?)
+    immersive_main_organization.present?
+  end
+
+  def immersive_main_organization
+    main_organization.try { |it| it if it.immersive? }
   end
 
   ## API Exposure

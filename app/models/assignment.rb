@@ -199,11 +199,7 @@ class Assignment < Progress
   end
 
   def contextual_organization
-    if user.has_immersive_main_organization?
-      user.main_organization
-    else
-      Organization.current
-    end
+    user.immersive_main_organization || Organization.current
   end
 
   def tips
