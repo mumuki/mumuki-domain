@@ -182,7 +182,7 @@ class Assignment < Progress
                 exercise: {only: [:name, :number]},
                 submitter: {only: [:email, :social_id, :uid], methods: [:name, :profile_picture]}}).
       deep_merge(
-        'organization' => contextual_organization,
+        'organization' => contextual_organization.name,
         'sid' => submission_id,
         'created_at' => submitted_at || updated_at,
         'content' => solution,
@@ -202,7 +202,7 @@ class Assignment < Progress
     if user.has_immersive_main_organization?
       user.main_organization
     else
-      Organization.current.name
+      Organization.current
     end
   end
 
