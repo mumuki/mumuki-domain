@@ -291,10 +291,10 @@ class User < ApplicationRecord
   end
 
   def current_organic_context
-    if Organization.current?
-      Organization.current
-    else
-      main_organization
-    end
+    Organization.current? ?  Organization.current : main_organization
+  end
+
+  def immersive_main_organic_context
+    user.immersive_main_organization || Organization.current
   end
 end

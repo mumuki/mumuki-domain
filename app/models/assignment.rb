@@ -182,7 +182,7 @@ class Assignment < Progress
                 exercise: {only: [:name, :number]},
                 submitter: {only: [:email, :social_id, :uid], methods: [:name, :profile_picture]}}).
       deep_merge(
-        'organization' => contextual_organization.name,
+        'organization' => user.immersive_main_organic_context.name,
         'sid' => submission_id,
         'created_at' => submitted_at || updated_at,
         'content' => solution,
@@ -196,10 +196,6 @@ class Assignment < Progress
           'position' => navigable_parent.try(:number),
           'chapter' => guide.chapter.as_json(only: [:id], methods: [:name])
         }})
-  end
-
-  def contextual_organization
-    user.immersive_main_organization || Organization.current
   end
 
   def tips
