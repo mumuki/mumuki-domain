@@ -146,6 +146,31 @@ describe User, organization_workspace: :test do
     end
   end
 
+
+  describe '#recommended_replacement_organization' do
+    let(:student) { create :user }
+
+    context 'when no granted organizations' do
+      it { expect(student.recommended_replacement_organization).to eq Organization.current }
+    end
+
+    context 'when granted organizations' do
+      let(:other_organization) { create :organization, immersive: immersive }
+
+      before { student.add_permission! :teacher, other_organization }
+
+      context 'when granted organizations but not immersive' do
+        let(:immersive) { false }
+        it { expect(student.recommended_replacement_organization).to eq Organization.current }
+      end
+
+      context 'when granted organizations and not immersive' do
+        let(:immersive) { true }
+        it { expect(student.recommended_replacement_organization).to eq student.recommended_organization }
+      end
+    end
+  end
+
   describe '#completed_containers_with_lookahead' do
     let(:student) { create :user }
 

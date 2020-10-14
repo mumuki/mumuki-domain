@@ -95,6 +95,15 @@ module Mumuki::Domain::Helpers::User
     main_organization.try { |it| it if it.immersive? }
   end
 
+  def recommended_organization
+    recommendations = student_granted_organizations.select { |it| it.immersive? }
+    recommendations.first if recommendations.size == 1
+  end
+
+  def recommended_replacement_organization(other = Organization.current)
+    recommended_organization.try { |it| it if other.replaced_by?(it) }
+  end
+
   ## API Exposure
 
   def to_param
