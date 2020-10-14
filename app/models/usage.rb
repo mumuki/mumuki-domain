@@ -8,6 +8,7 @@ class Usage < ApplicationRecord
 
   before_save :set_slug
   before_destroy :destroy_children_usages!
+  before_destroy :delete_associated_indicators!
 
   def self.destroy_all_where(query)
     where(query).destroy_all
@@ -26,6 +27,10 @@ class Usage < ApplicationRecord
   end
 
   private
+
+  def delete_associated_indicators!
+    Indicator.delete_all_for!(item, organization)
+  end
 
   def set_slug
     self.slug = item.slug

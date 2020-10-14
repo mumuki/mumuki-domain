@@ -57,6 +57,10 @@ class Indicator < Progress
     children_passed_count == children_count
   end
 
+  def self.delete_all_for!(content, organization)
+    where(content: content, organization: organization).delete_all
+  end
+
   private
 
   def children
