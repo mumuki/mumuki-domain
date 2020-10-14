@@ -240,10 +240,9 @@ class User < ApplicationRecord
     Organization.current? ?  Organization.current : main_organization
   end
 
-  def recommended_organic_context_at(exercise)
+  def current_immersive_context_at(exercise)
     if Organization.current?
-      replacement = recommended_replacement_organization
-      exercise&.used_in?(replacement) ? replacement : Organization.current
+      immersive_organization_at(exercise) || Organization.current
     else
       main_organization
     end

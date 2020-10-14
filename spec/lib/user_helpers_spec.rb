@@ -148,7 +148,6 @@ describe Mumuki::Domain::Helpers::User do
       it { expect(user.student_granted_organizations).to eq [] }
       it { expect(user.has_student_granted_organizations?).to be false }
       it { expect(user.has_immersive_main_organization?).to be false }
-      it { expect(user.immersive_main_organization).to be nil }
     end
 
     context 'with organization' do
@@ -158,11 +157,9 @@ describe Mumuki::Domain::Helpers::User do
       it { expect(user.student_granted_organizations).to eq [organization] }
       it { expect(user.has_student_granted_organizations?).to be true }
       it { expect(user.has_immersive_main_organization?).to be false }
-      it { expect(user.immersive_main_organization).to be nil }
 
       context 'when immersive' do
         before { organization.settings.immersive = true }
-        it { expect(user.immersive_main_organization).to eq organization }
       end
     end
   end

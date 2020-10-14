@@ -182,7 +182,7 @@ class Assignment < Progress
                 exercise: {only: [:name, :number]},
                 submitter: {only: [:email, :social_id, :uid], methods: [:name, :profile_picture]}}).
       deep_merge(
-        'organization' => submitter.recommended_organic_context_at(exercise).name,
+        'organization' => submitter.current_immersive_context_at(exercise).name,
         'sid' => submission_id,
         'created_at' => submitted_at || updated_at,
         'content' => solution,

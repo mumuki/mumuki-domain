@@ -147,11 +147,11 @@ describe User, organization_workspace: :test do
   end
 
 
-  describe '#recommended_replacement_organization' do
+  describe '#immersive_organization_at' do
     let(:student) { create :user }
 
     context 'when no granted organizations' do
-      it { expect(student.recommended_replacement_organization).to eq Organization.current }
+      it { expect(student.immersive_organization_at nil).to eq Organization.current }
     end
 
     context 'when granted organizations' do
@@ -161,12 +161,12 @@ describe User, organization_workspace: :test do
 
       context 'when granted organizations but not immersive' do
         let(:immersive) { false }
-        it { expect(student.recommended_replacement_organization).to eq Organization.current }
+        it { expect(student.immersive_organization_at nil).to eq Organization.current }
       end
 
       context 'when granted organizations and not immersive' do
         let(:immersive) { true }
-        it { expect(student.recommended_replacement_organization).to eq student.recommended_organization }
+        it { expect(student.immersive_organization_at nil).to eq other_organization }
       end
     end
   end

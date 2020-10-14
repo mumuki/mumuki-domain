@@ -87,21 +87,21 @@ module Mumuki::Domain::Helpers::User
     student_granted_organizations.first || any_granted_organizations.first
   end
 
+  # Deprecated: use `immersive_organization_at` which
+  # properly looks for a single immersive organization taking
+  # current organization and path into account
   def has_immersive_main_organization?
-    immersive_main_organization.present?
+    main_organization.try { |it| it if it.immersive? }.present?
   end
 
-  def immersive_main_organization
-    main_organization.try { |it| it if it.immersive? }
-  end
+  def immersive_organization_at(path_item, current = Organization.current)
+    return nil unless current.immersible?
 
-  def recommended_organization
-    recommendations = student_granted_organizations.select { |it| it.immersive? }
-    recommendations.first if recommendations.size == 1
-  end
-
-  def recommended_replacement_organization(other = Organization.current)
-    recommended_organization.try { |it| it if other.replaced_by?(it) }
+    usage_filter = path_item ? lambda { |it| path_item.used_in?(it) } : lambda { true }
+    student_granted_organizations
+      .select { |it| current.immersed_in?(it) }
+      .select(&usage_filter)
+      .single
   end
 
   ## API Exposure
