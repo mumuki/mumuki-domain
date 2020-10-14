@@ -240,10 +240,10 @@ class User < ApplicationRecord
     Organization.current? ?  Organization.current : main_organization
   end
 
-  def recommended_organic_context_at(content)
+  def recommended_organic_context_at(exercise)
     if Organization.current?
       replacement = recommended_replacement_organization
-      content&.used_in?(replacement) ? replacement : Organization.current
+      exercise&.used_in?(replacement) ? replacement : Organization.current
     else
       main_organization
     end
