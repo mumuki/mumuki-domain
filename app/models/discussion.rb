@@ -4,7 +4,10 @@ class Discussion < ApplicationRecord
   belongs_to :item, polymorphic: true
   has_many :messages, -> { order(:created_at) }, dependent: :destroy
   belongs_to :initiator, class_name: 'User'
+
   belongs_to :last_moderator_access_by, class_name: 'User', optional: true
+  belongs_to :status_updated_by, class_name: 'User', optional: true
+
   belongs_to :exercise, foreign_type: :exercise, foreign_key: 'item_id'
   belongs_to :organization
   has_many :subscriptions
@@ -106,7 +109,11 @@ class Discussion < ApplicationRecord
   end
 
   def update_status!(status, user)
-    update!(status: status) if reachable_status_for?(user, status)
+    if reachable_status_for?(user, status)
+      update! status: status,
+              status_updated_by: user,
+              status_updated_at: Time.now
+    end
   end
 
   def has_messages?
