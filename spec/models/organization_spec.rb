@@ -280,4 +280,42 @@ describe Organization, organization_workspace: :test do
       it { expect(one.immersible?).to be false }
     end
   end
+
+  describe 'lookahead' do
+    let(:organization) { build(:organization, name: 'foo') }
+
+    describe '#enable_progressive_display!' do
+      context 'invalid lookahead' do
+        before { organization.enable_progressive_display! lookahead: 0 }
+        it { expect(organization.progressive_display_lookahead).to be nil }
+      end
+
+      context 'positive lookahead' do
+        before { organization.enable_progressive_display! }
+        it { expect(organization.progressive_display_lookahead).to eq 1 }
+      end
+    end
+
+    describe '#progressive_display=' do
+      context 'nil lookahead' do
+        before { organization.progressive_display_lookahead = nil }
+        it { expect(organization.progressive_display_lookahead).to be nil }
+      end
+
+      context 'zero lookahead' do
+        before { organization.progressive_display_lookahead = 0 }
+        it { expect(organization.progressive_display_lookahead).to be nil }
+      end
+
+      context 'positive lookahead' do
+        before { organization.progressive_display_lookahead = 2 }
+        it { expect(organization.progressive_display_lookahead).to eq 2 }
+      end
+
+      context 'negative lookahead' do
+        before { organization.progressive_display_lookahead = -1 }
+        it { expect(organization.progressive_display_lookahead).to be nil }
+      end
+    end
+  end
 end

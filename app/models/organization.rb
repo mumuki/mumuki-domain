@@ -134,6 +134,10 @@ class Organization < ApplicationRecord
     name.try { |it| it.gsub(/\W/, ' ').titleize }
   end
 
+  def progressive_display_lookahead=(lookahead)
+    self[:progressive_display_lookahead] = lookahead && lookahead > 0 ? lookahead : nil
+  end
+
   private
 
   def ensure_consistent_public_login
