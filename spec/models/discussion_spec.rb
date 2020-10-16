@@ -89,6 +89,7 @@ describe Discussion, organization_workspace: :test do
         before { discussion.update_status!(:solved, moderator) }
 
         it { expect(discussion.status).to eq :solved }
+        it { expect(discussion.reachable_statuses_for initiator).to eq [] }
         it { expect(discussion.status_updated_by).to eq moderator }
         it { expect(discussion.status_updated_at).to be < Time.now }
         it { expect(discussion.reachable_statuses_for moderator).to eq [:opened, :closed] }
