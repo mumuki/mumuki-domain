@@ -93,7 +93,7 @@ class Assignment < Progress
   def notify!
     unless Organization.silenced?
       contexts = notification_contexts
-      update_missplaced!(notification_contexts.size > 1)
+      update_missplaced!(contexts.size > 1)
       contexts.uniq.each { |it| Mumukit::Nuntius.notify! 'submissions', to_resource_h(context: it) }
     end
   end
