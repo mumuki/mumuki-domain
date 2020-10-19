@@ -147,7 +147,7 @@ describe User, organization_workspace: :test do
   end
 
 
-  describe '#immersive_organization_at' do
+  describe 'immeresive behaviour' do
     let(:student) { create :user }
 
     context 'when no granted organizations' do
@@ -177,6 +177,7 @@ describe User, organization_workspace: :test do
           context 'when content is tested' do
             let(:exercise) { create(:exercise) }
             let!(:chapter) { create(:chapter, lessons: [ create(:lesson, exercises: [exercise] )]) }
+            let(:assignment) { Assignment.new exercise: exercise, submitter: student }
 
             before { reindex_current_organization! }
 
@@ -187,10 +188,12 @@ describe User, organization_workspace: :test do
               end
 
               it { expect(student.immersive_organization_at exercise).to eq other_organization }
+              it { expect(assignment.current_notification_contexts).to eq [Organization.current, other_organization] }
             end
 
             context 'when content is not shared' do
               it { expect(student.immersive_organization_at exercise).to be nil }
+              it { expect(assignment.current_notification_contexts).to eq [Organization.current] }
             end
           end
         end
