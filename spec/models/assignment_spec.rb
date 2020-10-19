@@ -192,6 +192,48 @@ describe Assignment, organization_workspace: :test do
     it { expect(exercise.assignments.first.organization).to eq Organization.current }
   end
 
+  describe 'update_misplaced!' do
+    let(:exercise) { create(:exercise) }
+    let(:user) { create(:user) }
+    let(:assignment) { Assignment.create(exercise: exercise, submitter: user, misplaced: misplaced) }
+
+    context 'when nil' do
+      let(:misplaced) { nil }
+      context 'then false' do
+        before { assignment.update_misplaced! false }
+        it { expect(assignment.misplaced).to be nil }
+      end
+      context 'then true' do
+        before { assignment.update_misplaced! true }
+        it { expect(assignment.misplaced).to be true }
+      end
+    end
+
+    context 'when true' do
+      let(:misplaced) { true }
+      context 'then false' do
+        before { assignment.update_misplaced! false }
+        it { expect(assignment.misplaced).to be false }
+      end
+      context 'then true' do
+        before { assignment.update_misplaced! true }
+        it { expect(assignment.misplaced).to be true }
+      end
+    end
+
+    context 'when false' do
+      let(:misplaced) { false }
+      context 'then false' do
+        before { assignment.update_misplaced! false }
+        it { expect(assignment.misplaced).to be false }
+      end
+      context 'then true' do
+        before { assignment.update_misplaced! true }
+        it { expect(assignment.misplaced).to be true }
+      end
+    end
+  end
+
   describe 'organization' do
     let(:exercise) { create(:exercise) }
     let(:user) { create(:user) }

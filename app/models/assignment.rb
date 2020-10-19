@@ -247,6 +247,10 @@ class Assignment < Progress
     self.top_submission_status = submission_status unless submission_status.improved_by?(top_submission_status)
   end
 
+  def update_misplaced!(value)
+    update! misplaced: value if value != misplaced?
+  end
+
   private
 
   def update_submissions_count!
@@ -263,10 +267,6 @@ class Assignment < Progress
 
   def update_last_submission!
     submitter.update!(last_submission_date: DateTime.current, last_exercise: exercise)
-  end
-
-  def update_misplaced!(value)
-    update! misplaced: value if value != misplaced?
   end
 
 end
