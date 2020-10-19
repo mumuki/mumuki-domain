@@ -262,4 +262,22 @@ describe Organization, organization_workspace: :test do
       it { expect(organization.display_name).to be_nil }
     end
   end
+
+  describe '#immersible?' do
+    context 'current public' do
+      let(:one) { build(:organization, public: true) }
+
+      let(:other_immersive) { build(:organization, immersive: true) }
+      let(:other_non_immersive) { build(:organization, immersive: true) }
+
+      it { expect(one.immersible?).to be true }
+      it { expect(one.immersed_in? other_immersive).to be true }
+      it { expect(one.immersed_in? other_non_immersive).to be true }
+    end
+
+    context 'current private' do
+      let(:one) { build(:organization, public: false) }
+      it { expect(one.immersible?).to be false }
+    end
+  end
 end

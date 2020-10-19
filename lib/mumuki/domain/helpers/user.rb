@@ -97,7 +97,7 @@ module Mumuki::Domain::Helpers::User
   def immersive_organization_at(path_item, current = Organization.current)
     return nil unless current.immersible?
 
-    usage_filter = path_item ? lambda { |it| path_item.used_in?(it) } : lambda { true }
+    usage_filter = path_item ? lambda { |it| path_item.used_in?(it) } : lambda { |_| true }
     student_granted_organizations
       .select { |it| current.immersed_in?(it) }
       .select(&usage_filter)
