@@ -93,7 +93,7 @@ class Assignment < Progress
   def notify!
     unless Organization.silenced?
       contexts = current_notification_contexts
-      update_missplaced!(contexts.size > 1)
+      update_misplaced!(contexts.size > 1)
       contexts.each { |it| Mumukit::Nuntius.notify! 'submissions', to_resource_h(context: it) }
     end
   end
@@ -178,7 +178,7 @@ class Assignment < Progress
   def to_resource_h(options = {})
     context = options[:context] || Organization.current
     excluded_fields = %i(created_at exercise_id id organization_id parent_id solution submission_id
-                         submission_status submitted_at submitter_id top_submission_status updated_at missplaced)
+                         submission_status submitted_at submitter_id top_submission_status updated_at misplaced)
 
     as_json(except: excluded_fields,
               include: {
@@ -265,8 +265,8 @@ class Assignment < Progress
     submitter.update!(last_submission_date: DateTime.current, last_exercise: exercise)
   end
 
-  def update_missplaced!(value)
-    update! missplaced: value if value != missplaced?
+  def update_misplaced!(value)
+    update! misplaced: value if value != misplaced?
   end
 
 end
