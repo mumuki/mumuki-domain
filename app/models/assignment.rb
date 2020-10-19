@@ -91,7 +91,13 @@ class Assignment < Progress
   end
 
   def notify!
-    Mumukit::Nuntius.notify! 'submissions', to_resource_h unless Organization.silenced?
+    unless Organization.silenced?
+      notification_contexts.uniq.each { |it| Mumukit::Nuntius.notify! 'submissions', to_resource_h(context: it) }
+    end
+  end
+
+  def notification_contexts
+    [Organization.current, submitter.current_immersive_context_at(exercise)]
   end
 
   def notify_to_accessible_organizations!
@@ -167,7 +173,8 @@ class Assignment < Progress
     exercise.run_tests! params.merge(extra: extra, test: test, settings: settings)
   end
 
-  def to_resource_h
+  def to_resource_h(options = {})
+    context = options[:context] || Organization.current
     excluded_fields = %i(created_at exercise_id id organization_id parent_id solution submission_id
                          submission_status submitted_at submitter_id top_submission_status updated_at)
 
@@ -182,7 +189,7 @@ class Assignment < Progress
                 exercise: {only: [:name, :number]},
                 submitter: {only: [:email, :social_id, :uid], methods: [:name, :profile_picture]}}).
       deep_merge(
-        'organization' => submitter.current_immersive_context_at(exercise).name,
+        'organization' => context.name,
         'sid' => submission_id,
         'created_at' => submitted_at || updated_at,
         'content' => solution,
