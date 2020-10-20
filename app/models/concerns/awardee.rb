@@ -1,20 +1,16 @@
 module Awardee
   def acquired_medals
-    medals_for all_medals.first
+    medals_for current_indicators.select(&:once_completed?)
   end
 
   def unacquired_medals
-    medals_for all_medals.second
+    medals_for current_indicators.reject(&:once_completed?)
   end
 
   private
 
   def medals_for(indicators)
     indicators.map { |i| i.content.medal }.compact
-  end
-
-  def all_medals
-    current_indicators.partition(&:once_completed?)
   end
 
   def current_indicators
