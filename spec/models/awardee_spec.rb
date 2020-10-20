@@ -24,7 +24,7 @@ describe Awardee do
 
   before { organization.reindex_usages!.switch! }
 
-  context 'acquired medals' do
+  context 'gamified organization' do
     describe 'when a guide has been partially solved' do
       before { guide.exercises.first.submit_solution!(user, content: ':)').tap(&:passed!) }
 
@@ -69,5 +69,14 @@ describe Awardee do
       it { expect(user.acquired_medals).to include book_medal }
       it { expect(user.unacquired_medals).to be_empty }
     end
+  end
+
+  context 'non-gamified organization' do
+    before do
+      organization.gamification_enabled = false
+    end
+
+    it { expect(user.acquired_medals).to be_empty }
+    it { expect(user.unacquired_medals).to be_empty }
   end
 end
