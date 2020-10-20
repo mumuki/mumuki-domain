@@ -10,7 +10,7 @@ module Awardee
   private
 
   def medals_for(progress)
-    progress.map { |i| i.content.medal }.compact
+    Organization.current.gamification_enabled? ? progress.map { |i| i.content.medal } : []
   end
 
   def awardable_content_progress_here

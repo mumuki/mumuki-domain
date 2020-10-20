@@ -7,7 +7,7 @@ describe Awardee do
   let(:topic_medal) { create(:medal) }
   let(:book_medal) { create(:medal) }
 
-  let(:organization) { create :organization, book: book }
+  let(:organization) { create :organization, book: book, settings: { gamification_enabled: true } }
   let(:book) { create :book, medal: book_medal, chapters: [chapter] }
   let(:chapter) { create :chapter, topic: topic }
   let(:topic) { create :topic, medal: topic_medal, lessons: [lesson, another_lesson] }
