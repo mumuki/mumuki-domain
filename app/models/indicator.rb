@@ -37,7 +37,7 @@ class Indicator < Progress
   def clean!
     self.dirty_by_submission = false
     self.dirty_by_content_change = false
-    self.once_completed = self.once_completed || all_children_passed?
+    self.once_completed ||= all_children_passed?
   end
 
   def refresh_children_count!
