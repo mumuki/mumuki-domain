@@ -131,7 +131,7 @@ module Contextualization
         .compact
         .merge(
           title: it[:title].affable,
-          result: it[:result].sanitized,
+          result: it[:result],
           status: it[:status])
     end
   end
