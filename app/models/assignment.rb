@@ -92,9 +92,8 @@ class Assignment < Progress
 
   def notify!
     unless Organization.silenced?
-      contexts = current_notification_contexts
-      update_misplaced!(contexts.size > 1)
-      contexts.each { |it| Mumukit::Nuntius.notify! 'submissions', to_resource_h(context: it) }
+      update_misplaced!(current_notification_contexts.size > 1)
+      Mumukit::Nuntius.notify! 'submissions', to_resource_h
     end
   end
 
@@ -175,8 +174,7 @@ class Assignment < Progress
     exercise.run_tests! params.merge(extra: extra, test: test, settings: settings)
   end
 
-  def to_resource_h(options = {})
-    context = options[:context] || Organization.current
+  def to_resource_h
     excluded_fields = %i(created_at exercise_id id organization_id parent_id solution submission_id
                          submission_status submitted_at submitter_id top_submission_status updated_at misplaced)
 
@@ -191,7 +189,7 @@ class Assignment < Progress
                 exercise: {only: [:name, :number]},
                 submitter: {only: [:email, :social_id, :uid], methods: [:name, :profile_picture]}}).
       deep_merge(
-        'organization' => context.name,
+        'organization' => Organization.current.name,
         'sid' => submission_id,
         'created_at' => submitted_at || updated_at,
         'content' => solution,
