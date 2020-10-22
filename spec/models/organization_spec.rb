@@ -268,11 +268,11 @@ describe Organization, organization_workspace: :test do
       let(:one) { build(:organization, public: true) }
 
       let(:other_immersive) { build(:organization, immersive: true) }
-      let(:other_non_immersive) { build(:organization, immersive: true) }
+      let(:other_non_immersive) { build(:organization, immersive: false) }
 
       it { expect(one.immersible?).to be true }
       it { expect(one.immersed_in? other_immersive).to be true }
-      it { expect(one.immersed_in? other_non_immersive).to be true }
+      it { expect(one.immersed_in? other_non_immersive).to be false }
     end
 
     context 'current private' do

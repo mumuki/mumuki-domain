@@ -91,7 +91,7 @@ module Mumuki::Domain::Helpers::User
   # properly looks for a single immersive organization taking
   # current organization and path into account
   def has_immersive_main_organization?
-    main_organization.try { |it| it if it.immersive? }.present?
+    main_organization.try(&:immersive?).present?
   end
 
   def immersive_organization_at(path_item, current = Organization.current)
