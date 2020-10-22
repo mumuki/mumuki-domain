@@ -236,6 +236,18 @@ class User < ApplicationRecord
     end
   end
 
+  def current_organic_context
+    Organization.current? ?  Organization.current : main_organization
+  end
+
+  def current_immersive_context_at(exercise)
+    if Organization.current?
+      immersive_organization_at(exercise) || Organization.current
+    else
+      main_organization
+    end
+  end
+
   private
 
   def welcome_to_new_organizations!
@@ -288,13 +300,5 @@ class User < ApplicationRecord
 
   def self.buried_profile
     (@buried_profile || {}).slice(:first_name, :last_name, :email)
-  end
-
-  def current_organic_context
-    if Organization.current?
-      Organization.current
-    else
-      main_organization
-    end
   end
 end

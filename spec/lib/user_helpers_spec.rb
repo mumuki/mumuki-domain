@@ -160,7 +160,6 @@ describe Mumuki::Domain::Helpers::User do
 
       context 'when immersive' do
         before { organization.settings.immersive = true }
-        it { expect(user.has_immersive_main_organization?).to be true }
       end
     end
   end

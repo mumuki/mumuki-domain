@@ -28,6 +28,14 @@ module Mumuki::Domain::Helpers::Organization
     name == 'base'
   end
 
+  def immersible?
+    public?
+  end
+
+  def immersed_in?(other)
+    immersible? && other.immersive? && target_audience == other.target_audience
+  end
+
   def switch!
     Mumukit::Platform::Organization.switch! self
   end

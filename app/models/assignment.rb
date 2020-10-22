@@ -91,7 +91,14 @@ class Assignment < Progress
   end
 
   def notify!
-    Mumukit::Nuntius.notify! 'submissions', to_resource_h unless Organization.silenced?
+    unless Organization.silenced?
+      update_misplaced!(current_notification_contexts.size > 1)
+      Mumukit::Nuntius.notify! 'submissions', to_resource_h
+    end
+  end
+
+  def current_notification_contexts
+    [Organization.current, submitter.current_immersive_context_at(exercise)].uniq
   end
 
   def notify_to_accessible_organizations!
@@ -169,7 +176,7 @@ class Assignment < Progress
 
   def to_resource_h
     excluded_fields = %i(created_at exercise_id id organization_id parent_id solution submission_id
-                         submission_status submitted_at submitter_id top_submission_status updated_at)
+                         submission_status submitted_at submitter_id top_submission_status updated_at misplaced)
 
     as_json(except: excluded_fields,
               include: {
@@ -236,6 +243,10 @@ class Assignment < Progress
 
   def update_top_submission!
     self.top_submission_status = submission_status unless submission_status.improved_by?(top_submission_status)
+  end
+
+  def update_misplaced!(value)
+    update! misplaced: value if value != misplaced?
   end
 
   private

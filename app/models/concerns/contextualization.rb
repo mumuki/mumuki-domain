@@ -51,7 +51,7 @@ module Contextualization
   end
 
   def single_visible_test_result?
-    test_results.size == 1 && visible_success_output?
+    test_results.single? && visible_success_output?
   end
 
   def first_test_result

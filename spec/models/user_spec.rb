@@ -146,6 +146,69 @@ describe User, organization_workspace: :test do
     end
   end
 
+
+  describe 'immeresive behaviour' do
+    let(:student) { create :user }
+
+    context 'when no granted organizations' do
+      it { expect(student.immersive_organization_at nil).to be nil }
+      it { expect(student.current_immersive_context_at nil).to eq Organization.current }
+    end
+
+    context 'when granted organizations' do
+      let(:other_organization) { create :organization, immersive: immersive }
+
+      context 'when student' do
+        before { student.add_permission! :student, other_organization }
+
+        context 'when granted organizations but not immersive' do
+          let(:immersive) { false }
+
+          it { expect(student.immersive_organization_at nil).to be nil }
+          it { expect(student.current_immersive_context_at nil).to eq Organization.current }
+        end
+
+        context 'when granted organizations and immersive' do
+          let(:immersive) { true }
+
+          it { expect(student.immersive_organization_at nil).to eq other_organization }
+          it { expect(student.current_immersive_context_at nil).to eq other_organization }
+
+          context 'when content is tested' do
+            let(:exercise) { create(:exercise) }
+            let!(:chapter) { create(:chapter, lessons: [ create(:lesson, exercises: [exercise] )]) }
+            let(:assignment) { Assignment.new exercise: exercise, submitter: student }
+
+            before { reindex_current_organization! }
+
+            context 'when content is shared' do
+              before do
+                other_organization.update! book: Organization.current.book
+                reindex_organization! other_organization
+              end
+
+              it { expect(student.immersive_organization_at exercise).to eq other_organization }
+              it { expect(assignment.current_notification_contexts).to eq [Organization.current, other_organization] }
+            end
+
+            context 'when content is not shared' do
+              it { expect(student.immersive_organization_at exercise).to be nil }
+              it { expect(assignment.current_notification_contexts).to eq [Organization.current] }
+            end
+          end
+        end
+      end
+
+      context 'when teacher and immersive' do
+        before { student.add_permission! :teacher, other_organization }
+        let(:immersive) { true }
+
+        it { expect(student.immersive_organization_at nil).to eq nil }
+        it { expect(student.current_immersive_context_at nil).to eq Organization.current }
+      end
+    end
+  end
+
   describe '#completed_containers_with_lookahead' do
     let(:student) { create :user }
 
