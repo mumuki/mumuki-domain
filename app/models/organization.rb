@@ -97,11 +97,11 @@ class Organization < ApplicationRecord
   end
 
   def title_suffix
-    central? ? '' : " - #{book.name}"
+    " - #{book.name}"
   end
 
   def site_name
-    central? ? 'mumuki' : name
+    name
   end
 
   # Tells if the given user can
