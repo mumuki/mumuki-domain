@@ -238,28 +238,86 @@ describe Organization, organization_workspace: :test do
     let(:organization) { build(:organization, description: 'some text with *markdown*!') }
 
     it { expect(organization.description_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
+    it { expect(organization.description_teaser_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
   end
 
-  describe '#display_name' do
-    let(:organization) { build(:organization, name: name) }
+  context '#description_teaser_html' do
+    context 'one paragraph' do
+      let(:organization) { build(:organization, description: 'some text with *markdown*!') }
+      it { expect(organization.description_teaser_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
+    end
+    context 'two paragraphs' do
+      let(:organization) { build(:organization, description: "some text with *markdown*!\n\nand some more") }
+      it { expect(organization.description_teaser_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
+    end
+  end
 
-    context 'regular organization name' do
-      let(:name) { 'central' }
+  describe 'page fields' do
+    let(:book) { build(:book, name: 'a book', description: 'a great book') }
+    let(:organization) { build(:organization, display_name: 'primaria', display_description: 'mumuki para chicos y chicas', book: book) }
 
-      it { expect(organization.display_name).to eq 'Central' }
+    context 'when wins page' do
+      before { organization.wins_page = true }
+      it { expect(organization.page_name).to eq 'primaria' }
+      it { expect(organization.page_description).to eq 'mumuki para chicos y chicas' }
     end
 
-    context 'organization name with symbols' do
-      let(:name) { 'some.organization-with_symbols' }
+    context 'when it does not win page' do
+      it { expect(organization.page_name).to eq 'a book' }
+      it { expect(organization.page_description).to eq 'a great book' }
+    end
+  end
 
-      it { expect(organization.display_name).to eq 'Some Organization With Symbols' }
+  describe 'display fields' do
+    let(:organization) { build(:organization, name: 'primaria', description: 'mumuki para chicos y chicas') }
+
+    it { expect(organization.name).to eq 'primaria' }
+    it { expect(organization.description).to eq 'mumuki para chicos y chicas' }
+
+    context 'with nil display_name field' do
+      let(:organization) { build(:organization, name: name) }
+
+      context 'regular organization name' do
+        let(:name) { 'central' }
+
+        it { expect(organization.display_name).to eq 'Central' }
+      end
+
+      context 'organization name with symbols' do
+        let(:name) { 'some.organization-with_symbols' }
+
+        it { expect(organization.display_name).to eq 'Some Organization With Symbols' }
+      end
+
+      context 'does not break on empty name' do
+        let(:name) { nil }
+
+        it { expect { organization.display_name }.to_not raise_error }
+        it { expect(organization.display_name).to be_nil }
+      end
     end
 
-    context 'does not break on empty name' do
-      let(:name) { nil }
+    context 'with custom display name' do
+      context 'es' do
+        before { I18n.locale = :es }
+        before { organization.display_name = 'Mumuki Primaria'}
+        it { expect(organization.display_name).to eq 'Mumuki Primaria' }
+        it { expect(organization.display_description).to eq 'En este sitio encontrarás el contenido sobre programación de primaria' }
+      end
 
-      it { expect { organization.display_name }.to_not raise_error }
-      it { expect(organization.display_name).to be_nil }
+      context 'en' do
+        before { I18n.locale = :en }
+        before { organization.display_name = 'Mumuki Primaria'}
+        it { expect(organization.display_name).to eq 'Mumuki Primaria' }
+        it { expect(organization.display_description).to eq 'In this site you will find programming contents about primaria' }
+      end
+
+      context 'pt' do
+        before { I18n.locale = :pt }
+        before { organization.display_name = 'Mumuki Primaria'}
+        it { expect(organization.display_name).to eq 'Mumuki Primaria' }
+        it { expect(organization.display_description).to eq 'Neste site você encontrará conteúdos de programação sobre primaria' }
+      end
     end
   end
 
