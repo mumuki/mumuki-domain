@@ -57,3 +57,5 @@ es-CL:
       submission:
         one: Solución
         other: Soluciones
+      organization:
+        default_display_description: "En este sitio encontrarás el contenido sobre programación de %{name}"
