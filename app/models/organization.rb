@@ -98,10 +98,12 @@ class Organization < ApplicationRecord
   end
 
   def title_suffix
-    " - #{book.name}"
+    warn "Don't use title_suffix. Use page_name instead"
+    " - #{page_name}"
   end
 
   def site_name
+    warn "Don't use site_name. Use display_name instead"
     name
   end
 
