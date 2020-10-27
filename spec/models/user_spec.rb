@@ -147,7 +147,7 @@ describe User, organization_workspace: :test do
   end
 
 
-  describe 'immeresive behaviour' do
+  describe 'immersive behaviour' do
     let(:student) { create :user }
 
     context 'when no granted organizations' do

@@ -25,6 +25,7 @@ FactoryBot.define do
 
   factory :test_organization, parent: :public_organization do
     name { 'test' }
+    immersible { true }
     book { create(:book, name: 'test', slug: 'mumuki/mumuki-the-book') }
   end
 
