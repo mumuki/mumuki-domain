@@ -140,6 +140,10 @@ class Organization < ApplicationRecord
          .flat_map { |item_type, item| item_type.constantize.where(id: item.map(&:item_id)) }
   end
 
+  def awardable_contents
+    gamification_enabled? ? all_contents.select(&:medal_id) : []
+  end
+
   private
 
   def ensure_consistent_public_login
