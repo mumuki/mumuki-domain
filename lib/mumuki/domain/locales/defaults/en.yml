@@ -1,0 +1,4 @@
+en:
+  defaults:
+    organization:
+      display_description: "In this site you will find programming contents about %{name}"

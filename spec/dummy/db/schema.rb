@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20201019191036) do
+ActiveRecord::Schema.define(version: 20201026225312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -317,6 +317,9 @@ ActiveRecord::Schema.define(version: 20201019191036) do
     t.integer "progressive_display_lookahead"
     t.boolean "incognito_mode_enabled"
     t.integer "target_audience", default: 0
+    t.text "display_name"
+    t.text "display_description"
+    t.boolean "wins_page"
     t.index ["book_id"], name: "index_organizations_on_book_id"
     t.index ["name"], name: "index_organizations_on_name", unique: true
   end
