@@ -11,7 +11,8 @@ class Organization < ApplicationRecord
   serialize :settings, Mumuki::Domain::Organization::Settings
   serialize :theme, Mumuki::Domain::Organization::Theme
 
-  markdown_on :description
+  markdown_on :description, :display_description, :page_description
+  teaser_on :display_description
 
   validate :ensure_consistent_public_login
   validate :ensure_valid_activity_range
@@ -97,10 +98,12 @@ class Organization < ApplicationRecord
   end
 
   def title_suffix
-    " - #{book.name}"
+    warn "Don't use title_suffix. Use page_name instead"
+    " - #{page_name}"
   end
 
   def site_name
+    warn "Don't use site_name. Use display_name instead"
     name
   end
 
@@ -130,12 +133,37 @@ class Organization < ApplicationRecord
     update! progressive_display_lookahead: lookahead
   end
 
-  def display_name
-    name.try { |it| it.gsub(/\W/, ' ').titleize }
-  end
-
   def progressive_display_lookahead=(lookahead)
     self[:progressive_display_lookahead] = lookahead&.positive? ? lookahead : nil
+  end
+
+  # ==============
+  # Display fields
+  # ==============
+
+  def display_name
+    self[:display_name].presence || name.try { |it| it.gsub(/\W/, ' ').titleize }
+  end
+
+  def display_description
+    self[:display_description].presence || I18n.t('defaults.organization.display_description', name: name)
+  end
+
+  # ===========
+  # Page fields
+  # ===========
+
+  # Since an organization has a single book, both concepts may be merged
+  # when describing a site. In such contexts, wins_page?
+  # control whether the book or the organization header fields are
+  # more important
+
+  def page_name
+    wins_page? ? display_name : book.name
+  end
+
+  def page_description
+    wins_page? ? display_description : book.description
   end
 
   private

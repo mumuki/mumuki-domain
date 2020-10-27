@@ -3,6 +3,16 @@ class ApplicationRecord < ActiveRecord::Base
 
   delegate :whitelist_attributes, to: :class
 
+  def self.teaser_on(*args)
+    args.each do |selector|
+      teaser_selector = "#{selector}_teaser"
+      define_method teaser_selector do
+        send(selector)&.markdown_paragraphs&.first
+      end
+      markdown_on teaser_selector, skip_sanitization: true
+    end
+  end
+
   def self.defaults(&block)
     after_initialize :defaults, if: :new_record?
     define_method :defaults, &block
