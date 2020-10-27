@@ -14,18 +14,14 @@ module Awardee
   end
 
   def awarded_contents_in(organization)
-    contents_in(organization).first
+    awardable_contents_in(organization).first
   end
 
   def unawarded_contents_in(organization)
-    contents_in(organization).second
-  end
-
-  def contents_in(organization)
-    awardable_contents_in(organization).partition { |c| c.once_completed_for? self, organization }
+    awardable_contents_in(organization).second
   end
 
   def awardable_contents_in(organization)
-    @awardable_contents_in ||= organization.gamification_enabled? ? organization.all_contents.select(&:medal_id) : []
+    @awardable_contents_in ||= organization.awardable_contents.partition { |c| c.once_completed_for? self, organization }
   end
 end
