@@ -14,11 +14,15 @@ module Awardee
   end
 
   def awarded_contents_in(organization)
-    awardable_contents_in(organization).select { |c| c.once_completed_for? self, organization }
+    contents_in(organization).first
   end
 
   def unawarded_contents_in(organization)
-    awardable_contents_in(organization).reject { |c| c.once_completed_for? self, organization }
+    contents_in(organization).second
+  end
+
+  def contents_in(organization)
+    awardable_contents_in(organization).partition { |c| c.once_completed_for? self, organization }
   end
 
   def awardable_contents_in(organization)
