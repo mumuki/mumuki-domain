@@ -57,5 +57,3 @@ es:
       submission:
         one: Solucion
         other: Soluciones
-      organization:
-        default_display_description: "En este sitio encontrarás el contenido sobre programación de %{name}"

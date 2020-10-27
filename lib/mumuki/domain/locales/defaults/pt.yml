@@ -1,0 +1,4 @@
+pt:
+  defaults:
+    organization:
+      display_description: "Neste site você encontrará conteúdos de programação sobre %{name}"

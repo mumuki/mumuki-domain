@@ -28,6 +28,3 @@ pt:
             base:
               consistent_public_login: 'Uma organização pública não pode restringir métodos de login'
               invalid_activity_range: 'O intervalo de atividades da organização não é válido'
-    models:
-      organization:
-        default_display_description: "Neste site você encontrará conteúdos de programação sobre %{name}"

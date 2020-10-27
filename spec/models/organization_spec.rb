@@ -238,17 +238,17 @@ describe Organization, organization_workspace: :test do
     let(:organization) { build(:organization, description: 'some text with *markdown*!') }
 
     it { expect(organization.description_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
-    it { expect(organization.description_teaser_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
   end
 
-  context '#description_teaser_html' do
+  context '#display_description_teaser_html' do
+    let(:organization) { build(:organization, display_description: description) }
     context 'one paragraph' do
-      let(:organization) { build(:organization, description: 'some text with *markdown*!') }
-      it { expect(organization.description_teaser_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
+      let(:description) { 'some text with *markdown*!' }
+      it { expect(organization.display_description_teaser_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
     end
     context 'two paragraphs' do
-      let(:organization) { build(:organization, description: "some text with *markdown*!\n\nand some more") }
-      it { expect(organization.description_teaser_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
+      let(:description) { "some text with *markdown*!\n\nand some more" }
+      it { expect(organization.display_description_teaser_html).to eq("<p>some text with <em>markdown</em>!</p>\n") }
     end
   end
 

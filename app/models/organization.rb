@@ -146,7 +146,7 @@ class Organization < ApplicationRecord
   end
 
   def display_description
-    self[:display_description].presence || I18n.t('activerecord.models.organization.default_display_description', name: name)
+    self[:display_description].presence || I18n.t('defaults.organization.display_description', name: name)
   end
 
   # ===========

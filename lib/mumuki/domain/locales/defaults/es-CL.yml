@@ -1,0 +1,4 @@
+es-CL:
+  defaults:
+    organization:
+      display_description: "En este sitio encontrarás el contenido sobre programación de %{name}"
