@@ -1,10 +1,10 @@
 module Awardee
-  def acquired_medals
-    @acquired_medals ||= medals_for completed_contents_here
+  def acquired_medals(organization=Organization.current)
+    @acquired_medals ||= medals_for awarded_contents_in(organization)
   end
 
-  def unacquired_medals
-    @unacquired_medals ||= medals_for uncompleted_contents_here
+  def unacquired_medals(organization=Organization.current)
+    @unacquired_medals ||= medals_for unawarded_contents_in(organization)
   end
 
   private
@@ -13,15 +13,15 @@ module Awardee
     content.map(&:medal)
   end
 
-  def completed_contents_here
-    awardable_contents_here.select { |c| c.once_completed_for? self, Organization.current }
+  def awarded_contents_in(organization)
+    awardable_contents_in(organization).select { |c| c.once_completed_for? self, organization }
   end
 
-  def uncompleted_contents_here
-    awardable_contents_here.reject { |c| c.once_completed_for? self, Organization.current }
+  def unawarded_contents_in(organization)
+    awardable_contents_in(organization).reject { |c| c.once_completed_for? self, organization }
   end
 
-  def awardable_contents_here
-    @awardable_contents_here ||= Organization.current.gamification_enabled? ? Organization.current.all_contents.select(&:medal_id) : []
+  def awardable_contents_in(organization)
+    @awardable_contents_in ||= organization.gamification_enabled? ? organization.all_contents.select(&:medal_id) : []
   end
 end
