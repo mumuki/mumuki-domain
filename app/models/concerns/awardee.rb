@@ -1,23 +1,27 @@
 module Awardee
   def acquired_medals
-    @acquired_medals ||= medals_for awardable_content_progress_here.select(&:once_completed?)
+    @acquired_medals ||= medals_for completed_contents_here
   end
 
   def unacquired_medals
-    @unacquired_medals ||= medals_for awardable_content_progress_here.reject(&:once_completed?)
+    @unacquired_medals ||= medals_for uncompleted_contents_here
   end
 
   private
 
-  def medals_for(progress)
-    Organization.current.gamification_enabled? ? progress.map { |i| i.content.medal } : []
+  def medals_for(content)
+    content.map(&:medal)
   end
 
-  def awardable_content_progress_here
-    @awardable_content_progress_here ||= awardable_contents_here.map { |i| i.progress_for(self, Organization.current) }
+  def completed_contents_here
+    awardable_contents_here.select { |c| c.once_completed_for? self, Organization.current }
+  end
+
+  def uncompleted_contents_here
+    awardable_contents_here.reject { |c| c.once_completed_for? self, Organization.current }
   end
 
   def awardable_contents_here
-    Usage.where(organization: Organization.current).map(&:item).select(&:medal_id)
+    @awardable_contents_here ||= Organization.current.gamification_enabled? ? Organization.current.all_contents.select(&:medal_id) : []
   end
 end
