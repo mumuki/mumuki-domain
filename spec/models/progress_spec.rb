@@ -29,6 +29,12 @@ describe Progress do
   let(:exercise2) { create :exercise, name: 'exercise-2' }
   let(:exercise3) { create :exercise, name: 'exercise-3' }
 
+  before do
+    user.make_student_of!(orga1.slug)
+    user.make_student_of!(orga2.slug)
+    user.save!
+  end
+
   # Progress tree for orga1
   #     IB (0/1)
   #     |

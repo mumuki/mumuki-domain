@@ -24,36 +24,27 @@ class Progress < ApplicationRecord
 
   alias_method :_move_to!, :transfer_to!
 
-  def copy_to!(organization)
-    validate_transferrable_to!(organization)
-    delete_duplicates_in!(organization)
-    progress_item = _copy_to!(organization)
-    progress_item.dirty_parent_by_submission!
+  %w(copy move).each do |transfer_type|
+    define_method "#{transfer_type}_to!" do |organization|
+      "Mumuki::Domain::ProgressTransfer::#{transfer_type.camelize}".constantize.new(self, organization).execute!
+    end
   end
 
-  def move_to!(organization)
-    validate_transferrable_to!(organization)
-    delete_duplicates_in!(organization)
-    dirty_parent_by_submission!
-    _move_to!(organization)
-    dirty_parent_by_submission!
-  end
-
-  def validate_transferrable_to!(organization)
-    raise "Transferred progress' content must be available in destination!" unless content_available_in?(organization)
+  def guide_indicator?
+    is_a?(Indicator) && content_type == 'Guide'
   end
 
   def has_duplicates_in?(organization)
     duplicates_in(organization).present?
   end
 
+  def delete_duplicates_in!(organization)
+    duplicates_in(organization).delete_all
+  end
+
   private
 
   def duplicates_in(organization)
     self.class.where(duplicates_key.merge(organization: organization)).where.not(id: id)
-  end
-
-  def delete_duplicates_in!(organization)
-    duplicates_in(organization).delete_all
   end
 end

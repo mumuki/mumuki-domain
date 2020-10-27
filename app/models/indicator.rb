@@ -92,12 +92,12 @@ class Indicator < Progress
     content.usage_in_organization(organization).present?
   end
 
-  private
-
   def delete_duplicates_in!(organization)
     duplicates_in(organization).each(&:cascade_delete_children!)
     super
   end
+
+  private
 
   def duplicates_key
     { content: content, user: user }
