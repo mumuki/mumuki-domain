@@ -342,6 +342,14 @@ describe Organization, organization_workspace: :test do
       it { expect(one.immersed_in? other_immersive).to be true }
       it { expect(one.immersed_in? other_non_immersive).to be false }
     end
+
+    context 'cannot be immersive' do
+      let(:orga) { build(:organization, immersible: true) }
+      before { orga.update(immersive: true) }
+
+      it { expect(orga.valid?).to be false }
+      it { expect(orga.errors[:immersible]).not_to be_nil }
+    end
   end
 
   describe 'lookahead' do
