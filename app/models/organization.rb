@@ -15,6 +15,7 @@ class Organization < ApplicationRecord
 
   validate :ensure_consistent_public_login
   validate :ensure_valid_activity_range
+  validate :ensure_not_immersive_and_immersible
 
   belongs_to :book
   has_many :usages
@@ -139,6 +140,10 @@ class Organization < ApplicationRecord
   end
 
   private
+
+  def ensure_not_immersive_and_immersible
+    errors.add(:immersible, :cannot_be_immersive) if immersible? && immersive?
+  end
 
   def ensure_consistent_public_login
     errors.add(:base, :consistent_public_login) if settings.customized_login_methods? && public?
