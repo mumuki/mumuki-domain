@@ -322,8 +322,18 @@ describe Organization, organization_workspace: :test do
   end
 
   describe '#immersible?' do
-    context 'current public' do
+    context 'current private' do
+      let(:one) { build(:organization, public: false) }
+      it { expect(one.immersible?).to be false }
+    end
+
+    context 'current public, not immersible' do
       let(:one) { build(:organization, public: true) }
+      it { expect(one.immersible?).to be false }
+    end
+
+    context 'current public, immersible' do
+      let(:one) { build(:organization, public: true, immersible: true) }
 
       let(:other_immersive) { build(:organization, immersive: true) }
       let(:other_non_immersive) { build(:organization, immersive: false) }
@@ -333,9 +343,12 @@ describe Organization, organization_workspace: :test do
       it { expect(one.immersed_in? other_non_immersive).to be false }
     end
 
-    context 'current private' do
-      let(:one) { build(:organization, public: false) }
-      it { expect(one.immersible?).to be false }
+    context 'cannot be immersive' do
+      let(:orga) { build(:organization, immersible: true) }
+      before { orga.update(immersive: true) }
+
+      it { expect(orga.valid?).to be false }
+      it { expect(orga.errors[:immersible]).not_to be_nil }
     end
   end
 

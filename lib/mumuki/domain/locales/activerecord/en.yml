@@ -28,3 +28,5 @@ en:
             base:
               consistent_public_login: 'A public organization can not restrict login methods'
               invalid_activity_range: 'The organization activity range are not valid'
+            immersible:
+              cannot_be_immersive: 'An organization cannot be immersible and immersive at the same time'
