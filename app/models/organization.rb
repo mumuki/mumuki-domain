@@ -135,7 +135,7 @@ class Organization < ApplicationRecord
   end
 
   def progressive_display_lookahead=(lookahead)
-    self[:progressive_display_lookahead] = lookahead&.positive? ? lookahead : nil
+    self[:progressive_display_lookahead] = lookahead.to_i.positive? ? lookahead : nil
   end
 
   # ==============
