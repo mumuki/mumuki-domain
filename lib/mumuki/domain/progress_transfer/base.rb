@@ -39,6 +39,6 @@ class Mumuki::Domain::ProgressTransfer::Base
   end
 
   def notify_transfer!
-    Mumukit::Nuntius.notify! 'progress-transfers', { from: source_organization.name, to: destination_organization.name, item_type: progress_item.class.to_s, item_id: progress_item.id, transfer_type: transfer_type }
+    Mumukit::Nuntius.notify! 'progress-transfers', { from: source_organization.name, to: destination_organization.name, item_type: transferred_item.class.to_s, item_id: transferred_item.id, transfer_type: transfer_type }
   end
 end
