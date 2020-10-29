@@ -387,6 +387,11 @@ describe Organization, organization_workspace: :test do
         before { organization.progressive_display_lookahead = -1 }
         it { expect(organization.progressive_display_lookahead).to be nil }
       end
+
+      context 'string lookahead' do
+        before { organization.progressive_display_lookahead = '1' }
+        it { expect(organization.progressive_display_lookahead).to be 1 }
+      end
     end
   end
 end
