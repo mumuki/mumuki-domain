@@ -167,6 +167,16 @@ class Organization < ApplicationRecord
     wins_page? ? display_description : book.description
   end
 
+  def all_contents
+    Usage.where(organization: self)
+         .group_by(&:item_type)
+         .flat_map { |item_type, item| item_type.constantize.where(id: item.map(&:item_id)) }
+  end
+
+  def awardable_contents
+    gamification_enabled? ? all_contents.select(&:medal_id) : []
+  end
+
   private
 
   def ensure_not_immersive_and_immersible

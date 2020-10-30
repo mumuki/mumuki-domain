@@ -4,6 +4,7 @@ class User < ApplicationRecord
           WithUserNavigation,
           WithReminders,
           WithDiscussionCreation,
+          Awardee,
           Disabling,
           Mumuki::Domain::Helpers::User
 
@@ -31,7 +32,7 @@ class User < ApplicationRecord
   has_many :exams, through: :exam_authorizations
 
   enum gender: %i(female male other unspecified)
-  belongs_to :avatar, optional: true
+  belongs_to :avatar, polymorphic: true, optional: true
 
   before_validation :set_uid!
   validates :uid, presence: true
