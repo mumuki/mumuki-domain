@@ -37,6 +37,7 @@ class Indicator < Progress
   def clean!
     self.dirty_by_submission = false
     self.dirty_by_content_change = false
+    self.once_completed ||= all_children_passed?
   end
 
   def refresh_children_count!
@@ -54,7 +55,11 @@ class Indicator < Progress
 
   def completed?
     rebuild!
-    children_passed_count == children_count
+    all_children_passed?
+  end
+
+  def once_completed?
+    self.once_completed || completed?
   end
 
   private
@@ -73,5 +78,9 @@ class Indicator < Progress
 
   def parent_content
     content.usage_in_organization(organization).structural_parent
+  end
+
+  def all_children_passed?
+    children_passed_count == children_count
   end
 end

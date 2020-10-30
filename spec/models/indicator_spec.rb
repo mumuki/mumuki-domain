@@ -34,7 +34,7 @@ describe Indicator, organization_workspace: :test do
       let!(:sibling_assignment) { sibling_exercise.submit_solution!(user, content: 'foo').tap(&:passed!) }
 
       context 'indicator rebuild is not propagated up' do
-        before { guide_indicator.completed? }
+        before { guide_indicator.rebuild! }
 
         it { expect(guide_indicator).to_not be_dirty_by_submission }
         it { expect(topic_indicator).to be_dirty_by_submission }
@@ -96,6 +96,25 @@ describe Indicator, organization_workspace: :test do
         it { expect(topic_indicator).to_not be_dirty_by_submission }
         it { expect(book_indicator).to_not be_dirty_by_submission }
       end
+    end
+  end
+
+  context 'completion' do
+    describe 'content is completed' do
+      it { expect(guide_indicator).to be_completed }
+      it { expect(guide_indicator).to be_once_completed }
+    end
+
+    describe 'content was once completed if failed afterwards' do
+      before do
+        assignment.reload
+        guide_indicator.reload.rebuild!
+        assignment.failed!
+        guide_indicator.reload.rebuild!
+      end
+
+      it { expect(guide_indicator).to_not be_completed }
+      it { expect(guide_indicator).to be_once_completed }
     end
   end
 end
