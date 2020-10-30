@@ -164,6 +164,7 @@ describe User, organization_workspace: :test do
         context 'when granted organizations but not immersive' do
           let(:immersive) { false }
 
+          it { expect(student.immersive_organizations_at nil).to be_empty }
           it { expect(student.immersive_organization_at nil).to be nil }
           it { expect(student.current_immersive_context_at nil).to eq Organization.current }
         end
@@ -171,6 +172,7 @@ describe User, organization_workspace: :test do
         context 'when granted organizations and immersive' do
           let(:immersive) { true }
 
+          it { expect(student.immersive_organizations_at nil).to eq [other_organization] }
           it { expect(student.immersive_organization_at nil).to eq other_organization }
           it { expect(student.current_immersive_context_at nil).to eq other_organization }
 

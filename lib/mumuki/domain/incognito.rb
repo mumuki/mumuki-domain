@@ -48,6 +48,14 @@ module Mumuki::Domain
       false
     end
 
+    def current_immersive_context_at(_)
+      nil
+    end
+
+    def immersive_organizations_at(_)
+      []
+    end
+
     # ========
     # Visiting
     # ========
