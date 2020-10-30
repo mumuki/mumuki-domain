@@ -364,6 +364,32 @@ describe Assignment, organization_workspace: :test do
       it { expect(assignment.affable_test_results).to eq [{status: :failed, title: '<em>first</em> test', result: 'result'},
                                                           {status: :failed, title: 'second test', result: 'result', summary: 'you are using a function <strong>you have not declared</strong>'} ]  }
     end
+
+    context 'it does not sanitize test results' do
+      before { Mumukit::ContentType::Sanitizer.should_sanitize = true }
+      after { Mumukit::ContentType::Sanitizer.should_sanitize = false }
+
+      let(:test_results) do
+        [ {status: :failed, title: 'title', result: 'Expected <10>'} ]
+      end
+
+      it { expect(assignment.affable_test_results).to eq [{status: :failed, title: 'title', result: 'Expected <10>'}]  }
+    end
+  end
+
+  describe '#sanitized_affable_test_results' do
+    let(:assignment) { create(:assignment, test_results: test_results) }
+
+    context 'it escapes test results' do
+      before { Mumukit::ContentType::Sanitizer.should_sanitize = true }
+      after { Mumukit::ContentType::Sanitizer.should_sanitize = false }
+
+      let(:test_results) do
+        [ { status: :failed, title: 'title', result: 'Expected <10>' } ]
+      end
+
+      it { expect(assignment.sanitized_affable_test_results).to eq [{status: :failed, title: 'title', result: 'Expected &lt;10&gt;'} ]  }
+    end
   end
 
   describe '#update_top_submission!' do
