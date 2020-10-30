@@ -131,8 +131,12 @@ module Contextualization
         .compact
         .merge(
           title: it[:title].affable,
-          result: it[:result].sanitized,
+          result: it[:result],
           status: it[:status])
     end
+  end
+
+  def sanitized_affable_test_results
+    affable_test_results.each { |it| it[:result] = it[:result]&.sanitized }
   end
 end
