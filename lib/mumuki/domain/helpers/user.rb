@@ -95,13 +95,16 @@ module Mumuki::Domain::Helpers::User
   end
 
   def immersive_organization_at(path_item, current = Organization.current)
-    return nil unless current.immersible?
+    immersive_organizations_at(path_item, current).single
+  end
+
+  def immersive_organizations_at(path_item, current = Organization.current)
+    return [] unless current.immersible?
 
     usage_filter = path_item ? lambda { |it| path_item.used_in?(it) } : lambda { |_| true }
     student_granted_organizations
       .select { |it| current.immersed_in?(it) }
       .select(&usage_filter)
-      .single
   end
 
   ## API Exposure

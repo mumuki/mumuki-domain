@@ -68,4 +68,14 @@ describe Mumuki::Domain::Incognito do
       it { expect(assignment.status).to be_like :passed }
     end
   end
+
+  describe 'immersive context fooling' do
+    context 'no immersive organizations' do
+      it { expect(user.immersive_organizations_at(nil)).to be_empty }
+    end
+
+    context 'no current immersive context' do
+      it { expect(user.current_immersive_context_at(nil)).to be_nil }
+    end
+  end
 end
