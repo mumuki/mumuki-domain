@@ -27,8 +27,10 @@ class Mumuki::Domain::Submission::Base
     results
   end
 
-  def dry_run!(assignment, evaluation)
-    evaluation.evaluate! assignment, self
+  # By default evaluation strategy is ignored.
+  # Subclasses may override this behaviour
+  def dry_run!(assignment, _evaluation)
+    evaluate! assignment
   end
 
   def with_client_result(result)
