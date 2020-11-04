@@ -23,6 +23,10 @@ module WithTermsAcceptance
     accept_terms! forum_terms
   end
 
+  def has_accepted?(term)
+    term_accepted_at_for(term.scope).try { |it| it > term.updated_at }.present?
+  end
+
   private
 
   def unaccepted_terms_in(terms)
@@ -35,10 +39,6 @@ module WithTermsAcceptance
 
   def has_accepted_all?(terms)
     unaccepted_terms_in(terms).blank?
-  end
-
-  def has_accepted?(term)
-    term_accepted_at_for(term.scope).try { |it| it > term.updated_at }.present?
   end
 
   def term_accepted_at_for(role)
