@@ -56,6 +56,26 @@ module Mumuki::Domain
       []
     end
 
+    def any_granted_roles
+      []
+    end
+
+    # ========
+    # Terms
+    # ========
+
+    def accepted_profile_terms?
+      true
+    end
+
+    def accepted_forum_terms?
+      true
+    end
+
+    def has_accepted?(term)
+      false
+    end
+
     # ========
     # Visiting
     # ========
