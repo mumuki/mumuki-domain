@@ -16,11 +16,11 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> 5.1.6"
 
-  s.add_dependency 'mumukit-auth', '~> 7.8'
+  s.add_dependency 'mumukit-auth', '~> 7.9'
   s.add_dependency 'mumukit-assistant', '~> 0.2'
   s.add_dependency 'mumukit-bridge', '~> 4.1'
   s.add_dependency 'mumukit-content-type', '~> 1.7'
-  s.add_dependency 'mumukit-core', '~> 1.13'
+  s.add_dependency 'mumukit-core', '~> 1.18'
   s.add_dependency 'mumukit-directives', '~> 0.5'
   s.add_dependency 'mumukit-randomizer', '~> 1.0'
   s.add_dependency 'mumukit-platform', '~> 5.2'

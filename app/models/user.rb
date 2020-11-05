@@ -6,12 +6,13 @@ class User < ApplicationRecord
           WithDiscussionCreation,
           Awardee,
           Disabling,
+          WithTermsAcceptance,
           Mumuki::Domain::Helpers::User
 
   serialize :permissions, Mumukit::Auth::Permissions
 
-  has_many :assignments, foreign_key: :submitter_id
 
+  has_many :assignments, foreign_key: :submitter_id
   has_many :messages, -> { order(created_at: :desc) }, through: :assignments
 
   has_many :submitted_exercises, through: :assignments, class_name: 'Exercise', source: :exercise
@@ -37,6 +38,7 @@ class User < ApplicationRecord
   before_validation :set_uid!
   validates :uid, presence: true
 
+  validates :terms_of_service, acceptance: true
   after_save :welcome_to_new_organizations!, if: :gained_access_to_new_orga?
   after_initialize :init
   PLACEHOLDER_IMAGE_URL = 'user_shape.png'.freeze

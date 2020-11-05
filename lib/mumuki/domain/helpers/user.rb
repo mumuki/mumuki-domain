@@ -15,6 +15,7 @@ module Mumuki::Domain::Helpers::User
            :protect_permissions_assignment!,
            :student_granted_organizations,
            :any_granted_organizations,
+           :any_granted_roles,
            to: :permissions
 
   def platform_class_name
