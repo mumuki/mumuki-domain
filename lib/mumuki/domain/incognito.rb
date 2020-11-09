@@ -64,12 +64,12 @@ module Mumuki::Domain
     # Terms
     # ========
 
-    def accepted_profile_terms?
-      true
+    def has_forum_terms_to_accept?
+      false
     end
 
-    def accepted_forum_terms?
-      true
+    def has_profile_terms_to_accept?
+      false
     end
 
     def has_accepted?(term)

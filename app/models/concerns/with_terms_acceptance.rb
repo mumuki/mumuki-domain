@@ -7,6 +7,14 @@ module WithTermsAcceptance
     !has_accepted_all?(profile_terms)
   end
 
+  def has_role_terms_to_accept?
+    !has_accepted_all?(role_specific_terms)
+  end
+
+  def role_specific_terms
+    @role_specific_terms ||= Term.role_specific_terms_for(self)
+  end
+
   def forum_terms
     @forum_terms ||= Term.forum_related_terms
   end
