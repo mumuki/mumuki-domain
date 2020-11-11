@@ -145,6 +145,10 @@ class Assignment < Progress
     end
   end
 
+  def manual_evaluation_pending!
+    update! submission_status: :manual_evaluation_pending
+  end
+
   def passed!
     update! submission_status: :passed
   end
