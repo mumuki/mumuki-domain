@@ -101,12 +101,18 @@ module Mumuki::Domain::Helpers::User
   end
 
   def immersive_organizations_at(path_item, current = Organization.current)
-    return [] unless current.immersible?
-
     usage_filter = path_item ? lambda { |it| path_item.used_in?(it) } : lambda { |_| true }
-    student_granted_organizations
-      .select { |it| current.immersed_in?(it) }
-      .select(&usage_filter)
+    immersive_organizations_for(current).select(&usage_filter)
+  end
+
+  def immersive_organization_with_content_at(path_item, current = Organization.current)
+    immersive_orgas = immersive_organizations_for(current)
+    usage_filter = path_item ? ->(it) { path_item.content_used_in?(it) } : ->(_) { true }
+
+    with_usage = immersive_orgas.select(&usage_filter).single
+    without_usage = immersive_orgas.single
+
+    [with_usage || without_usage, with_usage ? path_item : nil]
   end
 
   ## API Exposure
@@ -119,5 +125,13 @@ module Mumuki::Domain::Helpers::User
     def profile_fields
       [:first_name, :last_name, :gender, :birthdate]
     end
+  end
+
+  private
+
+  def immersive_organizations_for(current)
+    return [] unless current.immersible?
+
+    student_granted_organizations.select { |it| current.immersed_in?(it) }
   end
 end

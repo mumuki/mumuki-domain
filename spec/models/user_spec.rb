@@ -153,6 +153,7 @@ describe User, organization_workspace: :test do
     context 'when no granted organizations' do
       it { expect(student.immersive_organization_at nil).to be nil }
       it { expect(student.current_immersive_context_at nil).to eq Organization.current }
+      it { expect(student.current_immersive_context_and_content_at nil).to eq [Organization.current, nil] }
     end
 
     context 'when granted organizations' do
@@ -167,6 +168,7 @@ describe User, organization_workspace: :test do
           it { expect(student.immersive_organizations_at nil).to be_empty }
           it { expect(student.immersive_organization_at nil).to be nil }
           it { expect(student.current_immersive_context_at nil).to eq Organization.current }
+          it { expect(student.current_immersive_context_and_content_at nil).to eq [Organization.current, nil] }
         end
 
         context 'when granted organizations and immersive' do
@@ -175,6 +177,7 @@ describe User, organization_workspace: :test do
           it { expect(student.immersive_organizations_at nil).to eq [other_organization] }
           it { expect(student.immersive_organization_at nil).to eq other_organization }
           it { expect(student.current_immersive_context_at nil).to eq other_organization }
+          it { expect(student.current_immersive_context_and_content_at nil).to eq [other_organization, nil] }
 
           context 'when content is tested' do
             let(:exercise) { create(:exercise) }
@@ -190,11 +193,13 @@ describe User, organization_workspace: :test do
               end
 
               it { expect(student.immersive_organization_at exercise).to eq other_organization }
+              it { expect(student.current_immersive_context_and_content_at exercise).to eq [other_organization, exercise] }
               it { expect(assignment.current_notification_contexts).to eq [Organization.current, other_organization] }
             end
 
             context 'when content is not shared' do
               it { expect(student.immersive_organization_at exercise).to be nil }
+              it { expect(student.current_immersive_context_and_content_at exercise).to eq [other_organization, nil] }
               it { expect(assignment.current_notification_contexts).to eq [Organization.current] }
             end
           end

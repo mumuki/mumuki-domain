@@ -243,9 +243,9 @@ class User < ApplicationRecord
     Organization.current? ?  Organization.current : main_organization
   end
 
-  def current_immersive_context_at(exercise)
+  def current_immersive_context_at(path_item)
     if Organization.current?
-      immersive_organization_at(exercise) || Organization.current
+      immersive_organization_at(path_item) || Organization.current
     else
       main_organization
     end
@@ -259,11 +259,16 @@ class User < ApplicationRecord
       new_permissions: permissions.as_json
     }
   end
-  
+
   def save_and_notify!
     save!
     notify_permissions_changed!
     self
+  end
+
+  def current_immersive_context_and_content_at(path_item)
+    orga, content = immersive_organization_with_content_at path_item
+    [orga || Organization.current, content]
   end
 
   private
