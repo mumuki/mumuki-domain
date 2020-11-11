@@ -77,6 +77,11 @@ describe Usage do
       expect(oop.usage_in_organization.number).to eq 3
     end
 
+    context '#used_in?' do
+      it { expect(fundamentals.used_in?(Organization.current)).to be_falsey }
+      it { expect(functional_programming.used_in?(Organization.current)).to be_truthy }
+    end
+
     it { expect(Usage.in_organization.count).to eq 4  }
   end
 end

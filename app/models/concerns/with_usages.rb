@@ -16,6 +16,10 @@ module WithUsages
     item.is_a?(type) ? item : nil
   end
 
+  def used_in?(organization)
+    usage_in_organization(organization).present?
+  end
+
   class_methods do
     def aggregate_of(association)
       super
