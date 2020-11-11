@@ -20,6 +20,14 @@ module Container
     content.progress_for(user, organization)
   end
 
+  def navigable_content_in(organization = Organization.current)
+    content.usage_in_organization(organization)
+  end
+
+  def content_used_in?(organization)
+    navigable_content_in(organization).present?
+  end
+
   private
 
   # Generally we are calling progress_for for each sibling. That method needs the
