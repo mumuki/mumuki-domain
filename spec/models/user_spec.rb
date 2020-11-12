@@ -197,6 +197,21 @@ describe User, organization_workspace: :test do
               it { expect(assignment.current_notification_contexts).to eq [Organization.current, other_organization] }
             end
 
+            context 'when content inside container is shared' do
+              let(:guide) { create(:guide) }
+              let(:lesson_immersive) { create(:lesson, guide: guide ) }
+              let(:lesson_immersible) { create(:lesson, guide: guide ) }
+              let!(:chapter) { create(:chapter, lessons: [ lesson_immersible ]) }
+              let!(:chapter_immersive) { create(:chapter, lessons: [ lesson_immersive ]) }
+
+              before do
+                other_organization.book.update! chapters: [chapter_immersive]
+                reindex_organization! other_organization
+              end
+
+              it { expect(student.current_immersive_context_and_content_at(lesson_immersible)).to eq [other_organization, lesson_immersive] }
+            end
+
             context 'when content is not shared' do
               it { expect(student.immersive_organization_at exercise).to be nil }
               it { expect(student.current_immersive_context_and_content_at exercise).to eq [other_organization, nil] }

@@ -106,13 +106,16 @@ module Mumuki::Domain::Helpers::User
   end
 
   def immersive_organization_with_content_at(path_item, current = Organization.current)
-    immersive_orgas = immersive_organizations_for(current)
-    usage_filter = path_item ? ->(it) { path_item.content_used_in?(it) } : ->(_) { true }
+    immersive_organizations = immersive_organizations_for(current)
+    immersive_without_usage = immersive_organizations.single
 
-    with_usage = immersive_orgas.select(&usage_filter).single
-    without_usage = immersive_orgas.single
+    return [immersive_without_usage, nil] unless path_item.present?
 
-    [with_usage || without_usage, with_usage ? path_item : nil]
+    immersive_with_usage = immersive_organizations.select { |it| path_item.content_used_in? it }.single
+    [
+      immersive_with_usage || immersive_without_usage,
+      immersive_with_usage ? path_item.navigable_content_in(immersive_with_usage) : nil
+    ]
   end
 
   ## API Exposure
