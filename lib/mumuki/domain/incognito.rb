@@ -64,14 +64,13 @@ module Mumuki::Domain
     # Terms
     # ========
 
-    def accepted_profile_terms?
-      true
+    # It avoids role terms acceptance redirections
+    def has_role_terms_to_accept?
+      false
     end
 
-    def accepted_forum_terms?
-      true
-    end
-
+    # It makes terms UI to be shown as if no terms were accepted
+    # It does not force any term to be accepted though
     def has_accepted?(term)
       false
     end
