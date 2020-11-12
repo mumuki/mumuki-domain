@@ -60,45 +60,54 @@ describe Exercise, organization_workspace: :test do
       it { expect(exercise.next_for(user)).to be nil }
     end
     context 'when exercise belong to a guide with a single exercise' do
-      let(:exercise_with_guide) { create(:exercise, guide: guide) }
+      let(:exercise_within_guide) { create(:exercise, guide: guide) }
       let(:guide) { create(:guide) }
 
-      it { expect(exercise_with_guide.next_for(user)).to be nil }
+      it { expect(exercise_within_guide.next_for(user)).to be nil }
     end
     context 'when exercise belongs to a guide with two exercises' do
-      let!(:exercise_with_guide) { create(:exercise, guide: guide, number: 2) }
+      let!(:exercise_within_guide) { create(:exercise, guide: guide, number: 2) }
       let!(:alternative_exercise) { create(:exercise, guide: guide, number: 3) }
       let!(:guide) { create(:guide) }
 
-      it { expect(exercise_with_guide.next_for(user)).to eq alternative_exercise }
+      it { expect(exercise_within_guide.next_for(user)).to eq alternative_exercise }
     end
 
     context 'when exercise belongs to a guide with two exercises and alternative exercise has been solved',
             organization_workspace: :test do
-      let(:exercise_with_guide) { create(:exercise, guide: guide) }
+      let(:exercise_within_guide) { create(:exercise, guide: guide) }
       let!(:alternative_exercise) { create(:exercise, guide: guide) }
       let(:guide) { create(:indexed_guide) }
 
       before { alternative_exercise.submit_solution!(user, content: 'foo').passed! }
 
-      it { expect(exercise_with_guide.next_for(user)).to be nil }
+      it { expect(exercise_within_guide.next_for(user)).to be nil }
     end
 
     context 'when exercise belongs to a guide with two exercises and alternative exercise has been submitted but not solved',
             organization_workspace: :test do
-      let!(:exercise_with_guide) { create(:exercise, guide: guide, number: 2) }
+      let!(:exercise_within_guide) { create(:exercise, guide: guide, number: 2) }
       let!(:alternative_exercise) { create(:exercise, guide: guide, number: 3) }
       let(:guide) { create(:guide) }
 
       before { alternative_exercise.submit_solution!(user, content: 'foo') }
 
-      it { expect(guide.pending_exercises(user)).to_not eq [] }
+      it { expect(guide.pending_exercises(user)).to_not eq [alternative_exercise, exercise_within_guide] }
       it { expect(guide.next_exercise(user)).to_not be nil }
-      it { expect(guide.pending_exercises(user)).to include(alternative_exercise) }
-      it { expect(exercise_with_guide.next_for(user)).to eq alternative_exercise }
-      it { expect(guide.exercises).to_not eq [] }
-      it { expect(exercise_with_guide.guide).to eq guide }
-      it { expect(guide.pending_exercises(user)).to include(exercise_with_guide) }
+      it { expect(exercise_within_guide.next_for(user)).to eq alternative_exercise }
+    end
+
+    context 'when exercise belongs to a guide with two exercises and alternative exercise is pending manual evaluation',
+            organization_workspace: :test do
+      let!(:exercise_within_guide) { create(:exercise, guide: guide, number: 2) }
+      let!(:alternative_exercise) { create(:exercise, guide: guide, number: 3) }
+      let(:guide) { create(:guide) }
+
+      before { alternative_exercise.submit_solution!(user, content: 'foo').manual_evaluation_pending! }
+
+      it { expect(guide.pending_exercises(user)).to eq [exercise_within_guide] }
+      it { expect(guide.next_exercise(user)).to eq exercise_within_guide }
+      it { expect(exercise_within_guide.next_for(user)).to be nil }
     end
   end
 
@@ -439,7 +448,7 @@ describe Exercise, organization_workspace: :test do
 
   describe '#language' do
     let(:guide) { create(:guide) }
-    let(:exercise_with_guide) { create(:exercise, guide: guide, language: guide.language) }
+    let(:exercise_within_guide) { create(:exercise, guide: guide, language: guide.language) }
     let(:other_language) { create(:language) }
 
     context 'when has no guide' do
@@ -447,7 +456,7 @@ describe Exercise, organization_workspace: :test do
     end
 
     context 'when has guide and is consistent' do
-      it { expect(exercise_with_guide.valid?).to be true }
+      it { expect(exercise_within_guide.valid?).to be true }
     end
   end
 
