@@ -268,7 +268,9 @@ class User < ApplicationRecord
 
   def current_immersive_context_and_content_at(path_item)
     orga, content = immersive_organization_with_content_at path_item
-    [orga || Organization.current, content]
+    return [Organization.current, path_item] unless orga.present?
+
+    [orga, content]
   end
 
   private
