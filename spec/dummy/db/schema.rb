@@ -425,7 +425,6 @@ ActiveRecord::Schema.define(version: 20201027152806) do
     t.datetime "disabled_at"
     t.boolean "trusted_for_forum"
     t.string "avatar_type", default: "Avatar"
-    t.index ["avatar_type", "avatar_id"], name: "index_users_on_avatar_type_and_avatar_id"
     t.datetime "headmaster_terms_accepted_at"
     t.datetime "janitor_terms_accepted_at"
     t.datetime "moderator_terms_accepted_at"
@@ -434,6 +433,7 @@ ActiveRecord::Schema.define(version: 20201027152806) do
     t.datetime "privacy_terms_accepted_at"
     t.datetime "legal_terms_accepted_at"
     t.datetime "forum_terms_accepted_at"
+    t.index ["avatar_type", "avatar_id"], name: "index_users_on_avatar_type_and_avatar_id"
     t.index ["disabled_at"], name: "index_users_on_disabled_at"
     t.index ["last_organization_id"], name: "index_users_on_last_organization_id"
     t.index ["uid"], name: "index_users_on_uid", unique: true

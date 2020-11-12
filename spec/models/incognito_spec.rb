@@ -78,4 +78,21 @@ describe Mumuki::Domain::Incognito do
       it { expect(user.current_immersive_context_at(nil)).to be_nil }
     end
   end
+
+  describe 'terms context fooling' do
+    let!(:legal_term) { create(:term, scope: :legal, locale: :en) }
+    let!(:moderator_term) { create(:term, scope: :moderator, locale: :en) }
+
+    context 'no role terms to accept' do
+      it { expect(user.has_role_terms_to_accept?).to eq false }
+    end
+
+    context 'has_accepted? term' do
+      it { expect(user.has_accepted?(legal_term)).to eq false }
+    end
+
+    context 'profile_terms' do
+      it { expect(Term.profile_terms_for(user)).to eq [legal_term] }
+    end
+  end
 end
