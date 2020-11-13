@@ -182,5 +182,12 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
       it { expect(guide.progress_for(user, organization)).not_to be_dirty_by_submission }
     end
 
+    context 'when solution is empty status should be consistent' do
+      before { assignment.passed! }
+      before { exercise.submit_solution!(user, content: '') }
+
+      it { expect(assignment.reload.status).to eq :failed }
+      it { expect(assignment.reload.solution).to be_empty }
+    end
   end
 end
