@@ -231,6 +231,10 @@ class Exercise < ApplicationRecord
     guide.pending_exercises(user)
   end
 
+  def reading?
+    is_a? Reading
+  end
+
   private
 
   def evaluation_class
