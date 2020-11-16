@@ -267,10 +267,9 @@ class User < ApplicationRecord
   end
 
   def current_immersive_context_and_content_at(path_item)
-    orga, content = immersive_organization_with_content_at path_item
-    return [Organization.current, path_item] unless orga.present?
-
-    [orga, content]
+    immersive_organization_with_content_at(path_item).tap do |orga, _|
+      return [Organization.current, path_item] unless orga.present?
+    end
   end
 
   private

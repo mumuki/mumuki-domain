@@ -107,7 +107,7 @@ module Mumuki::Domain::Helpers::User
 
   def immersive_organization_with_content_at(path_item, current = Organization.current)
     orga = immersive_organizations_with_content_at(path_item, current).single
-    [orga, orga ? path_item&.navigable_content_in(orga) : nil]
+    [orga, path_item&.navigable_content_in(orga)]
   end
 
   def immersive_organizations_with_content_at(path_item, current = Organization.current)
@@ -132,9 +132,9 @@ module Mumuki::Domain::Helpers::User
 
   private
 
-  def immersive_organizations_for(current)
-    return [] unless current.immersible?
+  def immersive_organizations_for(organization)
+    return [] unless organization.immersible?
 
-    student_granted_organizations.select { |it| current.immersed_in?(it) }
+    student_granted_organizations.select { |it| organization.immersed_in?(it) }
   end
 end
