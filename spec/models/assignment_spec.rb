@@ -237,23 +237,26 @@ describe Assignment, organization_workspace: :test do
   describe 'organization' do
     let(:exercise) { create(:exercise) }
     let(:user) { create(:user) }
-    let(:chapter) { create(:chapter, lessons: [ create(:lesson, exercises: [exercise] )]) }
-    let(:new_organization) { create(:organization, book: create(:book, chapters: [chapter] )) }
+    let(:book) { Organization.current.book }
+    let!(:chapter) { create(:chapter, book: book, lessons: [ create(:lesson, exercises: [exercise] )]) }
+    let(:new_organization) { create(:organization, book: book) }
+    let(:assignment) { exercise.assignment_for(user) }
 
+    before { reindex_current_organization! }
     before { exercise.submit_solution!(user, content: 'foo') }
 
     context 'when solution is submitted for the first time' do
       it 'should persist what organization it was submitted in' do
-        expect(exercise.assignment_for(user).organization).to eq Organization.current
+        expect(assignment.organization).to eq Organization.current
       end
     end
 
     context 'when solution is submitted after the assignment was created without an organization' do
-      before { exercise.assignment_for(user).update_column(:organization_id, nil) }
+      before { assignment.update_column(:organization_id, nil) }
       before { exercise.submit_solution!(user, content: 'foo') }
 
       it 'should persist what organization it was submitted in' do
-        expect(exercise.assignment_for(user).organization).to eq Organization.current
+        expect(assignment.reload.organization).to eq Organization.current
       end
     end
 
@@ -263,7 +266,7 @@ describe Assignment, organization_workspace: :test do
       before { exercise.submit_solution!(user, content: 'foo') }
 
       it 'should persist what organization it was submitted in' do
-        expect(exercise.assignment_for(user).organization).to eq new_organization
+        expect(assignment.organization).to eq new_organization
       end
     end
   end

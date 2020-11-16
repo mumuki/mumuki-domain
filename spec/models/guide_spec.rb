@@ -57,6 +57,7 @@ describe Guide do
 
   describe '#clear_progress!' do
     let(:an_exercise) { create(:exercise) }
+    let(:guide) { create(:indexed_guide) }
     let(:test_organization) { create(:test_organization) }
 
     before do
