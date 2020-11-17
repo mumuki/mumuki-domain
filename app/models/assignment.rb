@@ -52,6 +52,14 @@ class Assignment < Progress
     self.organization = Organization.current
   end
 
+  def recontextualize!
+    if organization != Organization.current
+      dirty_parent_by_submission! if organization.present? && exercise.used_in?(organization)
+      self.organization = Organization.current
+      self.parent_id = nil
+    end
+  end
+
   def set_default_top_submission_status
     self.top_submission_status ||= 0
   end
