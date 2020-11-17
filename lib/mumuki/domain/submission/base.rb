@@ -53,11 +53,7 @@ class Mumuki::Domain::Submission::Base
 
   def save_submission!(assignment)
     assignment.content = content
-    if assignment.organization != Organization.current
-      assignment.dirty_parent_by_submission! if assignment.organization
-      assignment.organization = Organization.current
-      assignment.parent_id = nil
-    end
+    assignment.recontextualize!
     assignment.save!
   end
 
