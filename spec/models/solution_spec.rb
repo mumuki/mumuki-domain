@@ -142,7 +142,7 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
 
   describe '#submit_solution!' do
     let(:organization)  { create :organization }
-    let(:organization2) { create :organization, name: 'orga2', book: organization.book }
+    let!(:organization2) { create :organization, name: 'orga2', book: organization.book }
     let(:user) { create :user }
 
     before { organization.switch! }
@@ -150,15 +150,37 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
     let(:guide) { exercise.guide }
     let!(:assignment) { exercise.submit_solution!(user, content: 'foo') }
 
-    before do
-      organization2.switch!
-      exercise.submit_solution!(user, content: 'bar')
-      assignment.reload
+    context 'when old organization still has the exercise' do
+      before do
+        organization2.reindex_usages!
+        organization2.switch!
+        exercise.submit_solution!(user, content: 'bar')
+        assignment.reload
+      end
+
+      it { expect(assignment.solution).to eq('bar') }
+      it { expect(assignment.parent).to_not eq(guide.progress_for(user, organization )) }
+      it { expect(assignment.parent).to     eq(guide.progress_for(user, organization2)) }
+      it { expect(guide.progress_for(user, organization)).to be_dirty_by_submission }
     end
 
-    it { expect(assignment.solution).to eq('bar') }
-    it { expect(assignment.parent).to_not eq(guide.progress_for(user, organization )) }
-    it { expect(assignment.parent).to     eq(guide.progress_for(user, organization2)) }
-    it { expect(guide.progress_for(user, organization)).to be_dirty_by_submission }
+    context 'when old organization has not got the exercise' do
+      let(:other_book) { create(:book) }
+      before do
+        organization2.reindex_usages!
+        organization2.switch!
+        organization.update! book: other_book
+        organization.reindex_usages!
+
+        exercise.submit_solution!(user, content: 'bar')
+        assignment.reload
+      end
+
+      it { expect(assignment.solution).to eq('bar') }
+      it { expect(assignment.parent).to_not eq(guide.progress_for(user, organization )) }
+      it { expect(assignment.parent).to     eq(guide.progress_for(user, organization2)) }
+      it { expect(guide.progress_for(user, organization)).not_to be_dirty_by_submission }
+    end
+
   end
 end
