@@ -36,6 +36,6 @@ class Mumuki::Domain::Organization::Profile < Mumukit::Platform::Model
   end
 
   def open_graph_image_url
-    @open_graph_image_url ||= Mumukit::Platform.application.url_for("logo-alt.png")  # Best image size: 256x256
+    @open_graph_image_url ||= Mumukit::Platform.laboratory.url_for("logo-alt.png")  # Best image size: 256x256
   end
 end
