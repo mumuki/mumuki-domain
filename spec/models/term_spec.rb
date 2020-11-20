@@ -28,7 +28,7 @@ describe Term, organization_workspace: :test do
         let(:user) { create(:user) }
 
         describe 'when user has not accepted anything' do
-          it { expect(Term.profile_terms_for(user).map(&:scope)).to eq Term::GENERAL }
+          it { expect(Term.profile_terms_for(user).map(&:scope)).to contain_exactly *Term::GENERAL }
           it { expect(Term.role_specific_terms_for(user)).to eq [] }
           it { expect(Term.general_terms.map(&:scope)).to eq Term::GENERAL }
           it { expect(Term.forum_related_terms.map(&:scope)).to eq Term::FORUM_RELATED }
@@ -38,7 +38,7 @@ describe Term, organization_workspace: :test do
         describe 'when user has accepted all profile terms' do
           before { user.accept_profile_terms!; user.reload }
 
-          it { expect(Term.profile_terms_for(user).map(&:scope)).to eq Term::GENERAL }
+          it { expect(Term.profile_terms_for(user).map(&:scope)).to contain_exactly *Term::GENERAL }
           it { expect(Term.role_specific_terms_for(user)).to eq [] }
           it { expect(Term.general_terms.map(&:scope)).to eq Term::GENERAL }
           it { expect(Term.forum_related_terms.map(&:scope)).to eq Term::FORUM_RELATED }
@@ -49,7 +49,7 @@ describe Term, organization_workspace: :test do
         describe 'when user has accepted all forum terms' do
           before { user.accept_forum_terms!; user.reload }
 
-          it { expect(Term.profile_terms_for(user).map(&:scope)).to eq Term::GENERAL }
+          it { expect(Term.profile_terms_for(user).map(&:scope)).to contain_exactly *Term::GENERAL }
           it { expect(Term.role_specific_terms_for(user)).to eq [] }
           it { expect(Term.general_terms.map(&:scope)).to eq Term::GENERAL }
           it { expect(Term.forum_related_terms.map(&:scope)).to eq Term::FORUM_RELATED }
@@ -64,7 +64,7 @@ describe Term, organization_workspace: :test do
             user.reload
           end
 
-          it { expect(Term.profile_terms_for(user).map(&:scope)).to eq Term::GENERAL }
+          it { expect(Term.profile_terms_for(user).map(&:scope)).to contain_exactly *Term::GENERAL }
           it { expect(Term.role_specific_terms_for(user)).to eq [] }
           it { expect(Term.general_terms.map(&:scope)).to eq Term::GENERAL }
           it { expect(Term.forum_related_terms.map(&:scope)).to eq Term::FORUM_RELATED }
@@ -80,9 +80,9 @@ describe Term, organization_workspace: :test do
             user.reload
           end
 
-          it { expect(Term.profile_terms_for(user).map(&:scope)).to eq %w(privacy student legal) }
+          it { expect(Term.profile_terms_for(user).map(&:scope)).to contain_exactly *%w(privacy student legal) }
           it { expect(Term.role_specific_terms_for(user)).to eq [] }
-          it { expect(Term.general_terms.map(&:scope)).to eq %w(privacy student legal) }
+          it { expect(Term.general_terms.map(&:scope)).to contain_exactly *%w(privacy student legal) }
           it { expect(Term.forum_related_terms.map(&:scope)).to eq Term::FORUM_RELATED }
           it { expect(user.has_profile_terms_to_accept?).to eq true }
           it { expect(user.has_forum_terms_to_accept?).to eq true }
@@ -95,7 +95,7 @@ describe Term, organization_workspace: :test do
             user.reload
           end
 
-          it { expect(Term.profile_terms_for(user).map(&:scope)).to eq Term::GENERAL + ['moderator'] }
+          it { expect(Term.profile_terms_for(user).map(&:scope)).to contain_exactly *(Term::GENERAL + ['moderator']) }
           it { expect(Term.role_specific_terms_for(user).map(&:scope)).to eq ['moderator'] }
           it { expect(Term.general_terms.map(&:scope)).to eq Term::GENERAL }
           it { expect(Term.forum_related_terms.map(&:scope)).to eq Term::FORUM_RELATED }
@@ -105,7 +105,7 @@ describe Term, organization_workspace: :test do
 
         describe 'without user' do
 
-          it { expect(Term.profile_terms_for(nil).map(&:scope)).to eq Term::GENERAL }
+          it { expect(Term.profile_terms_for(nil).map(&:scope)).to contain_exactly *Term::GENERAL }
           it { expect(Term.role_specific_terms_for(nil).map(&:scope)).to eq [] }
           it { expect(Term.general_terms.map(&:scope)).to eq Term::GENERAL }
           it { expect(Term.forum_related_terms.map(&:scope)).to eq Term::FORUM_RELATED }
