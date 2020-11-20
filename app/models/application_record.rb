@@ -70,9 +70,8 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   def update_and_notify!(data)
-    update! data
-    notify!
-    self
+    assign_attributes data
+    save_and_notify!
   end
 
   def self.aggregate_of(association)
@@ -105,7 +104,7 @@ class ApplicationRecord < ActiveRecord::Base
     obj
   end
 
-  def self.whitelist_attributes(a_hash, options={})
+  def self.whitelist_attributes(a_hash, options = {})
     attributes = attribute_names
     attributes += reflections.keys if options[:relations]
     a_hash.with_indifferent_access.slice(*attributes).except(*options[:except])

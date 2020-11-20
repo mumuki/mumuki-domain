@@ -8,6 +8,7 @@ module Mumuki::Domain::Helpers::User
   delegate :has_role?,
            :add_permission!,
            :remove_permission!,
+           :update_permission!,
            :has_permission?,
            :has_permission_delegation?,
            :protect!,

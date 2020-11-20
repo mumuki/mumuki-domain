@@ -139,9 +139,9 @@ class User < ApplicationRecord
 
   def interpolations
     {
-      'user_email' => email,
-      'user_first_name' => first_name,
-      'user_last_name' => last_name
+        'user_email' => email,
+        'user_first_name' => first_name,
+        'user_last_name' => last_name
     }
   end
 
@@ -249,6 +249,21 @@ class User < ApplicationRecord
     else
       main_organization
     end
+  end
+
+  def notify_permissions_changed!
+    return if permissions_before_last_save == permissions
+    Mumukit::Nuntius.notify! 'user-permissions-changed', user: {
+      uid: uid,
+      old_permissions: permissions_before_last_save.as_json,
+      new_permissions: permissions.as_json
+    }
+  end
+  
+  def save_and_notify!
+    save!
+    notify_permissions_changed!
+    self
   end
 
   private

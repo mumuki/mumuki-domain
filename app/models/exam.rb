@@ -5,7 +5,7 @@ class Exam < ApplicationRecord
   include TerminalNavigation
 
   belongs_to :organization
-  belongs_to :course, optional: true
+  belongs_to :course
 
   has_many :authorizations, class_name: 'ExamAuthorization', dependent: :destroy
   has_many :users, through: :authorizations
@@ -186,8 +186,6 @@ class Exam < ApplicationRecord
     exam[:start_time] = exam[:start_time].to_time
     exam[:end_time] = exam[:end_time].to_time
     exam[:classroom_id] = exam[:eid] if exam[:eid].present?
-    exam[:passing_criterion_type] = exam.dig(:passing_criterion, :type)
-    exam[:passing_criterion_value] = exam.dig(:passing_criterion, :value)
   end
 
   def self.remove_previous_version(eid, guide_id)

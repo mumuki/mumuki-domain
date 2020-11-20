@@ -35,7 +35,7 @@ RSpec.configure do |config|
 end
 
 Mumukit::Platform.configure do |config|
-  config.application = Mumukit::Platform::Application::Organic.new 'http://sample.app.com', Mumukit::Platform.organization_mapping
+  config.application = Mumukit::Platform::Application::Organic.new 'http://localmumuki.io', Mumukit::Platform.organization_mapping
 end
 
 Mumukit::Auth.configure do |c|

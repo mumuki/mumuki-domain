@@ -41,7 +41,7 @@ module Mumuki::Domain::Helpers::Organization
   end
 
   def url_for(path)
-    Mumukit::Platform.application.organic_url_for(name, path)
+    Mumukit::Platform.laboratory.organic_url_for(name, path)
   end
 
   def url
