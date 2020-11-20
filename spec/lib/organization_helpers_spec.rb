@@ -172,7 +172,7 @@ describe Mumukit::Platform::Organization do
       it { expect(subject.banner_url).to eq 'https://mumuki.io/logo-alt-large.png' }
       it { expect(subject.favicon_url).to eq '/favicon.ico' }
       it { expect(subject.breadcrumb_image_url).to eq nil }
-      it { expect(subject.open_graph_image_url).to eq 'http://sample.app.com/logo-alt.png' }
+      it { expect(subject.open_graph_image_url).to eq 'http://localmumuki.io/logo-alt.png' }
     end
 
     describe Mumuki::Domain::Organization::Profile do
@@ -201,19 +201,19 @@ describe Mumukit::Platform::Organization do
     end
     describe '#url_for' do
       context 'with subdomain mapping' do
-        it { expect(organization.url_for 'zaraza').to eq 'http://orga.sample.app.com/zaraza' }
-        it { expect(organization.url_for '/zaraza').to eq 'http://orga.sample.app.com/zaraza' }
+        it { expect(organization.url_for 'zaraza').to eq 'http://orga.localmumuki.io/zaraza' }
+        it { expect(organization.url_for '/zaraza').to eq 'http://orga.localmumuki.io/zaraza' }
       end
 
       context 'with path mapping' do
         before { allow_any_instance_of(Mumukit::Platform::Application::Organic).to receive(:organization_mapping).and_return(Mumukit::Platform::OrganizationMapping::Path) }
 
-        it { expect(organization.url_for 'zaraza').to eq 'http://sample.app.com/orga/zaraza' }
-        it { expect(organization.url_for '/zaraza').to eq 'http://sample.app.com/orga/zaraza' }
+        it { expect(organization.url_for 'zaraza').to eq 'http://localmumuki.io/orga/zaraza' }
+        it { expect(organization.url_for '/zaraza').to eq 'http://localmumuki.io/orga/zaraza' }
       end
     end
     describe '#domain' do
-      it { expect(organization.domain).to eq 'orga.sample.app.com' }
+      it { expect(organization.domain).to eq 'orga.localmumuki.io' }
     end
 
     describe 'to_resource_h' do
