@@ -52,10 +52,10 @@ class Assignment < Progress
     self.organization = Organization.current
   end
 
-  def recontextualize!
-    if organization != Organization.current
+  def recontextualize!(new_organization = Organization.current)
+    if organization != new_organization
       dirty_parent_by_submission! if organization.present? && exercise.used_in?(organization)
-      self.organization = Organization.current
+      self.organization = new_organization
       self.parent_id = nil
     end
   end
