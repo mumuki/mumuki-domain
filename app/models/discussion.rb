@@ -44,6 +44,10 @@ class Discussion < ApplicationRecord
     end
   end
 
+  def navigable_content_in(_)
+    nil
+  end
+  
   def used_in?(organization)
     organization == self.organization
   end
