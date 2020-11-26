@@ -15,6 +15,10 @@ class Array
   def single?
     size == 1
   end
+
+  def multiple?
+    size > 1
+  end
 end
 
 class NilClass

@@ -29,7 +29,7 @@ module Mumuki::Domain::Helpers::Organization
   end
 
   def immersed_in?(other)
-    immersible? && other.immersive? && target_audience == other.target_audience
+    immersible? && other.immersive? && !other.disabled? && target_audience == other.target_audience
   end
 
   def switch!

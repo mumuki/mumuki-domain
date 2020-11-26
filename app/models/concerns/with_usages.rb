@@ -16,6 +16,18 @@ module WithUsages
     item.is_a?(type) ? item : nil
   end
 
+  def navigable_content_in(organization = Organization.current)
+    self if used_in?(organization)
+  end
+
+  def content_used_in?(organization)
+    navigable_content_in(organization).present?
+  end
+
+  def used_in?(organization)
+    usage_in_organization(organization).present?
+  end
+
   class_methods do
     def aggregate_of(association)
       super

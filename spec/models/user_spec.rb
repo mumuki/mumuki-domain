@@ -152,7 +152,9 @@ describe User, organization_workspace: :test do
 
     context 'when no granted organizations' do
       it { expect(student.immersive_organization_at nil).to be nil }
+      it { expect(student.immersive_organizations_with_content_at nil).to be_empty }
       it { expect(student.current_immersive_context_at nil).to eq Organization.current }
+      it { expect(student.current_immersive_context_and_content_at nil).to eq [Organization.current, nil] }
     end
 
     context 'when granted organizations' do
@@ -167,6 +169,8 @@ describe User, organization_workspace: :test do
           it { expect(student.immersive_organizations_at nil).to be_empty }
           it { expect(student.immersive_organization_at nil).to be nil }
           it { expect(student.current_immersive_context_at nil).to eq Organization.current }
+          it { expect(student.immersive_organizations_with_content_at nil).to be_empty }
+          it { expect(student.current_immersive_context_and_content_at nil).to eq [Organization.current, nil] }
         end
 
         context 'when granted organizations and immersive' do
@@ -175,6 +179,8 @@ describe User, organization_workspace: :test do
           it { expect(student.immersive_organizations_at nil).to eq [other_organization] }
           it { expect(student.immersive_organization_at nil).to eq other_organization }
           it { expect(student.current_immersive_context_at nil).to eq other_organization }
+          it { expect(student.immersive_organizations_with_content_at nil).to eq [other_organization] }
+          it { expect(student.current_immersive_context_and_content_at nil).to eq [other_organization, nil] }
 
           context 'when content is tested' do
             let(:exercise) { create(:exercise) }
@@ -189,12 +195,49 @@ describe User, organization_workspace: :test do
                 reindex_organization! other_organization
               end
 
-              it { expect(student.immersive_organization_at exercise).to eq other_organization }
-              it { expect(assignment.current_notification_contexts).to eq [Organization.current, other_organization] }
+              context 'with one organization' do
+                it { expect(student.immersive_organization_at exercise).to eq other_organization }
+                it { expect(student.immersive_organizations_with_content_at exercise).to eq [other_organization] }
+                it { expect(student.current_immersive_context_and_content_at exercise).to eq [other_organization, exercise] }
+                it { expect(assignment.current_notification_contexts).to eq [Organization.current, other_organization] }
+              end
+
+              context 'with many organizations' do
+                let(:just_another_organization) { create :organization, name: 'just-another-one', immersive: true }
+                before { student.add_permission! :student, just_another_organization }
+
+                before do
+                  just_another_organization.update! book: Organization.current.book
+                  reindex_organization! just_another_organization
+                end
+
+                it { expect(student.immersive_organization_at exercise).to be_nil }
+                it { expect(student.immersive_organizations_with_content_at exercise).to eq [other_organization, just_another_organization] }
+                it { expect(student.current_immersive_context_and_content_at exercise).to eq [Organization.current, exercise] }
+                it { expect(assignment.current_notification_contexts).to eq [Organization.current] }
+              end
+            end
+
+            context 'when content inside container is shared' do
+              let(:guide) { create(:guide) }
+              let(:lesson_immersive) { create(:lesson, guide: guide ) }
+              let(:lesson_immersible) { create(:lesson, guide: guide ) }
+              let!(:chapter) { create(:chapter, lessons: [ lesson_immersible ]) }
+              let!(:chapter_immersive) { create(:chapter, lessons: [ lesson_immersive ]) }
+
+              before do
+                other_organization.book.update! chapters: [chapter_immersive]
+                reindex_organization! other_organization
+              end
+
+              it { expect(student.immersive_organizations_with_content_at lesson_immersible).to eq [other_organization] }
+              it { expect(student.current_immersive_context_and_content_at(lesson_immersible)).to eq [other_organization, lesson_immersive] }
             end
 
             context 'when content is not shared' do
               it { expect(student.immersive_organization_at exercise).to be nil }
+              it { expect(student.immersive_organizations_with_content_at exercise).to eq [other_organization] }
+              it { expect(student.current_immersive_context_and_content_at exercise).to eq [other_organization, nil] }
               it { expect(assignment.current_notification_contexts).to eq [Organization.current] }
             end
           end

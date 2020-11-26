@@ -77,6 +77,21 @@ describe Usage do
       expect(oop.usage_in_organization.number).to eq 3
     end
 
+    context '#used_in?' do
+      it { expect(fundamentals.used_in?(pdep)).to be_falsey }
+      it { expect(functional_programming.used_in?(pdep)).to be_truthy }
+    end
+
+    context '#content_used_in?' do
+      it { expect(fundamentals.content_used_in?(pdep)).to be_falsey }
+      it { expect(functional_programming.content_used_in?(pdep)).to be_truthy }
+    end
+
+    context '#navigable_content_in' do
+      it { expect(fundamentals.navigable_content_in(pdep)).to be_nil }
+      it { expect(functional_programming.navigable_content_in(pdep)).to eq(functional_programming) }
+    end
+
     it { expect(Usage.in_organization.count).to eq 4  }
   end
 end

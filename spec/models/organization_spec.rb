@@ -341,6 +341,11 @@ describe Organization, organization_workspace: :test do
       it { expect(one.immersible?).to be true }
       it { expect(one.immersed_in? other_immersive).to be true }
       it { expect(one.immersed_in? other_non_immersive).to be false }
+
+      context 'but immersive disabled' do
+        before { other_immersive.disabled_from = 10.minute.ago }
+        it { expect(one.immersed_in? other_immersive).to be false }
+      end
     end
 
     context 'cannot be immersive' do

@@ -52,7 +52,15 @@ module Mumuki::Domain
       nil
     end
 
-    def immersive_organizations_at(_)
+    def current_immersive_context_and_content_at(_)
+      [nil, nil]
+    end
+
+    def immersive_organizations_with_content_at(_, _ = nil)
+      []
+    end
+
+    def immersive_organizations_at(_, _ = nil)
       []
     end
 

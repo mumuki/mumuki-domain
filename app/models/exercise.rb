@@ -47,6 +47,14 @@ class Exercise < ApplicationRecord
     guide.usage_in_organization(organization).present?
   end
 
+  def navigable_content_in(organization = Organization.current)
+    self if used_in?(organization)
+  end
+
+  def content_used_in?(organization)
+    navigable_content_in(organization).present?
+  end
+
   def structural_parent
     guide
   end

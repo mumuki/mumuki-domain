@@ -76,6 +76,7 @@ describe Mumuki::Domain::Incognito do
 
     context 'no current immersive context' do
       it { expect(user.current_immersive_context_at(nil)).to be_nil }
+      it { expect(user.current_immersive_context_and_content_at(nil)).to eq [nil, nil] }
     end
   end
 
