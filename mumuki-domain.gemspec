@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'mumukit-core', '~> 1.18'
   s.add_dependency 'mumukit-directives', '~> 0.5'
   s.add_dependency 'mumukit-randomizer', '~> 1.0'
-  s.add_dependency 'mumukit-platform', '~> 6.0'
+  s.add_dependency 'mumukit-platform', '~> 6.1'
   s.add_dependency 'mumukit-sync', '~> 1.0'
   s.add_dependency 'mumukit-login', '~> 7.0'
 
