@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20201130163114) do
+ActiveRecord::Schema.define(version: 20201201143140) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -312,6 +312,10 @@ ActiveRecord::Schema.define(version: 20201130163114) do
     t.integer "discussion_id"
     t.boolean "approved", default: false
     t.boolean "not_actually_a_question", default: false
+    t.datetime "disabled_at"
+    t.bigint "disabled_by_id"
+    t.index ["disabled_at"], name: "index_messages_on_disabled_at"
+    t.index ["disabled_by_id"], name: "index_messages_on_disabled_by_id"
   end
 
   create_table "organizations", id: :serial, force: :cascade do |t|

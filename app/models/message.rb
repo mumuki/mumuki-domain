@@ -1,8 +1,10 @@
 class Message < ApplicationRecord
+  include Disabling
 
   belongs_to :discussion, optional: true
   belongs_to :assignment, foreign_key: :submission_id, primary_key: :submission_id, optional: true
   has_one :exercise, through: :assignment
+  belongs_to :disabled_by, class_name: 'User', optional: true
 
   validates_presence_of :content, :sender
   validates_presence_of :submission_id, :unless => :discussion_id?
@@ -68,6 +70,17 @@ class Message < ApplicationRecord
 
   def question?
     from_initiator? && !not_actually_a_question?
+  end
+
+  def disable_by!(moderator)
+    transaction do
+      disable!
+      update! disabled_by: moderator
+    end
+  end
+
+  def restore!
+    update! disabled_at: nil, disabled_by: nil
   end
 
   def self.parse_json(json)

@@ -179,9 +179,13 @@ class Discussion < ApplicationRecord
     klazz.constantize.find(debatable_id)
   end
 
+  def student_visible_messages
+    messages.where(disabled_at: nil)
+  end
+
   private
 
   def messages_by_updated_at(direction = :desc)
-    messages.reorder(updated_at: direction)
+    student_visible_messages.reorder(updated_at: direction)
   end
 end
