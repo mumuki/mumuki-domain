@@ -240,7 +240,7 @@ class Exercise < ApplicationRecord
   end
 
   def reading?
-    is_a? Reading
+    is_a? ::Reading
   end
 
   private
