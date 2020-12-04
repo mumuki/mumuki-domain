@@ -239,8 +239,8 @@ class Exercise < ApplicationRecord
     guide.pending_exercises(user)
   end
 
-  def reading?
-    is_a? ::Reading
+  def solvable?
+    is_a? ::Problem
   end
 
   private
