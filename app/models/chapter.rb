@@ -13,6 +13,7 @@ class Chapter < ApplicationRecord
 
   has_many :exercises, through: :topic
 
+  delegate :mono_lesson?, :first_lesson, to: :topic
 
   def used_in?(organization)
     organization.book == self.book
