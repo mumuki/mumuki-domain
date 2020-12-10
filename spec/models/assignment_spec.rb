@@ -468,6 +468,54 @@ describe Assignment, organization_workspace: :test do
     end
   end
 
+  describe 'content' do
+    let(:user) { create(:user) }
+    let(:guide) { create(:indexed_guide) }
+
+    let(:interactive) { create(:interactive) }
+    let(:playground) { create(:playground, guide: guide) }
+    let(:problem) { create(:problem) }
+    let(:reading) { create(:reading, guide: guide) }
+
+    context 'interactive' do
+      let(:assignment) { interactive.assignment_for(user) }
+
+      before { interactive.submit_try!(user, query: 'foo') }
+
+      it 'has no content' do
+        expect(assignment.solution).to be_nil
+      end
+    end
+
+    context 'playground has no content' do
+      let(:assignment) { playground.assignment_for(user) }
+
+      before { playground.submit_query!(user, query: 'foo') }
+
+      it 'has no content' do
+        expect(assignment.solution).to be_nil
+      end
+    end
+
+    context 'problem' do
+      let(:assignment) { problem.submit_solution!(user, content: 'foo') }
+
+      it 'has content' do
+        expect(assignment.solution).to eq 'foo'
+      end
+    end
+
+    context 'reading' do
+      let(:assignment) { reading.assignment_for(user) }
+
+      before { reading.submit_confirmation!(user) }
+
+      it 'has no content' do
+        expect(assignment.solution).to be_nil
+      end
+    end
+  end
+
   describe 'submission status' do
     let(:exercise) { create(:indexed_exercise) }
     let(:assignment) { create(:assignment, exercise: exercise, status: submission_status) }
