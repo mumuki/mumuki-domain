@@ -4,6 +4,9 @@ on: push
 
 jobs:
   test_and_deploy:
+    env:
+      RACK_ENV: test
+      RAILS_ENV: test
     runs-on: ubuntu-latest
     services:
       postgres:
