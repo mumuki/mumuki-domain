@@ -10,7 +10,7 @@ class Challenge < Exercise
 
   alias_method :own_extra, :extra
 
-  def extra(*)
+  def extra
     [guide.extra, own_extra]
       .compact
       .join("\n")
