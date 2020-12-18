@@ -21,20 +21,15 @@ class Problem < QueriableChallenge
     self.expectations = []
   end
 
+  alias_method :own_expectations, :expectations
+  alias_method :own_custom_expectations, :custom_expectations
+
   def expectations
-    own_expectations + guide_expectations
+    own_expectations + guide.expectations
   end
 
   def custom_expectations
-    "#{own_custom_expectations}\n#{guide_custom_expectations}"
-  end
-
-  def guide_expectations
-    guide.expectations
-  end
-
-  def guide_custom_expectations
-    guide.custom_expectations
+    "#{own_custom_expectations}\n#{guide.custom_expectations}"
   end
 
   def evaluation_criteria?

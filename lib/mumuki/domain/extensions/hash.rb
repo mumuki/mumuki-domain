@@ -11,4 +11,8 @@ class Hash
   def markdownified(*keys, **options)
     map { |k, v| key.in?(keys) ? v.markdownified(options) : v }.to_h
   end
+
+  def randomize_with(randomizer, seed)
+    transform_values { |v| v.randomize_with randomizer, seed }
+  end
 end

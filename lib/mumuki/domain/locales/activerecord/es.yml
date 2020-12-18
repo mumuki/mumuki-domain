@@ -32,7 +32,7 @@ es:
           attributes:
             randomizations:
               invalid_format: 'formato inválido'
-            own_expectations:
+            raw_expectations:
               invalid_format: 'formato inválido'
             assistance_rules:
               invalid_format: 'formato inválido'

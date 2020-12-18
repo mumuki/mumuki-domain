@@ -59,15 +59,8 @@ class String
   def sanitized
     Mumukit::ContentType::Sanitizer.sanitize self
   end
-end
 
-class NilClass
-  def affable
-  end
-
-  def markdownified(**options)
-  end
-
-  def sanitized
+  def randomize_with(randomizer, seed)
+    randomizer.randomize!(self, seed)
   end
 end
