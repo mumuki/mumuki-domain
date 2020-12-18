@@ -22,16 +22,6 @@ class Exercise < ApplicationRecord
   include SiblingsNavigation,
           ParentNavigation
 
-  randomize(*RANDOMIZED_FIELDS)
-
-  # These behaviours are actually part of
-  # Challenge subclass, but are included here in order to
-  # ensure proper ordering and non-interference
-  # with randomization behaviour
-  include WithExpectations
-  include WithAugmentation
-
-
   belongs_to :guide
 
   markdown_on :teacher_info
@@ -46,6 +36,7 @@ class Exercise < ApplicationRecord
   validates_presence_of :submissions_count,
                         :guide, :bibliotheca_id
 
+  randomize(*RANDOMIZED_FIELDS)
   delegate :timed?, to: :navigable_parent
 
   def console?

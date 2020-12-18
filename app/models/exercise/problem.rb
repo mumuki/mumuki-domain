@@ -1,5 +1,6 @@
 class Problem < QueriableChallenge
-  include WithEditor,
+  include WithExpectations,
+          WithEditor,
           Solvable
 
   markdown_on :corollary
@@ -18,6 +19,17 @@ class Problem < QueriableChallenge
     super
     self.test = nil
     self.expectations = []
+  end
+
+  alias_method :own_expectations, :expectations
+  alias_method :own_custom_expectations, :custom_expectations
+
+  def expectations
+    own_expectations + guide.expectations
+  end
+
+  def custom_expectations
+    "#{own_custom_expectations}\n#{guide.custom_expectations}"
   end
 
   def evaluation_criteria?
