@@ -19,10 +19,8 @@ class Array
   def multiple?
     size > 1
   end
-end
 
-class NilClass
-  def insert_last(element)
-    [element]
+  def randomize_with(randomizer, seed)
+    map { |it| it.randomize_with randomizer, seed }
   end
 end

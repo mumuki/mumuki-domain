@@ -35,8 +35,7 @@ module WithRandomizations
 
     def randomize_field(selector)
       define_method(selector) do |*args|
-        return unless super(*args)
-        randomizer.randomize!(super(*args), seed)
+        super(*args).randomize_with randomizer, seed
       end
     end
   end

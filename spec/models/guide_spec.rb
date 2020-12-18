@@ -110,6 +110,8 @@ describe Guide do
         description: 'works with $randomizedWord',
         extra: 'exercise extra',
         hint: 'try $randomizedWord',
+        expectations: [{binding: '$randomizedWord', inspection: 'Not:Uses:$randomizedWord'}],
+        custom_expectations: 'expect: assigns $randomizedWord;',
         test: 'describe "$randomizedWord" do pending end',
         randomizations: {
           randomizedWord: { type: :one_of, value: %w(some) }
@@ -117,17 +119,21 @@ describe Guide do
 
     it { expect(exercise.default_content).to eq 'x = "some" /*...previousSolution...*/' }
     it { expect(exercise.description).to eq "works with some" }
-    it { expect(exercise.expectations).to eq guide.expectations }
     it { expect(exercise.extra).to eq "guide extra\nexercise extra\n" }
     it { expect(exercise.hint).to eq "try some" }
+    it { expect(exercise.custom_expectations).to eq "expect: assigns some;\n" }
+    it { expect(exercise.expectations).to eq [
+          {'binding' => 'some', 'inspection' => 'Not:Uses:some'},
+          {'binding' => 'guide', 'inspection' => 'Uses:expectations'}] }
     it { expect(exercise.test).to eq 'describe "some" do pending end' }
 
     it { expect(exercise.to_resource_h).to json_eq({
               default_content: 'x = "$randomizedWord" /*...previousSolution...*/',
               description: 'works with $randomizedWord',
-              expectations: [],
               extra: 'exercise extra',
               hint: 'try $randomizedWord',
+              expectations: [{binding: '$randomizedWord', inspection: 'Not:Uses:$randomizedWord'}],
+              custom_expectations: 'expect: assigns $randomizedWord;',
               test: 'describe "$randomizedWord" do pending end'
             },
             only: Exercise::RANDOMIZED_FIELDS) }

@@ -1,5 +1,5 @@
 class Exercise < ApplicationRecord
-  RANDOMIZED_FIELDS = [:default_content, :description, :extra, :hint, :test]
+  RANDOMIZED_FIELDS = [:default_content, :description, :extra, :hint, :test, :expectations, :custom_expectations]
   BASIC_RESOURCE_FIELDS = %i(
     name layout editor corollary teacher_info manual_evaluation locale
     choices assistance_rules randomizations tag_list extra_visible goal
@@ -22,6 +22,16 @@ class Exercise < ApplicationRecord
   include SiblingsNavigation,
           ParentNavigation
 
+  randomize(*RANDOMIZED_FIELDS)
+
+  # These behaviours are actually part of
+  # Challenge subclass, but are included here in order to
+  # ensure proper ordering and non-interference
+  # with randomization behaviour
+  include WithExpectations
+  include WithAugmentation
+
+
   belongs_to :guide
 
   markdown_on :teacher_info
@@ -36,7 +46,6 @@ class Exercise < ApplicationRecord
   validates_presence_of :submissions_count,
                         :guide, :bibliotheca_id
 
-  randomize(*RANDOMIZED_FIELDS)
   delegate :timed?, to: :navigable_parent
 
   def console?
@@ -135,8 +144,6 @@ class Exercise < ApplicationRecord
     language_resource_h = language.to_embedded_resource_h if language != guide.language
     as_json(only: BASIC_RESOURCE_FIELDS)
       .merge(id: bibliotheca_id, language: language_resource_h, type: type.underscore)
-      .merge(expectations: self[:expectations])
-      .merge(custom_expectations: self[:custom_expectations])
       .merge(settings: self[:settings])
       .merge(RANDOMIZED_FIELDS.map { |it| [it, self[it]] }.to_h)
       .symbolize_keys
