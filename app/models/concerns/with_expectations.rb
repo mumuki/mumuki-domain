@@ -18,8 +18,12 @@ module WithExpectations
     self[:expectations] = expectations.map(&:stringify_keys)
   end
 
+  def raw_expectations
+    self[:expectations]
+  end
+
   def ensure_expectations_format
-    errors.add :own_expectations,
-               :invalid_format unless own_expectations.to_a.all? { |it| Mulang::Expectation.valid? it }
+    errors.add :raw_expectations,
+               :invalid_format unless raw_expectations.to_a.all? { |it| Mulang::Expectation.valid? it }
   end
 end

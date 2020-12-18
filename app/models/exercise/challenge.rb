@@ -8,8 +8,10 @@ class Challenge < Exercise
     self.layout = self.class.default_layout
   end
 
+  alias_method :own_extra, :extra
+
   def extra(*)
-    [guide.extra, super]
+    [guide.extra, own_extra]
       .compact
       .join("\n")
       .strip

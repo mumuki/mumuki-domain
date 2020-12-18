@@ -98,6 +98,30 @@ describe Guide do
     end
   end
 
+  describe 'fields inheritance' do
+    let!(:guide) do
+      create(:guide,
+        extra: 'guide extra',
+        expectations: [{binding: 'guide', inspection: 'Uses:expectations'}],
+        custom_expectations: 'expect: declares foo;',
+        exercises: [exercise])
+    end
+
+    let(:exercise) do
+      build(:exercise,
+        extra: 'foo exercise extra',
+        expectations: [{binding: 'foo', inspection: 'Not:Uses:foo'}],
+        custom_expectations: 'expect: assigns foo;')
+    end
+
+    it { expect(guide.raw_expectations).to eq guide.raw_expectations }
+    it { expect(exercise.raw_expectations).to eq [{'binding' => 'foo', 'inspection' => 'Not:Uses:foo'}] }
+
+    it { expect(exercise.own_custom_expectations).to eq 'expect: assigns foo;' }
+    it { expect(exercise.own_expectations).to eq [{'binding' => 'foo', 'inspection' => 'Not:Uses:foo'}] }
+    it { expect(exercise.own_extra).to eq 'foo exercise extra' }
+  end
+
   describe 'customizations' do
     let!(:guide) {
       create(:guide,
@@ -108,7 +132,7 @@ describe Guide do
       build(:exercise,
         default_content: 'x = "$randomizedWord" /*...previousSolution...*/',
         description: 'works with $randomizedWord',
-        extra: 'exercise extra',
+        extra: '$randomizedWord exercise extra',
         hint: 'try $randomizedWord',
         expectations: [{binding: '$randomizedWord', inspection: 'Not:Uses:$randomizedWord'}],
         custom_expectations: 'expect: assigns $randomizedWord;',
@@ -119,9 +143,16 @@ describe Guide do
 
     it { expect(exercise.default_content).to eq 'x = "some" /*...previousSolution...*/' }
     it { expect(exercise.description).to eq "works with some" }
-    it { expect(exercise.extra).to eq "guide extra\nexercise extra\n" }
     it { expect(exercise.hint).to eq "try some" }
+
+    it { expect(exercise.own_extra).to eq "some exercise extra" }
+    it { expect(exercise.extra).to eq "guide extra\nsome exercise extra\n" }
+
+    it { expect(exercise.own_custom_expectations).to eq "expect: assigns some;" }
     it { expect(exercise.custom_expectations).to eq "expect: assigns some;\n" }
+
+    it { expect(exercise.raw_expectations).to eq [{'binding' => '$randomizedWord', 'inspection' => 'Not:Uses:$randomizedWord'}] }
+    it { expect(exercise.own_expectations).to eq [{'binding' => 'some', 'inspection' => 'Not:Uses:some'}] }
     it { expect(exercise.expectations).to eq [
           {'binding' => 'some', 'inspection' => 'Not:Uses:some'},
           {'binding' => 'guide', 'inspection' => 'Uses:expectations'}] }
@@ -130,7 +161,7 @@ describe Guide do
     it { expect(exercise.to_resource_h).to json_eq({
               default_content: 'x = "$randomizedWord" /*...previousSolution...*/',
               description: 'works with $randomizedWord',
-              extra: 'exercise extra',
+              extra: '$randomizedWord exercise extra',
               hint: 'try $randomizedWord',
               expectations: [{binding: '$randomizedWord', inspection: 'Not:Uses:$randomizedWord'}],
               custom_expectations: 'expect: assigns $randomizedWord;',

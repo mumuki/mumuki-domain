@@ -70,10 +70,6 @@ class Guide < Content
     stats_for(user).done?
   end
 
-  def own_expectations
-    self[:expectations]
-  end
-
   # Finds an exercise by bibliotheca_id within this guide
   def locate_exercise!(bibliotheca_id)
     exercises.find_by!(bibliotheca_id: bibliotheca_id)

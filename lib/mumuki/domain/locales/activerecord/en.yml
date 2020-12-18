@@ -15,7 +15,7 @@ en:
           attributes:
             randomizations:
               invalid_format: 'format is invalid'
-            own_expectations:
+            raw_expectations:
               invalid_format: 'format is invalid'
             assistance_rules:
               invalid_format: 'format is invalid'
