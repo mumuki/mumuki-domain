@@ -114,7 +114,7 @@ describe Guide do
         custom_expectations: 'expect: assigns foo;')
     end
 
-    it { expect(guide.raw_expectations).to eq guide.raw_expectations }
+    it { expect(guide.raw_expectations).to eq [{'binding' => 'guide', 'inspection' => 'Uses:expectations'}] }
     it { expect(exercise.raw_expectations).to eq [{'binding' => 'foo', 'inspection' => 'Not:Uses:foo'}] }
 
     it { expect(exercise.own_custom_expectations).to eq 'expect: assigns foo;' }
