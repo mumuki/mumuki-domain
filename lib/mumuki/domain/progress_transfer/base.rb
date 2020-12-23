@@ -34,7 +34,7 @@ class Mumuki::Domain::ProgressTransfer::Base
 
   def validate_transferrable!
     raise "Transferred progress' content must be available in destination!" unless progress_item.content_available_in?(destination_organization)
-    raise 'User must be student in destination organization' unless user.student_granted_organizations.include?(destination_organization)
+    raise 'User must be student in destination organization' unless user.student_of?(destination_organization)
     raise 'Transfer only supported for guide indicators' unless progress_item.guide_indicator?
   end
 
