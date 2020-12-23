@@ -50,4 +50,8 @@ module Mumuki::Domain::Status::Submission
   def exp_given
     0
   end
+
+  def dup
+    self
+  end
 end

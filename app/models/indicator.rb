@@ -66,7 +66,42 @@ class Indicator < Progress
     where(content: content, organization: organization).delete_all
   end
 
+  def _move_to!(organization)
+    move_children_to!(organization)
+    super
+  end
+
+  def _copy_to!(organization)
+    progress_item = super
+    children.each { |it| it._copy_to! organization }
+    progress_item
+  end
+
+  def move_children_to!(organization)
+    children.update_all(organization_id: organization.id)
+
+    indicators.each { |it| it.move_children_to!(organization) }
+  end
+
+  def cascade_delete_children!
+    indicators.each(&:cascade_delete_children!)
+    children.delete_all(:delete_all)
+  end
+
+  def content_available_in?(organization)
+    content.usage_in_organization(organization).present?
+  end
+
+  def delete_duplicates_in!(organization)
+    duplicates_in(organization).each(&:cascade_delete_children!)
+    super
+  end
+
   private
+
+  def duplicates_key
+    { content: content, user: user }
+  end
 
   def children
     indicators.presence || assignments
