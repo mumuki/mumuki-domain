@@ -38,7 +38,7 @@ class Exercise < ApplicationRecord
 
   randomize(*RANDOMIZED_FIELDS)
   delegate :timed?, to: :navigable_parent
-  delegate :stats_for, to: :guide, allow_nil: true
+  delegate :stats_for, to: :guide
 
   def console?
     queriable?
