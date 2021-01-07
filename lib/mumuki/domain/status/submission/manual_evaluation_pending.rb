@@ -10,6 +10,6 @@ module Mumuki::Domain::Status::Submission::ManualEvaluationPending
   end
 
   def self.iconize
-    {class: :info, type: 'clock-o'}
+    {class: :info, type: 'clock'}
   end
 end
