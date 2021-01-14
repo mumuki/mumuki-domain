@@ -6,6 +6,7 @@ class Exam < ApplicationRecord
 
   belongs_to :organization
   belongs_to :course
+  belongs_to :exam_registration, optional: true
 
   has_many :authorizations, class_name: 'ExamAuthorization', dependent: :destroy
   has_many :users, through: :authorizations
