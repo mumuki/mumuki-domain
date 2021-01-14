@@ -10,6 +10,7 @@ class Exercise < ApplicationRecord
   include WithNumber,
           WithName,
           WithAssignments,
+          WithProgress,
           FriendlyName,
           WithLanguage,
           Assistable,
