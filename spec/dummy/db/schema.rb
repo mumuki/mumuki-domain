@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210118180941) do
+ActiveRecord::Schema.define(version: 20210118194904) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -340,6 +340,20 @@ ActiveRecord::Schema.define(version: 20210118180941) do
     t.integer "discussion_id"
     t.boolean "approved", default: false
     t.boolean "not_actually_a_question", default: false
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.integer "priority", default: 100
+    t.boolean "read", default: false
+    t.string "target_type"
+    t.bigint "target_id"
+    t.bigint "user_id"
+    t.bigint "organization_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_notifications_on_organization_id"
+    t.index ["target_type", "target_id"], name: "index_notifications_on_target_type_and_target_id"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "organizations", id: :serial, force: :cascade do |t|

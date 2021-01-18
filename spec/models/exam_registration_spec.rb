@@ -32,6 +32,12 @@ describe ExamRegistration, organization_workspace: :test do
       it { expect(exam.authorized? user).to be_truthy }
       it { expect(exam.authorized? other_user).to be_falsey }
     end
+
+    context 'creates notifications for all users' do
+      it { expect(user.notifications.size).to eq(1) }
+      it { expect(other_user.notifications.size).to eq(1) }
+      it { expect(user.notifications.first.target).to eq(auth_requests.first) }
+    end
   end
 
   describe '.authorization_criterion' do

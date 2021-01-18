@@ -12,6 +12,7 @@ class User < ApplicationRecord
   serialize :permissions, Mumukit::Auth::Permissions
 
 
+  has_many :notifications
   has_many :assignments, foreign_key: :submitter_id
   has_many :messages, -> { order(created_at: :desc) }, through: :assignments
 
