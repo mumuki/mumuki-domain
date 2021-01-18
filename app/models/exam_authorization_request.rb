@@ -8,12 +8,14 @@ class ExamAuthorizationRequest < ApplicationRecord
   before_save :set_default_status!
   after_update :notify_user!
 
-  def set_default_status!
-    self.status ||= :pending
-  end
-
   def try_authorize!
     exam.authorize! user if approved?
+  end
+
+  private
+
+  def set_default_status!
+    self.status ||= :pending
   end
 
   def notify_user!

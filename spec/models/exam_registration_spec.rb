@@ -3,11 +3,23 @@ require 'spec_helper'
 describe ExamRegistration, organization_workspace: :test do
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
+  let(:criterion_type) { :none }
+  let(:criterion_value) { 0 }
   let(:registration) { create(:exam_registration, authorization_criterion_type: criterion_type, authorization_criterion_value: criterion_value) }
 
   def assignments_for(student, count)
     exercises = create_list(:indexed_exercise, count)
     exercises.map { |it| it.submit_solution!(student, content: '') }
+  end
+
+  describe '.start!' do
+    context 'creates notifications for all users' do
+      before { registration.start! [user, other_user] }
+
+      it { expect(user.notifications.size).to eq(1) }
+      it { expect(other_user.notifications.size).to eq(1) }
+      it { expect(user.notifications.first.target).to eq(registration) }
+    end
   end
 
   describe '.process_requests!' do

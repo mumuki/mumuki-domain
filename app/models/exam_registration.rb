@@ -24,8 +24,8 @@ class ExamRegistration < ApplicationRecord
     self.authorization_criterion_type ||= :none
   end
 
-  def start!
-    # TODO: enviar notificaciones a todos los usuarios del area (organization o course)
+  def start!(users)
+    users.each &method(:notify_user!)
   end
 
   def process_requests!
@@ -33,5 +33,11 @@ class ExamRegistration < ApplicationRecord
       process_request! it
       it.try_authorize!
     end
+  end
+
+  private
+
+  def notify_user!(user)
+    Notification.create! organization: organization, user: user, target: self
   end
 end
