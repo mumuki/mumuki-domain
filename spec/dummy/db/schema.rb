@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210114201454) do
+ActiveRecord::Schema.define(version: 20210118180941) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -132,6 +132,20 @@ ActiveRecord::Schema.define(version: 20210114201454) do
     t.index ["item_type", "item_id"], name: "index_discussions_on_item_type_and_item_id"
     t.index ["organization_id"], name: "index_discussions_on_organization_id"
     t.index ["status_updated_by_id"], name: "index_discussions_on_status_updated_by_id"
+  end
+
+  create_table "exam_authorization_requests", force: :cascade do |t|
+    t.integer "status", default: 0
+    t.bigint "exam_id"
+    t.bigint "exam_registration_id"
+    t.bigint "user_id"
+    t.bigint "organization_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exam_id"], name: "index_exam_authorization_requests_on_exam_id"
+    t.index ["exam_registration_id"], name: "index_exam_authorization_requests_on_exam_registration_id"
+    t.index ["organization_id"], name: "index_exam_authorization_requests_on_organization_id"
+    t.index ["user_id"], name: "index_exam_authorization_requests_on_user_id"
   end
 
   create_table "exam_authorizations", force: :cascade do |t|

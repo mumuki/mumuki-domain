@@ -10,6 +10,7 @@ class Exam < ApplicationRecord
   belongs_to :exam_registration, optional: true
 
   has_many :authorizations, class_name: 'ExamAuthorization', dependent: :destroy
+  has_many :authorization_requests, class_name: 'ExamAuthorizationRequest', dependent: :destroy
   has_many :users, through: :authorizations
 
   enum passing_criterion_type: [:none, :percentage, :passed_exercises], _prefix: :passing_criterion

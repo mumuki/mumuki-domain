@@ -17,6 +17,14 @@ class ExamRegistration::AuthorizationCriterion
     raise "Invalid criterion value #{value} for #{type}" unless valid?
   end
 
+  def process_request!(authorization_request)
+    authorization_request.update! status: authorization_status_for(authorization_request.user)
+  end
+
+  def authorization_status_for(user)
+    enabled_for?(user) ? :approved : :rejected
+  end
+
   def self.parse(type, value)
     parse_criterion_type(type, value)
   end
