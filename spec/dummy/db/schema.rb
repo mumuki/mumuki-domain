@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210118194904) do
+ActiveRecord::Schema.define(version: 20210119190204) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -137,13 +137,11 @@ ActiveRecord::Schema.define(version: 20210118194904) do
   create_table "exam_authorization_requests", force: :cascade do |t|
     t.integer "status", default: 0
     t.bigint "exam_id"
-    t.bigint "exam_registration_id"
     t.bigint "user_id"
     t.bigint "organization_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["exam_id"], name: "index_exam_authorization_requests_on_exam_id"
-    t.index ["exam_registration_id"], name: "index_exam_authorization_requests_on_exam_registration_id"
     t.index ["organization_id"], name: "index_exam_authorization_requests_on_organization_id"
     t.index ["user_id"], name: "index_exam_authorization_requests_on_user_id"
   end
@@ -167,6 +165,13 @@ ActiveRecord::Schema.define(version: 20210118194904) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["organization_id"], name: "index_exam_registrations_on_organization_id"
+  end
+
+  create_table "exam_registrations_exams", id: false, force: :cascade do |t|
+    t.bigint "exam_id", null: false
+    t.bigint "exam_registration_id", null: false
+    t.index ["exam_id"], name: "index_exam_registrations_exams_on_exam_id"
+    t.index ["exam_registration_id"], name: "index_exam_registrations_exams_on_exam_registration_id"
   end
 
   create_table "exams", id: :serial, force: :cascade do |t|

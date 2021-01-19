@@ -25,7 +25,7 @@ describe ExamRegistration, organization_workspace: :test do
   describe '.process_requests!' do
     let(:criterion_type) { :passed_exercises }
     let(:criterion_value) { 2 }
-    let(:exam) { create(:exam, exam_registration: registration) }
+    let(:exam) { create(:exam, exam_registrations: [registration]) }
     let!(:auth_requests) do
       [user, other_user].map { |it| create(:exam_authorization_request, exam: exam, user: it) }
     end
