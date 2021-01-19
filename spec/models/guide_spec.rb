@@ -190,7 +190,7 @@ describe Guide do
     end
 
     context "under a organization that does not support manual evaluation", organization_workspace: :test do
-      before { Organization.current.update! hide_manual_evaluation_content: true }
+      before { Organization.current.update! prevent_manual_evaluation_content: true }
       it { expect(guide.exercises.count).to eq 1 }
     end
   end

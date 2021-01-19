@@ -376,7 +376,7 @@ ActiveRecord::Schema.define(version: 20210119190204) do
     t.text "display_description"
     t.boolean "wins_page"
     t.boolean "immersible"
-    t.boolean "hide_manual_evaluation_content"
+    t.boolean "prevent_manual_evaluation_content"
     t.index ["book_id"], name: "index_organizations_on_book_id"
     t.index ["name"], name: "index_organizations_on_name", unique: true
   end
