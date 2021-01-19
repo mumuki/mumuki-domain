@@ -22,7 +22,7 @@ class ExamRegistration::AuthorizationCriterion
   end
 
   def authorization_status_for(user)
-    enabled_for?(user) ? :approved : :rejected
+    meets_authorization_criteria?(user) ? :approved : :rejected
   end
 
   def self.parse(type, value)
@@ -45,7 +45,7 @@ class ExamRegistration::AuthorizationCriterion::None < ExamRegistration::Authori
     !value
   end
 
-  def enabled_for?(_user)
+  def meets_authorization_criteria?(_user)
     true
   end
 end
@@ -55,7 +55,7 @@ class ExamRegistration::AuthorizationCriterion::PassedExercises < ExamRegistrati
     value.positive?
   end
 
-  def enabled_for?(user)
+  def meets_authorization_criteria?(user)
     user.passed_submissions_count >= value
   end
 end

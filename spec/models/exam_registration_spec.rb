@@ -65,10 +65,6 @@ describe ExamRegistration, organization_workspace: :test do
           let(:criterion_type) { 'none' }
           it { expect(registration.authorization_criterion).to be_an_instance_of ExamRegistration::AuthorizationCriterion::None }
         end
-        context 'nil criterion' do
-          let(:criterion_type) { nil }
-          it { expect(registration.authorization_criterion).to be_an_instance_of ExamRegistration::AuthorizationCriterion::None }
-        end
         context 'invalid criterion' do
           let(:criterion_type) { 'unsupported' }
           it { expect { registration.authorization_criterion }.to raise_error ArgumentError }
@@ -83,13 +79,13 @@ describe ExamRegistration, organization_workspace: :test do
       end
     end
 
-    context 'enabled_for?' do
+    context 'meets_authorization_criteria?' do
       let(:criterion_value) { 2 }
 
       context ExamRegistration::AuthorizationCriterion::None do
         let(:criterion_type) { 'none' }
         context 'with any user' do
-          it { expect(registration.enabled_for? user).to be_truthy }
+          it { expect(registration.meets_authorization_criteria? user).to be_truthy }
         end
       end
 
@@ -99,12 +95,12 @@ describe ExamRegistration, organization_workspace: :test do
 
         context 'when count is greater or equal' do
           before { assignments.each(&:passed!) }
-          it { expect(registration.enabled_for? user).to be_truthy }
+          it { expect(registration.meets_authorization_criteria? user).to be_truthy }
         end
 
         context 'when count is less' do
           before { assignments.first.passed! }
-          it { expect(registration.enabled_for? user).to be_falsey }
+          it { expect(registration.meets_authorization_criteria? user).to be_falsey }
         end
       end
     end
