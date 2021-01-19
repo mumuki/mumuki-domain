@@ -207,7 +207,7 @@ class Organization < ApplicationRecord
     end
 
     def silenced?
-      !Mumukit::Platform::Organization.current? || current.silent?
+      !current? || current.silent?
     end
 
     def sync_key_id_field

@@ -74,6 +74,10 @@ module Mumuki::Domain::Helpers::Organization
       Mumukit::Platform::Organization.current?
     end
 
+    def safe_current
+      current if current?
+    end
+
     def parse(json)
       json
         .slice(:name)

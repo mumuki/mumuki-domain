@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Guide do
   let!(:extra_user) { create(:user, first_name: 'Ignatius', last_name: 'Reilly') }
   let(:guide) { create(:guide) }
+  let(:python) { create :language, name: 'python', extension: 'py', test_extension: 'py' }
 
   describe("schema fields are in sync") do
     let(:resource_h_fields) { Guide.new(language: Language.new).to_expanded_resource_h.keys - [:exercises]}
@@ -170,6 +171,30 @@ describe Guide do
             only: Exercise::RANDOMIZED_FIELDS) }
   end
 
+  describe '#exercises' do
+    let(:guide) do
+      create :guide,
+            language: python,
+            exercises: [
+              create(:reading),
+              create(:problem, manual_evaluation: true),
+            ]
+    end
+
+    context "under no organization" do
+      it { expect(guide.exercises.count).to eq 2 }
+    end
+
+    context "under a organization that support manual evaluation", organization_workspace: :test do
+      it { expect(guide.exercises.count).to eq 2 }
+    end
+
+    context "under a organization that does not support manual evaluation", organization_workspace: :test do
+      before { Organization.current.update! hide_manual_evaluation_content: true }
+      it { expect(guide.exercises.count).to eq 1 }
+    end
+  end
+
   describe '#to_resource_h' do
     let(:guide) do
       create :guide,
@@ -182,10 +207,6 @@ describe Guide do
               create(:problem, name: 'Say hello', language: python, bibliotheca_id: 11),
               create(:playground, name: 'Some functions', language: python, bibliotheca_id: 12)
             ]
-    end
-
-    let(:python) do
-      create :language, name: 'python', extension: 'py', test_extension: 'py'
     end
 
     it { expect(guide.to_resource_h).to json_eq beta: false,
