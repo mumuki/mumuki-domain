@@ -297,6 +297,31 @@ describe User, organization_workspace: :test do
     it { expect(user.teacher? 'pdep/k2001').to be false }
   end
 
+  describe '#passed_submissions_count_in' do
+    let!(:exercise_1) { build(:indexed_exercise) }
+    let!(:exercise_2) { build(:indexed_exercise) }
+    let!(:exercise_3) { build(:indexed_exercise) }
+
+    let(:user) { create(:user) }
+
+    let!(:assignment_for) do
+      # Failing after passing shouldn't affect count
+      exercise_1.submit_solution!(user, content: '').passed!
+      exercise_1.submit_solution!(user, content: '').failed!
+
+      exercise_2.submit_solution!(user, content: '').passed!
+    end
+
+    context 'an organization with submissions' do
+      it { expect(user.passed_submissions_count_in Organization.current).to eq 2 }
+    end
+
+    context 'an organization without submissions' do
+      let(:another_organization) { create(:organization) }
+      it { expect(user.passed_submissions_count_in another_organization).to eq 0 }
+    end
+  end
+
   describe '#submissions_count' do
     let!(:exercise_1) { build(:indexed_exercise) }
     let!(:exercise_2) { build(:indexed_exercise) }

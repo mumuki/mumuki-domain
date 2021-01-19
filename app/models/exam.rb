@@ -3,12 +3,16 @@ class Exam < ApplicationRecord
   include GuideContainer
   include FriendlyName
   include TerminalNavigation
+  include WithTimedEnablement
 
   belongs_to :organization
   belongs_to :course
 
   has_many :authorizations, class_name: 'ExamAuthorization', dependent: :destroy
+  has_many :authorization_requests, class_name: 'ExamAuthorizationRequest', dependent: :destroy
   has_many :users, through: :authorizations
+
+  has_and_belongs_to_many :exam_registrations
 
   enum passing_criterion_type: [:none, :percentage, :passed_exercises], _prefix: :passing_criterion
 
@@ -25,14 +29,6 @@ class Exam < ApplicationRecord
 
   def used_in?(organization)
     organization == self.organization
-  end
-
-  def enabled?
-    enabled_range.cover? DateTime.current
-  end
-
-  def enabled_range
-    start_time..end_time
   end
 
   def enabled_for?(user)

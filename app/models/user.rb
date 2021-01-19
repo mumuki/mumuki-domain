@@ -12,6 +12,7 @@ class User < ApplicationRecord
   serialize :permissions, Mumukit::Auth::Permissions
 
 
+  has_many :notifications
   has_many :assignments, foreign_key: :submitter_id
   has_many :messages, -> { order(created_at: :desc) }, through: :assignments
 
@@ -47,6 +48,10 @@ class User < ApplicationRecord
 
   def last_lesson
     last_guide.try(:lesson)
+  end
+
+  def passed_submissions_count_in(organization)
+    assignments.where(top_submission_status: Mumuki::Domain::Status::Submission::Passed.to_i, organization: organization).count
   end
 
   def submissions_count
