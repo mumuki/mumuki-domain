@@ -18,11 +18,11 @@ class ExamRegistration::AuthorizationCriterion
   end
 
   def process_request!(authorization_request)
-    authorization_request.update! status: authorization_status_for(authorization_request.user)
+    authorization_request.update! status: authorization_status_for(authorization_request)
   end
 
-  def authorization_status_for(user)
-    meets_authorization_criteria?(user) ? :approved : :rejected
+  def authorization_status_for(authorization_request)
+    meets_authorization_criteria?(authorization_request) ? :approved : :rejected
   end
 
   def self.parse(type, value)
@@ -45,7 +45,7 @@ class ExamRegistration::AuthorizationCriterion::None < ExamRegistration::Authori
     !value
   end
 
-  def meets_authorization_criteria?(_user)
+  def meets_authorization_criteria?(_authorization_request)
     true
   end
 end
@@ -55,7 +55,7 @@ class ExamRegistration::AuthorizationCriterion::PassedExercises < ExamRegistrati
     value.positive?
   end
 
-  def meets_authorization_criteria?(user)
-    user.passed_submissions_count >= value
+  def meets_authorization_criteria?(authorization_request)
+    authorization_request.user.passed_submissions_count_in(authorization_request.organization) >= value
   end
 end

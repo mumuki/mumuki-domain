@@ -33,7 +33,6 @@ describe ExamRegistration, organization_workspace: :test do
     before { assignments_for(user, 3).each(&:passed!) }
     before { registration.process_requests! }
 
-    # TODO: cómo sacar estos reload?
     context 'updates authorization request status' do
       it { expect(auth_requests[0].reload.status).to eq('approved') }
       it { expect(auth_requests[1].reload.status).to eq('rejected') }
@@ -81,11 +80,12 @@ describe ExamRegistration, organization_workspace: :test do
 
     context 'meets_authorization_criteria?' do
       let(:criterion_value) { 2 }
+      let(:authorization_request) { create(:exam_authorization_request, user: user) }
 
       context ExamRegistration::AuthorizationCriterion::None do
         let(:criterion_type) { 'none' }
         context 'with any user' do
-          it { expect(registration.meets_authorization_criteria? user).to be_truthy }
+          it { expect(registration.meets_authorization_criteria? authorization_request).to be_truthy }
         end
       end
 
@@ -95,12 +95,12 @@ describe ExamRegistration, organization_workspace: :test do
 
         context 'when count is greater or equal' do
           before { assignments.each(&:passed!) }
-          it { expect(registration.meets_authorization_criteria? user).to be_truthy }
+          it { expect(registration.meets_authorization_criteria? authorization_request).to be_truthy }
         end
 
         context 'when count is less' do
           before { assignments.first.passed! }
-          it { expect(registration.meets_authorization_criteria? user).to be_falsey }
+          it { expect(registration.meets_authorization_criteria? authorization_request).to be_falsey }
         end
       end
     end

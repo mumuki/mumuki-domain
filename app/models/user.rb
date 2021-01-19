@@ -50,6 +50,10 @@ class User < ApplicationRecord
     last_guide.try(:lesson)
   end
 
+  def passed_submissions_count_in(organization)
+    assignments.where(top_submission_status: Mumuki::Domain::Status::Submission::Passed.to_i, organization: organization).count
+  end
+
   def submissions_count
     assignments.pluck(:submissions_count).sum
   end
