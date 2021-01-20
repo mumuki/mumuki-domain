@@ -35,6 +35,14 @@ class Topic < Content
     Chapter.where(topic: self).map(&:book).each(&:reindex_usages!)
   end
 
+  def monolesson
+    @monolesson ||= lessons.to_a.single
+  end
+
+  def monolesson?
+    monolesson.present?
+  end
+
   ## Forking
 
   def fork_children_into!(dup, organization, syncer)

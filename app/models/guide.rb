@@ -42,7 +42,11 @@ class Guide < Content
   end
 
   def next_exercise(user)
-    user.next_exercise_at(self)
+    if user.present?
+      user.next_exercise_at(self)
+    else
+      first_exercise
+    end
   end
 
   # TODO: Make use of pending_siblings logic

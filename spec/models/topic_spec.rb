@@ -54,4 +54,22 @@ describe Topic do
       it { expect(Lesson.count).to eq 3 }
     end
   end
+
+  describe '#monolesson' do
+    context 'topic has one lesson' do
+      let(:topic) { create :topic, slug: 'foo/bar', lessons: [create(:lesson, name: 'l1')] }
+      it { expect(topic.monolesson?).to eq true }
+    end
+
+    context 'topic has two lessons' do
+      let(:topic) { create :topic, slug: 'foo/bar', lessons: [create(:lesson, name: 'l1'), create(:lesson, name: 'l2')] }
+      it { expect(topic.monolesson?).to eq false }
+    end
+
+    context 'topic has no lessons' do
+      let(:topic) { create :topic, slug: 'foo/bar', lessons: [] }
+      it { expect(topic.monolesson?).to eq false }
+    end
+  end
+
 end

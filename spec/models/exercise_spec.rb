@@ -109,6 +109,12 @@ describe Exercise, organization_workspace: :test do
       it { expect(guide.next_exercise(user)).to eq exercise_within_guide }
       it { expect(exercise_within_guide.next_for(user)).to be nil }
     end
+
+    context 'when no user present' do
+      let(:guide) { create(:guide, exercises: create_list(:exercise, 3)) }
+
+      it { expect(guide.next_exercise(nil)).to be guide.exercises.first }
+    end
   end
 
   describe '#extra' do
