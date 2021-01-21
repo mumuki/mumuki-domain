@@ -28,6 +28,10 @@ class Exercise < ApplicationRecord
 
   defaults { self.submissions_count = 0 }
 
+  def self.default_scope
+    where(manual_evaluation: false) if Organization.safe_current&.prevent_manual_evaluation_content
+  end
+
   alias_method :progress_for, :assignment_for
 
   serialize :choices, Array

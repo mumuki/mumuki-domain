@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Organization, organization_workspace: :test do
   let(:user) { create(:user) }
   let(:central) { create(:organization, name: 'central') }
+  let(:current) { Organization.find_by(name: 'test') }
 
   describe '.import_from_resource_h!' do
     let(:book) { create(:book) }
@@ -50,9 +51,19 @@ describe Organization, organization_workspace: :test do
   end
 
   describe '.current' do
-    let(:organization) { Organization.find_by(name: 'test') }
-    it { expect(organization).to_not be nil }
-    it { expect(organization).to eq Organization.current }
+    it { expect(current).to_not be nil }
+    it { expect(Organization.current).to eq current }
+  end
+
+  describe '.safe_current' do
+    context "with current organization" do
+      it { expect(Organization.safe_current).to eq current }
+    end
+
+    context "without current organization" do
+      before { Mumukit::Platform::Organization.leave! }
+      it { expect(Organization.safe_current).to be nil }
+    end
   end
 
   describe 'defaults' do
