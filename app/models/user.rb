@@ -78,6 +78,12 @@ class User < ApplicationRecord
     messages.where read: false
   end
 
+  def unread_notifications
+    # TODO: message and discussion should trigger notification instead of being one
+    all = notifications.where(read: false) + unread_messages + unread_discussions
+    all.sort_by(&:created_at).reverse
+  end
+
   def visit!(organization)
     update!(last_organization: organization) if organization != last_organization
   end
