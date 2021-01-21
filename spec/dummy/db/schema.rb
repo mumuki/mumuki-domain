@@ -137,11 +137,13 @@ ActiveRecord::Schema.define(version: 20210119190204) do
   create_table "exam_authorization_requests", force: :cascade do |t|
     t.integer "status", default: 0
     t.bigint "exam_id"
+    t.bigint "exam_registration_id"
     t.bigint "user_id"
     t.bigint "organization_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["exam_id"], name: "index_exam_authorization_requests_on_exam_id"
+    t.index ["exam_registration_id"], name: "index_exam_authorization_requests_on_exam_registration_id"
     t.index ["organization_id"], name: "index_exam_authorization_requests_on_organization_id"
     t.index ["user_id"], name: "index_exam_authorization_requests_on_user_id"
   end
@@ -189,10 +191,8 @@ ActiveRecord::Schema.define(version: 20210119190204) do
     t.bigint "course_id"
     t.integer "passing_criterion_type", default: 0
     t.integer "passing_criterion_value"
-    t.bigint "exam_registration_id"
     t.index ["classroom_id"], name: "index_exams_on_classroom_id", unique: true
     t.index ["course_id"], name: "index_exams_on_course_id"
-    t.index ["exam_registration_id"], name: "index_exams_on_exam_registration_id"
     t.index ["guide_id"], name: "index_exams_on_guide_id"
     t.index ["organization_id"], name: "index_exams_on_organization_id"
   end
