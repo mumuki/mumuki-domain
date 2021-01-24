@@ -63,9 +63,22 @@ class Guide < Content
   end
 
   def assignments_for(user, organization = Organization.current)
+    map_preloaded_assignments_for user, organization do |it, exercise|
+      it || user.build_assignment(exercise, organization)
+    end
+  end
+
+
+  def statuses_for(user, organization = Organization.current)
+    map_preloaded_assignments_for user, organization do |it|
+      it&.status || Mumuki::Domain::Status::Submission::Pending
+    end
+  end
+
+  def map_preloaded_assignments_for(user, _organization = Organization.current, &block)
     exercises = self.exercises
     ActiveRecord::Associations::Preloader.new.preload(exercises, :assignments, Assignment.where(submitter: user))
-    exercises.map { |it| it.assignments.first || user.build_assignment(it, organization) }
+    exercises.map { |it| block.call it.assignments.first, it }
   end
 
   def first_exercise
