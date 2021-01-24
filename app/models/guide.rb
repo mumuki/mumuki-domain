@@ -62,6 +62,12 @@ class Guide < Content
         where('assignments.id is null')
   end
 
+  def assignments_for(user, organization = Organization.current)
+    exercises = self.exercises
+    ActiveRecord::Associations::Preloader.new.preload(exercises, :assignments, Assignment.where(submitter: user))
+    exercises.map { |it| it.assignments.first || user.build_assignment(it, organization) }
+  end
+
   def first_exercise
     exercises.first
   end

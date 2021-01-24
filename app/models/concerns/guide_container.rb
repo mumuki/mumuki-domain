@@ -13,7 +13,8 @@ module GuideContainer
              :first_exercise,
              :next_exercise,
              :stats_for,
-             :exercises_count, to: :guide
+             :exercises_count,
+             :assignments_for, to: :guide
   end
 
   def index_usage!(organization = Organization.current)
