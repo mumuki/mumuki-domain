@@ -11,6 +11,10 @@ class Stats
     failed + pending == 0
   end
 
+  def almost_done?
+    failed + pending <= 1
+  end
+
   def started?
     submitted > 0
   end
