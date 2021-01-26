@@ -81,6 +81,8 @@ module Mumuki::Domain::Helpers::User
     result.map { |org| Mumukit::Platform::Organization.find_by_name!(org) rescue nil }.compact
   end
 
+  cache_accessor :any_granted_organizations, :student_granted_organizations
+
   def has_student_granted_organizations?
     student_granted_organizations.present?
   end
