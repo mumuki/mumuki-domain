@@ -21,6 +21,11 @@ describe Guide do
   describe '#assignments_for', organization_workspace: :test do
     let(:guide) { create(:guide, exercises: [create(:exercise), create(:exercise), create(:exercise)]) }
 
+    context "no user" do
+      it { expect(guide.assignments_for(nil).map(&:status)).to eq [:pending, :pending, :pending] }
+      it { expect(guide.find_assignments_for nil).to eq [nil, nil, nil] }
+    end
+
     context "no assignments" do
       it { expect(guide.assignments_for(user).map(&:status)).to eq [:pending, :pending, :pending] }
       it { expect(guide.find_assignments_for user).to eq [nil, nil, nil] }

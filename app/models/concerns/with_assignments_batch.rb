@@ -4,15 +4,15 @@
 module WithAssignmentsBatch
   extend ActiveSupport::Concern
 
-  def find_assignments_for(user, _organization = Organization.current)
+  def find_assignments_for(user, _organization = Organization.current, &block)
+    block = block_given? ? block : lambda { |it, _e| it }
+
+    return exercises.map { |it| block.call nil, it  } unless user
+
     exercises = self.exercises
     ActiveRecord::Associations::Preloader.new.preload(exercises, :assignments, Assignment.where(submitter: user))
 
-    if block_given?
-      exercises.map { |it| yield it.assignments.first, it }
-    else
-      exercises.map { |it| it.assignments.first }
-    end
+    exercises.map { |it| block.call it.assignments.first, it }
   end
 
   def statuses_for(user, organization = Organization.current)
@@ -23,7 +23,7 @@ module WithAssignmentsBatch
 
   def assignments_for(user, organization = Organization.current)
     find_assignments_for user, organization do |it, exercise|
-      it || user.build_assignment(exercise, organization)
+      it || Assignment.build_for(user, exercise, organization)
     end
   end
 end
