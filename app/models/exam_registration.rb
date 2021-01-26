@@ -1,5 +1,6 @@
 class ExamRegistration < ApplicationRecord
   include WithTimedEnablement
+  include TerminalNavigation
 
   belongs_to :organization
   has_and_belongs_to_many :exams
@@ -10,6 +11,8 @@ class ExamRegistration < ApplicationRecord
   before_save :ensure_valid_authorization_criterion!
 
   delegate :meets_authorization_criteria?, :process_request!, to: :authorization_criterion
+
+  alias_attribute :name, :description
 
   def authorization_criterion
     @authorization_criterion ||= ExamRegistration::AuthorizationCriterion.parse(authorization_criterion_type, authorization_criterion_value)
