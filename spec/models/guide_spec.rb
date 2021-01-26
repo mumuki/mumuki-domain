@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Guide do
-  let!(:extra_user) { create(:user, first_name: 'Ignatius', last_name: 'Reilly') }
+  let!(:user) { create(:user, first_name: 'Ignatius', last_name: 'Reilly') }
   let(:guide) { create(:guide) }
   let(:python) { create :language, name: 'python', extension: 'py', test_extension: 'py' }
 
@@ -16,6 +16,31 @@ describe Guide do
     let(:guide) { create(:guide, slug: 'fLbUlGaReLlI/MuMUkI-saMPle-gUIde') }
 
     it { expect(guide.slug).to eq('flbulgarelli/mumuki-sample-guide') }
+  end
+
+  describe '#assignments_for', organization_workspace: :test do
+    let(:guide) { create(:guide, exercises: [create(:exercise), create(:exercise), create(:exercise)]) }
+
+    context "no assignments" do
+      it { expect(guide.assignments_for(user).map(&:status)).to eq [:pending, :pending, :pending] }
+      it { expect(guide.find_assignments_for user).to eq [nil, nil, nil] }
+    end
+
+    context "one assignment" do
+      before { guide.exercises.first.submit_solution! user, content: 'something'  }
+      it { expect(guide.assignments_for(user).map(&:status)).to eq [:failed, :pending, :pending] }
+      it { expect(guide.find_assignments_for(user)[1..]).to eq [nil, nil] }
+    end
+
+    context "two assignments" do
+      before do
+        guide.exercises.take(2).each { |it| it.submit_solution! user, content: 'something' }
+      end
+
+      it { expect(guide.assignments_for(user).map(&:status)).to eq [:failed, :failed, :pending] }
+      it { expect(guide.find_assignments_for(user)[2..]).to eq [nil] }
+    end
+
   end
 
   describe '#destroy' do
@@ -64,23 +89,23 @@ describe Guide do
     before do
       test_organization.switch!
       guide.exercises = [an_exercise]
-      an_exercise.submit_solution! extra_user
+      an_exercise.submit_solution! user
     end
 
     context 'when progress is exclusively in one organization' do
       let(:another_exercise) { create(:exercise) }
 
       before do
-        another_exercise.submit_solution! extra_user
-        guide.clear_progress!(extra_user, test_organization)
+        another_exercise.submit_solution! user
+        guide.clear_progress!(user, test_organization)
       end
 
       it 'destroys the guides assignments for the given user and organization' do
-        expect(an_exercise.find_assignment_for(extra_user, test_organization)).to be_nil
+        expect(an_exercise.find_assignment_for(user, test_organization)).to be_nil
       end
 
       it 'does not destroy other guides assignments for the given user and organization' do
-        expect(another_exercise.find_assignment_for(extra_user, test_organization)).to be_truthy
+        expect(another_exercise.find_assignment_for(user, test_organization)).to be_truthy
       end
     end
 
@@ -89,12 +114,12 @@ describe Guide do
 
       before do
         another_organization.switch!
-        an_exercise.submit_solution! extra_user
-        guide.clear_progress!(extra_user, test_organization)
+        an_exercise.submit_solution! user
+        guide.clear_progress!(user, test_organization)
       end
 
       it 'destroys the guides assignments for the given user and organization' do
-        expect(an_exercise.find_assignment_for(extra_user, test_organization)).to be_nil
+        expect(an_exercise.find_assignment_for(user, test_organization)).to be_nil
       end
     end
   end
