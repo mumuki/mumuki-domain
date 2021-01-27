@@ -275,6 +275,14 @@ class User < ApplicationRecord
     end
   end
 
+  def formal_first_name
+    verified_first_name || first_name
+  end
+
+  def formal_last_name
+    verified_last_name || last_name
+  end
+
   private
 
   def welcome_to_new_organizations!
