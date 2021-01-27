@@ -21,6 +21,26 @@ describe Guide do
   describe '#assignments_for', organization_workspace: :test do
     let(:guide) { create(:guide, exercises: [create(:exercise), create(:exercise), create(:exercise)]) }
 
+    context 'other users' do
+      let(:other_user) { create(:user)}
+      before do
+        guide.exercises.first.submit_solution! other_user, content: 'something else'
+        guide.exercises.first.submit_solution! user, content: 'something'
+        guide.exercises.last.submit_solution! other_user, content: 'something else'
+
+      end
+
+      it { expect(guide.assignments_for(user).map(&:status)).to eq [:failed, :pending, :pending] }
+      it { expect(guide.assignments_for(user).map(&:submitter)).to eq [user, user, user] }
+
+      describe 'does not have effect' do
+        before { guide.assignments_for(user) }
+
+        it { expect(guide.assignments_for(other_user).map(&:submitter)).to eq [other_user, other_user, other_user] }
+        it { expect(guide.exercises.map { |it| it.assignments.size }).to eq [2, 0, 1] }
+      end
+    end
+
     context "no user" do
       it { expect(guide.assignments_for(nil).map(&:status)).to eq [:pending, :pending, :pending] }
       it { expect(guide.find_assignments_for nil).to eq [nil, nil, nil] }
