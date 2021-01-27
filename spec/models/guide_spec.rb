@@ -41,6 +41,11 @@ describe Guide do
       end
     end
 
+    context "incognito user" do
+      it { expect(guide.assignments_for(Mumuki::Domain::Incognito).map(&:status)).to eq [:pending, :pending, :pending] }
+      it { expect(guide.find_assignments_for Mumuki::Domain::Incognito).to eq [nil, nil, nil] }
+    end
+
     context "no user" do
       it { expect(guide.assignments_for(nil).map(&:status)).to eq [:pending, :pending, :pending] }
       it { expect(guide.find_assignments_for nil).to eq [nil, nil, nil] }
