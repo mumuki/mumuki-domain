@@ -212,7 +212,7 @@ class User < ApplicationRecord
   end
 
   def build_assignment(exercise, organization)
-    assignments.build(exercise: exercise, organization: organization)
+    Assignment.build_for(self, exercise, organization)
   end
 
   def pending_siblings_at(content)

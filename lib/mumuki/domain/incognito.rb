@@ -107,7 +107,7 @@ module Mumuki::Domain
     end
 
     def build_assignment(exercise, organization)
-      Assignment.new exercise: exercise, organization: organization, submitter: self
+      Assignment.build_for(self, exercise, organization)
     end
 
     def pending_siblings_at(content)

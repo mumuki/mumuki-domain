@@ -6,7 +6,8 @@ class Guide < Content
 
   include WithStats,
           WithExpectations,
-          WithLanguage
+          WithLanguage,
+          WithAssignmentsBatch
 
   markdown_on :corollary, :sources, :learn_more, :teacher_info
 

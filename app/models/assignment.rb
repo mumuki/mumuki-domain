@@ -263,6 +263,10 @@ class Assignment < Progress
     update! misplaced: value if value != misplaced?
   end
 
+  def self.build_for(user, exercise, organization)
+    Assignment.new submitter: user, exercise: exercise, organization: organization
+  end
+
   private
 
   def duplicates_key

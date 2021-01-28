@@ -19,6 +19,7 @@ module WithAssignments
   end
 
   # TODO: When the organization is used in this one, please change guide.pending_exercises
+  # TODO: Please do the same on WithAssignmentsBatch
   def find_assignment_for(user, _organization)
     assignments.find_by(submitter: user)
   end
