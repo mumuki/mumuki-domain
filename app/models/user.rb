@@ -7,6 +7,7 @@ class User < ApplicationRecord
           Awardee,
           Disabling,
           WithTermsAcceptance,
+          WithPreferences,
           Mumuki::Domain::Helpers::User
 
   serialize :permissions, Mumukit::Auth::Permissions
