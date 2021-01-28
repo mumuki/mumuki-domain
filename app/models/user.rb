@@ -84,6 +84,10 @@ class User < ApplicationRecord
     all.sort_by(&:created_at).reverse
   end
 
+  def read_notification!(target)
+    notifications.find_by(target: target)&.mark_as_read!
+  end
+
   def visit!(organization)
     update!(last_organization: organization) if organization != last_organization
   end
