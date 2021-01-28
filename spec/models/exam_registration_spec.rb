@@ -27,7 +27,7 @@ describe ExamRegistration, organization_workspace: :test do
     let(:criterion_value) { 2 }
     let(:exam) { create(:exam, exam_registrations: [registration]) }
     let!(:auth_requests) do
-      [user, other_user].map { |it| create(:exam_authorization_request, exam: exam, user: it) }
+      [user, other_user].map { |it| create(:exam_authorization_request, exam_registration: registration, exam: exam, user: it) }
     end
 
     before { assignments_for(user, 3).each(&:passed!) }
@@ -80,7 +80,7 @@ describe ExamRegistration, organization_workspace: :test do
 
     context 'meets_authorization_criteria?' do
       let(:criterion_value) { 2 }
-      let(:authorization_request) { create(:exam_authorization_request, user: user) }
+      let(:authorization_request) { create(:exam_authorization_request, exam_registration: registration, user: user) }
 
       context ExamRegistration::AuthorizationCriterion::None do
         let(:criterion_type) { 'none' }
