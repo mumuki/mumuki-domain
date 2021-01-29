@@ -34,7 +34,8 @@ class ExamRegistration < ApplicationRecord
   end
 
   def authorization_request_for(user)
-    authorization_requests.find_by user: user
+    authorization_requests.find_by(user: user) ||
+      ExamAuthorizationRequest.new(exam_registration: self, organization: organization)
   end
 
   private
