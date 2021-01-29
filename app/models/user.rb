@@ -3,6 +3,7 @@ class User < ApplicationRecord
   include WithProfile,
           WithUserNavigation,
           WithReminders,
+          WithNotifications,
           WithDiscussionCreation,
           Awardee,
           Disabling,
@@ -72,20 +73,6 @@ class User < ApplicationRecord
 
   def passed_assignments
     assignments.where(status: Mumuki::Domain::Status::Submission::Passed.to_i)
-  end
-
-  def unread_messages
-    messages.where read: false
-  end
-
-  def unread_notifications
-    # TODO: message and discussion should trigger notification instead of being one
-    all = notifications.where(read: false) + unread_messages + unread_discussions
-    all.sort_by(&:created_at).reverse
-  end
-
-  def read_notification!(target)
-    notifications.find_by(target: target)&.mark_as_read!
   end
 
   def visit!(organization)
