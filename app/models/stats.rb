@@ -8,15 +8,23 @@ class Stats
   end
 
   def done?
-    failed + pending == 0
+    missing == 0
   end
 
   def almost_done?
-    failed + pending <= 1
+    missing <= 1
+  end
+
+  def almost_but_not_done?
+    missing == 1
   end
 
   def started?
     submitted > 0
+  end
+
+  def missing
+    failed + pending
   end
 
   def self.from_statuses(statuses)
