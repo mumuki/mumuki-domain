@@ -2,7 +2,11 @@ module WithTargetAudience
   extend ActiveSupport::Concern
 
   included do
-    enum target_audience: [:grown_ups, :kids, :kindergarten]
+    enum target_audience: [:grown_ups, :primary, :kindergarten]
+  end
+
+  def kids?
+    target_audience.to_sym.in? [:primary, :kindergarten]
   end
 
   class_methods do

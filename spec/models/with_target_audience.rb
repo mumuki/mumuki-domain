@@ -36,4 +36,17 @@ describe WithTargetAudience do
       end
     end
   end
+
+  context '#kids?' do
+    describe 'primary and kindergarten organizations are for kids' do
+      let(:primary_organization) { create(:organization, target_audience: :primary, name: 'for_primary_kids') }
+
+      it { expect(primary_organization.kids?).to be true }
+      it { expect(kindergarten_organization.kids?).to be true }
+    end
+
+    describe 'grown ups organizations are not for kids' do
+      it { expect(grown_ups_organization.kids?).to be false }
+    end
+  end
 end
