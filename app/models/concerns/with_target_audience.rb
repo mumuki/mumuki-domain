@@ -2,7 +2,7 @@ module WithTargetAudience
   extend ActiveSupport::Concern
 
   included do
-    enum target_audience: [:grown_ups, :kids]
+    enum target_audience: [:grown_ups, :kids, :kindergarten]
   end
 
   class_methods do
