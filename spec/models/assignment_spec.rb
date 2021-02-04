@@ -326,7 +326,7 @@ describe Assignment, organization_workspace: :test do
     context 'html explanation' do
       let(:expectation_results) { [{result: :failed, binding: '*', inspection: 'UsesIf'}] }
 
-      it { expect(assignment.affable_expectation_results).to eq [{result: :failed, explanation: 'solution must use <i>if</i>'}]  }
+      it { expect(assignment.affable_expectation_results).to eq [{result: :failed, explanation: 'solution must use <code>if</code>'}]  }
     end
 
     context 'markdown explanation' do
