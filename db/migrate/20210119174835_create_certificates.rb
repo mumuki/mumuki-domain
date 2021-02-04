@@ -5,6 +5,7 @@ class CreateCertificates < ActiveRecord::Migration[5.1]
       t.references :certification, foreign_key: true
       t.datetime :start_date
       t.datetime :end_date
+      t.string :code
 
       t.timestamps
     end
