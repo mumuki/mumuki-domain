@@ -1,14 +1,10 @@
 class Invitation < ApplicationRecord
-  include Mumuki::Domain::Syncable
+  include Mumuki::Domain::Syncable,
+          WithCode
 
   belongs_to :course
 
   validate :ensure_not_expired, on: :create
-  validates_uniqueness_of :code
-
-  defaults do
-    self.code ||= self.class.generate_code
-  end
 
   def ensure_not_expired
     errors.add(:base, :invitation_expired) if expired?
@@ -51,11 +47,11 @@ class Invitation < ApplicationRecord
     self
   end
 
-  def self.generate_code
-    SecureRandom.urlsafe_base64 4
-  end
-
   private
+
+  def self.code_size
+    4
+  end
 
   def course_name
     course.name

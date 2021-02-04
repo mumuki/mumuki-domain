@@ -35,6 +35,8 @@ class User < ApplicationRecord
 
   has_many :exams, through: :exam_authorizations
 
+  has_many :certificates
+
   enum gender: %i(female male other unspecified)
   belongs_to :avatar, polymorphic: true, optional: true
 
@@ -281,6 +283,14 @@ class User < ApplicationRecord
 
   def formal_last_name
     verified_last_name || last_name
+  end
+
+  def formal_full_name
+    "#{formal_first_name} #{formal_last_name}"
+  end
+
+  def certificates_in(organization)
+    certificates.filter { |certificate| certificate.organization == organization }
   end
 
   private
