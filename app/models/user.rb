@@ -293,6 +293,10 @@ class User < ApplicationRecord
     certificates.filter { |certificate| certificate.organization == organization }
   end
 
+  def certificated_in?(certification)
+    certificates.where(certification: certification).exists?
+  end
+
   private
 
   def welcome_to_new_organizations!
