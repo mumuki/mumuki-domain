@@ -3,6 +3,7 @@ class User < ApplicationRecord
   include WithProfile,
           WithUserNavigation,
           WithReminders,
+          WithNotifications,
           WithDiscussionCreation,
           Awardee,
           Disabling,
@@ -73,10 +74,6 @@ class User < ApplicationRecord
 
   def passed_assignments
     assignments.where(status: Mumuki::Domain::Status::Submission::Passed.to_i)
-  end
-
-  def unread_messages
-    messages.where read: false
   end
 
   def visit!(organization)

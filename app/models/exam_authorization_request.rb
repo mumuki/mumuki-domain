@@ -1,7 +1,10 @@
 class ExamAuthorizationRequest < ApplicationRecord
+  include TerminalNavigation
+
   belongs_to :exam
   belongs_to :user
   belongs_to :organization
+  belongs_to :exam_registration
 
   enum status: %i(pending approved rejected)
 
@@ -9,6 +12,10 @@ class ExamAuthorizationRequest < ApplicationRecord
 
   def try_authorize!
     exam.authorize! user if approved?
+  end
+
+  def name
+    exam_registration.description
   end
 
   private

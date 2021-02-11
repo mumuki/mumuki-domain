@@ -48,6 +48,10 @@ class Discussion < ApplicationRecord
     nil
   end
   
+  def target
+    self
+  end
+
   def used_in?(organization)
     organization == self.organization
   end

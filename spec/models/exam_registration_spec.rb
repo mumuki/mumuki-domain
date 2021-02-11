@@ -12,7 +12,23 @@ describe ExamRegistration, organization_workspace: :test do
     exercises.map { |it| it.submit_solution!(student, content: '') }
   end
 
-  describe '.start!' do
+  describe '#authorization_request_for' do
+    let(:request) { registration.authorization_request_for user }
+
+    context "when the user doesn't have a request" do
+      it { expect(request).to be_an_instance_of ExamAuthorizationRequest }
+      it { expect(request.new_record?).to be_truthy }
+      it { expect(request.organization).to eq registration.organization }
+      it { expect(request.exam_registration).to eq registration }
+    end
+
+    context 'when the user has a request' do
+      let!(:previous_request) { create(:exam_authorization_request, user: user, exam_registration: registration) }
+      it { expect(request).to eq previous_request }
+    end
+  end
+
+  describe '#start!' do
     context 'creates notifications for all users' do
       before { registration.start! [user, other_user] }
 
@@ -22,12 +38,12 @@ describe ExamRegistration, organization_workspace: :test do
     end
   end
 
-  describe '.process_requests!' do
+  describe '#process_requests!' do
     let(:criterion_type) { :passed_exercises }
     let(:criterion_value) { 2 }
     let(:exam) { create(:exam, exam_registrations: [registration]) }
     let!(:auth_requests) do
-      [user, other_user].map { |it| create(:exam_authorization_request, exam: exam, user: it) }
+      [user, other_user].map { |it| create(:exam_authorization_request, exam_registration: registration, exam: exam, user: it) }
     end
 
     before { assignments_for(user, 3).each(&:passed!) }
@@ -51,7 +67,7 @@ describe ExamRegistration, organization_workspace: :test do
     end
   end
 
-  describe '.authorization_criterion' do
+  describe '#authorization_criterion' do
     context 'parse' do
       let(:criterion_value) { 75 }
       let(:criterion_type) { 'none' }
@@ -80,7 +96,7 @@ describe ExamRegistration, organization_workspace: :test do
 
     context 'meets_authorization_criteria?' do
       let(:criterion_value) { 2 }
-      let(:authorization_request) { create(:exam_authorization_request, user: user) }
+      let(:authorization_request) { create(:exam_authorization_request, exam_registration: registration, user: user) }
 
       context ExamRegistration::AuthorizationCriterion::None do
         let(:criterion_type) { 'none' }

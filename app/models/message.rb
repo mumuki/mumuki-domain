@@ -70,6 +70,10 @@ class Message < ApplicationRecord
     from_initiator? && !not_actually_a_question?
   end
 
+  def target
+    self
+  end
+
   def self.parse_json(json)
     message = json.delete 'message'
     json
