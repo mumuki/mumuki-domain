@@ -11,11 +11,12 @@ class UserStats < ApplicationRecord
   end
 
   def activity(date_range = nil)
+    date_filter = { submitted_at: date_range }.compact
     {
         exercises: {
             solved_count: organization_exercises
                               .joins(:assignments)
-                              .where(assignments: { top_submission_status: [:passed, :skipped], submitter: user }.merge_if_present(:submitted_at, date_range))
+                              .where(assignments: { top_submission_status: [:passed, :skipped], submitter: user }.merge(date_filter))
                               .count,
             count: organization_exercises.count},
 
@@ -32,17 +33,12 @@ class UserStats < ApplicationRecord
   private
 
   def messages_in_discussions(date_range = nil)
+    date_filter = { date: date_range }.compact
     Message.joins(:discussion)
-        .where({sender: user.uid, discussions: { organization: organization }}.merge_if_present(:date, date_range))
+        .where({sender: user.uid, discussions: { organization: organization }}.merge(date_filter))
   end
 
   def organization_exercises
     organization.book.exercises
-  end
-end
-
-class Hash
-  def merge_if_present(key, value)
-    value ? merge({ key => value }) : self
   end
 end
