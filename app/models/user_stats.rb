@@ -20,9 +20,7 @@ class UserStats < ApplicationRecord
                               .count,
             count: organization_exercises.count},
 
-        messages: {
-            count: messages_in_discussions(date_range).count,
-            approved: messages_in_discussions(date_range).where(approved: true).count}
+        messages: messages_in_discussions_count(date_range)
     }
   end
 
@@ -32,10 +30,16 @@ class UserStats < ApplicationRecord
 
   private
 
-  def messages_in_discussions(date_range = nil)
+  def messages_in_discussions_count(date_range = nil)
     date_filter = { date: date_range }.compact
-    Message.joins(:discussion)
+    result = Message.joins(:discussion)
         .where({sender: user.uid, discussions: { organization: organization }}.merge(date_filter))
+        .group(:approved)
+        .count
+    unapproved = result[false] || 0
+    approved = result[true] || 0
+
+    { count: unapproved + approved, approved: approved }
   end
 
   def organization_exercises
