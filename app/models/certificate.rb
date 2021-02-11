@@ -12,6 +12,10 @@ class Certificate < ApplicationRecord
     12
   end
 
+  def filename
+    "#{title.parameterize.underscore}.pdf"
+  end
+
   def locals
     json = as_json only: [:start_date, :end_date],
                    include: {
