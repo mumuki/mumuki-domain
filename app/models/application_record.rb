@@ -129,6 +129,12 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
+  def self.enum_prefixed_translations_for(selector)
+    send(selector.to_s.pluralize).map do |key, _|
+      [I18n.t("#{selector}_#{key}", default: key.to_sym), key]
+    end
+  end
+
   private
 
   def raise_foreign_key_error!
