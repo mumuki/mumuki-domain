@@ -6,7 +6,7 @@ class Certificate < ApplicationRecord
 
   has_one :organization, through: :certification
 
-  delegate :title, :description, :template_html_erb, to: :certification
+  delegate :title, :description, :template_html_erb, :background_image_url, to: :certification
 
   def self.code_size
     12

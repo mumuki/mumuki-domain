@@ -5,5 +5,4 @@ class Certification < ApplicationRecord
   def friendly
     title
   end
-
 end
