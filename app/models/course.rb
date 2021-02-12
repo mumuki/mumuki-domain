@@ -35,6 +35,10 @@ class Course < ApplicationRecord
     end
   end
 
+  def canonical_code
+    "#{period}-#{code}".downcase
+  end
+
   def closed?
     current_invitation.blank? || current_invitation.expired?
   end

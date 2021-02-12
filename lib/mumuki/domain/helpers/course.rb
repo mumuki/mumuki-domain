@@ -8,6 +8,6 @@ module Mumuki::Domain::Helpers::Course
   ## API Exposure
 
   def to_param
-    slug
+    canonical_code
   end
 end

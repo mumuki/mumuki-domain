@@ -19,6 +19,7 @@ describe 'CourseChanged', organization_workspace: :test do
   it { expect(course.code).to eq 'k2003' }
   it { expect(course.days).to eq %w(monday wednesday) }
   it { expect(course.period).to eq '2016' }
+  it { expect(course.canonical_code).to eq '2016-k2003' }
 
   describe '#invite!' do
     context 'when an invitation has not been created yet' do
