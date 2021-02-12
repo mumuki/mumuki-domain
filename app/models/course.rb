@@ -3,7 +3,7 @@ class Course < ApplicationRecord
   include Mumuki::Domain::Helpers::Course
   include Mumuki::Domain::Area
 
-  validates_presence_of :slug, :shifts, :code, :days, :period, :description, :organization_id
+  validates_presence_of :slug, :period, :code, :description, :organization_id
   validates_uniqueness_of :slug
   belongs_to :organization
 
