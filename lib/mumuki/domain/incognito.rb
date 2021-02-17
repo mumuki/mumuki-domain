@@ -84,6 +84,20 @@ module Mumuki::Domain
     end
 
     # ========
+    # Preferences
+    # ========
+
+    def preferences
+      Class.new do
+        class << self
+          def method_missing(_)
+            false
+          end
+        end
+      end
+    end
+
+    # ========
     # Visiting
     # ========
 
