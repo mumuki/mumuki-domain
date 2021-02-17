@@ -90,6 +90,9 @@ module Mumuki::Domain
     def visit!(*)
     end
 
+    def currently_in_exam?
+      false
+    end
     # ========
     # Progress
     # ========
