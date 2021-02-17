@@ -630,4 +630,25 @@ describe User, organization_workspace: :test do
       end
     end
   end
+
+  describe 'formal name' do
+    context 'user has no verified name' do
+      let(:user) { create :user, first_name: 'foo', last_name: 'bar' }
+
+      it { expect(user.formal_first_name).to eq 'foo' }
+      it { expect(user.formal_last_name).to eq 'bar' }
+    end
+    context 'user has verified name' do
+      let(:user) { create :user, first_name: 'foo', last_name: 'bar', verified_first_name: 'Joe', verified_last_name: 'Doe' }
+
+      it { expect(user.formal_first_name).to eq 'Joe' }
+      it { expect(user.formal_last_name).to eq 'Doe' }
+    end
+    context 'user has verified last name but not verified first name' do
+      let(:user) { create :user, first_name: 'foo', last_name: 'bar', verified_last_name: 'Doe' }
+
+      it { expect(user.formal_first_name).to eq 'foo' }
+      it { expect(user.formal_last_name).to eq 'Doe' }
+    end
+  end
 end
