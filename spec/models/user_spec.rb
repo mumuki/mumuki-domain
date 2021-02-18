@@ -35,7 +35,7 @@ describe User, organization_workspace: :test do
       before { original.reload.transfer_progress_to! final }
 
       let(:original) { create :user,
-                              permissions: {student: 'codeorga/*'},
+                              permissions: { student: 'codeorga/*' },
                               first_name: 'johnny',
                               last_name: 'doe',
                               social_id: 'auth0|123456',
@@ -69,7 +69,7 @@ describe User, organization_workspace: :test do
                               last_name: 'doe',
                               social_id: 'auth0|123456' }
       let(:final) { create :user,
-                           permissions: {student: 'prologschool/*'},
+                           permissions: { student: 'prologschool/*' },
                            first_name: 'John',
                            last_name: 'Doe',
                            social_id: 'auth0|345678',
@@ -89,7 +89,7 @@ describe User, organization_workspace: :test do
       before { original.transfer_progress_to! final }
 
       let(:original) { create :user,
-                              permissions: {student: 'codeorga/*'},
+                              permissions: { student: 'codeorga/*' },
                               first_name: 'johnny',
                               last_name: 'doe',
                               social_id: 'auth0|123456',
@@ -97,7 +97,7 @@ describe User, organization_workspace: :test do
                               last_organization: codeorga,
                               last_exercise: your_first_program }
       let(:final) { create :user,
-                           permissions: {student: 'prologschool/*'},
+                           permissions: { student: 'prologschool/*' },
                            first_name: 'John',
                            last_name: 'Doe',
                            social_id: 'auth0|345678',
@@ -119,7 +119,7 @@ describe User, organization_workspace: :test do
       before { original.transfer_progress_to! final }
 
       let(:original) { create :user,
-                              permissions: {student: 'codeorga/*'},
+                              permissions: { student: 'codeorga/*' },
                               first_name: 'johnny',
                               last_name: 'doe',
                               social_id: 'auth0|123456',
@@ -127,7 +127,7 @@ describe User, organization_workspace: :test do
                               last_organization: codeorga,
                               last_exercise: your_first_program }
       let(:final) { create :user,
-                           permissions: {student: 'prologschool/*'},
+                           permissions: { student: 'prologschool/*' },
                            first_name: 'John',
                            last_name: 'Doe',
                            social_id: 'auth0|345678',
@@ -145,7 +145,6 @@ describe User, organization_workspace: :test do
       it { expect(final.permissions.as_json).to json_like student: 'prologschool/*' }
     end
   end
-
 
   describe 'immersive behaviour' do
     let(:student) { create :user }
@@ -184,7 +183,7 @@ describe User, organization_workspace: :test do
 
           context 'when content is tested' do
             let(:exercise) { create(:exercise) }
-            let!(:chapter) { create(:chapter, lessons: [ create(:lesson, exercises: [exercise] )]) }
+            let!(:chapter) { create(:chapter, lessons: [create(:lesson, exercises: [exercise])]) }
             let(:assignment) { Assignment.new exercise: exercise, submitter: student }
 
             before { reindex_current_organization! }
@@ -220,10 +219,10 @@ describe User, organization_workspace: :test do
 
             context 'when content inside container is shared' do
               let(:guide) { create(:guide) }
-              let(:lesson_immersive) { create(:lesson, guide: guide ) }
-              let(:lesson_immersible) { create(:lesson, guide: guide ) }
-              let!(:chapter) { create(:chapter, lessons: [ lesson_immersible ]) }
-              let!(:chapter_immersive) { create(:chapter, lessons: [ lesson_immersive ]) }
+              let(:lesson_immersive) { create(:lesson, guide: guide) }
+              let(:lesson_immersible) { create(:lesson, guide: guide) }
+              let!(:chapter) { create(:chapter, lessons: [lesson_immersible]) }
+              let!(:chapter_immersive) { create(:chapter, lessons: [lesson_immersive]) }
 
               before do
                 other_organization.book.update! chapters: [chapter_immersive]
@@ -266,7 +265,7 @@ describe User, organization_workspace: :test do
     let(:lesson_2) { create :lesson, exercises: [exercise_2] }
 
     context 'lookahead 0' do
-      it { expect { student.completed_containers_with_lookahead([lesson_1, lesson_2], organization, lookahead: 0) }.to raise_error('invalid lookahead')  }
+      it { expect { student.completed_containers_with_lookahead([lesson_1, lesson_2], organization, lookahead: 0) }.to raise_error('invalid lookahead') }
     end
 
     context 'no items completed' do
@@ -288,7 +287,7 @@ describe User, organization_workspace: :test do
 
   describe 'roles' do
     let(:other) { build(:organization, name: 'pdep') }
-    let(:user) { build :user, permissions: {student: 'pdep/k2001', teacher: 'test/all'} }
+    let(:user) { build :user, permissions: { student: 'pdep/k2001', teacher: 'test/all' } }
 
     it { expect(user.student? 'test/all').to be true }
     it { expect(user.student? 'pdep/k2001').to be true }
@@ -359,7 +358,6 @@ describe User, organization_workspace: :test do
 
     end
 
-
     context 'when there are only failed submissions' do
       let!(:exercise_4) { build(:exercise) }
 
@@ -390,13 +388,13 @@ describe User, organization_workspace: :test do
         user: {
           uid: user.uid,
           old_permissions: {},
-          new_permissions: {student: 'example/foo'}.as_json
+          new_permissions: { student: 'example/foo' }.as_json
         }
       } }
 
       context 'using update_and_notify!' do
         before { expect_any_instance_of(Mumukit::Nuntius::NotificationMode::Deaf).to receive(:notify!).with('user-permissions-changed', permissions_diff) }
-        it { user.update_and_notify!(permissions: {student: 'example/foo'}) }
+        it { user.update_and_notify!(permissions: { student: 'example/foo' }) }
       end
 
       context 'using save_and_notify!' do
@@ -651,4 +649,26 @@ describe User, organization_workspace: :test do
       it { expect(user.formal_last_name).to eq 'Doe' }
     end
   end
+
+  describe '#certificated_in?' do
+    let(:user) { create :user, uid: 'test' }
+    let(:certificate_1) { create :certificate, user: user }
+    let(:certificate_2) { create :certificate, user: create(:user) }
+
+    it { expect(user.certificated_in? certificate_1).to eq true }
+    it { expect(user.certificated_in? certificate_2).to eq false }
+  end
+
+  describe '#certificates_in' do
+    let!(:user_1) { create :user, uid: 'test_1' }
+    let!(:user_2) { create :user, uid: 'test_2' }
+
+    let!(:certificate_1) { create :certificate, user: user_1 }
+    let!(:certificate_2) { create :certificate, user: user_2 }
+    let!(:certificate_3) { create :certificate, user: user_1 }
+    let!(:certificate_4) { create :certificate, user: user_1, organization: create(:organization) }
+
+    it { expect(user_1.certificates_in Organization.current).to contain_exactly certificate_1, certificate_3 }
+  end
+
 end

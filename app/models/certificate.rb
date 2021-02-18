@@ -21,7 +21,7 @@ class Certificate < ApplicationRecord
                    include: {
                      user: { methods: [:formal_first_name, :formal_last_name, :formal_full_name] },
                      certification: { only: [:title, :description] },
-                     organization: { only: [:name, :display_name, :description] }
+                     organization: { only: [:name, :display_name] }
                    }
     JSON.parse json.to_json, object_class: OpenStruct
   end
