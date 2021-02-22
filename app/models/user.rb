@@ -245,7 +245,7 @@ class User < ApplicationRecord
   end
 
   def current_organic_context
-    Organization.current? ?  Organization.current : main_organization
+    Organization.safe_current || main_organization
   end
 
   def current_immersive_context_at(path_item)
