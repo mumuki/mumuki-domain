@@ -149,6 +149,7 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
     let(:exercise) { create :indexed_exercise }
     let(:guide) { exercise.guide }
     let!(:assignment) { exercise.submit_solution!(user, content: 'foo') }
+    let(:new_assignment) { exercise.find_assignment_for(user, organization2) }
 
     context 'when old organization still has the exercise' do
       before do
@@ -158,10 +159,12 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
         assignment.reload
       end
 
-      it { expect(assignment.solution).to eq('bar') }
-      it { expect(assignment.parent).to_not eq(guide.progress_for(user, organization )) }
-      it { expect(assignment.parent).to     eq(guide.progress_for(user, organization2)) }
-      it { expect(guide.progress_for(user, organization)).to be_dirty_by_submission }
+      it { expect(assignment.solution).to eq('foo') }
+      it { expect(new_assignment.solution).to eq('bar') }
+      it { expect(assignment.parent).to eq(guide.progress_for(user, organization )) }
+      it { expect(new_assignment.parent).to eq(guide.progress_for(user, organization2)) }
+      it { expect(guide.progress_for(user, organization)).to_not be_dirty_by_submission }
+      it { expect(guide.progress_for(user, organization2)).to_not be_dirty_by_submission }
     end
 
     context 'when old organization has not got the exercise' do
@@ -176,9 +179,10 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
         assignment.reload
       end
 
-      it { expect(assignment.solution).to eq('bar') }
+      it { expect(assignment.solution).to eq('foo') }
+      it { expect(new_assignment.solution).to eq('bar') }
       it { expect(assignment.parent).to_not eq(guide.progress_for(user, organization )) }
-      it { expect(assignment.parent).to     eq(guide.progress_for(user, organization2)) }
+      it { expect(new_assignment.parent).to eq(guide.progress_for(user, organization2)) }
       it { expect(guide.progress_for(user, organization)).not_to be_dirty_by_submission }
     end
 
