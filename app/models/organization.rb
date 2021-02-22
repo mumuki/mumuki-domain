@@ -138,6 +138,10 @@ class Organization < ApplicationRecord
     self[:progressive_display_lookahead] = lookahead.to_i.positive? ? lookahead : nil
   end
 
+  def activity_start_date(default_date)
+    [default_date, in_preparation_until&.to_date].compact.max
+  end
+
   # ==============
   # Display fields
   # ==============
