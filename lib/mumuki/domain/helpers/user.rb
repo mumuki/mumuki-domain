@@ -77,11 +77,12 @@ module Mumuki::Domain::Helpers::User
 
   ## Accessible organizations
 
-  revamp_accessor :any_granted_organizations, :student_granted_organizations do |_, _, result|
-    result.map { |org| Mumukit::Platform::Organization.find_by_name!(org) rescue nil }.compact
+  revamp :any_granted_organizations, :student_granted_organizations, selector_transformer: proc { |it| "@__#{it}__".to_sym } do |attr_name, this, hyper|
+    this.instance_variable_get(attr_name) ||
+      hyper.call.map { |org| Mumukit::Platform::Organization.find_by_name!(org) rescue nil }.compact.tap do |organizations|
+        this.instance_variable_set(attr_name, organizations)
+      end
   end
-
-  cache_accessor :any_granted_organizations, :student_granted_organizations
 
   def has_student_granted_organizations?
     student_granted_organizations.present?
