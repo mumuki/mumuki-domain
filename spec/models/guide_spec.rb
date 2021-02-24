@@ -150,6 +150,10 @@ describe Guide do
       it 'destroys the guides assignments for the given user and organization' do
         expect(an_exercise.find_assignment_for(user, test_organization)).to be_nil
       end
+
+      it 'does not destroy the guide\'s assignments for other organizations' do
+        expect(an_exercise.find_assignment_for(user, another_organization)).to_not be_nil
+      end
     end
   end
 
