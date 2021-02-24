@@ -321,4 +321,37 @@ describe Book, organization_workspace: :test do
       end
     end
   end
+
+  describe 'discussions_in_organization' do
+    before { Organization.current.update! book: book }
+    before { reindex_current_organization! }
+
+    before { book.exercises.last.discuss!(user, {description: 'new discussion'}) }
+
+    let(:user) { create(:user) }
+    let(:book) { create(:book_with_full_tree) }
+    let(:another_book) { create(:book_with_full_tree) }
+
+    context 'in the same organization' do
+      context 'with same book' do
+        it { expect(book.discussions_in_organization.count).to eq 1 }
+      end
+
+      context 'when book changes' do
+        before { Organization.current.update! book: another_book }
+        before { reindex_current_organization! }
+
+        it { expect(another_book.discussions_in_organization.count).to eq 0 }
+      end
+    end
+
+    context 'in another organization with same book' do
+      let(:other_organization) { create(:organization, book: book) }
+      before { other_organization.switch! }
+      before { reindex_current_organization! }
+
+      it { expect(book.discussions_in_organization.count).to eq 0 }
+    end
+
+  end
 end

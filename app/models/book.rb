@@ -18,7 +18,7 @@ class Book < Content
   end
 
   def discussions_in_organization(organization = Organization.current)
-    Discussion.where(organization: organization).includes(exercise: [:language, :guide])
+    Discussion.where(organization: organization, item: organization.exercises).includes(exercise: [:language, :guide])
   end
 
   def first_chapter
