@@ -289,8 +289,8 @@ class User < ApplicationRecord
     "#{formal_first_name} #{formal_last_name}"
   end
 
-  def certificates_in(organization)
-    certificates.filter { |certificate| certificate.organization == organization }
+  def certificates_in_organization(organization = Organization.current)
+    certificates.where certificate_program: CertificateProgram.where(organization: organization)
   end
 
   def certificated_in?(certificate_program)

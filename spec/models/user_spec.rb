@@ -659,7 +659,7 @@ describe User, organization_workspace: :test do
     it { expect(user.certificated_in? certificate_2).to eq false }
   end
 
-  describe '#certificates_in' do
+  describe '#certificates_in_organization' do
     let!(:user_1) { create :user, uid: 'test_1' }
     let!(:user_2) { create :user, uid: 'test_2' }
 
@@ -668,7 +668,7 @@ describe User, organization_workspace: :test do
     let!(:certificate_3) { create :certificate, user: user_1 }
     let!(:certificate_4) { create :certificate, user: user_1, organization: create(:organization) }
 
-    it { expect(user_1.certificates_in Organization.current).to contain_exactly certificate_1, certificate_3 }
+    it { expect(user_1.certificates_in_organization Organization.current).to contain_exactly certificate_1, certificate_3 }
   end
 
 end
