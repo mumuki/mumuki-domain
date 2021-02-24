@@ -1,7 +1,7 @@
 FactoryBot.define do
-  factory :certification do
+  factory :certificate_program do
     title { 'Test' }
-    description { 'Certification to test' }
+    description { 'Certificate program to test' }
     organization { Organization.current }
   end
 end

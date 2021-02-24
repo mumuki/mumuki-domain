@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210211165238) do
+ActiveRecord::Schema.define(version: 20210119190204) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,27 +71,27 @@ ActiveRecord::Schema.define(version: 20210211165238) do
     t.index ["slug"], name: "index_books_on_slug", unique: true
   end
 
+  create_table "certificate_programs", force: :cascade do |t|
+    t.string "title"
+    t.string "template_html_erb"
+    t.text "description"
+    t.string "background_image_url"
+    t.bigint "organization_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_certificate_programs_on_organization_id"
+  end
+
   create_table "certificates", force: :cascade do |t|
     t.bigint "user_id"
-    t.bigint "certification_id"
+    t.bigint "certificate_program_id"
     t.datetime "start_date"
     t.datetime "end_date"
     t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["certification_id"], name: "index_certificates_on_certification_id"
+    t.index ["certificate_program_id"], name: "index_certificates_on_certificate_program_id"
     t.index ["user_id"], name: "index_certificates_on_user_id"
-  end
-
-  create_table "certifications", force: :cascade do |t|
-    t.string "title"
-    t.string "template_html_erb"
-    t.text "description"
-    t.bigint "organization_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "background_image_url"
-    t.index ["organization_id"], name: "index_certifications_on_organization_id"
   end
 
   create_table "chapters", id: :serial, force: :cascade do |t|
@@ -512,9 +512,6 @@ ActiveRecord::Schema.define(version: 20210211165238) do
     t.index ["uid"], name: "index_users_on_uid", unique: true
   end
 
-  add_foreign_key "certificates", "certifications"
-  add_foreign_key "certificates", "users"
-  add_foreign_key "certifications", "organizations"
   add_foreign_key "chapters", "topics"
   add_foreign_key "complements", "guides"
   add_foreign_key "exams", "guides"

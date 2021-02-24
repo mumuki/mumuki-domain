@@ -1,4 +1,4 @@
-class Certification < ApplicationRecord
+class CertificateProgram < ApplicationRecord
   belongs_to :organization
   has_many :certificates
 
@@ -28,8 +28,8 @@ class Certification < ApplicationRecord
   <%#= user.formal_first_name %>
   <%#= user.formal_last_name %>
   <%#= user.formal_full_name %>
-  <%#= certification.title %>
-  <%#= certification.description %>
+  <%#= certificate_program.title %>
+  <%#= certificate_program.description %>
   <%#= organization.name %>
   <%#= organization.display_name %>
 --                                  -->
