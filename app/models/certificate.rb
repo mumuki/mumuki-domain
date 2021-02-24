@@ -1,5 +1,5 @@
 class Certificate < ApplicationRecord
-  include WithCode
+  include WithGeneratedCode
 
   belongs_to :user
   belongs_to :certification
@@ -17,13 +17,14 @@ class Certificate < ApplicationRecord
   end
 
   def locals
-    json = as_json only: [:start_date, :end_date],
-                   include: {
-                     user: { methods: [:formal_first_name, :formal_last_name, :formal_full_name] },
-                     certification: { only: [:title, :description] },
-                     organization: { only: [:name, :display_name] }
-                   }
-    JSON.parse json.to_json, object_class: OpenStruct
+    as_json(only: [:start_date, :end_date],
+            include: {
+              user: { methods: [:formal_first_name, :formal_last_name, :formal_full_name] },
+              certification: { only: [:title, :description] },
+              organization: { only: [:name, :display_name] } }).to_deep_struct
   end
 
+  def for_user?(user)
+    self.user == user
+  end
 end

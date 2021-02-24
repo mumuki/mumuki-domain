@@ -1,4 +1,4 @@
-module WithCode
+module WithGeneratedCode
   extend ActiveSupport::Concern
 
   included do

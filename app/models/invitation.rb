@@ -1,6 +1,6 @@
 class Invitation < ApplicationRecord
   include Mumuki::Domain::Syncable,
-          WithCode
+          WithGeneratedCode
 
   belongs_to :course
 

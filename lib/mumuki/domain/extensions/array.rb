@@ -23,4 +23,9 @@ class Array
   def randomize_with(randomizer, seed)
     map { |it| it.randomize_with randomizer, seed }
   end
+
+  def to_deep_struct
+    map { |val| (val.is_a?(Hash) || val.is_a?(Array)) ? val.to_deep_struct : val }
+  end
+
 end
