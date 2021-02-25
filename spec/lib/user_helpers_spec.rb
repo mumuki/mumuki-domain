@@ -168,18 +168,15 @@ describe Mumuki::Domain::Helpers::User do
       before { user.make_student_of!(organization); user.save! }
       before { expect(Mumukit::Platform.organization_class).to receive(:find_by_name!).with('foo').exactly(1).times.and_return(organization) }
 
-      it { expect(user.student_granted_organizations.size).to eq 1 }
-      it { expect(user.student_granted_organizations).to eq [organization] }
-    end
+      it do
+        user.student_granted_organizations
+        expect(user.student_granted_organizations.size).to eq 1
+      end
 
-    context 'memoization may cause issues with uncontextualized users' do
-      let(:user) { create(:user) }
-
-      before { user.make_student_of!(organization); user.save! }
-      before { expect(Mumukit::Platform.organization_class).to receive(:find_by_name!).with('foo').exactly(1).times.and_return(organization) }
-
-      it { expect(user.student_granted_organizations.size).to eq 1 }
-      it { expect(user.student_granted_organizations).to eq [organization] }
+      it do
+        user.student_granted_organizations
+        expect(user.student_granted_organizations).to eq [organization]
+      end
     end
   end
 end
