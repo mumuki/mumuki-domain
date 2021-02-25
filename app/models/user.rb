@@ -293,7 +293,7 @@ class User < ApplicationRecord
     return [] unless saved_change_to_permissions?
 
     old, new = saved_change_to_permissions
-    new_organizations = (new.any_granted_organizations - old.any_granted_organizations).to_a
+    new_organizations = (new.any_granted_organizations_names - old.any_granted_organizations_names).to_a
     Organization.where(name: new_organizations)
   end
 
