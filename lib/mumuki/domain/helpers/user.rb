@@ -14,8 +14,8 @@ module Mumuki::Domain::Helpers::User
            :protect!,
            :protect_delegation!,
            :protect_permissions_assignment!,
-           :student_granted_organizations,
-           :any_granted_organizations,
+           :student_granted_organizations_names,
+           :any_granted_organizations_names,
            :any_granted_roles,
            to: :permissions
 
@@ -75,17 +75,24 @@ module Mumuki::Domain::Helpers::User
     "#{full_name} <#{email}> [#{uid}]"
   end
 
-  ## Accessible organizations
-
-  revamp :any_granted_organizations, :student_granted_organizations, selector_transformer: proc { |it| "@__#{it}__".to_sym } do |attr_name, this, hyper|
-    this.instance_variable_get(attr_name) ||
-      hyper.call.map { |org| Mumukit::Platform::Organization.find_by_name!(org) rescue nil }.compact.tap do |organizations|
-        this.instance_variable_set(attr_name, organizations)
-      end
+  def organizations_for(organizations_names)
+    organizations_names.map { |org| Mumukit::Platform::Organization.find_by_name!(org) rescue nil }
   end
 
-  def has_student_granted_organizations?
-    student_granted_organizations.present?
+  def any_granted_organizations
+    organizations_for(any_granted_organizations_names)
+  end
+
+  def student_granted_organizations
+    granted_organizations_names = student_granted_organizations_names
+    if @student_granted_organizations_names == granted_organizations_names
+      @student_granted_organizations
+    else
+      organizations_for(granted_organizations_names).tap do |granted_organizations|
+        @student_granted_organizations_names = granted_organizations_names
+        @student_granted_organizations = granted_organizations
+      end
+    end
   end
 
   def main_organization
