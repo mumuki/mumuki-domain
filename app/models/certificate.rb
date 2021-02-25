@@ -16,12 +16,11 @@ class Certificate < ApplicationRecord
     "#{title.parameterize.underscore}.pdf"
   end
 
-  def locals
-    as_json(only: [:start_date, :end_date],
-            include: {
-              user: { methods: [:formal_first_name, :formal_last_name, :formal_full_name] },
-              certificate_program: { only: [:title, :description] },
-              organization: { only: [:name, :display_name] } }).to_deep_struct
+  def template_locals
+    { user: user,
+      certificate_program: certificate_program,
+      organization: organization,
+      certificate: self }
   end
 
   def for_user?(user)

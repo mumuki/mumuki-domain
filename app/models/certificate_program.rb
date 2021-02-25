@@ -23,8 +23,8 @@ class CertificateProgram < ApplicationRecord
   }
 </style>
 <!-- You can use interpolations like --
-  <%#= start_date %>
-  <%#= end_date %>
+  <%#= certificate.start_date %>
+  <%#= certificate.end_date %>
   <%#= user.formal_first_name %>
   <%#= user.formal_last_name %>
   <%#= user.formal_full_name %>
