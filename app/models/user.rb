@@ -52,6 +52,10 @@ class User < ApplicationRecord
     last_guide.try(:lesson)
   end
 
+  def messages_in_organization(organization = Organization.current)
+    messages.where('assignments.organization': organization)
+  end
+
   def passed_submissions_count_in(organization)
     assignments.where(top_submission_status: Mumuki::Domain::Status::Submission::Passed.to_i, organization: organization).count
   end
