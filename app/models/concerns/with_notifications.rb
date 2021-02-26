@@ -2,7 +2,7 @@ module WithNotifications
   extend ActiveSupport::Concern
 
   def unread_messages
-    messages.where read: false
+    messages_in_organization.where read: false
   end
 
   def unread_notifications
