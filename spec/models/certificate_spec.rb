@@ -4,7 +4,7 @@ describe Certificate, organization_workspace: :test do
 
   let(:certificate) { create :certificate }
 
-  context '#tmplate_locals' do
+  context '#template_locals' do
     let(:locals) { certificate.template_locals.to_struct }
     it { expect(locals.certificate.start_date).to_not be_nil }
     it { expect(locals.certificate.end_date).to_not be_nil }
