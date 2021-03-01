@@ -29,6 +29,7 @@ describe Message, organization_workspace: :test do
       let!(:assignment) { problem.submit_solution! user, content: '' }
       let(:final_assignment) { Assignment.first }
       let(:message) { Message.first }
+      let(:other_organization) { create(:organization) }
 
       let!(:data) {
         {'exercise_id' => problem.id,
@@ -62,6 +63,9 @@ describe Message, organization_workspace: :test do
                            exercise: {bibliotheca_id: problem.bibliotheca_id},
                            organization: 'test' }
       it { expect(final_assignment.has_messages?).to be true }
+      it { expect(user.messages.count).to eq 1 }
+      it { expect(user.messages_in_organization.count).to eq 1 }
+      it { expect(user.messages_in_organization(other_organization).count).to eq 0 }
     end
 
     context 'when not last submission' do
