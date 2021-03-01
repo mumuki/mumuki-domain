@@ -35,6 +35,8 @@ class User < ApplicationRecord
 
   has_many :exams, through: :exam_authorizations
 
+  has_many :certificates
+
   enum gender: %i(female male other unspecified)
   belongs_to :avatar, polymorphic: true, optional: true
 
@@ -277,6 +279,26 @@ class User < ApplicationRecord
     immersive_organization_with_content_at(path_item).tap do |orga, _|
       return [Organization.current, path_item] unless orga.present?
     end
+  end
+
+  def formal_first_name
+    verified_first_name || first_name
+  end
+
+  def formal_last_name
+    verified_last_name || last_name
+  end
+
+  def formal_full_name
+    "#{formal_first_name} #{formal_last_name}"
+  end
+
+  def certificates_in_organization(organization = Organization.current)
+    certificates.where certificate_program: CertificateProgram.where(organization: organization)
+  end
+
+  def certificated_in?(certificate_program)
+    certificates.where(certificate_program: certificate_program).exists?
   end
 
   private
