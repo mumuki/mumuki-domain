@@ -255,9 +255,9 @@ describe Assignment, organization_workspace: :test do
       before { assignment.update_column(:organization_id, nil) }
       before { exercise.submit_solution!(user, content: 'foo') }
 
-      it 'should persist what organization it was submitted in' do
-        expect(assignment.reload.organization).to eq Organization.current
-      end
+      it { expect(Assignment.count).to eq 2 }
+      it { expect(assignment.reload.organization).to be_nil }
+      it { expect(exercise.find_assignment_for(user, Organization.current)).to_not be_nil }
     end
 
     context 'when solution is submitted after the assignment was created' do

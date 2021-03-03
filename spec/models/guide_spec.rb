@@ -112,13 +112,12 @@ describe Guide do
   end
 
   describe '#clear_progress!' do
-    let(:an_exercise) { create(:exercise) }
-    let(:guide) { create(:indexed_guide) }
+    let(:an_exercise) { create(:indexed_exercise) }
+    let(:guide) { an_exercise.guide }
     let(:test_organization) { create(:test_organization) }
 
     before do
       test_organization.switch!
-      guide.exercises = [an_exercise]
       an_exercise.submit_solution! user
     end
 
@@ -140,7 +139,7 @@ describe Guide do
     end
 
     context 'when progress is in more than one organization' do
-      let(:another_organization) { create(:another_test_organization) }
+      let(:another_organization) { create(:another_test_organization, book: test_organization.book) }
 
       before do
         another_organization.switch!
@@ -150,6 +149,10 @@ describe Guide do
 
       it 'destroys the guides assignments for the given user and organization' do
         expect(an_exercise.find_assignment_for(user, test_organization)).to be_nil
+      end
+
+      it 'does not destroy the guide\'s assignments for other organizations' do
+        expect(an_exercise.find_assignment_for(user, another_organization)).to_not be_nil
       end
     end
   end

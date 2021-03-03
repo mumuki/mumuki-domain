@@ -4,13 +4,13 @@
 module WithAssignmentsBatch
   extend ActiveSupport::Concern
 
-  def find_assignments_for(user, _organization = Organization.current, &block)
+  def find_assignments_for(user, organization = Organization.current, &block)
     block = block_given? ? block : lambda { |it, _e| it }
 
     return exercises.map { |it| block.call nil, it  } unless user
 
     pairs = exercises.map { |it| [it.id, [nil, it]] }.to_h
-    Assignment.where(submitter: user, exercise: exercises).each do |it|
+    Assignment.where(submitter: user, organization: organization, exercise: exercises).each do |it|
       pairs[it.exercise_id][0] = it
     end
 
