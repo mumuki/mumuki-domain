@@ -1,25 +1,49 @@
 require 'spec_helper'
 
 describe 'CourseChanged', organization_workspace: :test do
-  let(:course_json) do
-    {slug: 'test/bar',
-     shifts: %w(morning),
-     code: 'k2003',
-     days: %w(monday wednesday),
-     period: '2016',
-     description: 'test course'}
+  describe '#import_from_resource_h!' do
+
+    let!(:course) { Course.import_from_resource_h! course_json }
+
+    context 'classic fields' do
+      let(:course_json) do
+        {slug: 'test/bar',
+        shifts: %w(morning),
+        code: 'k2003',
+        days: %w(monday wednesday),
+        period: '2016',
+        description: 'test course'}
+      end
+
+      it { expect(course.slug).to eq 'test/bar' }
+      it { expect(course.code).to eq 'k2003' }
+      it { expect(course.days).to eq %w(monday wednesday) }
+      it { expect(course.period).to eq '2016' }
+      it { expect(course.canonical_code).to eq '2016-k2003' }
+    end
+
+    context 'current fields' do
+      let(:course_json) do
+        {slug: 'test/bar',
+        code: 'k2003',
+        period: '2021',
+        period_start: DateTime.new(2021, 2, 1),
+        period_end: DateTime.new(2021, 3, 1),
+        description: 'test course'}
+      end
+
+      it { expect(course.organization.courses).to include course }
+      it { expect(course.organization.name).to eq 'test' }
+
+      it { expect(course.slug).to eq 'test/bar' }
+      it { expect(course.code).to eq 'k2003' }
+      it { expect(course.days).to be nil }
+      it { expect(course.period).to eq '2021' }
+      it { expect(course.period_start).to eq DateTime.new(2021, 2, 1) }
+      it { expect(course.period_end).to eq DateTime.new(2021, 3, 1) }
+      it { expect(course.canonical_code).to eq '2021-k2003' }
+    end
   end
-
-  let!(:course) { Course.import_from_resource_h! course_json }
-
-  it { expect(course.organization.courses).to include course }
-  it { expect(course.organization.name).to eq 'test' }
-
-  it { expect(course.slug).to eq 'test/bar' }
-  it { expect(course.code).to eq 'k2003' }
-  it { expect(course.days).to eq %w(monday wednesday) }
-  it { expect(course.period).to eq '2016' }
-  it { expect(course.canonical_code).to eq '2016-k2003' }
 
   describe 'status' do
     context 'started' do
@@ -105,6 +129,16 @@ describe 'CourseChanged', organization_workspace: :test do
   end
 
   describe '#invite!' do
+    let(:course) do
+       Course.create! slug: 'test/bar',
+                      period: '2021',
+                      code: 'k2003',
+                      period_start: DateTime.new(2021, 2, 1),
+                      period_end: DateTime.new(2021, 3, 1),
+                      description: 'test course'
+
+    end
+
     context 'when an invitation has not been created yet' do
       it { expect(course.current_invitation).to be nil }
       it { expect(course.closed?).to be true }

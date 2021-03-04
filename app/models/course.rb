@@ -11,7 +11,7 @@ class Course < ApplicationRecord
 
   alias_attribute :name, :code
 
-  resource_fields :slug, :shifts, :code, :days, :period, :description
+  resource_fields :slug, :shifts, :code, :days, :period, :description, :period_start, :period_end
 
   def current_invitation
     invitations.where('expiration_date > ?', Time.now).first
