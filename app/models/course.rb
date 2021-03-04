@@ -35,6 +35,18 @@ class Course < ApplicationRecord
     end
   end
 
+  def infer_period_range!
+    return if period_start || period_end
+
+    period =~ /^(\d{4})?/
+    year = $1.to_i
+
+    return nil unless year.between? 2014, (DateTime.now.year + 1)
+
+    self.period_start = DateTime.new(year, 1, 1)
+    self.period_end = DateTime.new(year, 12, 31)
+  end
+
   def canonical_code
     "#{period}-#{code}".downcase
   end

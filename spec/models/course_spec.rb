@@ -21,6 +21,59 @@ describe 'CourseChanged', organization_workspace: :test do
   it { expect(course.period).to eq '2016' }
   it { expect(course.canonical_code).to eq '2016-k2003' }
 
+  describe "#infer_period_range!" do
+    before { course.infer_period_range! }
+
+    context 'period and range start' do
+      let(:course) { Course.new period: '2021', period_start: DateTime.new(2018, 3, 1) }
+
+      it { expect(course.period_start).to eq DateTime.new(2018, 3, 1) }
+      it { expect(course.period_end).to be nil }
+    end
+
+    context 'period and range end' do
+      let(:course) { Course.new period: '2021', period_end: DateTime.new(2018, 7, 15) }
+
+      it { expect(course.period_start).to be nil }
+      it { expect(course.period_end).to eq DateTime.new(2018, 7, 15) }
+    end
+
+    context 'no separators' do
+      let(:course) { Course.new period: '20181C'}
+
+      it { expect(course.period_start).to eq DateTime.new(2018, 1, 1) }
+      it { expect(course.period_end).to eq DateTime.new(2018, 12, 31) }
+    end
+
+    context 'with separators' do
+      let(:course) { Course.new period: '2020-1C'}
+
+      it { expect(course.period_start).to eq DateTime.new(2020, 1, 1) }
+      it { expect(course.period_end).to eq DateTime.new(2020, 12, 31) }
+    end
+
+    context 'before foundation' do
+      let(:course) { Course.new period: '0000'}
+
+      it { expect(course.period_start).to be nil}
+      it { expect(course.period_end).to be nil }
+    end
+
+    context 'too into the future' do
+      let(:course) { Course.new period: '9999'}
+
+      it { expect(course.period_start).to be nil}
+      it { expect(course.period_end).to be nil }
+    end
+
+    context 'empty period foundation' do
+      let(:course) { Course.new period: nil }
+
+      it { expect(course.period_start).to be nil}
+      it { expect(course.period_end).to be nil }
+    end
+  end
+
   describe '#invite!' do
     context 'when an invitation has not been created yet' do
       it { expect(course.current_invitation).to be nil }
