@@ -121,6 +121,8 @@ ActiveRecord::Schema.define(version: 20210302181654) do
     t.integer "organization_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "period_start"
+    t.datetime "period_end"
   end
 
   create_table "discussions", force: :cascade do |t|
