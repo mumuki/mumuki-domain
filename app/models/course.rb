@@ -35,6 +35,14 @@ class Course < ApplicationRecord
     end
   end
 
+  def ended?
+    !!period_end && period_end < DateTime.now
+  end
+
+  def started?
+    !!period_start && period_start < DateTime.now
+  end
+
   def infer_period_range!
     return if period_start || period_end
 

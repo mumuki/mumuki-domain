@@ -21,6 +21,36 @@ describe 'CourseChanged', organization_workspace: :test do
   it { expect(course.period).to eq '2016' }
   it { expect(course.canonical_code).to eq '2016-k2003' }
 
+  describe 'status' do
+    context 'started' do
+      let(:course) { Course.new period_start: 1.day.ago }
+
+      it { expect(course.started?).to be true }
+      it { expect(course.ended?).to be false }
+    end
+
+    context 'not started' do
+      let(:course) { Course.new period_start: 1.day.since }
+
+      it { expect(course.started?).to be false }
+      it { expect(course.ended?).to be false }
+    end
+
+    context 'ended' do
+      let(:course) { Course.new period_end: 1.day.ago }
+
+      it { expect(course.started?).to be false }
+      it { expect(course.ended?).to be true }
+    end
+
+    context 'not ended' do
+      let(:course) { Course.new period_end: 1.day.since }
+
+      it { expect(course.started?).to be false }
+      it { expect(course.ended?).to be false }
+    end
+  end
+
   describe "#infer_period_range!" do
     before { course.infer_period_range! }
 
