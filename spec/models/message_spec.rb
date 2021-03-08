@@ -55,7 +55,7 @@ describe Message, organization_workspace: :test do
       it { expect(Message.count).to eq 1 }
       it { expect(message.assignment).to_not be_nil }
       it { expect(message.assignment).to eq final_assignment }
-      it { expect(message.to_resource_h.except 'created_at', 'updated_at', 'date')
+      it { expect(message.to_resource_h.except 'created_at', 'updated_at', 'date', 'approved_at', 'approved_by_id')
              .to json_like submission_id: message.submission_id,
                            content: 'a',
                            sender: 'teacher@mumuki.org',

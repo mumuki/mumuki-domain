@@ -2,6 +2,8 @@ class Message < ApplicationRecord
 
   belongs_to :discussion, optional: true
   belongs_to :assignment, foreign_key: :submission_id, primary_key: :submission_id, optional: true
+  belongs_to :approved_by, class_name: 'User', optional: true
+
   has_one :exercise, through: :assignment
 
   validates_presence_of :content, :sender
@@ -50,12 +52,20 @@ class Message < ApplicationRecord
     update! read: true
   end
 
-  def toggle_approved!
-    toggle! :approved
+  def toggle_approved!(user)
+    if approved?
+      update! approved: false, approved_at: nil, approved_by: nil
+    else
+      update! approved: true, approved_at: Time.now, approved_by: user
+    end
   end
 
   def toggle_not_actually_a_question!
     toggle! :not_actually_a_question
+  end
+
+  def approved?
+    approved_at?
   end
 
   def validated?
