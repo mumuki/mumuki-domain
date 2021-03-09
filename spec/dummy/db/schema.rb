@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210119190204) do
+ActiveRecord::Schema.define(version: 20210302181654) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -400,6 +400,7 @@ ActiveRecord::Schema.define(version: 20210119190204) do
     t.boolean "wins_page"
     t.boolean "immersible"
     t.boolean "prevent_manual_evaluation_content"
+    t.text "faqs"
     t.index ["book_id"], name: "index_organizations_on_book_id"
     t.index ["name"], name: "index_organizations_on_name", unique: true
   end
@@ -505,6 +506,9 @@ ActiveRecord::Schema.define(version: 20210119190204) do
     t.datetime "legal_terms_accepted_at"
     t.datetime "forum_terms_accepted_at"
     t.boolean "banned_from_forum"
+    t.integer "use_purpose"
+    t.integer "learning_context"
+    t.integer "teaching_context"
     t.boolean "uppercase_mode"
     t.index ["avatar_type", "avatar_id"], name: "index_users_on_avatar_type_and_avatar_id"
     t.index ["disabled_at"], name: "index_users_on_disabled_at"
