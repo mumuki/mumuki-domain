@@ -36,11 +36,11 @@ class Course < ApplicationRecord
   end
 
   def ended?
-    !!period_end && period_end.past?
+    period_end.present? && period_end.past?
   end
 
   def started?
-    !!period_start && period_start.past?
+    period_start.present? && period_start.past?
   end
 
   def infer_period_range!
