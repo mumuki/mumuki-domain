@@ -57,6 +57,7 @@ class Topic < Content
       .joins("left join assignments assignments
                 on assignments.exercise_id = exercises.id
                 and assignments.submitter_id = #{user.id}
+                and assignments.organization_id = #{Organization.current.id}
                 and assignments.submission_status in (
                   #{Mumuki::Domain::Status::Submission::Passed.to_i},
                   #{Mumuki::Domain::Status::Submission::ManualEvaluationPending.to_i}
