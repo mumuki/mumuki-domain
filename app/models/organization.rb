@@ -11,7 +11,7 @@ class Organization < ApplicationRecord
   serialize :settings, Mumuki::Domain::Organization::Settings
   serialize :theme, Mumuki::Domain::Organization::Theme
 
-  markdown_on :description, :display_description, :page_description
+  markdown_on :description, :display_description, :page_description, :faqs
   teaser_on :display_description
 
   validate :ensure_consistent_public_login
