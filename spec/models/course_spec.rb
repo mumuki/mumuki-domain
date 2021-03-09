@@ -96,14 +96,14 @@ describe 'CourseChanged', organization_workspace: :test do
       let(:course) { Course.new period: '20181C'}
 
       it { expect(course.period_start).to eq DateTime.new(2018, 1, 1) }
-      it { expect(course.period_end).to eq DateTime.new(2018, 12, 31) }
+      it { expect(course.period_end).to eq DateTime.new(2018).end_of_year }
     end
 
     context 'with separators' do
       let(:course) { Course.new period: '2020-1C'}
 
       it { expect(course.period_start).to eq DateTime.new(2020, 1, 1) }
-      it { expect(course.period_end).to eq DateTime.new(2020, 12, 31) }
+      it { expect(course.period_end).to eq DateTime.new(2020).end_of_year }
     end
 
     context 'before foundation' do

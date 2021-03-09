@@ -51,8 +51,8 @@ class Course < ApplicationRecord
 
     return nil unless year.between? 2014, (DateTime.now.year + 1)
 
-    self.period_start = DateTime.new(year, 1, 1)
-    self.period_end = DateTime.new(year, 12, 31)
+    self.period_start = DateTime.new(year).beginning_of_year
+    self.period_end = DateTime.new(year).end_of_year
   end
 
   def canonical_code
