@@ -53,7 +53,7 @@ class Guide < Content
   # TODO: Make use of pending_siblings logic
   def pending_exercises(user)
     exercises.
-        joins("left join public.assignments assignments
+        joins("left join assignments assignments
                 on assignments.exercise_id = exercises.id
                 and assignments.submitter_id = #{user.id}
                 and assignments.organization_id = #{Organization.current.id}
