@@ -275,11 +275,11 @@ class Assignment < Progress
 
   def update_submissions_count!
     self.class.connection.execute(
-      "update public.exercises
+      "update exercises
          set submissions_count = submissions_count + 1
         where id = #{exercise.id}")
     self.class.connection.execute(
-      "update public.assignments
+      "update assignments
          set submissions_count = submissions_count + 1
         where id = #{id}")
     exercise.reload

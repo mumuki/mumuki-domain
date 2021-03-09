@@ -223,7 +223,7 @@ class User < ApplicationRecord
   end
 
   def next_exercise_at(guide)
-    guide.pending_exercises(self).order('public.exercises.number asc').first
+    guide.pending_exercises(self).order('exercises.number asc').first
   end
 
   def run_submission!(submission, assignment, evaluation)

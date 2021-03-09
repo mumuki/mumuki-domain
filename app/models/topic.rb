@@ -50,18 +50,13 @@ class Topic < Content
   end
 
   def pending_lessons(user)
-    lessons
-      .includes(:guide)
-      .references(:guide)
-      .joins('left join exercises exercises on exercises.guide_id = guides.id')
-      .joins("left join assignments assignments
-                on assignments.exercise_id = exercises.id
-                and assignments.submitter_id = #{user.id}
-                and assignments.submission_status in (
-                  #{Mumuki::Domain::Status::Submission::Passed.to_i},
-                  #{Mumuki::Domain::Status::Submission::ManualEvaluationPending.to_i}
-                )")
-      .where('assignments.id is null')
+    Exercise
+      .with_pending_assignments_for(
+        user,
+        lessons
+          .includes(:guide)
+          .references(:guide)
+          .joins('left join exercises exercises on exercises.guide_id = guides.id'))
       .group('guides.id', 'lessons.number', 'lessons.id')
   end
 

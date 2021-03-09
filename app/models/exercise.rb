@@ -267,4 +267,17 @@ class Exercise < ApplicationRecord
   def self.default_layout
     layouts.keys[0]
   end
+
+  def self.with_pending_assignments_for(user, relation)
+    relation.
+        joins("left join assignments assignments
+                on assignments.exercise_id = exercises.id
+                and assignments.submitter_id = #{user.id}
+                and assignments.organization_id = #{Organization.current.id}
+                and assignments.submission_status in (
+                  #{Mumuki::Domain::Status::Submission::Passed.to_i},
+                  #{Mumuki::Domain::Status::Submission::ManualEvaluationPending.to_i}
+                )").
+        where('assignments.id is null')
+  end
 end
