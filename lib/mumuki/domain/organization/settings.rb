@@ -40,10 +40,10 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
   end
 
   def disabled?
-    disabled_from.present? && disabled_from < Time.now
+    disabled_from.present? && disabled_from.past?
   end
 
   def in_preparation?
-    in_preparation_until.present? && in_preparation_until > Time.now
+    in_preparation_until.present? && in_preparation_until.future?
   end
 end

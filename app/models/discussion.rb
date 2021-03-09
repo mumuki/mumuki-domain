@@ -167,7 +167,7 @@ class Discussion < ApplicationRecord
   end
 
   def being_accessed_by_moderator?
-    last_moderator_access_at.present? && last_moderator_access_at > Time.now - MODERATOR_REVIEW_AVERAGE_TIME
+    last_moderator_access_at.present? && last_moderator_access_at.future? - MODERATOR_REVIEW_AVERAGE_TIME
   end
 
   def last_moderator_access_visible_for?(user)
