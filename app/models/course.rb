@@ -11,7 +11,7 @@ class Course < ApplicationRecord
 
   alias_attribute :name, :code
 
-  resource_fields :slug, :shifts, :code, :days, :period, :description
+  resource_fields :slug, :shifts, :code, :days, :period, :description, :period_start, :period_end
 
   def current_invitation
     invitations.where('expiration_date > ?', Time.now).first
@@ -33,6 +33,26 @@ class Course < ApplicationRecord
     else
       current_invitation
     end
+  end
+
+  def ended?
+    period_end.present? && period_end.past?
+  end
+
+  def started?
+    period_start.present? && period_start.past?
+  end
+
+  def infer_period_range!
+    return if period_start || period_end
+
+    period =~ /^(\d{4})?/
+    year = $1.to_i
+
+    return nil unless year.between? 2014, (DateTime.now.year + 1)
+
+    self.period_start = DateTime.new(year).beginning_of_year
+    self.period_end = DateTime.new(year).end_of_year
   end
 
   def canonical_code
