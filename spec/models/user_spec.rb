@@ -671,4 +671,12 @@ describe User, organization_workspace: :test do
     it { expect(user_1.certificates_in_organization Organization.current).to contain_exactly certificate_1, certificate_3 }
   end
 
+  describe 'generate_delete_account_token!' do
+    let(:user) { create :user }
+    before { user.generate_delete_account_token! }
+
+    it { expect(user.delete_account_token).to be_an_instance_of(String) }
+    it { expect(user.delete_account_token).to have_attributes(size: be > 10) }
+    it { expect(user.delete_account_token_expiration).to be_between(Time.now, 2.hours.since) }
+  end
 end

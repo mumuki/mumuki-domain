@@ -10,6 +10,7 @@ class User < ApplicationRecord
           WithTermsAcceptance,
           WithPreferences,
           Mumuki::Domain::Helpers::User
+          ActiveRecord::SecureToken
 
   serialize :permissions, Mumukit::Auth::Permissions
 
@@ -52,6 +53,12 @@ class User < ApplicationRecord
 
   def last_lesson
     last_guide.try(:lesson)
+  end
+
+  def generate_delete_account_token!
+    update!(
+        delete_account_token: self.class.generate_unique_secure_token,
+        delete_account_token_expiration: 2.hours.from_now)
   end
 
   def messages_in_organization(organization = Organization.current)
