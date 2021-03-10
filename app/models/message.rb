@@ -54,9 +54,9 @@ class Message < ApplicationRecord
 
   def toggle_approved!(user)
     if approved?
-      update! approved: false, approved_at: nil, approved_by: nil
+      disapprove!
     else
-      update! approved: true, approved_at: Time.now, approved_by: user
+      approve!(user)
     end
   end
 
@@ -102,5 +102,15 @@ class Message < ApplicationRecord
     if message_data['submission_id'].present?
       Assignment.find_by(submission_id: message_data.delete('submission_id'))&.receive_answer! message_data
     end
+  end
+
+  private
+
+  def approve!(user)
+    update! approved: true, approved_at: Time.now, approved_by: user
+  end
+
+  def disapprove!
+    update! approved: false, approved_at: nil, approved_by: nil
   end
 end
