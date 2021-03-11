@@ -58,7 +58,11 @@ class User < ApplicationRecord
   def generate_delete_account_token!
     update!(
         delete_account_token: self.class.generate_unique_secure_token,
-        delete_account_token_expiration: 2.hours.from_now)
+        delete_account_token_expiration_date: 2.hours.from_now)
+  end
+
+  def delete_account_token_matches?(token)
+    token == delete_account_token && delete_account_token_expiration_date >= Time.now
   end
 
   def messages_in_organization(organization = Organization.current)
