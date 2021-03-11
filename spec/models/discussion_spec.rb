@@ -193,6 +193,59 @@ describe Discussion, organization_workspace: :test do
     end
   end
 
+  describe '#update_last_moderator_access!' do
+    let(:discussion) { create(:discussion, organization: Organization.current) }
+    before { discussion.update_last_moderator_access! accessor }
+
+    context 'when user is moderator' do
+      let(:accessor) { create(:user, permissions: {moderator: 'test/*'}) }
+
+      it { expect(discussion.last_moderator_access_by).to eq accessor }
+      it { expect(discussion.last_moderator_access_at).to_not be nil }
+
+      it { expect(discussion.being_accessed_by_moderator?).to be true }
+      it { expect(discussion.last_moderator_access_visible_for? accessor).to be false }
+      it { expect(discussion.show_last_moderator_access_for? accessor).to be false }
+
+      context 'when accessed again right after' do
+        before { discussion.update_last_moderator_access! next_accessor }
+
+        context 'when next accessor is moderator' do
+          let(:next_accessor) { create(:user, permissions: {moderator: 'test/*'}) }
+
+          it { expect(discussion.last_moderator_access_by).to eq accessor }
+          it { expect(discussion.last_moderator_access_at).to_not be nil }
+
+          it { expect(discussion.being_accessed_by_moderator?).to be true }
+          it { expect(discussion.last_moderator_access_visible_for? next_accessor).to be true }
+          it { expect(discussion.show_last_moderator_access_for? next_accessor).to be true }
+        end
+
+        context 'when next accessor is student' do
+          let(:next_accessor) { create(:user, permissions: {student: 'test/*'}) }
+
+          it { expect(discussion.last_moderator_access_by).to eq accessor }
+          it { expect(discussion.last_moderator_access_at).to_not be nil }
+
+          it { expect(discussion.being_accessed_by_moderator?).to be true }
+          it { expect(discussion.last_moderator_access_visible_for? next_accessor).to be false }
+          it { expect(discussion.show_last_moderator_access_for? next_accessor).to be false }
+        end
+      end
+    end
+
+    context 'when user is student' do
+      let(:accessor) { create(:user, permissions: {student: 'test/*'}) }
+
+      it { expect(discussion.last_moderator_access_by).to be nil }
+      it { expect(discussion.last_moderator_access_at).to be nil }
+
+      it { expect(discussion.being_accessed_by_moderator?).to be false }
+      it { expect(discussion.last_moderator_access_visible_for? accessor).to be false }
+      it { expect(discussion.show_last_moderator_access_for? accessor).to be false }
+    end
+  end
+
   describe '#toggle_upvote!' do
     let(:discussion) { create(:discussion, {organization: Organization.current}) }
 
