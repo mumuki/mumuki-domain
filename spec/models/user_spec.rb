@@ -671,30 +671,32 @@ describe User, organization_workspace: :test do
     it { expect(user_1.certificates_in_organization Organization.current).to contain_exactly certificate_1, certificate_3 }
   end
 
-  describe '#generate_delete_account_token!' do
-    let(:user) { create :user }
-    before { user.generate_delete_account_token! }
+  describe 'delete_account_token' do
+    describe '#generate_delete_account_token!' do
+      let(:user) { create :user }
+      before { user.generate_delete_account_token! }
 
-    it { expect(user.delete_account_token).to be_an_instance_of(String) }
-    it { expect(user.delete_account_token).to have_attributes(size: be > 10) }
-    it { expect(user.delete_account_token_expiration_date).to be_between(Time.now, 2.hours.since) }
-  end
-
-  describe '#delete_account_token_matches?' do
-    let(:expiration_date) { 2.days.from_now }
-    let(:user) { create :user, delete_account_token: 'secret333', delete_account_token_expiration_date: expiration_date }
-
-    context 'valid token' do
-      it { expect(user.delete_account_token_matches? 'secret333').to be_truthy }
+      it { expect(user.delete_account_token).to be_an_instance_of(String) }
+      it { expect(user.delete_account_token).to have_attributes(size: be > 10) }
+      it { expect(user.delete_account_token_expiration_date).to be_between(Time.now, 2.hours.since) }
     end
 
-    context 'invalid token' do
-      it { expect(user.delete_account_token_matches? 'badtoken').to be_falsey }
-    end
+    describe '#delete_account_token_matches?' do
+      let(:expiration_date) { 2.days.from_now }
+      let(:user) { create :user, delete_account_token: 'secret333', delete_account_token_expiration_date: expiration_date }
 
-    context 'expired token' do
-      let(:expiration_date) { 1.hour.ago }
-      it { expect(user.delete_account_token_matches? 'secret333').to be_falsey }
+      context 'valid token' do
+        it { expect(user.delete_account_token_matches? 'secret333').to be_truthy }
+      end
+
+      context 'invalid token' do
+        it { expect(user.delete_account_token_matches? 'badtoken').to be_falsey }
+      end
+
+      context 'expired token' do
+        let(:expiration_date) { 1.hour.ago }
+        it { expect(user.delete_account_token_matches? 'secret333').to be_falsey }
+      end
     end
   end
 end

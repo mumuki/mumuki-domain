@@ -10,7 +10,6 @@ class User < ApplicationRecord
           WithTermsAcceptance,
           WithPreferences,
           Mumuki::Domain::Helpers::User
-          ActiveRecord::SecureToken
 
   serialize :permissions, Mumukit::Auth::Permissions
 
@@ -50,19 +49,10 @@ class User < ApplicationRecord
   PLACEHOLDER_IMAGE_URL = 'user_shape.png'.freeze
 
   resource_fields :uid, :social_id, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
+  with_temporary_token :delete_account_token
 
   def last_lesson
     last_guide.try(:lesson)
-  end
-
-  def generate_delete_account_token!
-    update!(
-        delete_account_token: self.class.generate_unique_secure_token,
-        delete_account_token_expiration_date: 2.hours.from_now)
-  end
-
-  def delete_account_token_matches?(token)
-    token == delete_account_token && delete_account_token_expiration_date >= Time.now
   end
 
   def messages_in_organization(organization = Organization.current)
