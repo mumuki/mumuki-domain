@@ -121,6 +121,8 @@ ActiveRecord::Schema.define(version: 20210308145910) do
     t.integer "organization_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "period_start"
+    t.datetime "period_end"
   end
 
   create_table "discussions", force: :cascade do |t|
@@ -403,6 +405,7 @@ ActiveRecord::Schema.define(version: 20210308145910) do
     t.boolean "wins_page"
     t.boolean "immersible"
     t.boolean "prevent_manual_evaluation_content"
+    t.text "faqs"
     t.index ["book_id"], name: "index_organizations_on_book_id"
     t.index ["name"], name: "index_organizations_on_name", unique: true
   end

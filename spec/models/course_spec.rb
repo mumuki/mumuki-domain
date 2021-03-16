@@ -1,27 +1,144 @@
 require 'spec_helper'
 
 describe 'CourseChanged', organization_workspace: :test do
-  let(:course_json) do
-    {slug: 'test/bar',
-     shifts: %w(morning),
-     code: 'k2003',
-     days: %w(monday wednesday),
-     period: '2016',
-     description: 'test course'}
+  describe '#import_from_resource_h!' do
+
+    let!(:course) { Course.import_from_resource_h! course_json }
+
+    context 'classic fields' do
+      let(:course_json) do
+        {slug: 'test/bar',
+        shifts: %w(morning),
+        code: 'k2003',
+        days: %w(monday wednesday),
+        period: '2016',
+        description: 'test course'}
+      end
+
+      it { expect(course.slug).to eq 'test/bar' }
+      it { expect(course.code).to eq 'k2003' }
+      it { expect(course.days).to eq %w(monday wednesday) }
+      it { expect(course.period).to eq '2016' }
+      it { expect(course.canonical_code).to eq '2016-k2003' }
+    end
+
+    context 'current fields' do
+      let(:course_json) do
+        {slug: 'test/bar',
+        code: 'k2003',
+        period: '2021',
+        period_start: DateTime.new(2021, 2, 1),
+        period_end: DateTime.new(2021, 3, 1),
+        description: 'test course'}
+      end
+
+      it { expect(course.organization.courses).to include course }
+      it { expect(course.organization.name).to eq 'test' }
+
+      it { expect(course.slug).to eq 'test/bar' }
+      it { expect(course.code).to eq 'k2003' }
+      it { expect(course.days).to be nil }
+      it { expect(course.period).to eq '2021' }
+      it { expect(course.period_start).to eq DateTime.new(2021, 2, 1) }
+      it { expect(course.period_end).to eq DateTime.new(2021, 3, 1) }
+      it { expect(course.canonical_code).to eq '2021-k2003' }
+    end
   end
 
-  let!(:course) { Course.import_from_resource_h! course_json }
+  describe 'status' do
+    context 'started' do
+      let(:course) { Course.new period_start: 1.day.ago }
 
-  it { expect(course.organization.courses).to include course }
-  it { expect(course.organization.name).to eq 'test' }
+      it { expect(course.started?).to be true }
+      it { expect(course.ended?).to be false }
+    end
 
-  it { expect(course.slug).to eq 'test/bar' }
-  it { expect(course.code).to eq 'k2003' }
-  it { expect(course.days).to eq %w(monday wednesday) }
-  it { expect(course.period).to eq '2016' }
-  it { expect(course.canonical_code).to eq '2016-k2003' }
+    context 'not started' do
+      let(:course) { Course.new period_start: 1.day.since }
+
+      it { expect(course.started?).to be false }
+      it { expect(course.ended?).to be false }
+    end
+
+    context 'ended' do
+      let(:course) { Course.new period_end: 1.day.ago }
+
+      it { expect(course.started?).to be false }
+      it { expect(course.ended?).to be true }
+    end
+
+    context 'not ended' do
+      let(:course) { Course.new period_end: 1.day.since }
+
+      it { expect(course.started?).to be false }
+      it { expect(course.ended?).to be false }
+    end
+  end
+
+  describe "#infer_period_range!" do
+    before { course.infer_period_range! }
+
+    context 'period and range start' do
+      let(:course) { Course.new period: '2021', period_start: DateTime.new(2018, 3, 1) }
+
+      it { expect(course.period_start).to eq DateTime.new(2018, 3, 1) }
+      it { expect(course.period_end).to be nil }
+    end
+
+    context 'period and range end' do
+      let(:course) { Course.new period: '2021', period_end: DateTime.new(2018, 7, 15) }
+
+      it { expect(course.period_start).to be nil }
+      it { expect(course.period_end).to eq DateTime.new(2018, 7, 15) }
+    end
+
+    context 'no separators' do
+      let(:course) { Course.new period: '20181C'}
+
+      it { expect(course.period_start).to eq DateTime.new(2018, 1, 1) }
+      it { expect(course.period_end).to eq DateTime.new(2018).end_of_year }
+    end
+
+    context 'with separators' do
+      let(:course) { Course.new period: '2020-1C'}
+
+      it { expect(course.period_start).to eq DateTime.new(2020, 1, 1) }
+      it { expect(course.period_end).to eq DateTime.new(2020).end_of_year }
+    end
+
+    context 'before foundation' do
+      let(:course) { Course.new period: '0000'}
+
+      it { expect(course.period_start).to be nil}
+      it { expect(course.period_end).to be nil }
+    end
+
+    context 'too into the future' do
+      let(:course) { Course.new period: '9999'}
+
+      it { expect(course.period_start).to be nil}
+      it { expect(course.period_end).to be nil }
+    end
+
+    context 'empty period foundation' do
+      let(:course) { Course.new period: nil }
+
+      it { expect(course.period_start).to be nil}
+      it { expect(course.period_end).to be nil }
+    end
+  end
 
   describe '#invite!' do
+    let(:course) do
+       Course.create! slug: 'test/bar',
+                      period: '2021',
+                      code: 'k2003',
+                      period_start: DateTime.new(2021, 2, 1),
+                      period_end: DateTime.new(2021, 3, 1),
+                      description: 'test course'
+
+    end
+
     context 'when an invitation has not been created yet' do
       it { expect(course.current_invitation).to be nil }
       it { expect(course.closed?).to be true }

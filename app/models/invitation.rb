@@ -39,7 +39,7 @@ class Invitation < ApplicationRecord
   end
 
   def expired?
-    Time.now > expiration_date
+    expiration_date.past?
   end
 
   def unexpired
