@@ -107,7 +107,7 @@ describe Discussion, organization_workspace: :test do
       end
 
       describe 'and that message gets approved' do
-        before { discussion.messages.last.update! approved: true }
+        before { discussion.messages.last.toggle_approved! moderator }
         before { discussion.reload }
 
         it { expect(discussion.has_validated_responses?).to be true }
