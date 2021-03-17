@@ -88,13 +88,12 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   def self.with_temporary_token(field_name, duration = 2.hours)
-    this = self
     class_eval do
       token_attribute = field_name
       token_date_attribute = "#{field_name}_expiration_date"
 
       define_method("generate_#{field_name}!") do
-        update!(token_attribute => this.generate_secure_token, token_date_attribute => duration.from_now)
+        update!(token_attribute => self.class.generate_secure_token, token_date_attribute => duration.from_now)
       end
 
       define_method("#{field_name}_matches?") do |token|
