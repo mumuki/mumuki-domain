@@ -689,6 +689,11 @@ describe User, organization_workspace: :test do
         it { expect(user.delete_account_token_matches? 'secret333').to be_truthy }
       end
 
+      context 'no token' do
+        before { user.update! delete_account_token: nil }
+        it { expect(user.delete_account_token_matches? nil).to be_falsey }
+      end
+
       context 'invalid token' do
         it { expect(user.delete_account_token_matches? 'badtoken').to be_falsey }
       end
