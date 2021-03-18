@@ -1,4 +1,5 @@
 class Message < ApplicationRecord
+  include WithSoftDeletion
 
   belongs_to :discussion, optional: true
   belongs_to :assignment, foreign_key: :submission_id, primary_key: :submission_id, optional: true
