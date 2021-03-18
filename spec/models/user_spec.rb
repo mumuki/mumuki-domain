@@ -702,6 +702,11 @@ describe User, organization_workspace: :test do
         let(:expiration_date) { 1.hour.ago }
         it { expect(user.delete_account_token_matches? 'secret333').to be_falsey }
       end
+
+      context 'token with no expiration date' do
+        let(:expiration_date) { nil }
+        it { expect(user.delete_account_token_matches? 'secret333').to be_falsey }
+      end
     end
   end
 end
