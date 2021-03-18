@@ -87,6 +87,22 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
+  def self.with_temporary_token(field_name, duration = 2.hours)
+    class_eval do
+      token_attribute = field_name
+      token_date_attribute = "#{field_name}_expiration_date"
+
+      define_method("generate_#{field_name}!") do
+        update!(token_attribute => self.class.generate_secure_token, token_date_attribute => duration.from_now)
+      end
+
+      define_method("#{field_name}_matches?") do |token|
+        actual_token = attribute(token_attribute)
+        actual_token.present? && token == actual_token && attribute(token_date_attribute)&.future?
+      end
+    end
+  end
+
   def self.numbered(*associations)
     class_eval do
       associations.each do |it|
@@ -139,5 +155,9 @@ class ApplicationRecord < ActiveRecord::Base
 
   def raise_foreign_key_error!
     raise ActiveRecord::InvalidForeignKey.new "#{model_name} is still referenced"
+  end
+
+  def self.generate_secure_token
+    SecureRandom.base58(24)
   end
 end
