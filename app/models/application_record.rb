@@ -98,7 +98,7 @@ class ApplicationRecord < ActiveRecord::Base
 
       define_method("#{field_name}_matches?") do |token|
         actual_token = attribute(token_attribute)
-        actual_token.present? && token == actual_token && attribute(token_date_attribute) >= Time.now
+        actual_token.present? && token == actual_token && attribute(token_date_attribute)&.future?
       end
     end
   end
