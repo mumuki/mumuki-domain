@@ -12,10 +12,6 @@ module Mumuki::Domain
     def ensure_enabled!
     end
 
-    def has_student_granted_organizations?
-      false
-    end
-
     def teacher_here?
       false
     end

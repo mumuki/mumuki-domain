@@ -12,3 +12,6 @@ group :test do
 end
 
 gem 'codeclimate-test-reporter', :group => :test, :require => nil
+#
+# gem 'mumukit-auth', path: '/home/lucho/mumuki/mumukit-auth'
+gem 'mumukit-auth', github: 'mumuki/mumukit-auth', branch: 'chore-granted_organizations_method_rename'

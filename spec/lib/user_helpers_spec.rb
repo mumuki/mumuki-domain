@@ -146,7 +146,6 @@ describe Mumuki::Domain::Helpers::User do
 
     context 'no organization' do
       it { expect(user.student_granted_organizations).to eq [] }
-      it { expect(user.has_student_granted_organizations?).to be false }
       it { expect(user.has_immersive_main_organization?).to be false }
     end
 
@@ -155,11 +154,28 @@ describe Mumuki::Domain::Helpers::User do
       before { expect(Mumukit::Platform.organization_class).to receive(:find_by_name!).and_return(organization)}
 
       it { expect(user.student_granted_organizations).to eq [organization] }
-      it { expect(user.has_student_granted_organizations?).to be true }
       it { expect(user.has_immersive_main_organization?).to be false }
 
       context 'when immersive' do
         before { organization.settings.immersive = true }
+      end
+    end
+
+    context 'is memoized properly' do
+      let(:user) { create(:user) }
+
+      before { organization.switch! }
+      before { user.make_student_of!(organization); user.save! }
+      before { expect(Mumukit::Platform.organization_class).to receive(:find_by_name!).with('foo').exactly(1).times.and_return(organization) }
+
+      it do
+        user.student_granted_organizations
+        expect(user.student_granted_organizations.size).to eq 1
+      end
+
+      it do
+        user.student_granted_organizations
+        expect(user.student_granted_organizations).to eq [organization]
       end
     end
   end
