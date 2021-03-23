@@ -2,6 +2,8 @@ class CertificateProgram < ApplicationRecord
   belongs_to :organization
   has_many :certificates
 
+  scope :ongoing, -> { where("start_date > :now AND end_date < :now", now: Time.now) }
+
   def friendly
     title
   end
@@ -23,8 +25,8 @@ class CertificateProgram < ApplicationRecord
   }
 </style>
 <!-- You can use interpolations like --
-  <%#= certificate.start_date %>
-  <%#= certificate.end_date %>
+  <%#= certificate.started_at %>
+  <%#= certificate.ended_at %>
   <%#= user.formal_first_name %>
   <%#= user.formal_last_name %>
   <%#= user.formal_full_name %>

@@ -21,6 +21,8 @@ class Organization < ApplicationRecord
   belongs_to :book
   has_many :usages
 
+  has_many :certificate_programs
+
   validates_presence_of :contact_email, :locale
   validates_presence_of :welcome_email_template, if: :greet_new_users?
   validates :name, uniqueness: true,
@@ -106,6 +108,10 @@ class Organization < ApplicationRecord
   def site_name
     warn "Don't use site_name. Use display_name instead"
     name
+  end
+
+  def ongoing_certificate_programs?
+    certificate_programs.ongoing.exists?
   end
 
   # Tells if the given user can
