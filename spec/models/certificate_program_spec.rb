@@ -6,7 +6,7 @@ describe CertificateProgram, organization_workspace: :test do
   let(:certificate_program_end_date) { nil }
   let(:certificate_program_start_date) { nil }
 
-  context '.ongoing' do
+  describe '.ongoing' do
     context 'with no end or start_date' do
       it { expect(CertificateProgram.ongoing.count).to eq 1 }
     end
