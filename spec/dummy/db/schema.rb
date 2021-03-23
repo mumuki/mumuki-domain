@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210310195602) do
+ActiveRecord::Schema.define(version: 20210318195238) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,14 +79,16 @@ ActiveRecord::Schema.define(version: 20210310195602) do
     t.bigint "organization_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "start_date"
+    t.datetime "end_date"
     t.index ["organization_id"], name: "index_certificate_programs_on_organization_id"
   end
 
   create_table "certificates", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "certificate_program_id"
-    t.datetime "start_date"
-    t.datetime "end_date"
+    t.datetime "started_at"
+    t.datetime "ended_at"
     t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

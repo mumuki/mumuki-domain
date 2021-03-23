@@ -6,8 +6,8 @@ describe Certificate, organization_workspace: :test do
 
   context '#template_locals' do
     let(:locals) { certificate.template_locals.to_struct }
-    it { expect(locals.certificate.start_date).to_not be_nil }
-    it { expect(locals.certificate.end_date).to_not be_nil }
+    it { expect(locals.certificate.started_at).to_not be_nil }
+    it { expect(locals.certificate.ended_at).to_not be_nil }
     it { expect(locals.user.formal_first_name).to eq 'Jane' }
     it { expect(locals.user.formal_last_name).to eq 'Doe' }
     it { expect(locals.user.formal_full_name).to eq 'Jane Doe' }
