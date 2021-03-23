@@ -2,7 +2,7 @@ class CertificateProgram < ApplicationRecord
   belongs_to :organization
   has_many :certificates
 
-  scope :ongoing, -> { where("start_date > :now AND end_date < :now", now: Time.now) }
+  active_between :start_date, :end_date, aliased_as: :ongoing
 
   def friendly
     title
