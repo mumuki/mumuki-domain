@@ -28,21 +28,58 @@ describe ExamRegistration, organization_workspace: :test do
     end
   end
 
-  describe '#register!' do
+  describe '#register_users!' do
     context 'properly register all users' do
-      before { registration.register!([user, other_user])}
+      before { registration.register_users!([user, other_user])}
 
       it { expect(registration.registrees).to eq([user, other_user]) }
     end
   end
 
-  describe '#start!' do
-    context 'creates notifications for all users' do
-      before { registration.register!([user, other_user]); registration.start! }
+  describe '#register!' do
+    context 'properly register user' do
+      before { registration.register! user }
 
-      it { expect(user.notifications.size).to eq(1) }
-      it { expect(other_user.notifications.size).to eq(1) }
-      it { expect(user.notifications.first.target).to eq(registration) }
+      context 'when it was registered only once' do
+        it { expect(registration.registrees.where(id: user.id).count).to eq(1) }
+      end
+
+      context 'when it was registered twice' do
+        before { registration.register! user }
+
+        it { expect(registration.registrees.where(id: user.id).count).to eq(1) }
+      end
+    end
+  end
+
+  describe '#notify_unnotified_registrees!' do
+    context 'creates notifications for all registrees' do
+
+      before do
+        registration.register_users!([user, other_user])
+        registration.notify_unnotified_registrees!
+      end
+
+      context 'registrees are properly notificated' do
+        it { expect(user.notifications.count).to eq(1) }
+        it { expect(other_user.notifications.count).to eq(1) }
+        it { expect(registration.notifications.count).to eq(2) }
+        it { expect(user.notifications.first.target).to eq(registration) }
+      end
+
+      context 'only new registrees are notified' do
+        let(:yet_another_user) { create(:user) }
+
+        before do
+          registration.register! yet_another_user
+          registration.notify_unnotified_registrees!
+        end
+
+        it { expect(user.notifications.count).to eq(1) }
+        it { expect(other_user.notifications.count).to eq(1) }
+        it { expect(yet_another_user.notifications.count).to eq(1) }
+        it { expect(registration.notifications.count).to eq(3) }
+      end
     end
   end
 
