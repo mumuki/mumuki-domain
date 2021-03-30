@@ -2,6 +2,8 @@ class CertificateProgram < ApplicationRecord
   belongs_to :organization
   has_many :certificates
 
+  active_between :start_date, :end_date, aliased_as: :ongoing
+
   def friendly
     title
   end
@@ -23,8 +25,8 @@ class CertificateProgram < ApplicationRecord
   }
 </style>
 <!-- You can use interpolations like --
-  <%#= certificate.start_date %>
-  <%#= certificate.end_date %>
+  <%#= certificate.started_at %>
+  <%#= certificate.ended_at %>
   <%#= user.formal_first_name %>
   <%#= user.formal_last_name %>
   <%#= user.formal_full_name %>

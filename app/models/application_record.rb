@@ -134,6 +134,19 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
+  def self.active_between(start_date_field, end_date_field, **options)
+    define_singleton_method(:active) do |actually_filter=true|
+      if actually_filter
+        self.where("(#{start_date_field} IS NULL OR #{start_date_field} < :now) AND (#{end_date_field} IS NULL OR #{end_date_field} > :now)", now: Time.now)
+      else
+        all
+      end
+    end
+
+    aliased_as = options.delete(:aliased_as)
+    singleton_class.send(:alias_method, aliased_as, :active) if aliased_as
+  end
+
   ## Partially implements resource-hash protocol, by
   ## defining `to_resource_h` and helper methods `resource_fields` and `slice_resource_h`
   ## using the given fields

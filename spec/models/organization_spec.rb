@@ -409,5 +409,25 @@ describe Organization, organization_workspace: :test do
         it { expect(organization.progressive_display_lookahead).to be 1 }
       end
     end
+
+    describe '#ongoing_certificate_programs?' do
+      let(:organization) { create(:organization) }
+
+      context 'with no certificate_programs in that organization' do
+        it { expect(organization.ongoing_certificate_programs?).to be false }
+      end
+
+      context 'with ongoing certificate_programs in that organization' do
+        let!(:certificate_program) { create(:certificate_program, organization: organization) }
+
+        it { expect(organization.reload.ongoing_certificate_programs?).to be true }
+      end
+
+      context 'with finished certificate_programs in that organization' do
+        let!(:certificate_program) { create(:certificate_program, organization: organization, end_date: 1.day.ago) }
+
+        it { expect(organization.reload.ongoing_certificate_programs?).to be false }
+      end
+    end
   end
 end

@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :certificate do
-    start_date { 1.month.ago }
-    end_date { 1.minute.ago }
+    started_at { 1.month.ago }
+    ended_at { 1.minute.ago }
     user { build :user, first_name: 'Jane', last_name: 'Doe' }
     certificate_program { build :certificate_program }
   end

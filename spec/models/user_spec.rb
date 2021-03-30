@@ -652,11 +652,13 @@ describe User, organization_workspace: :test do
 
   describe '#certificated_in?' do
     let(:user) { create :user, uid: 'test' }
+    let(:certificate_program_1) { create(:certificate_program, certificates: [certificate_1])}
+    let(:certificate_program_2) { create(:certificate_program, certificates: [certificate_2])}
     let(:certificate_1) { create :certificate, user: user }
     let(:certificate_2) { create :certificate, user: create(:user) }
 
-    it { expect(user.certificated_in? certificate_1).to eq true }
-    it { expect(user.certificated_in? certificate_2).to eq false }
+    it { expect(user.certificated_in? certificate_program_1).to eq true }
+    it { expect(user.certificated_in? certificate_program_2).to eq false }
   end
 
   describe '#certificates_in_organization' do
