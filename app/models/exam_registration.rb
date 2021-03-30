@@ -5,6 +5,7 @@ class ExamRegistration < ApplicationRecord
   belongs_to :organization
   has_and_belongs_to_many :exams
   has_many :authorization_requests, class_name: 'ExamAuthorizationRequest'
+  has_and_belongs_to_many :registrees, class_name: 'User'
 
   enum authorization_criterion_type: %i(none passed_exercises), _prefix: :authorization_criterion
 
@@ -22,8 +23,12 @@ class ExamRegistration < ApplicationRecord
     authorization_criterion.ensure_valid!
   end
 
-  def start!(users)
-    users.each &method(:notify_user!)
+  def register!(users)
+    update! registrees: users
+  end
+
+  def start!
+    registrees.each &method(:notify_user!)
   end
 
   def process_requests!
