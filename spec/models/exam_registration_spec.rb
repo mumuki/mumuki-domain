@@ -28,9 +28,17 @@ describe ExamRegistration, organization_workspace: :test do
     end
   end
 
+  describe '#register!' do
+    context 'properly register all users' do
+      before { registration.register!([user, other_user])}
+
+      it { expect(registration.registrees).to eq([user, other_user]) }
+    end
+  end
+
   describe '#start!' do
     context 'creates notifications for all users' do
-      before { registration.start! [user, other_user] }
+      before { registration.register!([user, other_user]); registration.start! }
 
       it { expect(user.notifications.size).to eq(1) }
       it { expect(other_user.notifications.size).to eq(1) }
