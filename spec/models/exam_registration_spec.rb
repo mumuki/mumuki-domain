@@ -53,10 +53,17 @@ describe ExamRegistration, organization_workspace: :test do
   end
 
   describe '#notify_unnotified_registrees!' do
-    context 'creates notifications for all registrees' do
 
+    before do
+      registration.register_users!([user, other_user])
+    end
+
+    context 'before being actually executed' do
+      it { expect(registration.unnotified_registrees?).to be true }
+    end
+
+    context 'after being actually executed' do
       before do
-        registration.register_users!([user, other_user])
         registration.notify_unnotified_registrees!
       end
 
@@ -65,6 +72,7 @@ describe ExamRegistration, organization_workspace: :test do
         it { expect(other_user.notifications.count).to eq(1) }
         it { expect(registration.notifications.count).to eq(2) }
         it { expect(user.notifications.first.target).to eq(registration) }
+        it { expect(registration.unnotified_registrees?).to be false }
       end
 
       context 'only new registrees are notified' do
@@ -79,8 +87,10 @@ describe ExamRegistration, organization_workspace: :test do
         it { expect(other_user.notifications.count).to eq(1) }
         it { expect(yet_another_user.notifications.count).to eq(1) }
         it { expect(registration.notifications.count).to eq(3) }
+        it { expect(registration.unnotified_registrees?).to be false }
       end
     end
+
   end
 
   describe '#process_requests!' do
