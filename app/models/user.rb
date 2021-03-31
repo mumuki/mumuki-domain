@@ -45,6 +45,7 @@ class User < ApplicationRecord
 
   validates :terms_of_service, acceptance: true
   after_save :welcome_to_new_organizations!, if: :gained_access_to_new_orga?
+  after_save :try_solve_open_discussions!, if: :banned_from_forum?
   after_initialize :init
   PLACEHOLDER_IMAGE_URL = 'user_shape.png'.freeze
 
@@ -135,7 +136,6 @@ class User < ApplicationRecord
   def unsubscribe_from_reminders!
     update! accepts_reminders: false
   end
-
 
   def attach!(role, course)
     add_permission! role, course.slug
@@ -312,6 +312,14 @@ class User < ApplicationRecord
 
   def gained_access_to_new_orga?
     new_accessible_organizations.present?
+  end
+
+  def try_solve_open_discussions!
+    discussions.each(&:try_solve!)
+  end
+
+  def just_banned_from_forum?
+    attribute_changed?(:banned_from_forum) && banned_from_forum?
   end
 
   def new_accessible_organizations
