@@ -249,18 +249,6 @@ class Exercise < ApplicationRecord
   private
 
   def evaluation_class
-    if manual_evaluation?
-      manual_evaluation_class
-    else
-      automated_evaluation_class
-    end
-  end
-
-  def manual_evaluation_class
-    Mumuki::Domain::Evaluation::Manual
-  end
-
-  def automated_evaluation_class
     Mumuki::Domain::Evaluation::Automated
   end
 

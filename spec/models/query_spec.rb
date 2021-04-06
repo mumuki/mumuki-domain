@@ -5,7 +5,6 @@ describe Mumuki::Domain::Submission::Query do
   let(:user) { create(:user) }
 
   before do
-    expect_any_instance_of(Challenge).to receive(:automated_evaluation_class).and_return(Mumuki::Domain::Evaluation::Automated)
     allow_any_instance_of(Language).to receive(:run_query!).and_return(status: :passed, result: '5')
   end
 

@@ -48,6 +48,16 @@ class Problem < QueriableChallenge
     own_expectations.present? || own_custom_expectations.present?
   end
 
+  def evaluation_class
+    if mixed_evaluation?
+      Mumuki::Domain::Evaluation::Mixed
+    elsif manual_evaluation?
+      Mumuki::Domain::Evaluation::Manual
+    else
+      Mumuki::Domain::Evaluation::Automated
+    end
+  end
+
   # Sets the layout. This method accepts input_kids as a synonym of input_primary
   # for historical reasons
   def layout=(layout)

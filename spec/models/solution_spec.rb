@@ -36,7 +36,6 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
 
   describe '#submit_solution!' do
 
-    before { expect_any_instance_of(Challenge).to receive(:automated_evaluation_class).and_return(Mumuki::Domain::Evaluation::Automated) }
     before { expect_any_instance_of(Language).to receive(:run_tests!).with(bridge_request).and_return(bridge_response) }
     let(:submission_attributes) { {} }
     let(:assignment) { exercise.submit_solution! user, submission_attributes }
