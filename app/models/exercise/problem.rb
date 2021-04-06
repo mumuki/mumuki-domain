@@ -33,7 +33,15 @@ class Problem < QueriableChallenge
   end
 
   def evaluation_criteria?
-    manual_evaluation? || expectations? || test.present?
+    manual_evaluation? || automated_evaluation?
+  end
+
+  def mixed_evaluation?
+    manual_evaluation? && automated_evaluation?
+  end
+
+  def automated_evaluation?
+    expectations? || test.present?
   end
 
   def expectations?
