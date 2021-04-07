@@ -39,6 +39,30 @@ describe UserStats, organization_workspace: :test do
       context 'with date filter' do
         it { expect(stats.activity(3.days.until..1.day.until)[:exercises]).to eq(solved_count: 1, count: 4) }
       end
+
+      context 'when book changes' do
+        let(:other_book) { create(:book_with_full_tree, exercises: exercises[1..2]) }
+
+        before do
+          Organization.current.update! book: other_book
+          reindex_current_organization!
+        end
+
+        it { expect(stats.activity[:exercises]).to eq(solved_count: 1, count: 2) }
+      end
+
+      context 'for other organization with same book' do
+        let(:other_orga) { create(:organization, book: book) }
+
+        before do
+          other_orga.switch!
+          reindex_current_organization!
+        end
+
+        it { expect(stats.activity[:exercises]).to eq(solved_count: 0, count: 4) }
+
+      end
+
     end
 
     context 'messages' do
