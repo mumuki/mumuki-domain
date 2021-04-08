@@ -16,10 +16,10 @@ class UserStats < ApplicationRecord
         exercises: {
             solved_count: organization_exercises
                               .joins(:assignments)
-                              .where(assignments: { top_submission_status: [:passed, :skipped], submitter: user }.merge(date_filter))
+                              .where(assignments: { top_submission_status: [:passed, :skipped], submitter: user, organization: organization }.merge(date_filter))
                               .count,
-            count: organization_exercises.count},
-
+            count: organization_exercises.count
+        },
         messages: messages_in_discussions_count(date_range)
     }
   end
