@@ -302,6 +302,12 @@ class User < ApplicationRecord
     certificates.where(certificate_program: certificate_program).exists?
   end
 
+  def certificate_in(certificate_program, certificate_h)
+    return if certificated_in?(certificate_program)
+    certificate = certificates.create certificate_h.merge(certificate_program: certificate_program)
+    UserMailer.certificate(certificate).deliver_later
+  end
+
   private
 
   def welcome_to_new_organizations!
