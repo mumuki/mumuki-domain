@@ -2,8 +2,8 @@ class Chapter < ApplicationRecord
   include WithStats
   include WithNumber
 
-  include SiblingsNavigation
   include TerminalNavigation
+  include SiblingsNavigation
 
   include FriendlyName
 
