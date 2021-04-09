@@ -29,8 +29,4 @@ class Chapter < ApplicationRecord
   def structural_parent
     book
   end
-
-  def pending_siblings_for(user)
-    book.pending_chapters(user)
-  end
 end
