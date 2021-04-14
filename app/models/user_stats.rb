@@ -43,6 +43,6 @@ class UserStats < ApplicationRecord
   end
 
   def organization_exercises
-    @organization_exercises ||= organization.exercises
+    @organization_exercises ||= organization.book.exercises
   end
 end
