@@ -4,11 +4,73 @@ describe Exercise, organization_workspace: :test do
   let(:exercise) { create(:exercise) }
   let(:user) { create(:user, first_name: 'Orlo') }
 
-  describe("schema fields are in sync") do
+  describe "schema fields are in sync" do
     let(:resource_h_fields) { Exercise.new(guide: Guide.new, language: Language.new).to_expanded_resource_h.keys }
     let(:schema_fields) { Mumuki::Domain::Store::Github::ExerciseSchema.fields.map(&:reverse_name) }
 
     it { expect(resource_h_fields).to contain_exactly(*schema_fields) }
+  end
+
+  describe '#to_resource_h' do
+    let(:exercise) { create(:problem, name: 'Say hello', description: 'say _hello_', layout: 'input_bottom', language: python, bibliotheca_id: 11, locale: 'en') }
+    let(:python) { create :language, name: 'python', extension: 'py', test_extension: 'py' }
+
+    before { exercise.guide.update! language: python }
+
+    it { expect(exercise.to_resource_h).to json_eq name: "Say hello",
+                                                   id: 11,
+                                                   locale: 'en',
+                                                   layout: 'input_bottom',
+                                                   tag_list: [],
+                                                   extra_visible: false,
+                                                   manual_evaluation: false,
+                                                   editor: 'code',
+                                                   assistance_rules: [],
+                                                   randomizations: {},
+                                                   choices: [],
+                                                   type: "problem",
+                                                   settings: {},
+                                                   test: 'dont care',
+                                                   offline_test: {},
+                                                   expectations: [],
+                                                   description: "say _hello_" }
+
+  it { expect(exercise.to_resource_h markdownified: true).to json_eq name: "Say hello",
+                                                                     id: 11,
+                                                                     locale: 'en',
+                                                                     layout: 'input_bottom',
+                                                                     tag_list: [],
+                                                                     extra_visible: false,
+                                                                     manual_evaluation: false,
+                                                                     editor: 'code',
+                                                                     assistance_rules: [],
+                                                                     randomizations: {},
+                                                                     choices: [],
+                                                                     type: "problem",
+                                                                     settings: {},
+                                                                     test: 'dont care',
+                                                                     offline_test: {},
+                                                                     expectations: [],
+                                                                     description: "<p>say <em>hello</em></p>\n" }
+
+  it { expect(exercise.to_resource_h embed_language: true).to json_eq name: "Say hello",
+                                                                      id: 11,
+                                                                      locale: 'en',
+                                                                      layout: 'input_bottom',
+                                                                      tag_list: [],
+                                                                      extra_visible: false,
+                                                                      manual_evaluation: false,
+                                                                      editor: 'code',
+                                                                      assistance_rules: [],
+                                                                      randomizations: {},
+                                                                      choices: [],
+                                                                      type: "problem",
+                                                                      settings: {},
+                                                                      test: 'dont care',
+                                                                      offline_test: {},
+                                                                      expectations: [],
+                                                                      description: "say _hello_",
+                                                                      language: { name: 'python', extension: 'py', test_extension: 'py' } }
   end
 
   describe '#choice_values' do

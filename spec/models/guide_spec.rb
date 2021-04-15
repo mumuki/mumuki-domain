@@ -308,7 +308,8 @@ describe Guide do
                                                   expectations: [],
                                                   settings: {},
                                                   description: "Simple problem",
-                                                  test: "dont care"
+                                                  test: "dont care",
+                                                  offline_test: {}
                                                 }, {
                                                   name: "Some functions",
                                                   id: 12,

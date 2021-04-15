@@ -74,6 +74,10 @@ class Language < ApplicationRecord
     save!
   end
 
+  def reimport_from_bridge!
+    import_from_resource_h! Mumuki::Domain::Store::Thesaurus::InfoConverter.new(runner_url, bridge.info).call
+  end
+
   def directives_sections
     new_directive Mumukit::Directives::Sections
   end
