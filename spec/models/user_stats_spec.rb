@@ -63,6 +63,18 @@ describe UserStats, organization_workspace: :test do
 
       end
 
+      context 'for organization with complements' do
+        let!(:complement) { create(:complement, exercises: [create(:exercise), create(:exercise)]) }
+        before { reindex_current_organization! }
+
+        it { expect(stats.activity[:exercises]).to eq(solved_count: 2, count: 4) }
+      end
+
+      context 'for organization with exams' do
+        let!(:exam) { create(:exam, exercises: [create(:exercise), create(:exercise)]) }
+
+        it { expect(stats.activity[:exercises]).to eq(solved_count: 2, count: 4) }
+      end
     end
 
     context 'messages' do

@@ -33,7 +33,7 @@ class Organization < ApplicationRecord
   after_create :reindex_usages!
   after_update :reindex_usages!, if: lambda { |user| user.saved_change_to_book_id? }
 
-  has_many :guides, through: 'usages', source: 'item', source_type: 'Guide'
+  has_many :guides, -> { where 'usages.parent_item_type' => 'Lesson' }, through: 'usages', source: 'item', source_type: 'Guide'
   has_many :exercises, through: :guides
   has_many :assignments, through: :exercises
   has_many :exams
