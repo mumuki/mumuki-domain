@@ -12,10 +12,9 @@ module SiblingsNavigation
     structural_parent.structural_children
   end
 
-  #TODO reestablish this after indicators reliably linked to assignments
-  # def pending_siblings_for(user, organization=Organization.current)
-  #   siblings.reject { |it| it.progress_for(user, organization).completed? }
-  # end
+  def pending_siblings_for(user, organization=Organization.current)
+    siblings.reject { |it| it.progress_for(user, organization).completed? }
+  end
 
   # Names
 
