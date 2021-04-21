@@ -211,6 +211,10 @@ class User < ApplicationRecord
     name.split.map(&:first).map(&:capitalize).join(' ')
   end
 
+  def abbreviated_name
+    "#{first_name} #{last_name.first.capitalize + '.' if last_name.present?}".strip
+  end
+
   def progress_at(content, organization)
     Indicator.find_or_initialize_by(user: self, organization: organization, content: content)
   end
