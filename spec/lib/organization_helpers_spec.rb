@@ -212,6 +212,17 @@ describe Mumukit::Platform::Organization do
         it { expect(organization.url_for '/zaraza').to eq 'http://localmumuki.io/orga/zaraza' }
       end
     end
+    describe '#retenantized_url_for' do
+      context 'with subdomain mapping' do
+        it { expect(organization.retenantized_url_for 'a_route/nested').to eq 'http://orga.localmumuki.io/a_route/nested' }
+      end
+
+      context 'with path mapping' do
+        before { allow_any_instance_of(Mumukit::Platform::Application::Organic).to receive(:organization_mapping).and_return(Mumukit::Platform::OrganizationMapping::Path) }
+
+        it { expect(organization.retenantized_url_for 'other_orga/a_route/nested').to eq 'http://localmumuki.io/orga/a_route/nested' }
+      end
+    end
     describe '#domain' do
       it { expect(organization.domain).to eq 'orga.localmumuki.io' }
     end
