@@ -568,7 +568,7 @@ describe User, organization_workspace: :test do
       context 'with several names' do
         let(:user) { create(:user, first_name: 'John George', last_name: 'Doe Foo') }
 
-        it { expect(user.name_initials).to eq 'J G D F' }
+        it { expect(user.abbreviated_name).to eq 'John George D.' }
       end
     end
 
