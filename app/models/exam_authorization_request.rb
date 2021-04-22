@@ -18,6 +18,17 @@ class ExamAuthorizationRequest < ApplicationRecord
     exam_registration.description
   end
 
+  def icon
+    case status.to_sym
+    when :pending
+      { class: 'info-circle', type: 'info' }
+    when :approved
+      { class: 'check-circle', type: 'success' }
+    when :rejected
+      { class: 'times-circle', type: 'danger' }
+    end
+  end
+
   private
 
   def notify_user!
