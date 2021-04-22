@@ -47,9 +47,13 @@ class Discussion < ApplicationRecord
   def navigable_content_in(_)
     nil
   end
-  
+
   def target
     self
+  end
+
+  def content_used_in?(organization)
+    item.content_used_in?(organization)
   end
 
   def used_in?(organization)
