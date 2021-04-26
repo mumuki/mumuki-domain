@@ -6,7 +6,7 @@ describe Message, organization_workspace: :test do
       {'exercise_id' => 1,
        'submission_id' => 'abcdef1',
        'message' => {
-         'sender' => 'aguspina87@gmail.com',
+         'sender' => 'student@mumuki.org',
          'content' => 'a',
          'created_at' => '1/1/1'}} }
 
@@ -14,7 +14,7 @@ describe Message, organization_workspace: :test do
       {'submission_id' => 'abcdef1',
        'content' => 'a',
        'created_at' => '1/1/1',
-       'sender' => 'aguspina87@gmail.com'} }
+       'sender' => 'student@mumuki.org'} }
 
     let(:parsed_comment) { Message.parse_json(data) }
 
@@ -55,7 +55,7 @@ describe Message, organization_workspace: :test do
       it { expect(Message.count).to eq 1 }
       it { expect(message.assignment).to_not be_nil }
       it { expect(message.assignment).to eq final_assignment }
-      it { expect(message.to_resource_h.except 'created_at', 'updated_at', 'date', 'approved_at', 'approved_by_id')
+      it { expect(message.to_resource_h.except 'created_at', 'updated_at', 'date')
              .to json_like submission_id: message.submission_id,
                            content: 'a',
                            sender: 'teacher@mumuki.org',
