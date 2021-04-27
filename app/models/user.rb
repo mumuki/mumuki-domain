@@ -283,11 +283,11 @@ class User < ApplicationRecord
   end
 
   def formal_first_name
-    verified_first_name || first_name
+    verified_first_name.presence || first_name
   end
 
   def formal_last_name
-    verified_last_name || last_name
+    verified_last_name.presence || last_name
   end
 
   def formal_full_name
