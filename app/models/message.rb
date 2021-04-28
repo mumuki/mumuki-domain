@@ -11,7 +11,6 @@ class Message < ApplicationRecord
   validates_presence_of :submission_id, :unless => :discussion_id?
 
   after_save :update_counters_cache!
-  after_destroy :update_counters_cache!
 
   markdown_on :content
 
