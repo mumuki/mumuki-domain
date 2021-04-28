@@ -540,6 +540,38 @@ describe User, organization_workspace: :test do
       it { expect(user.name_initials).to eq '' }
     end
 
+    describe '#abbreviated_name' do
+      context 'with first_name and last_name' do
+        let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
+
+        it { expect(user.abbreviated_name).to eq 'John D.' }
+      end
+
+      context 'with just first_name' do
+        let(:user) { create(:user, first_name: 'John', last_name: nil) }
+
+        it { expect(user.abbreviated_name).to eq 'John' }
+      end
+
+      context 'with just last_name' do
+        let(:user) { create(:user, first_name: nil, last_name: 'Doe') }
+
+        it { expect(user.abbreviated_name).to eq 'D.' }
+      end
+
+      context 'with no first_name or last_name' do
+        let(:user) { create(:user, first_name: nil, last_name: nil) }
+
+        it { expect(user.abbreviated_name).to eq '' }
+      end
+
+      context 'with several names' do
+        let(:user) { create(:user, first_name: 'John George', last_name: 'Doe Foo') }
+
+        it { expect(user.abbreviated_name).to eq 'John George D.' }
+      end
+    end
+
     context 'with several names' do
       let(:user) { create(:user, first_name: 'John George', last_name: 'Doe Foo') }
 
