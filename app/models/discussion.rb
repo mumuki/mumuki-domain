@@ -190,6 +190,6 @@ class Discussion < ApplicationRecord
   private
 
   def messages_by_updated_at(direction = :desc)
-    messages.reorder(updated_at: direction)
+    messages.where(deletion_motive: nil).reorder(updated_at: direction)
   end
 end
