@@ -1,4 +1,5 @@
 class Message < ApplicationRecord
+  include WithSoftDeletion
 
   belongs_to :discussion, optional: true
   belongs_to :assignment, foreign_key: :submission_id, primary_key: :submission_id, optional: true
@@ -10,7 +11,6 @@ class Message < ApplicationRecord
   validates_presence_of :submission_id, :unless => :discussion_id?
 
   after_save :update_counters_cache!
-  after_destroy :update_counters_cache!
 
   markdown_on :content
 
@@ -43,7 +43,8 @@ class Message < ApplicationRecord
   end
 
   def to_resource_h
-    as_json(except: [:id, :type, :discussion_id, :approved, :not_actually_a_question],
+    as_json(except: [:id, :type, :discussion_id, :approved, :approved_at, :approved_by_id,
+                     :not_actually_a_question, :deletion_motive, :deleted_at, :deleted_by_id],
             include: {exercise: {only: [:bibliotheca_id]}})
         .merge(organization: Organization.current.name)
   end

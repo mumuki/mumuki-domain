@@ -38,6 +38,10 @@ class Discussion < ApplicationRecord
     end
   end
 
+  def visible_messages
+    messages.where.not(deletion_motive: :self_deleted).or(messages.where(deletion_motive: nil))
+  end
+
   def try_solve!
     if opened?
       update! status: reachable_statuses_for(initiator).first
@@ -73,7 +77,7 @@ class Discussion < ApplicationRecord
   end
 
   def last_message_date
-    messages.last&.created_at || created_at
+    visible_messages.last&.created_at || created_at
   end
 
   def friendly
@@ -125,11 +129,11 @@ class Discussion < ApplicationRecord
   end
 
   def has_messages?
-    messages.exists? || description.present?
+    visible_messages.exists? || description.present?
   end
 
   def responses_count
-    messages.where.not(sender: initiator.uid).count
+    visible_messages.where.not(sender: initiator.uid).count
   end
 
   def has_responses?
@@ -186,6 +190,6 @@ class Discussion < ApplicationRecord
   private
 
   def messages_by_updated_at(direction = :desc)
-    messages.reorder(updated_at: direction)
+    messages.where(deletion_motive: nil).reorder(updated_at: direction)
   end
 end

@@ -380,14 +380,53 @@ describe Discussion, organization_workspace: :test do
       it { expect(discussion.reload.messages_count).to eq 3 }
     end
 
-    context 'when message gets deleted' do
+    context 'when message is self deleted by user' do
       before { discussion.submit_message!({content: 'it is ok'}, moderator) }
-      before { discussion.submit_message!({content: 'another question'}, initiator) }
-      before { discussion.messages.last.destroy! }
+      before { discussion.submit_message!({content: 'thnks'}, initiator) }
+      before { discussion.messages.last.soft_delete! :self_deleted, initiator }
 
       it { expect(discussion.reload.requires_moderator_response?).to be false }
       it { expect(discussion.reload.validated_messages_count).to eq 1 }
       it { expect(discussion.reload.messages_count).to eq 1 }
+    end
+
+    context 'when message is self deleted by moderator' do
+      before { discussion.submit_message!({content: 'it is wel don'}, moderator) }
+      before { discussion.messages.last.soft_delete! :self_deleted, moderator }
+
+      it { expect(discussion.reload.requires_moderator_response?).to be true }
+      it { expect(discussion.reload.validated_messages_count).to eq 0 }
+      it { expect(discussion.reload.messages_count).to eq 0 }
+    end
+
+    context 'when message is self deleted by moderator and then replies again' do
+      before { discussion.submit_message!({content: 'it is wel don'}, moderator) }
+      before { discussion.messages.last.soft_delete! :self_deleted, moderator }
+      before { discussion.submit_message!({content: 'it is well done'}, moderator) }
+
+      it { expect(discussion.reload.requires_moderator_response?).to be false }
+      it { expect(discussion.reload.validated_messages_count).to eq 1 }
+      it { expect(discussion.reload.messages_count).to eq 1 }
+    end
+
+    context 'when inappropriate message is deleted by moderator after responding' do
+      before { discussion.submit_message!({content: 'i have the same issue'}, other_user) }
+      before { discussion.submit_message!({content: 'some help...'}, moderator) }
+      before { discussion.submit_message!({content: 'i hate dulce de leche'}, initiator) }
+      before { discussion.messages.last.soft_delete! :inappropriate_content, moderator }
+
+      it { expect(discussion.reload.requires_moderator_response?).to be false }
+      it { expect(discussion.reload.validated_messages_count).to eq 1 }
+      it { expect(discussion.reload.messages_count).to eq 2 }
+    end
+
+    context 'when message that discloses personal information is deleted by moderator with no other response' do
+      before { discussion.submit_message!({content: 'call me maybe: 12345678'}, initiator) }
+      before { discussion.messages.last.soft_delete! :discloses_personal_information, moderator }
+
+      it { expect(discussion.reload.requires_moderator_response?).to be true }
+      it { expect(discussion.reload.validated_messages_count).to eq 0 }
+      it { expect(discussion.reload.messages_count).to eq 0 }
     end
 
     context 'long discussion' do
