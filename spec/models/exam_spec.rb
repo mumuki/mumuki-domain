@@ -20,7 +20,15 @@ describe Exam, organization_workspace: :test do
         it { expect(ExamAuthorization.where(exam: exam).count).to eq 0 }
       end
     end
+  end
 
+  describe '#next_for' do
+    let(:exam) { create(:exam) }
+
+    context 'does not break when asked for next' do
+      it { expect { exam.next_for(user) }.to_not raise_error }
+      it { expect(exam.next_for(user)).to be_nil }
+    end
   end
 
   describe '#validate_accessible_for!' do

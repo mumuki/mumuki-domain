@@ -18,4 +18,8 @@ module TerminalNavigation
   def siblings
     []
   end
+
+  def next_for(_user)
+    nil
+  end
 end
