@@ -420,6 +420,14 @@ describe Assignment, organization_workspace: :test do
 
       it { expect(assignment.affable_test_results).to eq [{status: :failed, title: 'title', result: 'Expected <10>'}]  }
     end
+
+    context 'it works with string keys too' do
+      let(:test_results) do
+        [ { 'status' => :failed, 'summary' => { 'type' => 'some_error', 'message' => 'something went wrong!' }, 'title' => 'some title', 'result' => 'some result' } ]
+      end
+
+      it { expect(assignment.affable_test_results).to eq [{ result: "some result", status: :failed, summary: "something went wrong!", title: "some title" }] }
+    end
   end
 
   describe '#sanitized_affable_test_results' do

@@ -29,7 +29,7 @@ class ApplicationRecord < ActiveRecord::Base
   def self.serialize_symbolized_hash_array(*keys)
     keys.each do |field|
       serialize field
-      define_method(field) { self[field]&.map { |it| it.symbolize_keys } }
+      define_method(field) { self[field]&.map { |it| it.deep_symbolize_keys } }
     end
   end
 
