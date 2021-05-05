@@ -81,13 +81,13 @@ describe Topic do
 
     before { organization.switch!.reindex_usages! }
 
-    context 'on organization with prevent_manual_evaluation' do
+    context 'on organization with prevent_manual_evaluation_content' do
       let(:organization) { create :organization, prevent_manual_evaluation_content: true, book: book }
 
       it { expect(pending_lessons_count).to eq 0 }
     end
 
-    context 'on organization without' do
+    context 'on organization without prevent_manual_evaluation_content' do
       let(:organization) { create :organization, book: book }
 
       it { expect(pending_lessons_count).to eq 1 }
