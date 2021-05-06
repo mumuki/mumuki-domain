@@ -72,4 +72,25 @@ describe Topic do
     end
   end
 
+  describe '#pending_lessons' do
+    let(:book) { create :book, topics: [topic] }
+    let(:topic) { create :topic, lessons: [lesson] }
+    let(:lesson) { create :lesson, exercises: [create(:exercise, manual_evaluation: true)] }
+    let(:user) { create :user }
+    let(:pending_lessons_count) { topic.pending_lessons(user).to_a.count }
+
+    before { organization.switch!.reindex_usages! }
+
+    context 'on organization with prevent_manual_evaluation' do
+      let(:organization) { create :organization, prevent_manual_evaluation_content: true, book: book }
+
+      it { expect(pending_lessons_count).to eq 0 }
+    end
+
+    context 'on organization without' do
+      let(:organization) { create :organization, book: book }
+
+      it { expect(pending_lessons_count).to eq 1 }
+    end
+  end
 end
