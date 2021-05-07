@@ -317,7 +317,11 @@ class User < ApplicationRecord
   def clear_progress_for!(organization)
     location = { organization: organization }.compact
 
-    assignments.where(location).delete_all
+    target_assignments = assignments.where(location)
+
+    messages.where(discussion_id: nil, assignment: target_assignments).delete_all
+
+    target_assignments.delete_all
     indicators.where(location).delete_all
     user_stats.where(location).delete_all
   end
