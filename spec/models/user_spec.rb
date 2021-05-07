@@ -743,4 +743,40 @@ describe User, organization_workspace: :test do
       end
     end
   end
+
+  describe '#clear_progress_for!' do
+    let(:user) { create :user }
+
+    let(:organization_1) { create :organization, name: 'orga-1' }
+    let(:organization_2) { create :organization, name: 'orga-2' }
+    let(:exercise_1) { create :indexed_exercise }
+    let(:exercise_2) { create :indexed_exercise }
+
+    before do
+      organization_1.switch!
+      exercise_1.submit_solution!(user).passed!
+      organization_2.switch!
+      exercise_2.submit_solution!(user).passed!
+    end
+
+    it { expect(user.assignments.count).to eq 2 }
+    it { expect(user.indicators.count).to eq 6 }
+    it { expect(user.user_stats.count).to eq 2 }
+
+    context 'on clearing progress for a specific organization' do
+      before { user.clear_progress_for!(organization_1) }
+
+      it { expect(user.assignments.count).to eq 1 }
+      it { expect(user.indicators.count).to eq 3 }
+      it { expect(user.user_stats.count).to eq 1 }
+    end
+
+    context 'on general progress clear' do
+      before { user.clear_progress_for!(nil) }
+
+      it { expect(user.assignments.count).to eq 0 }
+      it { expect(user.indicators.count).to eq 0 }
+      it { expect(user.user_stats.count).to eq 0 }
+    end
+  end
 end
