@@ -16,6 +16,8 @@ class User < ApplicationRecord
 
   has_many :notifications
   has_many :assignments, foreign_key: :submitter_id
+  has_many :indicators
+  has_many :user_stats, class_name: 'UserStats'
   has_many :messages, -> { order(created_at: :desc) }, through: :assignments
 
   has_many :submitted_exercises, through: :assignments, class_name: 'Exercise', source: :exercise
