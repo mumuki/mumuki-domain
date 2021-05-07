@@ -752,16 +752,22 @@ describe User, organization_workspace: :test do
     let(:exercise_1) { create :indexed_exercise }
     let(:exercise_2) { create :indexed_exercise }
 
+    let(:messages_count) { Message.count }
+
     before do
       organization_1.switch!
-      exercise_1.submit_solution!(user).passed!
+      assignment_1 = exercise_1.submit_solution!(user).tap(&:passed!)
+      create :message, sender: user, assignment: assignment_1, discussion_id: nil
       organization_2.switch!
-      exercise_2.submit_solution!(user).passed!
+      assignment_2 = exercise_2.submit_solution!(user).tap(&:passed!)
+      create :message, sender: user, assignment: assignment_2, discussion_id: nil
+      create :message, sender: user, assignment: assignment_1, discussion_id: 1
     end
 
     it { expect(user.assignments.count).to eq 2 }
     it { expect(user.indicators.count).to eq 6 }
     it { expect(user.user_stats.count).to eq 2 }
+    it { expect(messages_count).to eq 3 }
 
     context 'on clearing progress for a specific organization' do
       before { user.clear_progress_for!(organization_1) }
@@ -769,6 +775,7 @@ describe User, organization_workspace: :test do
       it { expect(user.assignments.count).to eq 1 }
       it { expect(user.indicators.count).to eq 3 }
       it { expect(user.user_stats.count).to eq 1 }
+      it { expect(messages_count).to eq 2 }
     end
 
     context 'on general progress clear' do
@@ -777,6 +784,7 @@ describe User, organization_workspace: :test do
       it { expect(user.assignments.count).to eq 0 }
       it { expect(user.indicators.count).to eq 0 }
       it { expect(user.user_stats.count).to eq 0 }
+      it { expect(messages_count).to eq 1 }
     end
   end
 end
