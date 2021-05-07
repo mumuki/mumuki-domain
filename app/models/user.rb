@@ -312,6 +312,14 @@ class User < ApplicationRecord
     UserMailer.certificate(certificate).deliver_later
   end
 
+  def clear_progress_for!(organization)
+    location = { organization: organization }.compact
+
+    assignments.where(location).delete_all
+    indicators.where(location).delete_all
+    user_stats.where(location).delete_all
+  end
+
   private
 
   def welcome_to_new_organizations!
