@@ -31,7 +31,7 @@ class UserStats < ApplicationRecord
   private
 
   def messages_in_discussions_count(date_range = nil)
-    date_filter = { date: date_range }.compact
+    date_filter = { created_at: date_range }.compact
     result = Message.joins(:discussion)
         .where({sender: user.uid, discussions: { organization: organization }}.merge(date_filter))
         .group(:approved)

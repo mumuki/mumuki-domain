@@ -82,7 +82,7 @@ describe UserStats, organization_workspace: :test do
       let(:discussion) { problem.discuss! user, title: 'Need help' }
 
       before { discussion.submit_message!({content: 'Same issue here'}, another_user) }
-      before { discussion.submit_message!({content: 'I forgot to say this', date: 2.days.until}, user) }
+      before { discussion.submit_message!({content: 'I forgot to say this', created_at: 2.days.until}, user) }
       before { discussion.submit_message!({content: 'Oh, this is the answer!', approved: true}, user) }
 
       context 'without date filter' do
