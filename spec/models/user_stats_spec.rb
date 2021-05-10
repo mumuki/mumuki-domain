@@ -92,6 +92,11 @@ describe UserStats, organization_workspace: :test do
       context 'with date filter' do
         it { expect(stats.activity(3.day.until..1.day.until)[:messages]).to eq(count: 1, approved: 0) }
       end
+
+      context 'with deleted message' do
+        before { discussion.messages.last.soft_delete! :self_deleted, user }
+        it { expect(stats.activity[:messages]).to eq(count: 1, approved: 0) }
+      end
     end
   end
 end
