@@ -29,7 +29,7 @@ class Exercise < ApplicationRecord
   defaults { self.submissions_count = 0 }
 
   def self.default_scope
-    where(manual_evaluation: false) if Organization.safe_current&.prevent_manual_evaluation_content
+    where(manual_evaluation: false) if hide_manual_evaluation?
   end
 
   alias_method :progress_for, :assignment_for
@@ -256,6 +256,10 @@ class Exercise < ApplicationRecord
     layouts.keys[0]
   end
 
+  def self.hide_manual_evaluation?
+    Organization.safe_current&.prevent_manual_evaluation_content
+  end
+
   def self.with_pending_assignments_for(user, relation)
     relation.
         joins("left join assignments assignments
@@ -266,6 +270,7 @@ class Exercise < ApplicationRecord
                   #{Mumuki::Domain::Status::Submission::Passed.to_i},
                   #{Mumuki::Domain::Status::Submission::ManualEvaluationPending.to_i}
                 )").
-        where('assignments.id is null')
+        where('assignments.id is null').
+        where(('exercises.manual_evaluation = false' if hide_manual_evaluation?))
   end
 end
