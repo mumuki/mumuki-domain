@@ -82,7 +82,7 @@ describe UserStats, organization_workspace: :test do
       let(:discussion) { problem.discuss! user, title: 'Need help' }
 
       before { discussion.submit_message!({content: 'Same issue here'}, another_user) }
-      before { discussion.submit_message!({content: 'I forgot to say this', date: 2.days.until}, user) }
+      before { discussion.submit_message!({content: 'I forgot to say this', created_at: 2.days.until}, user) }
       before { discussion.submit_message!({content: 'Oh, this is the answer!', approved: true}, user) }
 
       context 'without date filter' do
@@ -91,6 +91,11 @@ describe UserStats, organization_workspace: :test do
 
       context 'with date filter' do
         it { expect(stats.activity(3.day.until..1.day.until)[:messages]).to eq(count: 1, approved: 0) }
+      end
+
+      context 'with deleted message' do
+        before { discussion.messages.last.soft_delete! :self_deleted, user }
+        it { expect(stats.activity[:messages]).to eq(count: 1, approved: 0) }
       end
     end
   end
