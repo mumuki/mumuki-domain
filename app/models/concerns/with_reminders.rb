@@ -1,5 +1,6 @@
 module WithReminders
   extend ActiveSupport::Concern
+  include WithPgLock
 
   def build_reminder
     mailer = UserMailer.new
@@ -24,17 +25,7 @@ module WithReminders
   # This method is aimed to be sent across multiple servers or processed concurrently
   # and still not send duplicate mails
   def try_remind_with_lock!
-    # Some notes:
-    #
-    # * nowait is a postgre specific option and may not work with other databases
-    # * nowait will raise an exception if the lock can not be acquired
-    # * we are using a double check lock pattern to reduce lock acquisition
-    with_lock('for update nowait') do
-      reload
-      remind! if should_remind?
-    end if should_remind?
-  rescue
-    nil
+    with_pg_lock proc { remind! }, if: proc { should_remind? }
   end
 
   private
