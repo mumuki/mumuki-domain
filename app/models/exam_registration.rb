@@ -1,4 +1,5 @@
 class ExamRegistration < ApplicationRecord
+  include WithPgLock
   include WithTimedEnablement
   include TerminalNavigation
 
@@ -15,6 +16,8 @@ class ExamRegistration < ApplicationRecord
   delegate :meets_authorization_criteria?, :process_request!, to: :authorization_criterion
 
   alias_attribute :name, :description
+
+  scope :should_process, -> { where(processed: false).where(arel_table[:end_time].lt(Time.now)) }
 
   def authorization_criterion
     @authorization_criterion ||= ExamRegistration::AuthorizationCriterion.parse(authorization_criterion_type, authorization_criterion_value)
@@ -40,17 +43,21 @@ class ExamRegistration < ApplicationRecord
     registrees.where.not(id: Notification.notified_users_ids_for(self, self.organization))
   end
 
+  # Try to process authorization request, by acquiring a database lock for update
+  # the aproppriate record.
+  #
+  # This method is aimed to be sent across multiple servers or processed concurrently
+  # and still not send duplicate mails
   def process_requests!
-    authorization_requests.each { |it| process_authorization_request it }
+    with_pg_lock proc { process_authorization_requests! }, if: proc { !processed? }
   end
 
-  def process_authorization_request(authorization_request)
-    with_lock('for update nowait') do
-      process_request! authorization_request
-      authorization_request.try_authorize!
-    end if authorization_request.pending?
-  rescue
-    nil
+  def process_authorization_requests!
+    authorization_requests.each do |it|
+      process_request! it
+      it.try_authorize!
+    end
+    update! processed: true
   end
 
   def authorization_request_for(user)
