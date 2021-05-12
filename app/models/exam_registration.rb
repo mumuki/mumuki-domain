@@ -41,10 +41,16 @@ class ExamRegistration < ApplicationRecord
   end
 
   def process_requests!
-    authorization_requests.each do |it|
-      process_request! it
-      it.try_authorize!
-    end
+    authorization_requests.each { |it| process_authorization_request it }
+  end
+
+  def process_authorization_request(authorization_request)
+    with_lock('for update nowait') do
+      process_request! authorization_request
+      authorization_request.try_authorize!
+    end if authorization_request.pending?
+  rescue
+    nil
   end
 
   def authorization_request_for(user)
