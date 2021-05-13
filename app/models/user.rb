@@ -319,7 +319,7 @@ class User < ApplicationRecord
 
     target_assignments = assignments.where(location)
 
-    messages.where(discussion_id: nil, assignment: target_assignments).delete_all
+    messages.where(assignment: target_assignments).delete_all
 
     target_assignments.delete_all
     indicators.where(location).delete_all
