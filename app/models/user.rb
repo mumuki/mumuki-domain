@@ -16,6 +16,8 @@ class User < ApplicationRecord
 
   has_many :notifications
   has_many :assignments, foreign_key: :submitter_id
+  has_many :indicators
+  has_many :user_stats, class_name: 'UserStats'
   has_many :messages, -> { order(created_at: :desc) }, through: :assignments
 
   has_many :submitted_exercises, through: :assignments, class_name: 'Exercise', source: :exercise
@@ -310,6 +312,18 @@ class User < ApplicationRecord
     return if certificated_in?(certificate_program)
     certificate = certificates.create certificate_h.merge(certificate_program: certificate_program)
     UserMailer.certificate(certificate).deliver_later
+  end
+
+  def clear_progress_for!(organization)
+    location = { organization: organization }.compact
+
+    target_assignments = assignments.where(location)
+
+    messages.where(assignment: target_assignments).delete_all
+
+    target_assignments.delete_all
+    indicators.where(location).delete_all
+    user_stats.where(location).delete_all
   end
 
   private
