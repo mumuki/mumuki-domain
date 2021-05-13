@@ -743,4 +743,26 @@ describe User, organization_workspace: :test do
       end
     end
   end
+
+  describe '#try_solve_open_discussions!' do
+    let(:user) { create(:user, discussions: [*user_discussions, discussion_with_comment]) }
+    let(:user_discussions) { create_list(:discussion, 3) }
+    let(:discussion_with_comment) { create(:discussion)}
+    let!(:message) { create(:message, sender: other_user.uid, discussion: discussion_with_comment) }
+    let(:other_user) { create(:user) }
+
+    context 'discussions are not modified when user is not banned' do
+      it { expect(user.discussions.where(status: :opened).count).to eq 4 }
+      it { expect(user.discussions.where(status: :closed).count).to eq 0 }
+      it { expect(user.discussions.where(status: :pending_review).count).to eq 0 }
+    end
+
+    context 'discussions are closed when user is banned' do
+      before { user.update! banned_from_forum: true }
+
+      it { expect(user.discussions.where(status: :opened).count).to eq 0 }
+      it { expect(user.discussions.where(status: :closed).count).to eq 3 }
+      it { expect(user.discussions.where(status: :pending_review).count).to eq 1 }
+    end
+  end
 end
