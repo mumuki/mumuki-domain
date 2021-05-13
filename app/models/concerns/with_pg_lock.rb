@@ -3,7 +3,7 @@ module WithPgLock
   # Lock PG table, reload model and execute callback if
   # criterion is met
   #
-  def with_pg_lock(callback, criterion)
+  def with_pg_lock(callback, criterion = { if: proc { true } })
     # Some notes:
     #
     # * nowait is a postgre specific option and may not work with other databases
