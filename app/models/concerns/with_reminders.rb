@@ -19,7 +19,7 @@ module WithReminders
   end
 
   # Try to send a reminder, by acquiring a database lock for update
-  # the aproppriate record. This object can't be updated as long as
+  # the appropriate record. This object can't be updated as long as
   # the reminder is being sent.
   #
   # This method is aimed to be sent across multiple servers or processed concurrently

@@ -44,7 +44,7 @@ class ExamRegistration < ApplicationRecord
   end
 
   # Try to process authorization request, by acquiring a database lock for update
-  # the aproppriate record.
+  # the appropriate record.
   #
   # This method is aimed to be sent across multiple servers or processed concurrently
   # and still not send duplicate mails
