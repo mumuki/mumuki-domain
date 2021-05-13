@@ -49,7 +49,7 @@ class ExamRegistration < ApplicationRecord
   # This method is aimed to be sent across multiple servers or processed concurrently
   # and still not send duplicate mails
   def process_requests!
-    with_pg_lock proc { process_authorization_requests! }, if: proc { !processed? }
+    with_pg_lock proc { process_authorization_requests! }, proc { !processed? }
   end
 
   def process_authorization_requests!

@@ -25,7 +25,7 @@ module WithReminders
   # This method is aimed to be sent across multiple servers or processed concurrently
   # and still not send duplicate mails
   def try_remind_with_lock!
-    with_pg_lock proc { remind! }, if: proc { should_remind? }
+    with_pg_lock proc { remind! }, proc { should_remind? }
   end
 
   private
