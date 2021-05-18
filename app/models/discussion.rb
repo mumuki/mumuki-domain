@@ -81,7 +81,7 @@ class Discussion < ApplicationRecord
   end
 
   def friendly
-    initiator.name
+    initiator.abbreviated_name
   end
 
   def subscription_for(user)
