@@ -21,7 +21,7 @@ class ExamAuthorizationRequest < ApplicationRecord
   def icon
     case status.to_sym
     when :pending
-      { class: 'info-circle', type: 'info' }
+      { class: 'hourglass', type: 'info' }
     when :approved
       { class: 'check-circle', type: 'success' }
     when :rejected
