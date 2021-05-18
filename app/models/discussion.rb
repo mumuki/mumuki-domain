@@ -5,7 +5,7 @@ class Discussion < ApplicationRecord
   has_many :messages, -> { order(:created_at) }, dependent: :destroy
   belongs_to :initiator, class_name: 'User'
 
-  belongs_to :last_moderator_access_by, class_name: 'User', optional: true
+  belongs_to :responsible_moderator_by, class_name: 'User', optional: true
   belongs_to :status_updated_by, class_name: 'User', optional: true
 
   belongs_to :exercise, foreign_type: :exercise, foreign_key: 'item_id'
