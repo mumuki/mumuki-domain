@@ -1,6 +1,8 @@
 module WithResponsibleModerator
   extend ActiveSupport::Concern
 
+  MODERATOR_MAX_RESPONSIBLE_TIME = 45.minutes
+
   def toggle_responsible!(moderator)
     if any_responsible?
       no_responsible!
@@ -10,7 +12,7 @@ module WithResponsibleModerator
   end
 
   def any_responsible?
-    responsible_moderator_at.present?
+    responsible_moderator_at.present? && (responsible_moderator_at + MODERATOR_MAX_RESPONSIBLE_TIME).future?
   end
 
   private

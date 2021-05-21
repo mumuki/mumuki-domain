@@ -28,8 +28,6 @@ class Discussion < ApplicationRecord
   delegate :language, to: :item
   delegate :to_discussion_status, to: :status
 
-  MODERATOR_REVIEW_AVERAGE_TIME = 17.minutes
-
   scope :for_user, -> (user) do
     if user.try(:moderator_here?)
       all
