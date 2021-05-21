@@ -163,25 +163,6 @@ class Discussion < ApplicationRecord
             requires_moderator_response: !has_moderator_response
   end
 
-  def update_last_moderator_access!(user)
-    if user&.moderator_here? && !last_moderator_access_visible_for?(user)
-      update! last_moderator_access_at: Time.now,
-              last_moderator_access_by: user
-    end
-  end
-
-  def being_accessed_by_moderator?
-    last_moderator_access_at.present? && (last_moderator_access_at + MODERATOR_REVIEW_AVERAGE_TIME).future?
-  end
-
-  def last_moderator_access_visible_for?(user)
-    show_last_moderator_access_for?(user) && being_accessed_by_moderator?
-  end
-
-  def show_last_moderator_access_for?(user)
-    user&.moderator_here? && last_moderator_access_by != user
-  end
-
   def self.debatable_for(klazz, params)
     debatable_id = params[:"#{klazz.underscore}_id"]
     klazz.constantize.find(debatable_id)
