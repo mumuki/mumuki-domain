@@ -4,15 +4,19 @@ module WithResponsibleModerator
   MODERATOR_MAX_RESPONSIBLE_TIME = 45.minutes
 
   def toggle_responsible!(moderator)
-    if any_responsible?
+    if responsible?(moderator)
       no_responsible!
-    else
+    elsif no_current_responsible?
       responsible! moderator
     end
   end
 
   def any_responsible?
     responsible_moderator_at.present? && (responsible_moderator_at + MODERATOR_MAX_RESPONSIBLE_TIME).future?
+  end
+
+  def no_current_responsible?
+    !any_responsible?
   end
 
   def responsible?(moderator)
