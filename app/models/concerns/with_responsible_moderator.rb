@@ -15,6 +15,10 @@ module WithResponsibleModerator
     responsible_moderator_at.present? && (responsible_moderator_at + MODERATOR_MAX_RESPONSIBLE_TIME).future?
   end
 
+  def responsible?(moderator)
+    any_responsible? && responsible_moderator_by == moderator
+  end
+
   def current_responsible_visible_for?(user)
     user&.moderator_here? && any_responsible?
   end
