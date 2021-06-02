@@ -28,7 +28,7 @@ module WithResponsibleModerator
   end
 
   def can_toggle_responsible?(user)
-    user&.moderator_here? && (no_current_responsible? || responsible?(user))
+    can_have_responsible? && user_can_be_responsible?(user)
   end
 
   private
@@ -39,5 +39,13 @@ module WithResponsibleModerator
 
   def no_responsible!
     update! responsible_moderator_at: nil, responsible_moderator_by: nil
+  end
+
+  def user_can_be_responsible?(user)
+    user&.moderator_here? && (no_current_responsible? || responsible?(user))
+  end
+
+  def can_have_responsible?
+    opened? || pending_review?
   end
 end
