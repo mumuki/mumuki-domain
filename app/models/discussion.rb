@@ -124,6 +124,8 @@ class Discussion < ApplicationRecord
       update! status: status,
               status_updated_by: user,
               status_updated_at: Time.now
+
+      no_responsible! if responsible?(user)
     end
   end
 
