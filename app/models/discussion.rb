@@ -99,6 +99,7 @@ class Discussion < ApplicationRecord
     messages.create(message)
     user.subscribe_to! self
     unread_subscriptions(user)
+    no_responsible! if responsible?(user)
   end
 
   def authorized?(user)
