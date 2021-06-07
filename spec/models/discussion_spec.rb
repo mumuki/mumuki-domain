@@ -443,4 +443,37 @@ describe Discussion, organization_workspace: :test do
       it { expect(discussion.reload.messages_count).to eq 5 }
     end
   end
+
+  describe 'responsible moderator' do
+    let(:user) { create(:user) }
+    let(:problem) { create(:indexed_exercise) }
+    let(:discussion) { problem.discuss! user, title: 'Need help' }
+    let(:moderator) { create(:user, permissions: {moderator: 'test/*'}) }
+    let(:another_moderator) { create(:user, permissions: {moderator: 'test/*'}) }
+    before { discussion.toggle_responsible! moderator }
+
+    context 'is no longer responsible after sending a message' do
+      before { discussion.submit_message!({content: 'some help...'}, moderator) }
+
+      it { expect(discussion.any_responsible?).to be false }
+    end
+
+    context 'is still responsible if someone else sends a message' do
+      before { discussion.submit_message!({content: 'some help...'}, another_moderator) }
+
+      it { expect(discussion.responsible? moderator).to be true }
+    end
+
+    context 'is no longer responsible after changing discussion status' do
+      before { discussion.update_status!(:closed, moderator) }
+
+      it { expect(discussion.any_responsible?).to be false }
+    end
+
+    context 'is still responsible if someone else changes discussion status' do
+      before { discussion.update_status!(:closed, another_moderator) }
+
+      it { expect(discussion.responsible? moderator).to be true }
+    end
+  end
 end
