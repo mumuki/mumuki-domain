@@ -283,6 +283,10 @@ class User < ApplicationRecord
     }
   end
 
+  def solved_any_exercises?(organization = Organization.current)
+    Assignment.exists?(organization: organization, submitter: self)
+  end
+
   def save_and_notify!
     save!
     notify_permissions_changed!

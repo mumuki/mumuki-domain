@@ -818,4 +818,19 @@ describe User, organization_workspace: :test do
     it { expect(notifications_in_organization.count).to eq 1 }
     it { expect(notifications_in_organization).to eq [notification1] }
   end
+
+  describe '#solved_any_exercises?' do
+    let(:user) { build :user, permissions: { student: 'test/all' }}
+    let(:ex_orga) { create :organization, name: 'ex' }
+    let(:test_orga) { Organization.locate!('test') }
+
+    before do
+      ex_orga.switch!
+      build(:indexed_exercise).submit_solution!(user, content: '').passed!
+    end
+
+    it { expect(user.solved_any_exercises?(test_orga)).to eql false }
+    it { expect(user.solved_any_exercises?(ex_orga)).to eql true }
+    it { expect(user.solved_any_exercises?).to eql true }
+  end
 end
