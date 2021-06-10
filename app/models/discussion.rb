@@ -1,11 +1,11 @@
 class Discussion < ApplicationRecord
-  include WithDiscussionStatus, WithScopedQueries, Contextualization
+  include WithDiscussionStatus, WithScopedQueries, Contextualization, WithResponsibleModerator
 
   belongs_to :item, polymorphic: true
   has_many :messages, -> { order(:created_at) }, dependent: :destroy
   belongs_to :initiator, class_name: 'User'
 
-  belongs_to :last_moderator_access_by, class_name: 'User', optional: true
+  belongs_to :responsible_moderator_by, class_name: 'User', optional: true
   belongs_to :status_updated_by, class_name: 'User', optional: true
 
   belongs_to :exercise, foreign_type: :exercise, foreign_key: 'item_id'
@@ -27,8 +27,6 @@ class Discussion < ApplicationRecord
 
   delegate :language, to: :item
   delegate :to_discussion_status, to: :status
-
-  MODERATOR_REVIEW_AVERAGE_TIME = 17.minutes
 
   scope :for_user, -> (user) do
     if user.try(:moderator_here?)
@@ -81,7 +79,7 @@ class Discussion < ApplicationRecord
   end
 
   def friendly
-    initiator.name
+    initiator.abbreviated_name
   end
 
   def subscription_for(user)
@@ -101,6 +99,7 @@ class Discussion < ApplicationRecord
     messages.create(message)
     user.subscribe_to! self
     unread_subscriptions(user)
+    no_responsible! if responsible?(user)
   end
 
   def authorized?(user)
@@ -125,6 +124,8 @@ class Discussion < ApplicationRecord
       update! status: status,
               status_updated_by: user,
               status_updated_at: Time.now
+
+      no_responsible! if responsible?(user)
     end
   end
 
@@ -161,25 +162,6 @@ class Discussion < ApplicationRecord
     update! messages_count: messages_query.count,
             validated_messages_count: validated_messages.count,
             requires_moderator_response: !has_moderator_response
-  end
-
-  def update_last_moderator_access!(user)
-    if user&.moderator_here? && !last_moderator_access_visible_for?(user)
-      update! last_moderator_access_at: Time.now,
-              last_moderator_access_by: user
-    end
-  end
-
-  def being_accessed_by_moderator?
-    last_moderator_access_at.present? && (last_moderator_access_at + MODERATOR_REVIEW_AVERAGE_TIME).future?
-  end
-
-  def last_moderator_access_visible_for?(user)
-    show_last_moderator_access_for?(user) && being_accessed_by_moderator?
-  end
-
-  def show_last_moderator_access_for?(user)
-    user&.moderator_here? && last_moderator_access_by != user
   end
 
   def self.debatable_for(klazz, params)

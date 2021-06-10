@@ -193,59 +193,6 @@ describe Discussion, organization_workspace: :test do
     end
   end
 
-  describe '#update_last_moderator_access!' do
-    let(:discussion) { create(:discussion, organization: Organization.current) }
-    before { discussion.update_last_moderator_access! accessor }
-
-    context 'when user is moderator' do
-      let(:accessor) { create(:user, permissions: {moderator: 'test/*'}) }
-
-      it { expect(discussion.last_moderator_access_by).to eq accessor }
-      it { expect(discussion.last_moderator_access_at).to_not be nil }
-
-      it { expect(discussion.being_accessed_by_moderator?).to be true }
-      it { expect(discussion.last_moderator_access_visible_for? accessor).to be false }
-      it { expect(discussion.show_last_moderator_access_for? accessor).to be false }
-
-      context 'when accessed again right after' do
-        before { discussion.update_last_moderator_access! next_accessor }
-
-        context 'when next accessor is moderator' do
-          let(:next_accessor) { create(:user, permissions: {moderator: 'test/*'}) }
-
-          it { expect(discussion.last_moderator_access_by).to eq accessor }
-          it { expect(discussion.last_moderator_access_at).to_not be nil }
-
-          it { expect(discussion.being_accessed_by_moderator?).to be true }
-          it { expect(discussion.last_moderator_access_visible_for? next_accessor).to be true }
-          it { expect(discussion.show_last_moderator_access_for? next_accessor).to be true }
-        end
-
-        context 'when next accessor is student' do
-          let(:next_accessor) { create(:user, permissions: {student: 'test/*'}) }
-
-          it { expect(discussion.last_moderator_access_by).to eq accessor }
-          it { expect(discussion.last_moderator_access_at).to_not be nil }
-
-          it { expect(discussion.being_accessed_by_moderator?).to be true }
-          it { expect(discussion.last_moderator_access_visible_for? next_accessor).to be false }
-          it { expect(discussion.show_last_moderator_access_for? next_accessor).to be false }
-        end
-      end
-    end
-
-    context 'when user is student' do
-      let(:accessor) { create(:user, permissions: {student: 'test/*'}) }
-
-      it { expect(discussion.last_moderator_access_by).to be nil }
-      it { expect(discussion.last_moderator_access_at).to be nil }
-
-      it { expect(discussion.being_accessed_by_moderator?).to be false }
-      it { expect(discussion.last_moderator_access_visible_for? accessor).to be false }
-      it { expect(discussion.show_last_moderator_access_for? accessor).to be false }
-    end
-  end
-
   describe '#toggle_upvote!' do
     let(:discussion) { create(:discussion, {organization: Organization.current}) }
 
@@ -441,6 +388,39 @@ describe Discussion, organization_workspace: :test do
       it { expect(discussion.reload.requires_moderator_response?).to be false }
       it { expect(discussion.reload.validated_messages_count).to eq 2 }
       it { expect(discussion.reload.messages_count).to eq 5 }
+    end
+  end
+
+  describe 'responsible moderator' do
+    let(:user) { create(:user) }
+    let(:problem) { create(:indexed_exercise) }
+    let(:discussion) { problem.discuss! user, title: 'Need help' }
+    let(:moderator) { create(:user, permissions: {moderator: 'test/*'}) }
+    let(:another_moderator) { create(:user, permissions: {moderator: 'test/*'}) }
+    before { discussion.toggle_responsible! moderator }
+
+    context 'is no longer responsible after sending a message' do
+      before { discussion.submit_message!({content: 'some help...'}, moderator) }
+
+      it { expect(discussion.any_responsible?).to be false }
+    end
+
+    context 'is still responsible if someone else sends a message' do
+      before { discussion.submit_message!({content: 'some help...'}, another_moderator) }
+
+      it { expect(discussion.responsible? moderator).to be true }
+    end
+
+    context 'is no longer responsible after changing discussion status' do
+      before { discussion.update_status!(:closed, moderator) }
+
+      it { expect(discussion.any_responsible?).to be false }
+    end
+
+    context 'is still responsible if someone else changes discussion status' do
+      before { discussion.update_status!(:closed, another_moderator) }
+
+      it { expect(discussion.responsible? moderator).to be true }
     end
   end
 end
