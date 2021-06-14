@@ -46,4 +46,5 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
   def in_preparation?
     in_preparation_until.present? && in_preparation_until.future?
   end
+
 end

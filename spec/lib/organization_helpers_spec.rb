@@ -37,7 +37,8 @@ describe Mumukit::Platform::Organization do
         description: 'Academy',
         terms_of_service: 'TOS',
         logo_url: 'http://mumuki.io/logo-alt-large.png',
-        locale: 'en'
+        locale: 'en',
+        time_zone: 'Amsterdam'
       },
       theme: {
         theme_stylesheet: '.foo { }',
@@ -157,6 +158,7 @@ describe Mumukit::Platform::Organization do
       it { expect(subject.contact_email).to eq 'issues@mumuki.io' }
       it { expect(subject.description).to eq 'Academy' }
       it { expect(subject.terms_of_service).to eq 'TOS' }
+      it { expect(subject.time_zone).to eq 'Amsterdam' }
 
       it { expect(subject.locale).to eq 'en' }
       it { expect(subject.locale_json).to json_eq facebook_code: 'en_US', auth0_code: 'en', name: 'English' }
@@ -173,6 +175,7 @@ describe Mumukit::Platform::Organization do
       it { expect(subject.favicon_url).to eq '/favicon.ico' }
       it { expect(subject.breadcrumb_image_url).to eq nil }
       it { expect(subject.open_graph_image_url).to eq 'http://localmumuki.io/logo-alt.png' }
+      it { expect(subject.time_zone).to eq 'Buenos Aires' }
     end
 
     describe Mumuki::Domain::Organization::Profile do
