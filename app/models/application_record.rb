@@ -103,6 +103,21 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
+  def self.with_pg_retry(&block)
+    retries ||= 0
+    transaction(&block)
+  rescue ActiveRecord::StatementInvalid => e
+    retries += 1
+
+    raise e if retries > 2
+    if %w(PG::ConnectionBad PG::UnableToSend).any? { |it| e.message.include? it }
+      warn "Postgres connection failed. Retrying in 5 seconds..."
+      sleep 5
+      ActiveRecord::Base.connection.verify!
+      retry
+    end
+  end
+
   def self.numbered(*associations)
     class_eval do
       associations.each do |it|
