@@ -6,6 +6,7 @@ FactoryBot.define do
     locale { 'en' }
     settings {}
     name { 'an-organization' }
+    time_zone { 'UTC' }
     book
   end
 

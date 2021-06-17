@@ -13,7 +13,8 @@ class Mumuki::Domain::Organization::Profile < Mumukit::Platform::Model
                       :community_link,
                       :errors_explanations,
                       :welcome_email_template,
-                      :welcome_email_sender
+                      :welcome_email_sender,
+                      :time_zone
 
   def locale_json
     locale_h.to_json
@@ -38,4 +39,9 @@ class Mumuki::Domain::Organization::Profile < Mumukit::Platform::Model
   def open_graph_image_url
     @open_graph_image_url ||= Mumukit::Platform.laboratory.url_for("logo-alt.png")  # Best image size: 256x256
   end
+
+  def time_zone
+    @time_zone || 'Buenos Aires'
+  end
+
 end
