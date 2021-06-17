@@ -149,6 +149,10 @@ class Discussion < ApplicationRecord
     validated_messages_count > 0
   end
 
+  def requires_attention_for?(user)
+    user&.moderator_here? && requires_attention?
+  end
+
   def requires_attention?
     no_current_responsible? && (requires_moderator_response? || pending_review?)
   end
