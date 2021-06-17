@@ -15,9 +15,10 @@ class Discussion < ApplicationRecord
 
   scope :by_language, -> (language) { includes(:exercise).joins(exercise: :language).where(languages: {name: language}) }
   scope :order_by_responses_count, -> (direction) { reorder(validated_messages_count: direction, messages_count: opposite(direction)) }
-  scope :by_requires_attention, -> (boolean) { where(requires_moderator_response: boolean.to_boolean).no_responsible_moderator }
+  scope :by_requires_attention, -> (boolean) { where(requires_moderator_response: boolean.to_boolean).or(pending_review).no_responsible_moderator }
   scope :no_responsible_moderator, -> { where('responsible_moderator_at < ?', Time.now - MODERATOR_MAX_RESPONSIBLE_TIME)
                                           .or(where(responsible_moderator_at: nil)) }
+  scope :pending_review, -> { where(status: Mumuki::Domain::Status::Discussion::PendingReview) }
 
   after_create :subscribe_initiator!
 
