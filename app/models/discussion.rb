@@ -15,14 +15,14 @@ class Discussion < ApplicationRecord
 
   scope :by_language, -> (language) { includes(:exercise).joins(exercise: :language).where(languages: {name: language}) }
   scope :order_by_responses_count, -> (direction) { reorder(validated_messages_count: direction, messages_count: opposite(direction)) }
-  scope :by_requires_moderator_response, -> (boolean) { where(requires_moderator_response: boolean.to_boolean) }
+  scope :by_requires_attention, -> (boolean) { where(requires_moderator_response: boolean.to_boolean) }
 
   after_create :subscribe_initiator!
 
   markdown_on :description
 
   sortable :responses_count, :upvotes_count, :created_at, default: :created_at_desc
-  filterable :status, :language, :requires_moderator_response
+  filterable :status, :language, :requires_attention
   pageable
 
   delegate :language, to: :item
