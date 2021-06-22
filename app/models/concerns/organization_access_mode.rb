@@ -1,13 +1,18 @@
 module OrganizationAccessMode
 
   class Base
-    attr_reader :user
+    attr_reader :user, :organization
 
-    def initialize(user)
+    def initialize(user, organization = Organization.current)
       @user = user
+      @organization = organization
     end
 
     def validate_active!
+    end
+
+    def faqs_here?
+      organization.faqs.present?
     end
   end
 
@@ -19,17 +24,35 @@ module OrganizationAccessMode
       super user
       @scopes = global_scopes.map { |scope| [scope, :all] }.to_h.merge specific_scopes
     end
+
+    def faqs_here?
+      has_scope(:faqs) && super
+    end
+
+    private
+
+    def has_scope(key, *keys)
+      @scopes.dig(key, *keys).present?
+    end
   end
 
   class ComingSoon < Base
     def validate_active!
       raise Mumuki::Domain::UnpreparedOrganizationError
     end
+
+    def faqs_here?
+      false
+    end
   end
 
   class Forbidden < Base
     def validate_active!
       raise Mumuki::Domain::ForbiddenError unless Organization.current.public? || !user
+    end
+
+    def faqs_here?
+      false
     end
   end
 end
