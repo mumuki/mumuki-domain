@@ -12,3 +12,5 @@ group :test do
 end
 
 gem 'codeclimate-test-reporter', :group => :test, :require => nil
+#
+gem 'mumukit-auth', path: '/home/federico/Projects/mumuki/mumukit-auth'
