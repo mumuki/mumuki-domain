@@ -14,10 +14,18 @@ module OrganizationAccessMode
     def faqs_here?
       organization.faqs.present?
     end
+
+    def submit_solutions_here?
+      false
+    end
   end
 
   class Full < Base
     def profile_here?
+      true
+    end
+
+    def submit_solutions_here?
       true
     end
   end
