@@ -9,7 +9,9 @@ class WithOrganizationStatus::Base
   end
 
   def access_mode(user)
-    if user&.student_of? organization
+    if user&.teacher_of? organization
+      teacher_access_mode(user)
+    elsif user&.student_of? organization
       student_access_mode(user)
     elsif user&.ex_student_of? organization
       ex_student_access_mode(user)
