@@ -17,6 +17,9 @@ module OrganizationAccessMode
   end
 
   class Full < Base
+    def profile_here?
+      true
+    end
   end
 
   class ReadOnly < Base
@@ -27,6 +30,10 @@ module OrganizationAccessMode
 
     def faqs_here?
       has_scope(:faqs) && super
+    end
+
+    def profile_here?
+      has_scope(:profile)
     end
 
     private
@@ -44,6 +51,10 @@ module OrganizationAccessMode
     def faqs_here?
       false
     end
+
+    def profile_here?
+      false
+    end
   end
 
   class Forbidden < Base
@@ -52,6 +63,10 @@ module OrganizationAccessMode
     end
 
     def faqs_here?
+      false
+    end
+
+    def profile_here?
       false
     end
   end
