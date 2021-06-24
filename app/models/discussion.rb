@@ -15,8 +15,9 @@ class Discussion < ApplicationRecord
 
   scope :by_language, -> (language) { includes(:exercise).joins(exercise: :language).where(languages: {name: language}) }
   scope :order_by_responses_count, -> (direction) { reorder(validated_messages_count: direction, messages_count: opposite(direction)) }
-  scope :by_requires_attention, -> (boolean) { requires_moderator_response(boolean).or(pending_review).no_responsible_moderator }
-  scope :requires_moderator_response, -> (boolean) { where(requires_moderator_response: boolean.to_boolean) }
+  scope :by_requires_attention, -> (boolean) { opened_and_requires_moderator_response(boolean).or(pending_review).no_responsible_moderator }
+  scope :opened_and_requires_moderator_response, -> (boolean) { where(requires_moderator_response: boolean.to_boolean)
+                                                                  .where(status: Mumuki::Domain::Status::Discussion::Opened) }
   scope :no_responsible_moderator, -> { where('responsible_moderator_at < ?', Time.now - MODERATOR_MAX_RESPONSIBLE_TIME)
                                           .or(where(responsible_moderator_at: nil)) }
   scope :pending_review, -> { where(status: Mumuki::Domain::Status::Discussion::PendingReview) }
@@ -154,7 +155,7 @@ class Discussion < ApplicationRecord
   end
 
   def requires_attention?
-    no_current_responsible? && (requires_moderator_response? || pending_review?)
+    no_current_responsible? && status.requires_attention_for?(self)
   end
 
   def subscribe_initiator!

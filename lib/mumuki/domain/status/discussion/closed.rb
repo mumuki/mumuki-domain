@@ -12,4 +12,8 @@ module Mumuki::Domain::Status::Discussion::Closed
   def self.iconize
     {class: :danger, type: 'times-circle'}
   end
+
+  def self.requires_attention_for?(_)
+    false
+  end
 end

@@ -12,4 +12,8 @@ module Mumuki::Domain::Status::Discussion::PendingReview
   def self.iconize
     {class: :info, type: 'hourglass'}
   end
+
+  def self.requires_attention_for?(_)
+    true
+  end
 end
