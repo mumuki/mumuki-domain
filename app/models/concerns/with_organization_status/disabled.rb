@@ -5,7 +5,7 @@ class WithOrganizationStatus::Disabled < WithOrganizationStatus::Base
   end
 
   def student_access_mode(user)
-    OrganizationAccessMode::ReadOnly.new(user, :faqs, :profile, exercises: :all)
+    OrganizationAccessMode::ReadOnly.new(user, :faqs, :profile, :exercises, :discussions)
   end
 
   def ex_student_access_mode(user)

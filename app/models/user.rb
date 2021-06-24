@@ -201,7 +201,7 @@ class User < ApplicationRecord
   # This is true only when this organization has the forum enabled and the user
   # has the discusser pseudo-permission and the discusser is trusted
   def can_discuss_in?(organization)
-    organization.forum_enabled? && discusser_of?(organization) && trusted_as_discusser_in?(organization) && !banned_from_forum?
+    organization.access_mode(self).discuss_here?
   end
 
   def trusted_as_discusser_in?(organization)

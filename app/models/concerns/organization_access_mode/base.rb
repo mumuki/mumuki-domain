@@ -16,5 +16,18 @@ class OrganizationAccessMode::Base
   def submit_solutions_here?
     false
   end
+
+  def discuss_here?
+    organization.forum_enabled? && user.discusser_of?(organization) &&
+      user.trusted_as_discusser_in?(organization) && !user.banned_from_forum?
+  end
+
+  def show_discussion_element?
+    false
+  end
+
+  def validate_discuss_here?(_discussion)
+    raise Mumuki::Domain::ForbiddenError
+  end
 end
 

@@ -12,6 +12,14 @@ class OrganizationAccessMode::ReadOnly < OrganizationAccessMode::Base
     has_scope(:profile)
   end
 
+  def discuss_here?
+    has_scope(:discussions) && super
+  end
+
+  def validate_discuss_here?(discussion)
+    super(discussion) unless discussion&.initiator == user
+  end
+
   private
 
   def has_scope(key, *keys)
