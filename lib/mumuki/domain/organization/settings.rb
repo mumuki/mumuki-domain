@@ -28,7 +28,7 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
   end
 
   def forum_discussions_minimal_role
-    (@forum_discussions_minimal_role || 'student').to_sym
+    (@forum_discussions_minimal_role || 'ex_student').to_sym
   end
 
   def disabled_from=(disabled_from)
