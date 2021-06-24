@@ -10,4 +10,8 @@ class OrganizationAccessMode::ComingSoon < OrganizationAccessMode::Base
   def profile_here?
     false
   end
+
+  def discuss_here?
+    false
+  end
 end

@@ -9,7 +9,7 @@ class WithOrganizationStatus::Enabled < WithOrganizationStatus::Base
   end
 
   def ex_student_access_mode(user)
-    OrganizationAccessMode::ReadOnly.new(user, :faqs, :profile, exercises: :submitted)
+    OrganizationAccessMode::ReadOnly.new(user, :faqs, :profile, :discussions, exercises: :submitted)
   end
 
   def outsider_access_mode(user)
