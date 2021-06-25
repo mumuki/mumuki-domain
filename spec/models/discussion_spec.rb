@@ -330,6 +330,11 @@ describe Discussion, organization_workspace: :test do
         it { expect(Discussion.by_requires_attention(true)).to match_array [discussion_pending_review] }
       end
     end
+
+    context '#requires_attention_for' do
+      it { expect(discussion_opened.requires_attention_for? user).to be false }
+      it { expect(discussion_opened.requires_attention_for? moderator).to be true }
+    end
   end
 
 
