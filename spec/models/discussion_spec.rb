@@ -250,6 +250,89 @@ describe Discussion, organization_workspace: :test do
     end
   end
 
+  describe 'requires attention' do
+    let(:user) { create(:user, permissions: {student: '*/*'} ) }
+    let(:moderator) { create(:user, permissions: {moderator: '*/*', student: '*/*'} ) }
+    let(:exercise) { create(:problem) }
+
+    let(:discussion_pending_review) { exercise.discuss!(user, {status: :pending_review}) }
+    let(:discussion_opened) { exercise.discuss!(user, {status: :opened}) }
+    let(:discussion_closed) { exercise.discuss!(user, {status: :closed}) }
+    let(:discussion_solved) { exercise.discuss!(user, {status: :solved}) }
+    let(:discussions) { [discussion_pending_review, discussion_opened, discussion_closed, discussion_solved] }
+
+    context 'when there is a responsible moderator' do
+      before { discussions.each { |it| it.update! responsible_moderator_at: Time.now, responsible_moderator_by: moderator } }
+
+      it { expect(discussion_pending_review.requires_attention?).to be false }
+      it { expect(discussion_opened.requires_attention?).to be false }
+      it { expect(discussion_closed.requires_attention?).to be false }
+      it { expect(discussion_solved.requires_attention?).to be false }
+      it { expect(Discussion.by_requires_attention(true)).to match_array [] }
+    end
+
+    context 'when there is no responsible moderator' do
+      context 'when there are no messages yet' do
+        it { expect(discussion_pending_review.requires_attention?).to be true }
+        it { expect(discussion_opened.requires_attention?).to be true }
+        it { expect(discussion_closed.requires_attention?).to be false }
+        it { expect(discussion_solved.requires_attention?).to be false }
+        it { expect(Discussion.by_requires_attention(true)).to match_array [discussion_pending_review, discussion_opened] }
+      end
+
+      context 'when moderator comments' do
+        before do
+          discussions.each { |it| create(:message, content: 'Help incoming', discussion: it, sender: moderator.uid) }
+        end
+
+        it { expect(discussion_pending_review.requires_attention?).to be true }
+        it { expect(discussion_opened.requires_attention?).to be false }
+        it { expect(discussion_closed.requires_attention?).to be false }
+        it { expect(discussion_solved.requires_attention?).to be false }
+        it { expect(Discussion.by_requires_attention(true)).to match_array [discussion_pending_review] }
+
+        context 'when discussion initiator asks again' do
+          before do
+            discussions.each { |it| create(:message, content: 'Sorry what?', discussion: it, sender: user.uid) }
+          end
+
+          it { expect(discussion_pending_review.requires_attention?).to be true }
+          it { expect(discussion_opened.requires_attention?).to be true }
+          it { expect(discussion_closed.requires_attention?).to be false }
+          it { expect(discussion_solved.requires_attention?).to be false }
+          it { expect(Discussion.by_requires_attention(true)).to match_array [discussion_pending_review, discussion_opened] }
+        end
+
+        context 'when discussion initiator comments again but it is not a question' do
+          before do
+            discussions.each { |it| create(:message, content: 'Alright thanks', discussion: it,
+                                           sender: user.uid, not_actually_a_question: true) }
+          end
+
+          it { expect(discussion_pending_review.requires_attention?).to be true }
+          it { expect(discussion_opened.requires_attention?).to be false }
+          it { expect(discussion_closed.requires_attention?).to be false }
+          it { expect(discussion_solved.requires_attention?).to be false }
+          it { expect(Discussion.by_requires_attention(true)).to match_array [discussion_pending_review] }
+        end
+      end
+
+      context 'when a user comments and it\'s approved by a moderator' do
+        before do
+          discussions.each { |it| create(:message, content: 'Here is some help', discussion: it, sender: create(:user).uid,
+                                         approved: true, approved_at: Time.now, approved_by: moderator) }
+        end
+
+        it { expect(discussion_pending_review.requires_attention?).to be true }
+        it { expect(discussion_opened.requires_attention?).to be false }
+        it { expect(discussion_closed.requires_attention?).to be false }
+        it { expect(discussion_solved.requires_attention?).to be false }
+        it { expect(Discussion.by_requires_attention(true)).to match_array [discussion_pending_review] }
+      end
+    end
+  end
+
+
   describe 'messages not being deleted' do
     let(:user) { create(:user) }
     let(:other_user) { create(:user) }
