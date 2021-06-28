@@ -90,7 +90,7 @@ describe Mumukit::Platform::Organization do
 
         it { expect(subject.login_methods).to eq %w{facebook twitter google} }
         it { expect(subject.login_provider).to eq 'google' }
-        it { expect(subject.forum_discussions_minimal_role).to be :student }
+        it { expect(subject.forum_discussions_minimal_role).to be :ex_student }
         it { expect(subject.login_provider_settings).to eq(token: '123') }
         it { expect(subject.raise_hand_enabled?).to be true }
         it { expect(subject.report_issue_enabled?).to be true }

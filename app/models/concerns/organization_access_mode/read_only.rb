@@ -1,6 +1,6 @@
 class OrganizationAccessMode::ReadOnly < OrganizationAccessMode::Base
-  def initialize(user, *global_scopes, **specific_scopes)
-    super user
+  def initialize(user, organization, *global_scopes, **specific_scopes)
+    super user, organization
     @scopes = global_scopes.map { |scope| [scope, :all] }.to_h.merge specific_scopes
   end
 

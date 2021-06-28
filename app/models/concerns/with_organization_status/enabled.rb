@@ -1,22 +1,22 @@
 class WithOrganizationStatus::Enabled < WithOrganizationStatus::Base
 
   def teacher_access_mode(user)
-    OrganizationAccessMode::Full.new(user)
+    OrganizationAccessMode::Full.new user, organization
   end
 
   def student_access_mode(user)
-    OrganizationAccessMode::Full.new user
+    OrganizationAccessMode::Full.new user, organization
   end
 
   def ex_student_access_mode(user)
-    OrganizationAccessMode::ReadOnly.new(user, :faqs, :profile, :discussions, exercises: :submitted)
+    OrganizationAccessMode::ReadOnly.new user, organization, :faqs, :profile, :discussions, exercises: :submitted
   end
 
   def outsider_access_mode(user)
-    OrganizationAccessMode::Forbidden.new user
+    OrganizationAccessMode::Forbidden.new user, organization
   end
 
-  def validate!(_user)
+  def validate!(_user = nil)
   end
 
 end
