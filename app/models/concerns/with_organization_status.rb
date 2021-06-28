@@ -14,6 +14,10 @@ module WithOrganizationStatus
     status.access_mode(user)
   end
 
+  def validate_active!
+    status.validate!
+  end
+
   def validate_active_for!(user)
     status.validate!(user)
     access_mode(user).validate_active!
