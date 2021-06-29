@@ -49,7 +49,7 @@ class Course < ApplicationRecord
     period =~ /^(\d{4})?/
     year = $1.to_i
 
-    return nil unless year.between? 2014, (DateTime.current.year + 1)
+    return nil unless year.between? 2014, (Time.current.year + 1)
 
     self.period_start = DateTime.new(year).beginning_of_year
     self.period_end = DateTime.new(year).end_of_year

@@ -32,7 +32,7 @@ class Exam < ApplicationRecord
   end
 
   def enabled_for?(user)
-    enabled_range_for(user).cover? DateTime.current
+    enabled_range_for(user).cover? Time.current
   end
 
   def in_progress_for?(user)
