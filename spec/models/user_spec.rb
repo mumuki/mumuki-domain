@@ -712,7 +712,7 @@ describe User, organization_workspace: :test do
 
       it { expect(user.delete_account_token).to be_an_instance_of(String) }
       it { expect(user.delete_account_token).to have_attributes(size: be > 10) }
-      it { expect(user.delete_account_token_expiration_date).to be_between(Time.now, 2.hours.since) }
+      it { expect(user.delete_account_token_expiration_date).to be_between(Time.current, 2.hours.since) }
     end
 
     describe '#delete_account_token_matches?' do

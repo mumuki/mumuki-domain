@@ -11,7 +11,7 @@ module WithReminders
 
   def remind!
     build_reminder.deliver_now
-    update! last_reminded_date: Time.now
+    update! last_reminded_date: Time.current
   end
 
   def should_remind?
