@@ -251,7 +251,7 @@ class User < ApplicationRecord
 
   def age
     if birthdate.present?
-      @age ||= Time.now.round_years_since(birthdate.to_time)
+      @age ||= Time.current.round_years_since(birthdate.in_time_zone)
     end
   end
 

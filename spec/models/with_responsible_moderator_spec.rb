@@ -16,7 +16,7 @@ describe WithResponsibleModerator, organization_workspace: :test do
 
     context 'when moderator is already responsible' do
       before do
-        discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.now
+        discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.current
         discussion.toggle_responsible! moderator
       end
 
@@ -26,7 +26,7 @@ describe WithResponsibleModerator, organization_workspace: :test do
 
     context 'when another moderator is already responsible' do
       before do
-        discussion.update! responsible_moderator_by: another_moderator, responsible_moderator_at: Time.now
+        discussion.update! responsible_moderator_by: another_moderator, responsible_moderator_at: Time.current
         discussion.toggle_responsible! moderator
       end
 
@@ -40,13 +40,13 @@ describe WithResponsibleModerator, organization_workspace: :test do
       end
 
       context 'when a moderator is responsible' do
-        before { discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.now }
+        before { discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.current }
 
         it { expect(discussion.any_responsible?).to be true }
       end
 
       context 'when a moderator was responsible but too much time passed' do
-        before { discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.now - 1.hour }
+        before { discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.current - 1.hour }
 
         it { expect(discussion.any_responsible?).to be false }
       end
@@ -58,19 +58,19 @@ describe WithResponsibleModerator, organization_workspace: :test do
       end
 
       context 'when a moderator is responsible' do
-        before { discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.now }
+        before { discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.current }
 
         it { expect(discussion.responsible? moderator).to be true }
       end
 
       context 'when another moderator is responsible' do
-        before { discussion.update! responsible_moderator_by: another_moderator, responsible_moderator_at: Time.now }
+        before { discussion.update! responsible_moderator_by: another_moderator, responsible_moderator_at: Time.current }
 
         it { expect(discussion.responsible? moderator).to be false }
       end
 
       context 'when a moderator was responsible but too much time passed' do
-        before { discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.now - 1.hour }
+        before { discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.current - 1.hour }
 
         it { expect(discussion.responsible? moderator).to be false }
       end
@@ -78,7 +78,7 @@ describe WithResponsibleModerator, organization_workspace: :test do
 
     describe '#current_responsible_visible_for?' do
       context 'when there is a responsible' do
-        before { discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.now }
+        before { discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.current }
 
         context 'when user is a student' do
           it { expect(discussion.current_responsible_visible_for? student).to be false }
@@ -102,7 +102,7 @@ describe WithResponsibleModerator, organization_workspace: :test do
 
     describe '#can_toggle_responsible?' do
       context 'when there is a responsible' do
-        before { discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.now }
+        before { discussion.update! responsible_moderator_by: moderator, responsible_moderator_at: Time.current }
 
         context 'when user is a student' do
           it { expect(discussion.can_toggle_responsible? student).to be false }

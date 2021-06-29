@@ -54,7 +54,7 @@ class Discussion < ApplicationRecord
   def navigable_content_in(_)
     nil
   end
-  
+
   def target
     self
   end
@@ -128,7 +128,7 @@ class Discussion < ApplicationRecord
     if reachable_status_for?(user, status)
       update! status: status,
               status_updated_by: user,
-              status_updated_at: Time.now
+              status_updated_at: Time.current
 
       no_responsible! if responsible?(user)
     end

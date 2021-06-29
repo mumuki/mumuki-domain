@@ -58,8 +58,7 @@ module WithTermsAcceptance
   end
 
   def accept_terms!(terms)
-    update! unaccepted_terms_scopes_in(terms).to_h { |scope| [term_acceptance_field_for(scope), Time.now] }
+    update! unaccepted_terms_scopes_in(terms).to_h { |scope| [term_acceptance_field_for(scope), Time.current] }
   end
 
 end
-
