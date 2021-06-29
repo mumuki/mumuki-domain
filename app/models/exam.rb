@@ -179,8 +179,8 @@ class Exam < ApplicationRecord
     exam[:organization_id] = Organization.current.id
     exam[:course_id] = Course.locate!(exam[:course].to_s).id
     exam[:users] = User.where(uid: exam[:uids])
-    exam[:start_time] = exam[:start_time].to_time
-    exam[:end_time] = exam[:end_time].to_time
+    exam[:start_time] = exam[:start_time].in_time_zone
+    exam[:end_time] = exam[:end_time].in_time_zone
     exam[:classroom_id] = exam[:eid] if exam[:eid].present?
   end
 
