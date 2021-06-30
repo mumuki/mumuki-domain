@@ -14,4 +14,8 @@ class OrganizationAccessMode::ComingSoon < OrganizationAccessMode::Base
   def discuss_here?
     false
   end
+
+  def show_content?(_content)
+    false
+  end
 end
