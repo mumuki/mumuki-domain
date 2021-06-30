@@ -30,4 +30,10 @@ module WithAssignments
   def assignment_for(user, organization=Organization.current)
     find_assignment_for(user, organization) || user.build_assignment(self, organization)
   end
+
+  def has_progress_for?(user, organization)
+    assignment_for(user, organization).persisted?
+  end
+
+
 end

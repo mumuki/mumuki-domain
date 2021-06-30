@@ -7,6 +7,10 @@ module WithProgress
     progress_for(user, organization).completion_percentage
   end
 
+  def has_progress_for?(user, organization)
+    progress_for(user, organization).persisted?
+  end
+
   def dirty_progresses!
     Indicator.dirty_by_content_change! self
   end
