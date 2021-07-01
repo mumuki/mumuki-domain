@@ -27,7 +27,7 @@ describe UserStats, organization_workspace: :test do
         exercises[0].submit_solution!(user, content: '').failed!
 
         assignment = exercises[1].submit_solution!(user, content: '')
-        assignment.update!(submitted_at: 2.days.until, status: 'skipped')
+        assignment.update!(updated_at: 2.days.until, status: 'skipped')
 
         exercises[0].submit_solution!(another_user, content: '').passed!
       end
