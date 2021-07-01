@@ -13,7 +13,11 @@ class WithOrganizationStatus::Disabled < WithOrganizationStatus::Base
   end
 
   def outsider_access_mode(user)
-    OrganizationAccessMode::Forbidden.new user, organization
+    if organization.public?
+      OrganizationAccessMode::Gone.new user, organization
+    else
+      OrganizationAccessMode::Forbidden.new user, organization
+    end
   end
 
   def validate!(user = nil)
