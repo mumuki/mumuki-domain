@@ -28,4 +28,8 @@ module Mumuki::Domain::Status::Discussion::Opened
   def self.should_be_shown?(*)
     true
   end
+
+  def self.requires_attention_for?(discussion)
+    discussion.requires_moderator_response?
+  end
 end

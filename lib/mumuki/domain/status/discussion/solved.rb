@@ -16,4 +16,8 @@ module Mumuki::Domain::Status::Discussion::Solved
   def self.should_be_shown?(*)
     true
   end
+
+  def self.requires_attention_for?(_)
+    false
+  end
 end
