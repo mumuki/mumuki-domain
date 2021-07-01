@@ -44,6 +44,10 @@ module Mumuki::Domain::Helpers::Organization
     Mumukit::Platform.laboratory.organic_url_for(name, path)
   end
 
+  def retenantized_url_for(tenantized_path)
+    Mumukit::Platform.laboratory.retenantize_in(name, tenantized_path)
+  end
+
   def url
     url_for '/'
   end
