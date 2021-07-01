@@ -19,5 +19,4 @@ class WithOrganizationStatus::Base
       outsider_access_mode(user)
     end
   end
-
 end

@@ -17,12 +17,20 @@ class OrganizationAccessMode::Base
     false
   end
 
+  def resolve_discussions_here?
+    false
+  end
+
   def discuss_here?
     organization.forum_enabled? && user.discusser_of?(organization) &&
       user.trusted_as_discusser_in?(organization) && !user.banned_from_forum?
   end
 
   def show_discussion_element?
+    false
+  end
+
+  def show_content_element?
     false
   end
 
