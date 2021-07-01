@@ -25,10 +25,6 @@ class OrganizationAccessMode::ReadOnly < OrganizationAccessMode::Base
       (has_scope(:exercises, :submitted) && content.has_progress_for?(user, organization))
   end
 
-  def validate_content_here?(content)
-    raise Mumuki::Domain::GoneError unless show_content?(content)
-  end
-
   private
 
   def has_scope(key, value = :all)
