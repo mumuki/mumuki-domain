@@ -11,7 +11,7 @@ class UserStats < ApplicationRecord
   end
 
   def activity(date_range = nil)
-    date_filter = { submitted_at: date_range }.compact
+    date_filter = { updated_at: date_range }.compact
     {
         exercises: {
             solved_count: organization_exercises
