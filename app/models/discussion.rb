@@ -165,7 +165,11 @@ class Discussion < ApplicationRecord
   def extra_preview_html
     # FIXME this is buggy, because the extra
     # may have changed since the submission of this discussion
-    exercise.assignment_for(initiator).extra_preview_html
+    assignment.extra_preview_html
+  end
+
+  def assignment
+    exercise.find_assignment_for(initiator, organization)
   end
 
   def update_counters!
