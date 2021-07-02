@@ -39,8 +39,8 @@ module WithScopedQueries::Sort
       [:asc, :desc].find { |it| it != dir }
     end
 
-    def sorting_filters
-      sorting_fields.product([:asc, :desc]).map do |it|
+    def sorting_filters(except: [])
+      (sorting_fields - except).product([:asc, :desc]).map do |it|
         "#{it.first}_#{it.second}"
       end
     end
