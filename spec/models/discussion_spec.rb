@@ -238,21 +238,21 @@ describe Discussion, organization_workspace: :test do
 
     context 'as student' do
       let(:student) { create(:user) }
-      it { expect(exercise.discussions.for_user(student)).to match_array public_discussions }
+      it { expect(Discussion.in_context_of(exercise, student)).to match_array public_discussions }
     end
 
     context 'as initiator' do
-      it { expect(exercise.discussions.for_user(initiator)).to match_array public_discussions + private_discussions }
+      it { expect(Discussion.in_context_of(exercise, initiator)).to match_array public_discussions + private_discussions }
     end
 
     context 'as moderator' do
       let(:moderator) { create(:user, permissions: {moderator: 'test/*'}) }
-      it { expect(exercise.discussions.for_user(moderator)).to match_array public_discussions + private_discussions + [other_discussion] }
+      it { expect(Discussion.in_context_of(exercise, moderator)).to match_array public_discussions + private_discussions + [other_discussion] }
     end
 
     context 'for other item' do
       let(:other_exercise) { create(:exercise) }
-      it { expect(other_exercise.discussions.for_user(initiator)).to be_empty }
+      it { expect(Discussion.in_context_of(other_exercise, initiator)).to be_empty }
     end
   end
 

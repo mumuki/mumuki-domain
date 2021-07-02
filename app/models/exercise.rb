@@ -238,6 +238,10 @@ class Exercise < ApplicationRecord
     is_a? ::Problem
   end
 
+  def contextualize_for(scope, user)
+    scope.in_context_of_assignment(find_assignment_for(user))
+  end
+
   private
 
   def evaluation_class
