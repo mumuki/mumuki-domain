@@ -239,7 +239,8 @@ class Exercise < ApplicationRecord
   end
 
   def contextualize_for(scope, user)
-    scope.in_context_of_assignment(find_assignment_for(user))
+    assignment = find_assignment_for(user)
+    assignment ? scope.in_context_of_assignment(assignment) : super
   end
 
   private
