@@ -6,6 +6,7 @@ class Organization < ApplicationRecord
   include Mumukit::Login::OrganizationHelpers
 
   include WithTargetAudience
+  include WithOrganizationStatus
 
   serialize :profile, Mumuki::Domain::Organization::Profile
   serialize :settings, Mumuki::Domain::Organization::Settings

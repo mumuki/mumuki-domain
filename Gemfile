@@ -12,3 +12,5 @@ group :test do
 end
 
 gem 'codeclimate-test-reporter', :group => :test, :require => nil
+#
+gem 'mumukit-auth', github: 'mumuki/mumukit-auth', branch: 'feature-ex-student-role'
