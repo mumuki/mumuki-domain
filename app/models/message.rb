@@ -120,10 +120,6 @@ class Message < ApplicationRecord
   end
 
   def self.import_from_resource_h!(resource_h)
-    ## TODO AVOID SWITCH
-    Organization.locate!(resource_h['organization']).switch!
-
-    ## TODO find by assignment_id
     if resource_h['submission_id'].present?
       assignment = Assignment.find_by(submission_id: resource_h['submission_id'])
       assignment&.receive_answer! sender: resource_h['message']['sender'],
