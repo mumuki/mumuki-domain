@@ -2,17 +2,47 @@ class Message < ApplicationRecord
   include WithSoftDeletion
 
   belongs_to :discussion, optional: true
-  belongs_to :assignment, foreign_key: :submission_id, primary_key: :submission_id, optional: true
+  belongs_to :assignment, optional: true
   belongs_to :approved_by, class_name: 'User', optional: true
 
   has_one :exercise, through: :assignment
 
   validates_presence_of :content, :sender
-  validates_presence_of :submission_id, :unless => :discussion_id?
+  validate :contextualized?
 
   after_save :update_counters_cache!
 
   markdown_on :content
+
+  # Visible messages are those that can be publicly seen
+  # in forums. non-direct messages are naver visible.
+  scope :visible, -> () do
+    where.not(deletion_motive: :self_deleted)
+      .or(where(deletion_motive: nil))
+      .where(submission_id: nil)
+  end
+
+  def contextualization
+    direct? ? assignment : discussion
+  end
+
+  def contextualized?
+    assignment_id.present? ^ discussion_id.present?
+  end
+
+  # Whether this message is stale, that is,
+  # targets a submission that is the latest one.
+  #
+  # This can occur only in direct messages.
+  def stale?
+    direct? && assignment.submission_id != submission_id
+  end
+
+  # Whether this message is direct, that is, whether it comes from rise-hand feature.
+  # Forum messages are non-direct.
+  def direct?
+    submission_id.present?
+  end
 
   def notify!
     Mumukit::Nuntius.notify! 'student-messages', to_resource_h unless Organization.silenced?
@@ -85,23 +115,19 @@ class Message < ApplicationRecord
     self
   end
 
-  def self.parse_json(json)
-    message = json.delete 'message'
-    json
-        .except('uid', 'exercise_id')
-        .merge(message)
-  end
-
   def self.read_all!
     update_all read: true
   end
 
-  def self.import_from_resource_h!(json)
-    message_data = parse_json json
-    Organization.find_by!(name: message_data.delete('organization')).switch!
+  def self.import_from_resource_h!(resource_h)
+    ## TODO AVOID SWITCH
+    Organization.locate!(resource_h['organization']).switch!
 
-    if message_data['submission_id'].present?
-      Assignment.find_by(submission_id: message_data.delete('submission_id'))&.receive_answer! message_data
+    ## TODO find by assignment_id
+    if resource_h['submission_id'].present?
+      assignment = Assignment.find_by(submission_id: resource_h['submission_id'])
+      assignment&.receive_answer! sender: resource_h['message']['sender'],
+                                  content: resource_h['message']['content']
     end
   end
 

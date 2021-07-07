@@ -38,6 +38,11 @@ describe Assignment, organization_workspace: :test do
       it { expect(message.read).to be false }
       it { expect(message.assignment).to eq assignment }
       it { expect(message.submission_id).to eq assignment.submission_id }
+      it { expect(message.assignment_id).to eq assignment.id }
+      it { expect(message.contextualization).to eq assignment }
+      it { expect(message.contextualized?).to be true }
+      it { expect(message.stale?).to be false }
+      it { expect(message.direct?).to be true }
       it { expect(assignment.organization).to eq Organization.current }
     end
   end

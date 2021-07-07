@@ -9,7 +9,7 @@ module WithMessages
   end
 
   def build_message(body)
-    messages.build({date: DateTime.current}.merge(body))
+    messages.build({date: DateTime.current, submission_id: submission_id}.merge(body))
   end
 
   def has_messages?

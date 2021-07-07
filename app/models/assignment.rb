@@ -7,11 +7,7 @@ class Assignment < Progress
 
   belongs_to :exercise
   has_one :guide, through: :exercise
-  has_many :messages,
-           -> { where.not(submission_id: nil).order(date: :desc) },
-           foreign_key: :submission_id,
-           primary_key: :submission_id,
-           dependent: :destroy
+  has_many :messages, -> { order(date: :desc) }, dependent: :destroy
 
   belongs_to :organization
   belongs_to :submitter, class_name: 'User'
