@@ -82,7 +82,7 @@ class Assignment < Progress
     end
   end
 
-  def persist_submission!(submission)
+  def save_submission!(submission)
     transaction do
       update! submission_id: submission.id
       update! submitted_at: Time.current

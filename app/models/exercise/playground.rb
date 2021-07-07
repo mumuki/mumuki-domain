@@ -3,9 +3,9 @@ class Playground < QueriableChallenge
 
   name_model_as Exercise
 
-  def setup_query_assignment!(assignment, submission)
+  def save_query_submission!(assignment, submission)
     assignment.running!
-    assignment.persist_submission! submission
+    assignment.save_submission! submission
   end
 
   def save_query_results!(assignment)
