@@ -8,6 +8,7 @@ class Mumuki::Domain::Submission::Try < Mumuki::Domain::Submission::ConsoleSubmi
   def save_submission!(assignment)
     assignment.query_results = [] if cookie.blank?
     assignment.queries = cookie.insert_last(query)
+    assignment.persist_submission! self
     assignment.save!
   end
 

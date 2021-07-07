@@ -9,7 +9,7 @@ class Problem < QueriableChallenge
 
   name_model_as Exercise
 
-  def setup_query_assignment!(assignment)
+  def setup_query_assignment!(_assignment, _submission)
   end
 
   def save_query_results!(assignment)

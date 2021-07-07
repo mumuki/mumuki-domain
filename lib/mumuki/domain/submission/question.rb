@@ -5,7 +5,6 @@ class Mumuki::Domain::Submission::Question < Mumuki::Domain::Submission::Base
   end
 
   def save_submission!(assignment)
-    assignment.persist_submission! self
   end
 
   def try_evaluate!(*)
