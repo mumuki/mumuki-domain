@@ -24,13 +24,13 @@ class Assignment < Progress
   alias_attribute :status, :submission_status
   alias_attribute :attempts_count, :attemps_count
 
-  scope :by_exercise_ids, -> (exercise_ids) {
+  scope :by_exercise_ids, -> (exercise_ids) do
     where(exercise_id: exercise_ids) if exercise_ids
-  }
+  end
 
-  scope :by_usernames, -> (usernames) {
+  scope :by_usernames, -> (usernames) do
     joins(:submitter).where('users.name' => usernames) if usernames
-  }
+  end
 
   defaults do
     self.query_results = []
