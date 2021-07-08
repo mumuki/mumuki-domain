@@ -65,6 +65,14 @@ module Mumuki::Domain::Helpers::User
     "#{first_name} #{last_name}".strip
   end
 
+  def verified_full_name
+    "#{verified_first_name} #{verified_last_name}".strip
+  end
+
+  def has_verified_full_name?
+    verified_first_name? && verified_last_name?
+  end
+
   alias_method :name, :full_name
 
   def profile_completed?
