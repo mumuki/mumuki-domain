@@ -8,18 +8,18 @@ class Message < ApplicationRecord
   has_one :exercise, through: :assignment
 
   validates_presence_of :content, :sender
-  validate :contextualized?
+  validate :ensure_contextualized
 
   after_save :update_counters_cache!
 
   markdown_on :content
 
   # Visible messages are those that can be publicly seen
-  # in forums. non-direct messages are naver visible.
+  # in forums. non-direct messages are never visible.
   scope :visible, -> () do
     where.not(deletion_motive: :self_deleted)
       .or(where(deletion_motive: nil))
-      .where(submission_id: nil)
+      .where(assignment_id: nil)
   end
 
   def contextualization
@@ -135,5 +135,9 @@ class Message < ApplicationRecord
 
   def disapprove!
     update! approved: false, approved_at: nil, approved_by: nil
+  end
+
+  def ensure_contextualized
+    errors.add(:base, :not_properly_contextualized) unless contextualized?
   end
 end

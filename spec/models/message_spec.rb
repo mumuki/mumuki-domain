@@ -1,6 +1,75 @@
 require 'spec_helper'
 
 describe Message, organization_workspace: :test do
+
+  describe 'validations' do
+    context 'when no context' do
+      let(:message) { Message.new content: 'content', sender: 'sender@mumuki.org' }
+      it { expect(message.contextualized?).to be false }
+      it { expect(message.valid?).to be false }
+    end
+
+    context 'when improperly contextualized' do
+      let(:message) do
+        Message.new content: 'content',
+                    sender: 'sender@mumuki.org',
+                    discussion: create(:discussion),
+                    assignment: create(:assignment)
+      end
+
+      it { expect(message.contextualized?).to be false }
+      it { expect(message.valid?).to be false }
+    end
+
+    context 'when direct' do
+      let(:message) do
+        Message.new content: 'content',
+                    sender: 'sender@mumuki.org',
+                    assignment: create(:assignment)
+      end
+
+      it { expect(message.contextualized?).to be true }
+      it { expect(message.valid?).to be true }
+    end
+
+    context 'when non-direct' do
+      let(:message) do
+        Message.new content: 'content',
+                    sender: 'sender@mumuki.org',
+                    discussion: create(:discussion)
+      end
+      it { expect(message.contextualized?).to be true }
+      it { expect(message.valid?).to be true }
+    end
+  end
+
+  describe 'visible' do
+    context 'non-direct messages' do
+      before do
+        create_list(:message, 5, discussion: create(:discussion), sender: 'sender@mumuki.org', deletion_motive: motive)
+      end
+
+      context 'self-deleted' do
+        let(:motive) { :self_deleted }
+        it { expect(Message.visible.count).to eq 0 }
+      end
+
+      context 'non-self-deleted' do
+        let(:motive) { :inappropriate_content }
+
+        it { expect(Message.visible.count).to eq 5 }
+      end
+    end
+
+    context 'direct messages' do
+      before do
+        create_list(:message, 5, assignment: create(:assignment), sender: 'sender@mumuki.org')
+      end
+
+      it { expect(Message.visible.count).to eq 0 }
+    end
+  end
+
   describe '.import_from_resource_h!' do
     let(:user) { create(:user) }
     let(:problem) { create(:problem) }
