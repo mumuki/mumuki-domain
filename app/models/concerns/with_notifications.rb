@@ -7,8 +7,7 @@ module WithNotifications
 
   def unread_notifications
     # TODO: message and discussion should trigger a notification instead of being one
-    # include message notifications once they are properly implemented
-    all = notifications.where(read: false) + unread_discussions
+    all = notifications.where(read: false) + unread_messages + unread_discussions
     all.sort_by(&:created_at).reverse
   end
 

@@ -168,14 +168,6 @@ class Exercise < ApplicationRecord
     Exercise.find(id)
   end
 
-  def messages_path_for(user)
-    "api/guides/#{guide.slug}/#{bibliotheca_id}/student/#{URI.escape user.uid}/messages?language=#{language}"
-  end
-
-  def messages_url_for(user)
-    Mumukit::Platform.classroom_api.organic_url_for(Organization.current, messages_path_for(user))
-  end
-
   def description_context
     splitted_description.first.markdownified
   end

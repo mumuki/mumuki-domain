@@ -8,6 +8,7 @@ describe Discussion, organization_workspace: :test do
     let(:problem) { create(:indexed_exercise) }
     let(:discussion) { problem.discuss! initiator, title: 'Need help' }
     let(:moderator) { create(:user, permissions: {moderator: 'test/*'}) }
+    let(:first_message) { discussion.messages.first }
 
     it { expect(discussion.new_record?).to be false }
     it { expect(discussion.has_responses?).to be false }
@@ -30,12 +31,17 @@ describe Discussion, organization_workspace: :test do
 
       it { expect(discussion.has_responses?).to be false }
       it { expect(discussion.has_validated_responses?).to be false }
-      it { expect(discussion.messages.first.content).to eq 'I forgot to say this' }
       it { expect(initiator.unread_discussions).to eq [] }
       it { expect(discussion.reachable_statuses_for initiator).to eq [:closed] }
       it { expect(discussion.reachable_statuses_for moderator).to eq [:closed] }
       it { expect(discussion.reachable_statuses_for student).to eq [] }
       it { expect(discussion.requires_moderator_response).to be true }
+
+      it { expect(first_message.content).to eq 'I forgot to say this' }
+      it { expect(first_message.contextualization).to eq discussion }
+      it { expect(first_message.contextualized?).to be true }
+      it { expect(first_message.stale?).to be false }
+      it { expect(first_message.direct?).to be false }
 
       describe 'and closes the discussion' do
         before { discussion.update_status!(:closed, initiator) }
@@ -70,7 +76,7 @@ describe Discussion, organization_workspace: :test do
       it { expect(discussion.has_responses?).to be true }
       it { expect(discussion.has_validated_responses?).to be false }
       it { expect(initiator.unread_discussions).to include discussion }
-      it { expect(discussion.messages.first.content).to eq 'You should do this' }
+      it { expect(first_message.content).to eq 'You should do this' }
       it { expect(discussion.reachable_statuses_for initiator).to eq [:pending_review] }
       it { expect(discussion.reachable_statuses_for moderator).to eq [:closed, :solved] }
       it { expect(discussion.reachable_statuses_for student).to eq [] }

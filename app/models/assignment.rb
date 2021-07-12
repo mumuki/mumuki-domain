@@ -7,11 +7,7 @@ class Assignment < Progress
 
   belongs_to :exercise
   has_one :guide, through: :exercise
-  has_many :messages,
-           -> { where.not(submission_id: nil).order(date: :desc) },
-           foreign_key: :submission_id,
-           primary_key: :submission_id,
-           dependent: :destroy
+  has_many :messages, -> { order(date: :desc) }, dependent: :destroy
 
   belongs_to :organization
   belongs_to :submitter, class_name: 'User'
@@ -28,13 +24,13 @@ class Assignment < Progress
   alias_attribute :status, :submission_status
   alias_attribute :attempts_count, :attemps_count
 
-  scope :by_exercise_ids, -> (exercise_ids) {
+  scope :by_exercise_ids, -> (exercise_ids) do
     where(exercise_id: exercise_ids) if exercise_ids
-  }
+  end
 
-  scope :by_usernames, -> (usernames) {
+  scope :by_usernames, -> (usernames) do
     joins(:submitter).where('users.name' => usernames) if usernames
-  }
+  end
 
   defaults do
     self.query_results = []
@@ -88,7 +84,6 @@ class Assignment < Progress
 
   def persist_submission!(submission)
     transaction do
-      messages.destroy_all if submission_id.present?
       update! submission_id: submission.id
       update! submitted_at: DateTime.current
       update_submissions_count!

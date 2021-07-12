@@ -42,7 +42,7 @@ class Discussion < ApplicationRecord
   end
 
   def visible_messages
-    messages.where.not(deletion_motive: :self_deleted).or(messages.where(deletion_motive: nil))
+    messages.visible
   end
 
   def try_solve!
