@@ -471,28 +471,6 @@ describe Exercise, organization_workspace: :test do
     it { expect(Problem.find(exercise.friendly_name)).to eq exercise }
   end
 
-  describe 'messages_path_for', organization_workspace: :test do
-    let(:haskell) { create(:haskell) }
-    let(:problem) { create(:problem, bibliotheca_id: 32, guide: guide, language: haskell) }
-    let(:guide) { create(:guide, slug: 'mumuki/myguide') }
-
-    context 'user with email uid' do
-      let(:student) { create(:user, uid: 'foo@bar.com') }
-
-      it { expect(problem.messages_path_for(student))
-             .to eq 'api/guides/mumuki/myguide/32/student/foo@bar.com/messages?language=haskell' }
-      it { expect(problem.messages_url_for(student))
-             .to eq 'http://test.classroom-api.localmumuki.io/api/guides/mumuki/myguide/32/student/foo@bar.com/messages?language=haskell' }
-    end
-
-    context 'user with twitter uid' do
-      let(:student) { create(:user, uid: 'twitter|12134342') }
-
-      it { expect(problem.messages_url_for(student))
-             .to eq 'http://test.classroom-api.localmumuki.io/api/guides/mumuki/myguide/32/student/twitter%7C12134342/messages?language=haskell' }
-    end
-  end
-
   describe '#splitted_description' do
     let(:exercise) { create(:exercise, description: "**Foo**\n\n> _Bar_") }
     it { expect(exercise.description_context).to eq "<p><strong>Foo</strong></p>\n" }
