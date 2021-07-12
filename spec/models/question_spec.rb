@@ -15,7 +15,7 @@ describe Mumuki::Domain::Submission::Query, organization_workspace: :test do
 
       it { expect(assignment.solution).to be nil }
       it { expect(assignment.messages.count).to eq 1 }
-      it { expect(assignment.submission_id).to_not be nil }
+      it { expect(assignment.submission_id).to be nil }
     end
 
     context 'when a question on a previous submission is sent' do
