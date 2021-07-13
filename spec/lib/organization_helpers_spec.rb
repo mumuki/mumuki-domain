@@ -173,9 +173,9 @@ describe Mumukit::Platform::Organization do
       it { expect(subject.logo_url).to eq 'https://mumuki.io/logo-alt-large.png' }
       it { expect(subject.banner_url).to eq 'https://mumuki.io/logo-alt-large.png' }
       it { expect(subject.favicon_url).to eq '/favicon.ico' }
-      it { expect(subject.breadcrumb_image_url).to eq nil }
+      it { expect(subject.breadcrumb_image_url).to be nil }
       it { expect(subject.open_graph_image_url).to eq 'http://localmumuki.io/logo-alt.png' }
-      it { expect(subject.time_zone).to eq 'Buenos Aires' }
+      it { expect(subject.time_zone).to be nil }
     end
 
     describe Mumuki::Domain::Organization::Profile do

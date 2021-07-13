@@ -17,7 +17,7 @@ class ExamRegistration < ApplicationRecord
 
   alias_attribute :name, :description
 
-  scope :should_process, -> { where(processed: false).where(arel_table[:end_time].lt(Time.now)) }
+  scope :should_process, -> { where(processed: false).where(arel_table[:end_time].lt(Time.current)) }
 
   def authorization_criterion
     @authorization_criterion ||= ExamRegistration::AuthorizationCriterion.parse(authorization_criterion_type, authorization_criterion_value)

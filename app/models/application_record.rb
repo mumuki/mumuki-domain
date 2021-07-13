@@ -152,7 +152,7 @@ class ApplicationRecord < ActiveRecord::Base
   def self.active_between(start_date_field, end_date_field, **options)
     define_singleton_method(:active) do |actually_filter=true|
       if actually_filter
-        self.where("(#{start_date_field} IS NULL OR #{start_date_field} < :now) AND (#{end_date_field} IS NULL OR #{end_date_field} > :now)", now: Time.now)
+        self.where("(#{start_date_field} IS NULL OR #{start_date_field} < :now) AND (#{end_date_field} IS NULL OR #{end_date_field} > :now)", now: Time.current)
       else
         all
       end

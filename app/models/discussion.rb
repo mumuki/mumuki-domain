@@ -26,20 +26,12 @@ class Discussion < ApplicationRecord
 
   markdown_on :description
 
-  sortable :responses_count, :upvotes_count, :created_at, default: :created_at_desc
+  sortable :responses_count, :upvotes_count, :created_at, :similarity, default: :created_at_desc
   filterable :status, :language, :requires_attention
   pageable
 
   delegate :language, to: :item
   delegate :to_discussion_status, to: :status
-
-  scope :for_user, -> (user) do
-    if user.try(:moderator_here?)
-      all
-    else
-      where.not(status: :closed).where.not(status: :pending_review).or(where(initiator: user))
-    end
-  end
 
   def visible_messages
     messages.visible
@@ -54,7 +46,7 @@ class Discussion < ApplicationRecord
   def navigable_content_in(_)
     nil
   end
-  
+
   def target
     self
   end
@@ -128,7 +120,7 @@ class Discussion < ApplicationRecord
     if reachable_status_for?(user, status)
       update! status: status,
               status_updated_by: user,
-              status_updated_at: Time.now
+              status_updated_at: Time.current
 
       no_responsible! if responsible?(user)
     end
@@ -165,7 +157,11 @@ class Discussion < ApplicationRecord
   def extra_preview_html
     # FIXME this is buggy, because the extra
     # may have changed since the submission of this discussion
-    exercise.assignment_for(initiator).extra_preview_html
+    assignment.extra_preview_html
+  end
+
+  def assignment
+    exercise.find_assignment_for(initiator, organization)
   end
 
   def update_counters!
@@ -180,6 +176,46 @@ class Discussion < ApplicationRecord
   def self.debatable_for(klazz, params)
     debatable_id = params[:"#{klazz.underscore}_id"]
     klazz.constantize.find(debatable_id)
+  end
+
+  def self.in_context_of(content, user, organization = Organization.current)
+    organization_discussions = content.discussions_in_organization(organization)
+    if user&.moderator_of? organization
+      organization_discussions
+    else
+      content.contextualize_for(
+        organization_discussions
+          .where.not(status: :closed)
+          .where.not(status: :pending_review)
+          .or(where(initiator: user)),
+        user,
+        organization)
+    end
+  end
+
+  def self.contextual_sorting_filters
+    Discussion.sorting_filters(except: [:similarity])
+  end
+
+  def self.in_context_of_assignment(assignment)
+    relation = all
+    relation.instance_variable_set(:@assignment, assignment)
+
+    class << relation
+      def contextual_sorting_filters
+        Discussion.sorting_filters
+      end
+
+      def order_by_similarity(direction)
+        order(
+          "submission_status = #{@assignment.status.to_i} #{direction}",
+          "test_results = #{ActiveRecord::Base.connection.quote(@assignment.test_results_before_type_cast)} #{direction}",
+          "expectation_results = #{ActiveRecord::Base.connection.quote(@assignment.expectation_results_before_type_cast)} #{direction}"
+          )
+      end
+    end
+
+    relation
   end
 
   private

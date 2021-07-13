@@ -41,7 +41,7 @@ class Mumuki::Domain::Organization::Profile < Mumukit::Platform::Model
   end
 
   def time_zone
-    @time_zone || 'Buenos Aires'
+    @time_zone
   end
 
 end
