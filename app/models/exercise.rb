@@ -238,9 +238,9 @@ class Exercise < ApplicationRecord
     is_a? ::Problem
   end
 
-  def contextualize_for(scope, user)
-    assignment = find_assignment_for(user)
-    assignment ? scope.in_context_of_assignment(assignment) : super
+  def contextualize_for(scope, user, organization)
+    assignment = find_assignment_for(user, organization)
+    assignment ? scope.in_context_of_assignment(assignment) : scope
   end
 
   private

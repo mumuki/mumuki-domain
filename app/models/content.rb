@@ -34,7 +34,7 @@ class Content < ApplicationRecord
     !private?
   end
 
-  def contextualize_for(_scope, _user)
+  def contextualize_for(_scope, _user, _organization)
     scope
   end
 end

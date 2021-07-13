@@ -180,7 +180,7 @@ class Discussion < ApplicationRecord
 
   def self.in_context_of(content, user, organization = Organization.current)
     organization_discussions = content.discussions_in_organization(organization)
-    if user&.moderator_here?
+    if user&.moderator_of? organization
       organization_discussions
     else
       content.contextualize_for(
@@ -188,7 +188,8 @@ class Discussion < ApplicationRecord
           .where.not(status: :closed)
           .where.not(status: :pending_review)
           .or(where(initiator: user)),
-        user)
+        user,
+        organization)
     end
   end
 
