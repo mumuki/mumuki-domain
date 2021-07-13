@@ -30,10 +30,10 @@ class Message < ApplicationRecord
     assignment_id.present? ^ discussion_id.present?
   end
 
-  # Whether this message is stale, that is,
-  # targets a submission that is the latest one.
+  # Whether this message is stale, that is, it
+  # targets a submission that is not the latest one.
   #
-  # This can occur only in direct messages.
+  # Only direct messages may become stale.
   def stale?
     direct? && assignment.submission_id != submission_id
   end
