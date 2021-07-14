@@ -7,11 +7,17 @@ describe Organization, organization_workspace: :test do
 
   describe '.import_from_resource_h!' do
     let(:book) { create(:book) }
-    let(:resource_h) { {
-      name: 'zulema',
-      book: book.slug,
-      profile: { locale: 'es', contact_email: 'contact@email.com' }
-    } }
+    let(:resource_h) {
+      {
+        name: 'zulema',
+        book: book.slug,
+        profile: {
+          locale: 'es',
+          time_zone: 'Santiago',
+          contact_email: 'contact@email.com'
+        }
+      }
+    }
     let!(:imported) { Organization.import_from_resource_h! resource_h }
     let(:found) { Organization.find_by(name: 'zulema').to_resource_h }
 

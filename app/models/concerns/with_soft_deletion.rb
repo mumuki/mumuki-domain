@@ -7,7 +7,7 @@ module WithSoftDeletion
   end
 
   def soft_delete!(motive, deleter)
-    update! deletion_motive: motive, deleted_by: deleter, deleted_at: Time.now
+    update! deletion_motive: motive, deleted_by: deleter, deleted_at: Time.current
   end
 
   def deleted?

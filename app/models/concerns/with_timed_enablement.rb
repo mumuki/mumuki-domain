@@ -2,7 +2,7 @@ module WithTimedEnablement
   extend ActiveSupport::Concern
 
   def enabled?
-    enabled_range.cover? DateTime.current
+    enabled_range.cover? Time.current
   end
 
   def enabled_range

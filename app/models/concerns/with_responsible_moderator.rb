@@ -34,7 +34,7 @@ module WithResponsibleModerator
   private
 
   def responsible!(moderator)
-    update! responsible_moderator_at: Time.now, responsible_moderator_by: moderator
+    update! responsible_moderator_at: Time.current, responsible_moderator_by: moderator
   end
 
   def no_responsible!

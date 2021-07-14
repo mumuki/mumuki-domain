@@ -23,7 +23,7 @@ class Organization < ApplicationRecord
 
   has_many :certificate_programs
 
-  validates_presence_of :contact_email, :locale
+  validates_presence_of :contact_email, :locale, :time_zone
   validates_presence_of :welcome_email_template, if: :greet_new_users?
   validates :name, uniqueness: true,
                    presence: true,

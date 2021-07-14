@@ -85,7 +85,7 @@ class Assignment < Progress
   def persist_submission!(submission)
     transaction do
       update! submission_id: submission.id
-      update! submitted_at: DateTime.current
+      update! submitted_at: Time.current
       update_submissions_count!
       update_last_submission!
     end
@@ -281,6 +281,6 @@ class Assignment < Progress
   end
 
   def update_last_submission!
-    submitter.update!(last_submission_date: DateTime.current, last_exercise: exercise)
+    submitter.update!(last_submission_date: Time.current, last_exercise: exercise)
   end
 end

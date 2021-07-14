@@ -130,7 +130,7 @@ class Message < ApplicationRecord
   private
 
   def approve!(user)
-    update! approved: true, approved_at: Time.now, approved_by: user
+    update! approved: true, approved_at: Time.current, approved_by: user
   end
 
   def disapprove!
