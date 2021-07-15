@@ -61,12 +61,6 @@ module Mumuki::Domain::Helpers::User
 
   ## Profile
 
-  def full_name
-    "#{first_name} #{last_name}".strip
-  end
-
-  alias_method :name, :full_name
-
   def profile_completed?
     self.class.profile_fields.map { |it| self[it] }.all? &:present?
   end

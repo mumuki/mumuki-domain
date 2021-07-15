@@ -9,6 +9,7 @@ class User < ApplicationRecord
           Disabling,
           WithTermsAcceptance,
           WithPreferences,
+          Onomastic,
           Mumuki::Domain::Helpers::User
 
   serialize :permissions, Mumukit::Auth::Permissions
@@ -286,18 +287,6 @@ class User < ApplicationRecord
     immersive_organization_with_content_at(path_item).tap do |orga, _|
       return [Organization.current, path_item] unless orga.present?
     end
-  end
-
-  def formal_first_name
-    verified_first_name.presence || first_name
-  end
-
-  def formal_last_name
-    verified_last_name.presence || last_name
-  end
-
-  def formal_full_name
-    "#{formal_first_name} #{formal_last_name}"
   end
 
   def certificates_in_organization(organization = Organization.current)
