@@ -17,14 +17,19 @@ describe User do
 
     context  'when user is created with no verified name' do
       it { expect(user.verified_first_name).to be_nil }
+      it { expect(user.verified_full_name).to be_blank }
+      it { expect(user.has_verified_full_name?).to be false }
     end
   end
 
   context 'when user is created with verified names' do
-    let(:verified_user_json) { user_json.merge(verified_first_name: 'Baz', verified_last_name: 'Foobar') }
+    let(:verified_user_json) { user_json.merge(verified_first_name: 'Dan', verified_last_name: 'Doe') }
     before { User.import_from_resource_h! verified_user_json }
-    it { expect(user.verified_first_name).to eq 'Baz' }
-    it { expect(user.verified_last_name).to eq 'Foobar' }
+    it { expect(user.verified_first_name).to eq 'Dan' }
+    it { expect(user.verified_last_name).to eq 'Doe' }
+    it { expect(user.verified_full_name).to eq 'Dan Doe' }
+    it { expect(user.has_verified_full_name?).to be true }
+
   end
 
   context 'when user exists' do
