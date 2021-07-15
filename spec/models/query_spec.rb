@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Mumuki::Domain::Submission::Query do
-  let!(:exercise) { create(:exercise) }
   let(:user) { create(:user) }
 
   before do
@@ -12,9 +11,32 @@ describe Mumuki::Domain::Submission::Query do
     let!(:results) { exercise.submit_query!(user, query: 'foo', content: 'bar', cookie: ['foo', 'bar']) }
     let(:assignment) { exercise.find_assignment_for(user, Organization.current) }
 
-    it { expect(results[:status]).to eq :passed }
-    it { expect(results[:result]).to eq '5' }
-    it { expect(assignment.solution).to eq 'bar' }
-    it { expect(assignment.status).to eq :pending }
+    shared_examples_for 'a query submission' do
+      it { expect(results[:status]).to eq :passed }
+      it { expect(results[:result]).to eq '5' }
+    end
+
+    context 'a playground exercise' do
+      let(:exercise) { create(:playground, indexed: true) }
+
+      it_behaves_like 'a query submission'
+
+      it { expect(assignment.submission_id).to_not be nil }
+      it { expect(assignment.submitted_at).to_not be nil }
+
+      it { expect(assignment.solution).to be nil }
+      it { expect(assignment.status).to eq :passed }
+    end
+
+    context 'a problem exercise' do
+      let(:exercise) { create(:problem, indexed: true) }
+
+      it_behaves_like 'a query submission'
+      it { expect(assignment.submission_id).to be nil }
+      it { expect(assignment.submitted_at).to be nil }
+
+      it { expect(assignment.solution).to eq 'bar' }
+      it { expect(assignment.status).to eq :pending }
+    end
   end
 end

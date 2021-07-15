@@ -6,7 +6,7 @@ class Mumuki::Domain::Submission::Query < Mumuki::Domain::Submission::ConsoleSub
   end
 
   def save_submission!(assignment)
-    assignment.exercise.setup_query_assignment!(assignment)
+    assignment.exercise.save_query_submission!(assignment, self)
     super
   end
 

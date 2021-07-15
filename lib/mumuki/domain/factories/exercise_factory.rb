@@ -28,12 +28,20 @@ FactoryBot.define do
   end
 
   factory :exercise_base do
+    transient do
+      indexed { false }
+    end
+
     language { guide ? guide.language : create(:language) }
     sequence(:bibliotheca_id) { |n| n }
     sequence(:number) { |n| n }
 
     locale { :en }
     guide
+
+    after(:build) do |exercise, evaluator|
+      exercise.guide = create(:indexed_guide) if evaluator.indexed
+    end
   end
 
   factory :challenge, parent: :exercise_base do
@@ -73,7 +81,7 @@ FactoryBot.define do
   factory :exercise, parent: :problem
 
   factory :indexed_exercise, parent: :exercise do
-    guide { create(:indexed_guide) }
+    indexed { true }
   end
 
   factory :x_equal_5_exercise, parent: :exercise do
