@@ -28,7 +28,7 @@ describe Mumuki::Domain::Submission::Query do
       it { expect(assignment.status).to eq :passed }
     end
 
-    context 'a problem problem' do
+    context 'a problem exercise' do
       let(:exercise) { create(:problem, indexed: true) }
 
       it_behaves_like 'a query submission'
