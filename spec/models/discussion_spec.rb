@@ -343,6 +343,30 @@ describe Discussion, organization_workspace: :test do
     end
   end
 
+  describe 'unread_first scope' do
+    let(:user) { create(:user) }
+    let!(:discussion_1) { create(:indexed_exercise).discuss! user, title: 'SOS 1' }
+    let!(:discussion_2) { create(:indexed_exercise).discuss! user, title: 'SOS 2' }
+    let!(:discussion_3) { create(:indexed_exercise).discuss! user, title: 'SOS 3' }
+    let!(:discussion_4) { create(:indexed_exercise).discuss! user, title: 'SOS 4' }
+    let!(:discussion_5) { create(:indexed_exercise).discuss! user, title: 'SOS 5' }
+
+    before do
+      Subscription.where(discussion: discussion_2).first.update! read: false
+      Subscription.where(discussion: discussion_5).first.update! read: false
+    end
+
+    let(:unread_discussions) { [discussion_2, discussion_5] }
+    let(:read_discussions) { [discussion_1, discussion_3, discussion_4] }
+
+    it do
+      expect(unread_discussions).to include(Discussion.unread_first.first)
+      expect(unread_discussions).to include(Discussion.unread_first.second)
+      expect(read_discussions).to include(Discussion.unread_first.third)
+      expect(read_discussions).to include(Discussion.unread_first.fourth)
+      expect(read_discussions).to include(Discussion.unread_first.fifth)
+    end
+  end
 
   describe 'messages not being deleted' do
     let(:user) { create(:user) }
