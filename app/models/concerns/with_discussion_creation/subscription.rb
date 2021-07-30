@@ -8,7 +8,7 @@ module WithDiscussionCreation::Subscription
   end
 
   def subscriptions_in_organization
-    subscriptions.joins(:discussion).where(discussion: discussions_in_organization)
+    subscriptions.where(discussion: Organization.current.discussions)
   end
 
   def subscribed_to?(discussion)
