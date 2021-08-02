@@ -24,5 +24,18 @@ describe WithDiscussionCreation::Subscription, organization_workspace: :test do
 
     it { expect(discussion.subscription_for(subscriber)).to eq subscription }
     it { expect(subscription.read).to be true }
+
+    context 'when someone posts a message' do
+      before { discussion.submit_message!({content: 'Same here'}, create(:user)) }
+
+      it { expect(discussion.subscription_for(user).read).to be false }
+      it { expect(discussion.subscription_for(subscriber).read).to be false }
+    end
+
+    context 'when user unsubscribes' do
+      before { subscriber.unsubscribe_to! discussion }
+
+      it {expect(discussion.subscription_for(subscriber)).to be nil }
+    end
   end
 end
