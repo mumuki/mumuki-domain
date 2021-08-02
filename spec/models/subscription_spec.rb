@@ -24,18 +24,22 @@ describe WithDiscussionCreation::Subscription, organization_workspace: :test do
 
     it { expect(discussion.subscription_for(subscriber)).to eq subscription }
     it { expect(subscription.read).to be true }
+    it { expect(user.unread_discussions).to be_empty }
 
     context 'when someone posts a message' do
       before { discussion.submit_message!({content: 'Same here'}, create(:user)) }
 
       it { expect(discussion.subscription_for(user).read).to be false }
       it { expect(discussion.subscription_for(subscriber).read).to be false }
+      it { expect(user.unread_discussions).to eq [discussion] }
+      it { expect(subscriber.unread_discussions).to eq [discussion] }
     end
 
     context 'when user unsubscribes' do
       before { subscriber.unsubscribe_to! discussion }
 
       it {expect(discussion.subscription_for(subscriber)).to be nil }
+      it { expect(user.unread_discussions).to be_empty }
     end
   end
 
@@ -57,12 +61,29 @@ describe WithDiscussionCreation::Subscription, organization_workspace: :test do
       before { test_organization.switch! }
 
       it { expect(user.subscriptions_in_organization.count).to eq 2 }
+      it { expect(user.unread_discussions).to be_empty }
+
+      context 'when a discussion is commented' do
+        before { Discussion.first.submit_message!({content: 'Same here'}, create(:user)) }
+
+        it { expect(user.unread_discussions).to eq [Discussion.first] }
+      end
     end
 
     context 'in another organization' do
       before { another_organization.switch! }
 
       it { expect(user.subscriptions_in_organization.count).to eq 3 }
+      it { expect(user.unread_discussions).to be_empty }
+
+      context 'when discussions are commented' do
+        before do
+          Discussion.third.submit_message!({content: 'Same here'}, create(:user))
+          Discussion.fifth.submit_message!({content: 'Same here'}, create(:user))
+        end
+
+        it { expect(user.unread_discussions).to match_array [Discussion.third, Discussion.fifth] }
+      end
     end
   end
 end
