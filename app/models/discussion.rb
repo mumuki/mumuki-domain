@@ -96,7 +96,7 @@ class Discussion < ApplicationRecord
     upvotes.find_by(user: user)
   end
 
-  def unread_subscriptions(user)
+  def mark_subscriptions_as_unread!(user)
     subscriptions.where.not(user: user).map(&:unread!)
   end
 
@@ -104,7 +104,7 @@ class Discussion < ApplicationRecord
     message.merge!(sender: user.uid)
     messages.create(message)
     user.subscribe_to! self
-    unread_subscriptions(user)
+    mark_subscriptions_as_unread!(user)
     no_responsible! if responsible?(user)
   end
 
