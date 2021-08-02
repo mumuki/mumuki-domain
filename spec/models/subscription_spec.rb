@@ -38,4 +38,31 @@ describe WithDiscussionCreation::Subscription, organization_workspace: :test do
       it {expect(discussion.subscription_for(subscriber)).to be nil }
     end
   end
+
+  describe 'discussions in different organizations' do
+    let(:test_organization) { Organization.locate!('test') }
+    let(:another_organization) { create(:organization, book: test_organization.book) }
+
+    before do
+      problem.discuss! user, title: 'Need help'
+      user.subscribe_to! (problem.discuss!(create(:user), title: 'Need help'))
+
+      another_organization.switch!
+      problem.discuss! user, title: 'Need help'
+      problem.discuss! user, title: 'Need help'
+      user.subscribe_to! (problem.discuss!(create(:user), title: 'Need help'))
+    end
+
+    context 'in test organization' do
+      before { test_organization.switch! }
+
+      it { expect(user.subscriptions_in_organization.count).to eq 2 }
+    end
+
+    context 'in another organization' do
+      before { another_organization.switch! }
+
+      it { expect(user.subscriptions_in_organization.count).to eq 3 }
+    end
+  end
 end
