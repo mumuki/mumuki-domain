@@ -18,4 +18,8 @@ class Notification < ApplicationRecord
   def mark_as_read!
     update read: true
   end
+
+  def subject
+    super || target.class.name.underscore
+  end
 end
