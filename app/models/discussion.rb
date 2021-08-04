@@ -21,7 +21,7 @@ class Discussion < ApplicationRecord
   scope :no_responsible_moderator, -> { where('responsible_moderator_at < ?', Time.now - MODERATOR_MAX_RESPONSIBLE_TIME)
                                           .or(where(responsible_moderator_at: nil)) }
   scope :pending_review, -> { where(status: :pending_review) }
-  scope :unread_first, -> { (includes(:subscriptions).reorder('subscriptions.read')) }
+  scope :unread_first, -> { includes(:subscriptions).reorder('subscriptions.read', :created_at) }
 
   after_create :subscribe_initiator!
 
