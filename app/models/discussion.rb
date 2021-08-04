@@ -21,7 +21,7 @@ class Discussion < ApplicationRecord
   scope :no_responsible_moderator, -> { where('responsible_moderator_at < ?', Time.now - MODERATOR_MAX_RESPONSIBLE_TIME)
                                           .or(where(responsible_moderator_at: nil)) }
   scope :pending_review, -> { where(status: :pending_review) }
-  scope :unread_first, -> { (includes(:subscriptions).reorder('subscriptions.read')) }
+  scope :unread_first, -> { includes(:subscriptions).reorder('subscriptions.read', :created_at) }
 
   after_create :subscribe_initiator!
 
@@ -96,15 +96,15 @@ class Discussion < ApplicationRecord
     upvotes.find_by(user: user)
   end
 
-  def unread_subscriptions(user)
-    subscriptions.where.not(user: user).map(&:unread!)
+  def mark_subscriptions_as_unread!(user)
+    subscriptions.where.not(user: user).each(&:unread!)
   end
 
   def submit_message!(message, user)
     message.merge!(sender: user.uid)
     messages.create(message)
     user.subscribe_to! self
-    unread_subscriptions(user)
+    mark_subscriptions_as_unread!(user)
     no_responsible! if responsible?(user)
   end
 

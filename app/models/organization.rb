@@ -148,6 +148,10 @@ class Organization < ApplicationRecord
     [default_date, in_preparation_until&.to_date].compact.max
   end
 
+  def discussions
+    book.discussions_in_organization(self)
+  end
+
   # ==============
   # Display fields
   # ==============
