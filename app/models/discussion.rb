@@ -97,7 +97,7 @@ class Discussion < ApplicationRecord
   end
 
   def mark_subscriptions_as_unread!(user)
-    subscriptions.where.not(user: user).map(&:unread!)
+    subscriptions.where.not(user: user).each(&:unread!)
   end
 
   def submit_message!(message, user)
