@@ -34,6 +34,10 @@ class ExamRegistration::AuthorizationCriterion
   rescue
     raise "Invalid criterion type #{type}"
   end
+
+  def meets_authorization_criteria?(authorization_request)
+    meets_criterion authorization_request.user, authorization_request.organization
+  end
 end
 
 class ExamRegistration::AuthorizationCriterion::None < ExamRegistration::AuthorizationCriterion
@@ -45,7 +49,7 @@ class ExamRegistration::AuthorizationCriterion::None < ExamRegistration::Authori
     !value
   end
 
-  def meets_authorization_criteria?(_authorization_request)
+  def meets_criterion?(_user, _organization)
     true
   end
 end
@@ -55,7 +59,7 @@ class ExamRegistration::AuthorizationCriterion::PassedExercises < ExamRegistrati
     value.positive?
   end
 
-  def meets_authorization_criteria?(authorization_request)
-    authorization_request.user.passed_submissions_count_in(authorization_request.organization) >= value
+  def meets_criterion?(user, organization)
+    user.passed_submissions_count_in(organization) >= value
   end
 end

@@ -13,7 +13,7 @@ class ExamRegistration < ApplicationRecord
 
   before_save :ensure_valid_authorization_criterion!
 
-  delegate :meets_authorization_criteria?, :process_request!, to: :authorization_criterion
+  delegate :meets_criterion?, :process_request!, to: :authorization_criterion
 
   alias_attribute :name, :description
 
@@ -71,6 +71,10 @@ class ExamRegistration < ApplicationRecord
 
   def registered?(user)
     registrees.include? user
+  end
+
+  def meets_criterion?(user)
+    authorization_criterion.meets_criterion?(user, organization)
   end
 
   private
