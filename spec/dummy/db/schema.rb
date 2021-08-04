@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210719145706) do
+ActiveRecord::Schema.define(version: 20210803175124) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -534,6 +534,7 @@ ActiveRecord::Schema.define(version: 20210719145706) do
     t.boolean "uppercase_mode"
     t.string "delete_account_token"
     t.datetime "delete_account_token_expiration_date"
+    t.text "ignored_notifications"
     t.index ["avatar_type", "avatar_id"], name: "index_users_on_avatar_type_and_avatar_id"
     t.index ["disabled_at"], name: "index_users_on_disabled_at"
     t.index ["last_organization_id"], name: "index_users_on_last_organization_id"

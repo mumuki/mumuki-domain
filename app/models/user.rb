@@ -13,7 +13,7 @@ class User < ApplicationRecord
           Mumuki::Domain::Helpers::User
 
   serialize :permissions, Mumukit::Auth::Permissions
-
+  serialize :ignored_notifications, Array
 
   has_many :notifications
   has_many :assignments, foreign_key: :submitter_id
