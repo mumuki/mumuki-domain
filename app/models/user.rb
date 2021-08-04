@@ -315,6 +315,18 @@ class User < ApplicationRecord
     user_stats.where(location).delete_all
   end
 
+  def notify_via_email!(notification)
+    UserMailer.notification(notification).deliver_later unless ignores_notification? notification
+  end
+
+  def ignores_notification?(notification)
+    ignored_notifications.include? notification.subject
+  end
+
+  def custom_notifications
+    notifications.where(subject: :custom)
+  end
+
   private
 
   def welcome_to_new_organizations!
