@@ -22,7 +22,7 @@ class Notification < ApplicationRecord
   end
 
   def notify_via_email!
-    user.notify_via_email! self
+    user.notify_via_email! self if defined? UserMailer
   end
 
   def subject
