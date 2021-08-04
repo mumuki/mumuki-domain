@@ -36,7 +36,7 @@ class ExamRegistration::AuthorizationCriterion
   end
 
   def meets_authorization_criteria?(authorization_request)
-    meets_criterion authorization_request.user, authorization_request.organization
+    meets_criterion? authorization_request.user, authorization_request.organization
   end
 end
 
