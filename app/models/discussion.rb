@@ -183,6 +183,11 @@ class Discussion < ApplicationRecord
     klazz.constantize.find(debatable_id)
   end
 
+  # TODO remove this once discussions generate notifications
+  def subject
+    'discussion'
+  end
+
   private
 
   def messages_by_updated_at(direction = :desc)
