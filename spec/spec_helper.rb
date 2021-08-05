@@ -33,10 +33,8 @@ RSpec.configure do |config|
     Mumukit::Platform::Organization.leave! if RSpec.current_example.metadata[:organization_workspace]
   end
 
-  # Hack to prevent breaking when using UserMailer which is defined in mumuki-laboratory
-  # TODO fix this recursive dependency
-  config.before(:all) do
-    Notification.skip_callback :create, :after, :notify_via_email!
+  config.before(:each) do
+    allow_any_instance_of(Notification).to receive(:notify_via_email!).and_return(nil)
   end
 end
 

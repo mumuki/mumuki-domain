@@ -21,11 +21,11 @@ class Notification < ApplicationRecord
     update read: true
   end
 
-  def notify_via_email!
-    user.notify_via_email! self
+  def self.create_and_notify_via_email!(args)
+    create!(args).tap(&:notify_via_email!)
   end
 
-  def subject
-    super || target.class.name.underscore
+  def notify_via_email!
+    user.notify_via_email! self
   end
 end
