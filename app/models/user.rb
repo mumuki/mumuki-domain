@@ -323,10 +323,6 @@ class User < ApplicationRecord
     ignored_notifications.include? notification.subject
   end
 
-  def custom_notifications
-    notifications.where(subject: :custom)
-  end
-
   private
 
   def welcome_to_new_organizations!
