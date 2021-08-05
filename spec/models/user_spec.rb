@@ -787,4 +787,22 @@ describe User, organization_workspace: :test do
       it { expect(messages_count).to eq 1 }
     end
   end
+
+  describe '#ignores_notification?' do
+    let(:user) { create(:user, ignored_notifications: ignored_notifications) }
+
+    let(:notification) { create(:notification, user: user, subject: :custom) }
+
+    context 'when user ignores notification type' do
+      let(:ignored_notifications) { ['custom'] }
+
+      it { expect(user.ignores_notification? notification).to be true }
+    end
+
+    context 'when user does not ignore notification type' do
+      let(:ignored_notifications) { ['exam_registration'] }
+
+      it { expect(user.ignores_notification? notification).to be false }
+    end
+  end
 end
