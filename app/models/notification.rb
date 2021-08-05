@@ -5,13 +5,8 @@ class Notification < ApplicationRecord
 
   enum subject: %i(
     custom
-    exam_registration_enabled
-    exam_registration_approved
-    exam_registration_rejected
-    exam_results_available
-    certificate_available)
-
-  after_create :notify_via_email!
+    exam_authorization_request_updated
+    exam_registration)
 
   scope :notified_users_ids_for, ->(target, organization=Organization.current) do
     where(target: target, organization: organization).pluck(:user_id)
