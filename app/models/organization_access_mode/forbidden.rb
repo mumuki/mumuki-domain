@@ -1,6 +1,6 @@
 class OrganizationAccessMode::Forbidden < OrganizationAccessMode::Base
   def validate_active!
-    raise Mumuki::Domain::ForbiddenError unless organization.public? || !user
+    raise Mumuki::Domain::ForbiddenError if organization.private? && user.present?
   end
 
   def faqs_here?
