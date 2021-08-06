@@ -15,7 +15,7 @@ class OrganizationAccessMode::Full < OrganizationAccessMode::Base
     discuss_here?
   end
 
-  def validate_discuss_here?(_discussion)
+  def validate_discuss_here!(_discussion)
   end
 
   def show_content?(_content)

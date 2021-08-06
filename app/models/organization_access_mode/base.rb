@@ -34,11 +34,11 @@ class OrganizationAccessMode::Base
     false
   end
 
-  def validate_discuss_here?(_discussion)
+  def validate_discuss_here!(_discussion)
     raise Mumuki::Domain::ForbiddenError
   end
 
-  def validate_content_here?(content)
+  def validate_content_here!(content)
     raise Mumuki::Domain::ForbiddenError unless show_content?(content)
   end
 end

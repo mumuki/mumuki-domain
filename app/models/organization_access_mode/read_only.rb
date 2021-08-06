@@ -16,7 +16,7 @@ class OrganizationAccessMode::ReadOnly < OrganizationAccessMode::Base
     has_scope(:discussions) && super
   end
 
-  def validate_discuss_here?(discussion)
+  def validate_discuss_here!(discussion)
     super(discussion) unless discussion&.initiator == user
   end
 
