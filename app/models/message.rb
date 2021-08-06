@@ -127,6 +127,11 @@ class Message < ApplicationRecord
     end
   end
 
+  # TODO remove this once messages generate notifications
+  def subject
+    'message'
+  end
+
   private
 
   def approve!(user)

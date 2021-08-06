@@ -73,9 +73,13 @@ class ExamRegistration < ApplicationRecord
     registrees.include? user
   end
 
+  def meets_criterion?(user)
+    authorization_criterion.meets_criterion?(user, organization)
+  end
+
   private
 
   def notify_registree!(registree)
-    Notification.create! organization: organization, user: registree, target: self
+    Notification.create_and_notify_via_email! organization: organization, user: registree, subject: :exam_registration, target: self
   end
 end

@@ -32,6 +32,10 @@ RSpec.configure do |config|
   config.after(:each) do
     Mumukit::Platform::Organization.leave! if RSpec.current_example.metadata[:organization_workspace]
   end
+
+  config.before(:each) do
+    allow_any_instance_of(Notification).to receive(:notify_via_email!).and_return(nil)
+  end
 end
 
 Mumukit::Platform.configure do |config|

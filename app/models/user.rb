@@ -13,7 +13,7 @@ class User < ApplicationRecord
           Mumuki::Domain::Helpers::User
 
   serialize :permissions, Mumukit::Auth::Permissions
-
+  serialize :ignored_notifications, Array
 
   has_many :notifications
   has_many :assignments, foreign_key: :submitter_id
@@ -313,6 +313,14 @@ class User < ApplicationRecord
     target_assignments.delete_all
     indicators.where(location).delete_all
     user_stats.where(location).delete_all
+  end
+
+  def notify_via_email!(notification)
+    UserMailer.notification(notification).deliver_later unless ignores_notification? notification
+  end
+
+  def ignores_notification?(notification)
+    ignored_notifications.include? notification.subject
   end
 
   private
