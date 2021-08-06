@@ -1,7 +1,7 @@
 class OrganizationAccessMode::Base
   attr_reader :user, :organization
 
-  def initialize(user, organization = Organization.current)
+  def initialize(user, organization)
     @user = user
     @organization = organization
   end
