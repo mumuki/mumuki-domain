@@ -10,7 +10,7 @@ module WithReminders
   end
 
   def remind!
-    build_reminder.deliver_now
+    build_reminder.post!
     update! last_reminded_date: Time.current
   end
 

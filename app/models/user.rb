@@ -300,7 +300,7 @@ class User < ApplicationRecord
   def certificate_in(certificate_program, certificate_h)
     return if certificated_in?(certificate_program)
     certificate = certificates.create certificate_h.merge(certificate_program: certificate_program)
-    UserMailer.certificate(certificate).deliver_later
+    UserMailer.certificate(certificate).post!
   end
 
   def clear_progress_for!(organization)
@@ -316,7 +316,7 @@ class User < ApplicationRecord
   end
 
   def notify_via_email!(notification)
-    UserMailer.notification(notification).deliver_later unless ignores_notification? notification
+    UserMailer.notification(notification).post! unless ignores_notification? notification
   end
 
   def ignores_notification?(notification)
@@ -327,7 +327,7 @@ class User < ApplicationRecord
 
   def welcome_to_new_organizations!
     new_accessible_organizations.each do |organization|
-      UserMailer.welcome_email(self, organization).deliver_now rescue nil if organization.greet_new_users?
+      UserMailer.welcome_email(self, organization).post! rescue nil if organization.greet_new_users?
     end
   end
 
