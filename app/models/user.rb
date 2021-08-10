@@ -62,6 +62,10 @@ class User < ApplicationRecord
     messages.where('assignments.organization': organization)
   end
 
+  def notifications_in_organization(organization = Organization.current)
+    notifications.where(organization: organization)
+  end
+
   def passed_submissions_count_in(organization)
     assignments.where(top_submission_status: Mumuki::Domain::Status::Submission::Passed.to_i, organization: organization).count
   end
