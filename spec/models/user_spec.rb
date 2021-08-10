@@ -805,4 +805,17 @@ describe User, organization_workspace: :test do
       it { expect(user.ignores_notification? notification).to be false }
     end
   end
+
+  describe '#notifications_in_organization' do
+    let(:user) { create(:user) }
+    let(:organization) { create(:organization) }
+    let!(:notification1) { create(:notification, user: user, organization: organization) }
+    let!(:notification2) { create(:notification, user: user) }
+
+    let(:notifications_in_organization) { user.notifications_in_organization(organization) }
+
+    it { expect(user.notifications.count).to eq 2 }
+    it { expect(notifications_in_organization.count).to eq 1 }
+    it { expect(notifications_in_organization).to eq [notification1] }
+  end
 end
