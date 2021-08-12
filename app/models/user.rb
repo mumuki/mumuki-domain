@@ -54,6 +54,8 @@ class User < ApplicationRecord
   resource_fields :uid, :social_id, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
   with_temporary_token :delete_account_token
 
+  organic_on :notifications
+
   def last_lesson
     last_guide.try(:lesson)
   end
