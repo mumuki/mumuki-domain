@@ -1,5 +1,6 @@
 class Discussion < ApplicationRecord
   include WithDiscussionStatus, WithScopedQueries, Contextualization, WithResponsibleModerator
+  include WithPgLock
 
   belongs_to :item, polymorphic: true
   has_many :messages, -> { order(:created_at) }, dependent: :destroy
