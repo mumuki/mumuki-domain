@@ -1,4 +1,4 @@
-class WithOrganizationStatus::Base
+class Organization::Status::Base
 
   attr_reader :organization
 

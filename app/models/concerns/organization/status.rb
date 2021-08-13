@@ -1,4 +1,4 @@
-module WithOrganizationStatus
+module Organization::Status
 
   def status
     @status ||= _status
@@ -21,11 +21,11 @@ module WithOrganizationStatus
 
   def _status
     if disabled?
-      WithOrganizationStatus::Disabled.new self
+      Organization::Status::Disabled.new self
     elsif in_preparation?
-      @status ||= WithOrganizationStatus::InPreparation.new self
+      Organization::Status::InPreparation.new self
     else
-      @status ||= WithOrganizationStatus::Enabled.new self
+      Organization::Status::Enabled.new self
     end
   end
 

@@ -1,4 +1,4 @@
-class WithOrganizationStatus::Disabled < WithOrganizationStatus::Base
+class Organization::Status::Disabled < Organization::Status::Base
 
   def teacher_access_mode(user)
     OrganizationAccessMode::Full.new user, organization
