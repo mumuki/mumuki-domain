@@ -32,7 +32,7 @@ module WithAssignments
   end
 
   def has_progress_for?(user, organization)
-    assignment_for(user, organization).persisted?
+    user.present? && find_assignment_for(user, organization).present?
   end
 
 
