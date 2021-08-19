@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Organization::Status, organization_workspace: :test do
+describe WithOrganizationStatus, organization_workspace: :test do
 
   describe '#status' do
     let(:organization) { create :organization }

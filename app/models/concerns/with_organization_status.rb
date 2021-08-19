@@ -1,4 +1,4 @@
-module Organization::Status
+module WithOrganizationStatus
 
   def status
     @status ||= _status
