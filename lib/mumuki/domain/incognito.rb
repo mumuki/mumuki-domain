@@ -16,6 +16,22 @@ module Mumuki::Domain
       false
     end
 
+    def ex_student_of?(*)
+      false
+    end
+
+    def ex_student_here?
+      false
+    end
+
+    def student_of?(*)
+      false
+    end
+
+    def student_here?
+      false
+    end
+
     def teacher_here?
       false
     end

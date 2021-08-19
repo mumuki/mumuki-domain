@@ -22,7 +22,7 @@ describe Organization, organization_workspace: :test do
     let(:found) { Organization.find_by(name: 'zulema').to_resource_h }
 
     it { expect(imported).to_not be nil }
-    it { expect(found).to json_eq resource_h, except: [:theme, :settings]  }
+    it { expect(found).to json_eq resource_h, except: [:theme, :settings] }
   end
 
   describe '#ask_for_help_enabled?' do
@@ -202,7 +202,6 @@ describe Organization, organization_workspace: :test do
     end
   end
 
-
   describe 'in_path' do
     let(:organization) { create :public_organization, name: 'main' }
     let!(:other_organization) { create :public_organization, name: 'other' }
@@ -317,21 +316,21 @@ describe Organization, organization_workspace: :test do
     context 'with custom display name' do
       context 'es' do
         before { I18n.locale = :es }
-        before { organization.display_name = 'Mumuki Primaria'}
+        before { organization.display_name = 'Mumuki Primaria' }
         it { expect(organization.display_name).to eq 'Mumuki Primaria' }
         it { expect(organization.display_description).to eq 'En este sitio encontrarás el contenido sobre programación de primaria' }
       end
 
       context 'en' do
         before { I18n.locale = :en }
-        before { organization.display_name = 'Mumuki Primaria'}
+        before { organization.display_name = 'Mumuki Primaria' }
         it { expect(organization.display_name).to eq 'Mumuki Primaria' }
         it { expect(organization.display_description).to eq 'In this site you will find programming contents about primaria' }
       end
 
       context 'pt' do
         before { I18n.locale = :pt }
-        before { organization.display_name = 'Mumuki Primaria'}
+        before { organization.display_name = 'Mumuki Primaria' }
         it { expect(organization.display_name).to eq 'Mumuki Primaria' }
         it { expect(organization.display_description).to eq 'Neste site você encontrará conteúdos de programação sobre primaria' }
       end
