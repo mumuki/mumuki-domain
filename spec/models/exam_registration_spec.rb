@@ -190,4 +190,18 @@ describe ExamRegistration, organization_workspace: :test do
       it { expect(registration.reload.multiple_options?).to be true }
     end
   end
+
+  describe '#ended?' do
+    context 'when it ended' do
+      before { registration.update! end_time: DateTime.yesterday }
+
+      it { expect(registration.ended?).to be true }
+    end
+
+    context 'when it did not end' do
+      before { registration.update! end_time: DateTime.current.next_week }
+
+      it { expect(registration.ended?).to be false }
+    end
+  end
 end
