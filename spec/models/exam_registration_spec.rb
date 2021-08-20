@@ -176,4 +176,18 @@ describe ExamRegistration, organization_workspace: :test do
       end
     end
   end
+
+  describe '#multiple_options?' do
+    let!(:exam) { create(:exam, exam_registrations: [registration]) }
+
+    context 'when there is one option only' do
+      it { expect(registration.multiple_options?).to be false }
+    end
+
+    context 'when there are multiple options' do
+      let!(:another_exam) { create(:exam, exam_registrations: [registration]) }
+
+      it { expect(registration.reload.multiple_options?).to be true }
+    end
+  end
 end
