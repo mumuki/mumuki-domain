@@ -34,6 +34,10 @@ class OrganizationAccessMode::Base
     false
   end
 
+  def restore_indicators?(_content)
+    false
+  end
+
   def validate_discuss_here!(_discussion)
     raise Mumuki::Domain::ForbiddenError
   end

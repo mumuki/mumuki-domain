@@ -111,6 +111,20 @@ class User < ApplicationRecord
     end
   end
 
+  def restore_organization_progress!(organization)
+    assignments_in(organization).each do |assignment|
+      assignment.tap(&:parent).save!
+    end
+  end
+
+  def assignments_in(organization)
+    assignments.where(organization: organization)
+  end
+
+  def has_assignments_in?(organization)
+    assignments_in(organization).exists?
+  end
+
   def accept_invitation!(invitation)
     make_student_of! invitation.course_slug
   end
