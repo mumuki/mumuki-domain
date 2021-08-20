@@ -80,6 +80,10 @@ class ExamRegistration < ApplicationRecord
     exams.count > 1
   end
 
+  def ended?
+    end_time.past?
+  end
+
   private
 
   def notify_registree!(registree)
