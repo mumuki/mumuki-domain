@@ -43,20 +43,6 @@ class Assignment < Progress
   after_initialize :set_default_top_submission_status
   before_save :award_experience_points!, :update_top_submission!, if: :submission_status_changed?
   after_save :dirty_parent_by_submission!, if: :completion_changed?
-  before_validation :set_current_organization!, unless: :organization
-
-  # TODO: Momentary as some assignments may not have an associated organization
-  def set_current_organization!
-    self.organization = Organization.current
-  end
-
-  def recontextualize!(new_organization = Organization.current)
-    if organization != new_organization
-      dirty_parent_by_submission! if organization.present? && exercise.used_in?(organization)
-      self.organization = new_organization
-      self.parent_id = nil
-    end
-  end
 
   def set_default_top_submission_status
     self.top_submission_status ||= 0
