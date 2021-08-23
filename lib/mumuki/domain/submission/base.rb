@@ -52,7 +52,6 @@ class Mumuki::Domain::Submission::Base
   private
 
   def save_submission!(assignment)
-    assignment.content = content
     assignment.recontextualize!
     assignment.save!
   end
