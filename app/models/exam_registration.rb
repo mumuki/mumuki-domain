@@ -1,5 +1,4 @@
 class ExamRegistration < ApplicationRecord
-  include WithPgLock
   include WithTimedEnablement
   include TerminalNavigation
 
