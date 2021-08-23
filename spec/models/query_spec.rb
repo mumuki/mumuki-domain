@@ -21,10 +21,10 @@ describe Mumuki::Domain::Submission::Query do
 
       it_behaves_like 'a query submission'
 
-      it { expect(assignment.submission_id).to_not be nil }
-      it { expect(assignment.submitted_at).to_not be nil }
+      it { expect(assignment.submission_id).to_not be_nil }
+      it { expect(assignment.submitted_at).to_not be_nil }
 
-      it { expect(assignment.solution).to be nil }
+      it { expect(assignment.solution).to be_nil }
       it { expect(assignment.status).to eq :passed }
     end
 
@@ -32,10 +32,10 @@ describe Mumuki::Domain::Submission::Query do
       let(:exercise) { create(:problem, indexed: true) }
 
       it_behaves_like 'a query submission'
-      it { expect(assignment.submission_id).to be nil }
-      it { expect(assignment.submitted_at).to be nil }
+      it { expect(assignment.submission_id).to be_nil }
+      it { expect(assignment.submitted_at).to be_nil }
 
-      it { expect(assignment.solution).to eq 'bar' }
+      it { expect(assignment.solution).to be_nil }
       it { expect(assignment.status).to eq :pending }
     end
   end
