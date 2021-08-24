@@ -26,7 +26,7 @@ class OrganizationAccessMode::ReadOnly < OrganizationAccessMode::Base
   end
 
   def restore_indicators?(book)
-    !book.has_progress_for?(user, organization) && user.has_assignments_in?(organization)
+    !book.has_progress_for?(user, organization) && user.has_assignments_in_organization?(organization)
   end
 
   def read_only?
