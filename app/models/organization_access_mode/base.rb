@@ -38,6 +38,10 @@ class OrganizationAccessMode::Base
     false
   end
 
+  def read_only?
+    false
+  end
+
   def validate_discuss_here!(_discussion)
     raise Mumuki::Domain::ForbiddenError
   end

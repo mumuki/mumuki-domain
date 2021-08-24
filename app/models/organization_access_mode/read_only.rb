@@ -29,6 +29,10 @@ class OrganizationAccessMode::ReadOnly < OrganizationAccessMode::Base
     !book.has_progress_for?(user, organization) && user.has_assignments_in?(organization)
   end
 
+  def read_only?
+    true
+  end
+
   private
 
   def has_scope(key, value = :all)
