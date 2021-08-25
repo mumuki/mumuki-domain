@@ -1,6 +1,5 @@
 module WithReminders
   extend ActiveSupport::Concern
-  include WithPgLock
 
   def build_reminder
     mailer = UserMailer.new

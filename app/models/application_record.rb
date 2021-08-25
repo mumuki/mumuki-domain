@@ -1,6 +1,8 @@
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
+  include WithPgLock
+
   delegate :whitelist_attributes, to: :class
 
   def self.teaser_on(*args)
