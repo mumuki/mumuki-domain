@@ -25,6 +25,14 @@ class OrganizationAccessMode::ReadOnly < OrganizationAccessMode::Base
       (has_scope(:exercises, :submitted) && content.has_progress_for?(user, organization))
   end
 
+  def restore_indicators?(book)
+    !book.has_progress_for?(user, organization) && user.has_assignments_in_organization?(organization)
+  end
+
+  def read_only?
+    true
+  end
+
   private
 
   def has_scope(key, value = :all)

@@ -54,7 +54,7 @@ class User < ApplicationRecord
   resource_fields :uid, :social_id, :email, :permissions, :verified_first_name, :verified_last_name, *profile_fields
   with_temporary_token :delete_account_token
 
-  organic_on :notifications
+  organic_on :notifications, :assignments
 
   def last_lesson
     last_guide.try(:lesson)
@@ -62,10 +62,6 @@ class User < ApplicationRecord
 
   def messages_in_organization(organization = Organization.current)
     messages.where('assignments.organization': organization)
-  end
-
-  def notifications_in_organization(organization = Organization.current)
-    notifications.where(organization: organization)
   end
 
   def passed_submissions_count_in(organization)
@@ -109,6 +105,16 @@ class User < ApplicationRecord
       update! last_submission_date: nil, last_exercise: nil
       assignments.destroy_all
     end
+  end
+
+  def restore_organization_progress!(organization)
+    assignments_in_organization(organization).each do |assignment|
+      assignment.tap(&:parent).save!
+    end
+  end
+
+  def has_assignments_in_organization?(organization)
+    assignments_in_organization(organization).exists?
   end
 
   def accept_invitation!(invitation)
