@@ -176,4 +176,32 @@ describe ExamRegistration, organization_workspace: :test do
       end
     end
   end
+
+  describe '#multiple_options?' do
+    let!(:exam) { create(:exam, exam_registrations: [registration]) }
+
+    context 'when there is one option only' do
+      it { expect(registration.multiple_options?).to be false }
+    end
+
+    context 'when there are multiple options' do
+      let!(:another_exam) { create(:exam, exam_registrations: [registration]) }
+
+      it { expect(registration.reload.multiple_options?).to be true }
+    end
+  end
+
+  describe '#ended?' do
+    context 'when it ended' do
+      before { registration.update! end_time: DateTime.yesterday }
+
+      it { expect(registration.ended?).to be true }
+    end
+
+    context 'when it did not end' do
+      before { registration.update! end_time: DateTime.current.next_week }
+
+      it { expect(registration.ended?).to be false }
+    end
+  end
 end

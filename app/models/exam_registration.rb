@@ -76,6 +76,14 @@ class ExamRegistration < ApplicationRecord
     authorization_criterion.meets_criterion?(user, organization)
   end
 
+  def multiple_options?
+    exams.count > 1
+  end
+
+  def ended?
+    end_time.past?
+  end
+
   private
 
   def notify_registree!(registree)
