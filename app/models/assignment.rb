@@ -123,7 +123,7 @@ class Assignment < Progress
   end
 
   def content=(content)
-    if exercise.solvable?
+    if content.present? && exercise.solvable?
       self.solution = exercise.single_choice? ? exercise.choice_index_for(content) : content
     end
   end
