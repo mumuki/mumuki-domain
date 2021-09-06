@@ -19,4 +19,8 @@ class Organization::Status::Base
       outsider_access_mode(user)
     end
   end
+
+  def validate!(user = nil)
+    validate_enabled! unless user
+  end
 end

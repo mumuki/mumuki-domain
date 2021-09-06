@@ -1,11 +1,9 @@
 module WithOrganizationStatus
 
+  delegate :validate_enabled!, :access_mode, to: :status
+
   def status
     @status ||= _status
-  end
-
-  def access_mode(user)
-    status.access_mode(user)
   end
 
   def validate_active!

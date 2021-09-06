@@ -20,8 +20,7 @@ class Organization::Status::InPreparation < Organization::Status::Base
     end
   end
 
-  def validate!(user = nil)
-    raise Mumuki::Domain::UnpreparedOrganizationError unless user
+  def validate_enabled!
+    raise Mumuki::Domain::UnpreparedOrganizationError
   end
-
 end

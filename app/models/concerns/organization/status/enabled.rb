@@ -20,7 +20,6 @@ class Organization::Status::Enabled < Organization::Status::Base
     end
   end
 
-  def validate!(_user = nil)
+  def validate_enabled!
   end
-
 end
