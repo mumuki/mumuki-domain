@@ -202,10 +202,6 @@ class User < ApplicationRecord
     sequence[0..count + lookahead - 1]
   end
 
-  # Tells if the given user can discuss in an organization
-  #
-  # This is true only when this organization has the forum enabled and the user
-  # has the discusser pseudo-permission and the discusser is trusted
   def can_discuss_in?(organization)
     organization.access_mode(self).discuss_here?
   end
