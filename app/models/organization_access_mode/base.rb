@@ -23,7 +23,8 @@ class OrganizationAccessMode::Base
 
   def discuss_here?
     organization.forum_enabled? && user.discusser_of?(organization) &&
-      user.trusted_as_discusser_in?(organization) && !user.banned_from_forum?
+      user.trusted_as_discusser_in?(organization) && !user.banned_from_forum? &&
+      !user.currently_in_exam?
   end
 
   def show_discussion_element?
