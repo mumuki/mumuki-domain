@@ -158,6 +158,7 @@ class User < ApplicationRecord
   end
 
   def detach!(role, course)
+    make_ex_student_of! course.slug if student_of?(course.slug) && solved_any_exercises?(course.organization)
     remove_permission! role, course.slug
     save_and_notify!
   end
