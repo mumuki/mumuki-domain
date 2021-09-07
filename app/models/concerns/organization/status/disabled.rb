@@ -20,9 +20,8 @@ class Organization::Status::Disabled < Organization::Status::Base
     end
   end
 
-  def validate!(user = nil)
-    raise Mumuki::Domain::DisabledOrganizationError unless user
+  def validate_enabled!
+    raise Mumuki::Domain::DisabledOrganizationError
   end
-
 end
 
