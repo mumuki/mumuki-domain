@@ -200,7 +200,7 @@ describe Assignment, organization_workspace: :test do
   describe 'update_misplaced!' do
     let(:exercise) { create(:exercise) }
     let(:user) { create(:user) }
-    let(:assignment) { Assignment.create(exercise: exercise, submitter: user, misplaced: misplaced) }
+    let(:assignment) { Assignment.create(exercise: exercise, submitter: user, misplaced: misplaced, organization: Organization.current) }
 
     context 'when nil' do
       let(:misplaced) { nil }

@@ -190,7 +190,7 @@ describe Mumuki::Domain::Submission::Solution, organization_workspace: :test do
       before { exercise.submit_solution!(user, content: '') }
 
       it { expect(assignment.reload.status).to eq :failed }
-      pending { expect(assignment.reload.solution).to be_empty }
+      it { expect(assignment.reload.solution).to be_empty }
     end
   end
 end
