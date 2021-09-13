@@ -97,6 +97,10 @@ class Indicator < Progress
     super
   end
 
+  def humanized_progress
+    "#{children_passed_count}/#{children_count}"
+  end
+
   private
 
   def duplicates_key

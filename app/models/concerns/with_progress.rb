@@ -31,6 +31,10 @@ module WithProgress
     progress_for(user, organization).once_completed?
   end
 
+  def humanized_progress_for(user, organization=Organization.current)
+    progress_for(user, organization).humanized_progress
+  end
+
   private
 
   def structural_children_changed?(old_structural_children)
