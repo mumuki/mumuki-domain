@@ -64,6 +64,38 @@ describe Exam, organization_workspace: :test do
     end
   end
 
+  describe '#accessible_for?' do
+    context 'disabled' do
+      let(:exam) { create(:exam, start_time: 5.minutes.since, end_time: 10.minutes.since, course: course) }
+
+      context 'for student' do
+        it { expect(exam.accessible_for? user).to be false }
+      end
+
+      context 'for teacher' do
+        before { expect(user).to receive(:teacher_here?).and_return(true) }
+
+        it { expect(exam.accessible_for? user).to be true }
+      end
+    end
+
+    context 'enabled' do
+      let(:exam) { create(:exam, start_time: 5.minutes.ago, end_time: 10.minutes.since, course: course) }
+
+      context 'for authorized student' do
+        before { exam.authorize! user }
+
+        it { expect(exam.accessible_for? user).to be true }
+      end
+
+      context 'for teacher' do
+        before { expect(user).to receive(:teacher_here?).and_return(true) }
+
+        it { expect(exam.accessible_for? user).to be true }
+      end
+    end
+  end
+
   describe 'import_from_json' do
     let(:user) { create(:user, uid: 'auth0|1') }
     let(:user2) { create(:user, uid: 'auth0|2') }
