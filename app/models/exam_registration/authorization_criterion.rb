@@ -38,6 +38,10 @@ class ExamRegistration::AuthorizationCriterion
   def meets_authorization_criteria?(authorization_request)
     meets_criterion? authorization_request.user, authorization_request.organization
   end
+
+  def authorization_criteria_matcher
+    criterion_matcher
+  end
 end
 
 class ExamRegistration::AuthorizationCriterion::None < ExamRegistration::AuthorizationCriterion
@@ -52,6 +56,10 @@ class ExamRegistration::AuthorizationCriterion::None < ExamRegistration::Authori
   def meets_criterion?(_user, _organization)
     true
   end
+
+  def criterion_matcher
+    {}
+  end
 end
 
 class ExamRegistration::AuthorizationCriterion::PassedExercises < ExamRegistration::AuthorizationCriterion
@@ -61,5 +69,9 @@ class ExamRegistration::AuthorizationCriterion::PassedExercises < ExamRegistrati
 
   def meets_criterion?(user, organization)
     user.passed_submissions_count_in(organization) >= value
+  end
+
+  def criterion_matcher
+    { 'stats.passed': { '$gte': value.to_f } }
   end
 end

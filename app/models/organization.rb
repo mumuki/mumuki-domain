@@ -21,7 +21,7 @@ class Organization < ApplicationRecord
 
   belongs_to :book
   has_many :usages
-
+  has_many :exam_registrations
   has_many :certificate_programs
 
   validates_presence_of :contact_email, :locale, :time_zone

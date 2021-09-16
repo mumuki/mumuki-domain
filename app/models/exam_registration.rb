@@ -12,7 +12,7 @@ class ExamRegistration < ApplicationRecord
 
   before_save :ensure_valid_authorization_criterion!
 
-  delegate :meets_authorization_criteria?, :process_request!, to: :authorization_criterion
+  delegate :meets_authorization_criteria?, :process_request!, :authorization_criteria_matcher, to: :authorization_criterion
 
   alias_attribute :name, :description
 
