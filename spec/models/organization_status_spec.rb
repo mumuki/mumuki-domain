@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe WithOrganizationStatus, organization_workspace: :test do
+describe WithOrganizationStatus do
 
   describe '#status' do
     let(:organization) { create :organization }
@@ -33,7 +33,10 @@ describe WithOrganizationStatus, organization_workspace: :test do
     let(:exercise2) { create :exercise }
     let(:discussion) { build :discussion, initiator: user }
 
-    before { create :assignment, submitter: user, organization: organization, exercise: exercise1 }
+    before {
+      create :assignment, submitter: user, organization: organization, exercise: exercise1
+      organization.switch!
+    }
 
     context 'in private organization' do
       context 'when organization is enabled' do
@@ -53,6 +56,13 @@ describe WithOrganizationStatus, organization_workspace: :test do
           it { expect { access_mode.validate_active! }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise1 }.not_to raise_error }
           it { expect { access_mode.validate_discuss_here! discussion }.not_to raise_error }
+
+          context 'during an exam' do
+            let(:exam_authorization) { create :exam_authorization, user: user }
+            before { exam_authorization.exam.start! user }
+
+            it { expect(access_mode.discuss_here?).to be true }
+          end
         end
 
         context 'and user is student of organization' do
@@ -72,6 +82,13 @@ describe WithOrganizationStatus, organization_workspace: :test do
           it { expect { access_mode.validate_content_here! exercise1 }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise2 }.not_to raise_error }
           it { expect { access_mode.validate_discuss_here! discussion }.not_to raise_error }
+
+          context 'during an exam' do
+            let(:exam_authorization) { create :exam_authorization, user: user }
+            before { exam_authorization.exam.start! user }
+
+            it { expect(access_mode.discuss_here?).to be false }
+          end
         end
 
         context 'and user is ex student of organization' do
@@ -271,6 +288,7 @@ describe WithOrganizationStatus, organization_workspace: :test do
         end
       end
     end
+
     context 'in public organization' do
       let(:organization) { create :public_organization }
       context 'when organization is enabled' do
