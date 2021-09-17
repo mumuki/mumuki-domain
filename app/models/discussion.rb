@@ -60,6 +60,10 @@ class Discussion < ApplicationRecord
     self
   end
 
+  def content_used_in?(organization)
+    item.content_used_in?(organization)
+  end
+
   def used_in?(organization)
     organization == self.organization
   end
