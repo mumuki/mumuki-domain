@@ -12,3 +12,5 @@ group :test do
 end
 
 gem 'codeclimate-test-reporter', :group => :test, :require => nil
+#
+gem 'mumukit-nuntius', github: 'mumuki/mumukit-nuntius', branch: 'feature-async-massive-notifications'
