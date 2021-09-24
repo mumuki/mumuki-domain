@@ -128,7 +128,13 @@ class ExamRegistration < ApplicationRecord
   private
 
   def notify_registree!(registree)
-    Notification.create_and_notify_via_email! organization: organization, user: registree, subject: :exam_registration, target: self
+    Notification.create_and_notify_via_email!(organization: organization, user: registree, target: self)
+  end
+
+  class << self
+    def subject
+      :exam_registration
+    end
   end
 
 end

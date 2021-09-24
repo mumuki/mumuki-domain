@@ -32,6 +32,12 @@ class ExamAuthorizationRequest < ApplicationRecord
   private
 
   def notify_user!
-    Notification.create_and_notify_via_email! organization: organization, user: user, target: self, subject: 'exam_authorization_request_updated' if saved_change_to_status?
+    Notification.create_and_notify_via_email!(organization: organization, user: user, target: self) if saved_change_to_status?
+  end
+
+  class << self
+    def subject
+      :exam_authorization_request_updated
+    end
   end
 end

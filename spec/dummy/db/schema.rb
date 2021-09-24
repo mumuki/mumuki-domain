@@ -127,6 +127,23 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.datetime "period_end"
   end
 
+  create_table "custom_notifications", force: :cascade do |t|
+    t.string "title"
+    t.text "body_html"
+    t.text "custom_html"
+    t.bigint "organization_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_custom_notifications_on_organization_id"
+  end
+
+  create_table "custom_notifications_users", id: false, force: :cascade do |t|
+    t.bigint "custom_notification_id", null: false
+    t.bigint "user_id", null: false
+    t.index ["custom_notification_id"], name: "index_custom_notifications_users_on_custom_notification_id"
+    t.index ["user_id"], name: "index_custom_notifications_users_on_user_id"
+  end
+
   create_table "discussions", force: :cascade do |t|
     t.integer "status", default: 0
     t.string "title"
