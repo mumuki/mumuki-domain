@@ -3,11 +3,6 @@ class Notification < ApplicationRecord
   belongs_to :organization
   belongs_to :target, polymorphic: true, optional: true
 
-  enum subject: %i(
-    custom
-    exam_authorization_request_updated
-    exam_registration)
-
   scope :notified_users_ids_for, ->(target, organization=Organization.current) do
     where(target: target, organization: organization).pluck(:user_id)
   end
