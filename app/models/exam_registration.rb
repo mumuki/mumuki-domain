@@ -76,6 +76,17 @@ class ExamRegistration < ApplicationRecord
     authorization_criterion.meets_criterion?(user, organization)
   end
 
+  def available_exams
+    return exams unless limited_authorization_requests?
+    Exam.find authorization_requests_counts.select do |_, count|
+      count <= authorization_requests_limit
+    end.keys
+  end
+
+  def limited_authorization_requests?
+    authorization_requests_limit.present?
+  end
+
   def multiple_options?
     exams.count > 1
   end
@@ -88,5 +99,9 @@ class ExamRegistration < ApplicationRecord
 
   def notify_registree!(registree)
     Notification.create_and_notify_via_email! organization: organization, user: registree, subject: :exam_registration, target: self
+  end
+
+  def authorization_requests_counts
+    authorization_requests.group(:exam).count
   end
 end

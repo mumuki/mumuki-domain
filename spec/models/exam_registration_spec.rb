@@ -5,7 +5,13 @@ describe ExamRegistration, organization_workspace: :test do
   let(:other_user) { create(:user) }
   let(:criterion_type) { :none }
   let(:criterion_value) { 0 }
-  let(:registration) { create(:exam_registration, authorization_criterion_type: criterion_type, authorization_criterion_value: criterion_value) }
+  let(:requests_limit) { nil }
+  let(:registration) do
+    create(:exam_registration,
+          authorization_criterion_type: criterion_type,
+          authorization_criterion_value: criterion_value,
+          authorization_requests_limit: requests_limit)
+  end
 
   def assignments_for(student, count)
     exercises = create_list(:indexed_exercise, count)
