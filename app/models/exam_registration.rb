@@ -76,6 +76,18 @@ class ExamRegistration < ApplicationRecord
     authorization_criterion.meets_criterion?(user, organization)
   end
 
+  def available_exams
+    return exams unless limited_authorization_requests?
+    counts = authorization_request_ids_counts
+    exams.select do |it|
+      counts[it.id].to_i < authorization_requests_limit
+    end
+  end
+
+  def limited_authorization_requests?
+    authorization_requests_limit.present?
+  end
+
   def multiple_options?
     exams.count > 1
   end
@@ -84,9 +96,39 @@ class ExamRegistration < ApplicationRecord
     end_time.past?
   end
 
+  def request_authorization!(user, exam)
+    with_available_exam exam do
+      authorization_requests.find_or_create_by! user: user do |it|
+        it.assign_attributes organization: organization, exam: exam
+      end
+    end
+  end
+
+  def update_authorization_request_by_id!(request_id, exam)
+    with_available_exam exam do
+      authorization_requests.update request_id, exam: exam
+    end
+  end
+
+  def authorization_request_ids_counts
+    authorization_requests.group(:exam_id).count
+  end
+
+  def exam_available?(exam)
+    available_exams.include? exam
+  end
+
+  def with_available_exam(exam, &block)
+    transaction do
+      raise Mumuki::Domain::GoneError unless exam_available?(exam)
+      block.call
+    end
+  end
+
   private
 
   def notify_registree!(registree)
     Notification.create_and_notify_via_email! organization: organization, user: registree, subject: :exam_registration, target: self
   end
+
 end
