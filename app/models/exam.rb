@@ -49,7 +49,7 @@ class Exam < ApplicationRecord
   end
 
   def accessible_for?(user)
-    (authorized?(user) && enabled_for?(user)) || user&.teacher_here?
+    (authorized?(user) && enabled_for?(user)) || user&.teacher_of?(course)
   end
 
   def timed?

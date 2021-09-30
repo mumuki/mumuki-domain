@@ -65,17 +65,21 @@ describe Exam, organization_workspace: :test do
   end
 
   describe '#accessible_for?' do
-    context 'disabled' do
+    context 'not enabled' do
       let(:exam) { create(:exam, start_time: 5.minutes.since, end_time: 10.minutes.since, course: course) }
 
       context 'for student' do
         it { expect(exam.accessible_for? user).to be false }
       end
 
-      context 'for teacher' do
-        before { expect(user).to receive(:teacher_here?).and_return(true) }
+      context 'for teacher in course' do
+        before { user.add_permission! :teacher, course.slug }
 
         it { expect(exam.accessible_for? user).to be true }
+      end
+
+      context 'for teacher not in course' do
+        it { expect(exam.accessible_for? user).to be false }
       end
     end
 
@@ -88,10 +92,14 @@ describe Exam, organization_workspace: :test do
         it { expect(exam.accessible_for? user).to be true }
       end
 
-      context 'for teacher' do
-        before { expect(user).to receive(:teacher_here?).and_return(true) }
+      context 'for teacher in course' do
+        before { user.add_permission! :teacher, course.slug }
 
         it { expect(exam.accessible_for? user).to be true }
+      end
+
+      context 'for teacher not in course' do
+        it { expect(exam.accessible_for? user).to be false }
       end
     end
   end
