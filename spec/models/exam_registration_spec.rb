@@ -103,20 +103,47 @@ describe ExamRegistration, organization_workspace: :test do
   describe '#request_authorization!' do
     let(:exams) { [create(:exam)] }
 
-    before { registration.request_authorization!(user, exams.first) }
+    context 'when exam is not capped' do
+      before { registration.request_authorization!(user, exams.first) }
 
-    it { expect(registration.authorization_requests.count).to eq 1 }
-    it { expect(registration.authorization_requests.first.exam).to eq exams.first }
+      it { expect(registration.authorization_requests.count).to eq 1 }
+      it { expect(registration.authorization_requests.first.exam).to eq exams.first }
+    end
+
+    context 'when exam is capped and not available' do
+      let(:requests_limit) { 0 }
+
+      it { expect { registration.request_authorization!(user, exams.first) }.to raise_error(Mumuki::Domain::GoneError)  }
+    end
   end
 
   describe '#update_authorization_request_by_id!' do
     let(:exams) { [create(:exam), create(:exam)] }
     let(:authorization) { registration.request_authorization!(user, exams.first) }
 
-    before { registration.update_authorization_request_by_id!(authorization.id, exams.second) }
+    context 'when exam not capped' do
+      before { registration.update_authorization_request_by_id!(authorization.id, exams.second) }
 
-    it { expect(registration.authorization_requests.count).to eq 1 }
-    it { expect(registration.authorization_requests.first.exam).to eq exams.second }
+      it { expect(registration.authorization_requests.count).to eq 1 }
+      it { expect(registration.authorization_requests.first.exam).to eq exams.second }
+    end
+
+    context 'when exam is capped but still available' do
+      let(:requests_limit) { 1 }
+
+      before { registration.update_authorization_request_by_id!(authorization.id, exams.second) }
+
+      it { expect(registration.authorization_requests.count).to eq 1 }
+      it { expect(registration.authorization_requests.first.exam).to eq exams.second }
+    end
+
+    context 'when exam is not available' do
+      let(:requests_limit) { 1 }
+
+      before { registration.request_authorization!(user, exams.second) }
+
+      it { expect { registration.update_authorization_request_by_id!(authorization.id, exams.second) } }
+    end
   end
 
   describe '#available_exams!' do

@@ -97,15 +97,17 @@ class ExamRegistration < ApplicationRecord
   end
 
   def request_authorization!(user, exam)
-    validate_exam_available! exam
-    authorization_requests.find_or_create_by! user: user do |it|
-      it.assign_attributes organization: organization, exam: exam
+    with_available_exam exam do
+      authorization_requests.find_or_create_by! user: user do |it|
+        it.assign_attributes organization: organization, exam: exam
+      end
     end
   end
 
   def update_authorization_request_by_id!(request_id, exam)
-    validate_exam_available! exam
-    authorization_requests.update request_id, exam: exam
+    with_available_exam exam do
+      authorization_requests.update request_id, exam: exam
+    end
   end
 
   def authorization_request_ids_counts
@@ -116,8 +118,11 @@ class ExamRegistration < ApplicationRecord
     available_exams.include? exam
   end
 
-  def validate_exam_available!(exam)
-    raise Mumuki::Domain::Gone unless exam_available?(exam)
+  def with_available_exam(exam, &block)
+    transaction do
+      raise Mumuki::Domain::GoneError unless exam_available?(exam)
+      block.call
+    end
   end
 
   private
