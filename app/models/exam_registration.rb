@@ -78,9 +78,10 @@ class ExamRegistration < ApplicationRecord
 
   def available_exams
     return exams unless limited_authorization_requests?
-    Exam.find authorization_requests_counts.select do |_, count|
-      count <= authorization_requests_limit
-    end.keys
+    counts = authorization_request_ids_counts
+    exams.select do |it|
+      counts[it.id].to_i < authorization_requests_limit
+    end
   end
 
   def limited_authorization_requests?
@@ -95,13 +96,24 @@ class ExamRegistration < ApplicationRecord
     end_time.past?
   end
 
+  def request_authorization!(user, exam)
+    authorization_requests.find_or_create_by! user: user do |it|
+      it.assign_attributes organization: organization, exam: exam
+    end
+  end
+
+  def update_authorization_request_by_id!(request_id, exam)
+    authorization_requests.update request_id, exam: exam
+  end
+
+  def authorization_request_ids_counts
+    authorization_requests.group(:exam_id).count
+  end
+
   private
 
   def notify_registree!(registree)
     Notification.create_and_notify_via_email! organization: organization, user: registree, subject: :exam_registration, target: self
   end
 
-  def authorization_requests_counts
-    authorization_requests.group(:exam).count
-  end
 end

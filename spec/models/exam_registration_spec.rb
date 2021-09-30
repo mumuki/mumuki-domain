@@ -6,11 +6,13 @@ describe ExamRegistration, organization_workspace: :test do
   let(:criterion_type) { :none }
   let(:criterion_value) { 0 }
   let(:requests_limit) { nil }
+  let(:exams) { [] }
   let(:registration) do
     create(:exam_registration,
           authorization_criterion_type: criterion_type,
           authorization_criterion_value: criterion_value,
-          authorization_requests_limit: requests_limit)
+          authorization_requests_limit: requests_limit,
+          exams: exams)
   end
 
   def assignments_for(student, count)
@@ -96,8 +98,55 @@ describe ExamRegistration, organization_workspace: :test do
         it { expect(registration.unnotified_registrees?).to be false }
       end
     end
-
   end
+
+  describe '#request_authorization!' do
+    let(:exams) { [create(:exam)] }
+
+    before { registration.request_authorization!(user, exams.first) }
+
+    it { expect(registration.authorization_requests.count).to eq 1 }
+    it { expect(registration.authorization_requests.first.exam).to eq exams.first }
+  end
+
+  describe '#update_authorization_request_by_id!' do
+    let(:exams) { [create(:exam), create(:exam)] }
+    let(:authorization) { registration.request_authorization!(user, exams.first) }
+
+    before { registration.update_authorization_request_by_id!(authorization.id, exams.second) }
+
+    it { expect(registration.authorization_requests.count).to eq 1 }
+    it { expect(registration.authorization_requests.first.exam).to eq exams.second }
+  end
+
+  describe '#available_exams!' do
+    let(:exams) { [create(:exam), create(:exam)] }
+
+    context 'when there is no limit to requests' do
+      it { expect(registration.available_exams.count).to eq 2 }
+    end
+
+    context 'when there is limit to requests' do
+      let(:requests_limit) { 3 }
+
+      context 'when limit has not yet been reached' do
+        before { registration.request_authorization!(user, exams.first) }
+
+        it { expect(registration.available_exams.count).to eq 2 }
+        it { expect(registration.authorization_request_ids_counts).to eq exams.first.id => 1 }
+      end
+
+      context 'when limit has been reached' do
+        before { 3.times { registration.request_authorization!(create(:user), exams.first) } }
+        before { registration.request_authorization!(create(:user), exams.second) }
+
+        it { expect(registration.available_exams.count).to eq 1 }
+        it { expect(registration.authorization_request_ids_counts).to eq exams.first.id => 3,
+                                                                         exams.second.id => 1 }
+      end
+    end
+  end
+
 
   describe '#process_requests!' do
     let(:criterion_type) { :passed_exercises }
