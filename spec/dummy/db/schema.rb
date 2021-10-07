@@ -382,6 +382,16 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.integer "topic_id"
   end
 
+  create_table "massive_job_failed_items", force: :cascade do |t|
+    t.bigint "massive_job_id"
+    t.string "uid"
+    t.text "stacktrace"
+    t.text "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["massive_job_id"], name: "index_massive_job_failed_items_on_massive_job_id"
+  end
+
   create_table "massive_jobs", force: :cascade do |t|
     t.bigint "user_id"
     t.string "target_type"

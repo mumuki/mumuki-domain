@@ -3,9 +3,20 @@ class MassiveJob < ApplicationRecord
   belongs_to :target, polymorphic: true
   belongs_to :user
 
-  delegate :organization, :description, to: :target
+  has_many :massive_job_failed_items
 
-  delegate :email, to: :user
+  delegate :organization, :description, to: :target
+  delegate :uid, :email, :formal_full_name, to: :user
+
+  alias_attribute :failed_items, :massive_job_failed_items
+
+  def friendly
+    description
+  end
+
+  def subject
+    target_type.constantize.subject
+  end
 
   def notify_creation!(uids)
     Mumukit::Nuntius.notify_job! 'MassiveJobCreated', massive_job_id: id, uids: uids
@@ -17,25 +28,13 @@ class MassiveJob < ApplicationRecord
     end
   end
 
-  def subject
-    target_type.constantize.subject
-  end
-
   def process!(uid)
     user = User.locate!(uid)
     return if target.processed? user
     target.process! user
     increment_processed_count!
-  rescue
-    increment_failed_count!
-  end
-
-  def increment_processed_count!
-    increment! :processed_count
-  end
-
-  def increment_failed_count!
-    increment! :failed_count
+  rescue => error
+    increment_failed_count! uid, error
   end
 
   def status
@@ -64,5 +63,22 @@ class MassiveJob < ApplicationRecord
 
   def percentage
     total * 100 / total_count
+  end
+
+  def organization_name
+    organization.name
+  end
+
+  private
+
+  def increment_processed_count!
+    increment! :processed_count
+  end
+
+  def increment_failed_count!(uid, error)
+    transaction do
+      increment! :failed_count
+      failed_items.create! uid: uid, message: error.message, stacktrace: error.full_message(highlight: false, order: :top)
+    end
   end
 end
