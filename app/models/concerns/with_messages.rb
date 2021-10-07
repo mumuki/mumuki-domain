@@ -4,7 +4,7 @@ module WithMessages
   end
 
   def send_question!(question)
-    message = build_message question.merge(sender: submitter.uid, read: true)
+    message = build_message question.merge(sender: submitter, read: true)
     message.save_and_notify!
   end
 

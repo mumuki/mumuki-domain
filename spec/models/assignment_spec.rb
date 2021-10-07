@@ -19,7 +19,7 @@ describe Assignment, organization_workspace: :test do
 
       it { expect(assignment.new_record?).to be false }
       it { expect(assignment.has_messages?).to be true }
-      it { expect(message.sender).to eq student.uid }
+      it { expect(message.sender).to eq student }
       it { expect(message.content).to eq 'How can i solve this?' }
       it { expect(message.read).to be true }
       it { expect(message.assignment).to eq assignment }
@@ -30,11 +30,11 @@ describe Assignment, organization_workspace: :test do
 
     describe '#receive_answer!' do
       before { problem.submit_question! student, content: 'How can i solve this?' }
-      before { assignment.receive_answer! sender: bot.uid, content: 'Check this link' }
+      before { assignment.receive_answer! sender: bot, content: 'Check this link' }
 
       it { expect(assignment.has_messages?).to be true }
       it { expect(assignment.messages.count).to eq 2 }
-      it { expect(message.sender).to eq 'bot@mumuki.org' }
+      it { expect(message.sender).to eq bot }
       it { expect(message.content).to eq 'Check this link' }
       it { expect(message.read).to be false }
       it { expect(message.assignment).to eq assignment }

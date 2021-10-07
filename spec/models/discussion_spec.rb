@@ -288,7 +288,7 @@ describe Discussion, organization_workspace: :test do
 
       context 'when moderator comments' do
         before do
-          discussions.each { |it| create(:message, content: 'Help incoming', discussion: it, sender: moderator.uid) }
+          discussions.each { |it| create(:message, content: 'Help incoming', discussion: it, sender: moderator) }
         end
 
         it { expect(discussion_pending_review.requires_attention?).to be true }
@@ -299,7 +299,7 @@ describe Discussion, organization_workspace: :test do
 
         context 'when discussion initiator asks again' do
           before do
-            discussions.each { |it| create(:message, content: 'Sorry what?', discussion: it, sender: user.uid) }
+            discussions.each { |it| create(:message, content: 'Sorry what?', discussion: it, sender: user) }
           end
 
           it { expect(discussion_pending_review.requires_attention?).to be true }
@@ -312,7 +312,7 @@ describe Discussion, organization_workspace: :test do
         context 'when discussion initiator comments again but it is not a question' do
           before do
             discussions.each { |it| create(:message, content: 'Alright thanks', discussion: it,
-                                           sender: user.uid, not_actually_a_question: true) }
+                                           sender: user, not_actually_a_question: true) }
           end
 
           it { expect(discussion_pending_review.requires_attention?).to be true }
@@ -325,7 +325,7 @@ describe Discussion, organization_workspace: :test do
 
       context 'when a user comments and it\'s approved by a moderator' do
         before do
-          discussions.each { |it| create(:message, content: 'Here is some help', discussion: it, sender: create(:user).uid,
+          discussions.each { |it| create(:message, content: 'Here is some help', discussion: it, sender: create(:user),
                                          approved: true, approved_at: Time.now, approved_by: moderator) }
         end
 

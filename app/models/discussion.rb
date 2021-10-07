@@ -103,7 +103,7 @@ class Discussion < ApplicationRecord
   end
 
   def submit_message!(message, user)
-    message.merge!(sender: user.uid)
+    message.merge!(sender: user)
     messages.create(message)
     user.subscribe_to! self
     mark_subscriptions_as_unread!(user)
@@ -142,7 +142,7 @@ class Discussion < ApplicationRecord
   end
 
   def responses_count
-    visible_messages.where.not(sender: initiator.uid).count
+    visible_messages.where.not(sender: initiator).count
   end
 
   def has_responses?
