@@ -1,0 +1,68 @@
+class MassiveJob < ApplicationRecord
+
+  belongs_to :target, polymorphic: true
+  belongs_to :user
+
+  delegate :organization, :description, to: :target
+
+  delegate :email, to: :user
+
+  def notify_creation!(uids)
+    Mumukit::Nuntius.notify_job! 'MassiveJobCreated', massive_job_id: id, uids: uids
+  end
+
+  def notify_users_to_add!(uids)
+    uids.each do |uid|
+      Mumukit::Nuntius.notify_job! 'UserAddedMassiveJob', massive_job_id: id, uid: uid
+    end
+  end
+
+  def subject
+    target_type.constantize.subject
+  end
+
+  def process!(uid)
+    user = User.locate!(uid)
+    return if target.processed? user
+    target.process! user
+    increment_processed_count!
+  rescue
+    increment_failed_count!
+  end
+
+  def increment_processed_count!
+    increment! :processed_count
+  end
+
+  def increment_failed_count!
+    increment! :failed_count
+  end
+
+  def status
+    return :pending if total.zero?
+    return :passed if processed_count == total_count
+    return :failed if total == total_count
+    :processing
+  end
+
+  def icon
+    case status
+    when :pending
+      { class: 'fa-hourglass', type: 'info' }
+    when :passed
+      { class: 'fa-check-circle', type: 'success' }
+    when :failed
+      { class: 'fa-times-circle', type: 'danger' }
+    else
+      { class: 'fa-circle-notch fa-spin', type: 'warning' }
+    end
+  end
+
+  def total
+    processed_count + failed_count
+  end
+
+  def percentage
+    total * 100 / total_count
+  end
+end

@@ -382,6 +382,19 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.integer "topic_id"
   end
 
+  create_table "massive_jobs", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "target_type"
+    t.bigint "target_id"
+    t.integer "total_count"
+    t.integer "failed_count", default: 0
+    t.integer "processed_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["target_type", "target_id"], name: "index_massive_jobs_on_target_type_and_target_id"
+    t.index ["user_id"], name: "index_massive_jobs_on_user_id"
+  end
+
   create_table "medals", force: :cascade do |t|
     t.string "image_url"
     t.string "description"
