@@ -17,7 +17,7 @@ class Message < ApplicationRecord
   markdown_on :content
 
   # Visible messages are those that can be publicly seen
-  # in forums. non-direct messages are never visible.
+  # in forums. Direct messages are never visible.
   scope :visible, -> () do
     where.not(deletion_motive: :self_deleted)
       .or(where(deletion_motive: nil))

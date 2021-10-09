@@ -19,7 +19,8 @@ class User < ApplicationRecord
   has_many :assignments, foreign_key: :submitter_id
   has_many :indicators
   has_many :user_stats, class_name: 'UserStats'
-  has_many :messages, -> { order(created_at: :desc) }, through: :assignments
+  has_many :forum_messages, -> { where.not(discussion_id: nil)  }, class_name: 'Message', foreign_key: :sender_id
+  has_many :direct_messages, -> { order(created_at: :desc) }, class_name: 'Message', source: :messages, through: :assignments
 
   has_many :submitted_exercises, through: :assignments, class_name: 'Exercise', source: :exercise
 
@@ -61,7 +62,7 @@ class User < ApplicationRecord
   end
 
   def messages_in_organization(organization = Organization.current)
-    messages.where('assignments.organization': organization)
+    direct_messages.where('assignments.organization': organization)
   end
 
   def passed_submissions_count_in(organization)
@@ -321,7 +322,7 @@ class User < ApplicationRecord
 
     target_assignments = assignments.where(location)
 
-    messages.where(assignment: target_assignments).delete_all
+    direct_messages.where(assignment: target_assignments).delete_all
 
     target_assignments.delete_all
     indicators.where(location).delete_all
