@@ -1,7 +1,7 @@
 module WithScopedQueries
   extend ActiveSupport::Concern
 
-  SCOPING_METHODS = [Filter, Sort, Page]
+  SCOPING_METHODS = [Filter, Sort, Page, Limit]
 
   included do
     class_attribute :queriable_attributes, instance_writer: false
