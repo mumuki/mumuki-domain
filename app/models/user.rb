@@ -6,7 +6,6 @@ class User < ApplicationRecord
           WithNotifications,
           WithDiscussionCreation,
           Awardee,
-          Disabling,
           WithTermsAcceptance,
           WithPreferences,
           Onomastic,
