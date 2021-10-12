@@ -340,6 +340,10 @@ class User < ApplicationRecord
     ignored_notifications.include? notification.subject
   end
 
+  def self.deleted_user
+    @deleted_user ||= create_with(@buried_profile).find_or_create_by(uid: 'deleted:shibi')
+  end
+
   private
 
   def welcome_to_new_organizations!
@@ -388,5 +392,19 @@ class User < ApplicationRecord
 
   def self.buried_profile
     (@buried_profile || {}).slice(:first_name, :last_name, :email)
+  end
+end
+
+class << User.deleted_user
+  before_destroy :forbid_destroy!
+
+  def abbreviated_name
+    I18n.t(:deleted_user, locale: (Organization.current.locale rescue 'en'))
+  end
+
+  private
+
+  def forbid_destroy!
+    raise '"Deleted User" shibi cannot be destroyed'
   end
 end
