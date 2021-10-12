@@ -156,7 +156,6 @@ class User < ApplicationRecord
     update! accepts_reminders: false
   end
 
-
   def attach!(role, course)
     add_permission! role, course.slug
     save_and_notify!
@@ -374,10 +373,6 @@ class User < ApplicationRecord
 
   def self.sync_key_id_field
     :uid
-  end
-
-  def self.unsubscription_verifier
-    Rails.application.message_verifier(:unsubscribe)
   end
 
   def self.create_if_necessary(user)
