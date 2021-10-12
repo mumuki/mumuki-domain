@@ -30,6 +30,7 @@ class Discussion < ApplicationRecord
   sortable :responses_count, :upvotes_count, :created_at, default: :created_at_desc
   filterable :status, :language, :requires_attention
   pageable
+  limitable
 
   delegate :language, to: :item
   delegate :to_discussion_status, to: :status
