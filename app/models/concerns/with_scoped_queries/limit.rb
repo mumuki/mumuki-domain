@@ -1,7 +1,8 @@
 module WithScopedQueries::Limit
   def self.query_by(params, current_scope, _)
     if params[:limit].present?
-      current_scope.limit(params[:limit])
+      max_limit = [params[:limit].to_i, 25].min
+      current_scope.limit(max_limit)
     else
       current_scope
     end
