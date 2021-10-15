@@ -81,4 +81,14 @@ class MassiveJob < ApplicationRecord
       failed_items.create! uid: uid, message: error.message, stacktrace: error.full_message(highlight: false, order: :top)
     end
   end
+
+  class << self
+    def process!(massive_job_id, uid)
+      MassiveJob.find(massive_job_id).process!(uid)
+    end
+
+    def notify_users_to_add!(massive_job_id, uids)
+      MassiveJob.find(massive_job_id).notify_users_to_add!(uids)
+    end
+  end
 end
