@@ -162,6 +162,25 @@ describe Exam, organization_workspace: :test do
     end
   end
 
+  describe '#time_left' do
+    let(:user) { create(:user) }
+    let(:exam) { create :exam }
+
+    before { allow(Time).to receive(:current).and_return(current_time) }
+
+    context 'with time left' do
+      let(:current_time) { exam.real_end_time(user) - 10.minutes }
+
+      it { expect(exam.time_left user).to eq(600) }
+    end
+
+    context 'with no time left' do
+      let(:current_time) { exam.real_end_time(user) + 10.minutes }
+
+      it { expect(exam.time_left user).to eq(-600) }
+    end
+  end
+
   describe 'update exam does not change user started_at' do
     let(:user) { create(:user, uid: 'auth0|1') }
     let(:guide) { create(:guide) }
