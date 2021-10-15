@@ -861,7 +861,7 @@ describe User, organization_workspace: :test do
     context 'removes student permission without add ex student of ex orga because user has exercises solved but avoid make_ex_student' do
       before { ex_orga.switch! }
       before { build(:indexed_exercise).submit_solution!(user, content: '').passed! }
-      before { user.detach! :student, course, false }
+      before { user.detach! :student, course, deep: true }
 
       it { expect(user.student_of?(ex_orga)).to be_falsey }
       it { expect(user.ex_student_of?(ex_orga)).to be_falsey }
