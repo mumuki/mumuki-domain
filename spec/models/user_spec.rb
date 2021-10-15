@@ -833,4 +833,39 @@ describe User, organization_workspace: :test do
     it { expect(user.solved_any_exercises?(ex_orga)).to eql true }
     it { expect(user.solved_any_exercises?).to eql true }
   end
+
+  describe '#detach!' do
+    let(:user) { build :user, permissions: { student: 'test/all:ex/all' }}
+    let(:ex_orga) { create :organization, name: 'ex' }
+    let(:course) { create :course, organization: ex_orga, slug: 'ex/all'}
+    let(:test_orga) { Organization.locate!('test') }
+
+    context 'removes student permission without add ex student of ex orga because user has no exercises solved' do
+      before { user.detach! :student, course }
+
+      it { expect(user.student_of?(ex_orga)).to be_falsey }
+      it { expect(user.ex_student_of?(ex_orga)).to be_falsey }
+      it { expect(user.student_of?(test_orga)).to be_truthy }
+    end
+
+    context 'becomes ex student of ex orga because user has exercises solved' do
+      before { ex_orga.switch! }
+      before { build(:indexed_exercise).submit_solution!(user, content: '').passed! }
+      before { user.detach! :student, course }
+
+      it { expect(user.student_of?(ex_orga)).to be_falsey }
+      it { expect(user.ex_student_of?(ex_orga)).to be_truthy }
+      it { expect(user.student_of?(test_orga)).to be_truthy }
+    end
+
+    context 'removes student permission without add ex student of ex orga because user has exercises solved but avoid make_ex_student' do
+      before { ex_orga.switch! }
+      before { build(:indexed_exercise).submit_solution!(user, content: '').passed! }
+      before { user.detach! :student, course, false }
+
+      it { expect(user.student_of?(ex_orga)).to be_falsey }
+      it { expect(user.ex_student_of?(ex_orga)).to be_falsey }
+      it { expect(user.student_of?(test_orga)).to be_truthy }
+    end
+  end
 end
