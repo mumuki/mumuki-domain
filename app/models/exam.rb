@@ -96,6 +96,10 @@ class Exam < ApplicationRecord
     end
   end
 
+  def time_left(user)
+    (real_end_time(user) - Time.current).round
+  end
+
   def started_at(user)
     authorization_for(user).started_at
   end
