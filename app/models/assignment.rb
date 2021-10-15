@@ -68,6 +68,10 @@ class Assignment < Progress
     end
   end
 
+  def randomized_values
+    exercise.randomizer.randomized_values(submitter.id)
+  end
+
   def save_submission!(submission)
     transaction do
       update! submission_id: submission.id
