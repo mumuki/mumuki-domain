@@ -17,7 +17,7 @@ class OrganizationAccessMode::ReadOnly < OrganizationAccessMode::Base
   end
 
   def validate_discuss_here!(discussion)
-    super(discussion) unless discussion&.initiator == user
+    super(discussion) unless discuss_here? && discussion&.initiator == user
   end
 
   def show_content?(content)

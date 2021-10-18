@@ -173,9 +173,9 @@ describe WithOrganizationStatus do
         context 'and user is ex student of organization' do
           before { user.update! permissions: { ex_student: slug } }
 
-          it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::Forbidden }
-          it { expect(access_mode.faqs_here?).to be false }
-          it { expect(access_mode.profile_here?).to be false }
+          it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::ReadOnly }
+          it { expect(access_mode.faqs_here?).to be true }
+          it { expect(access_mode.profile_here?).to be true }
           it { expect(access_mode.discuss_here?).to be false }
           it { expect(access_mode.submit_solutions_here?).to be false }
           it { expect(access_mode.resolve_discussions_here?).to be false }
@@ -183,10 +183,10 @@ describe WithOrganizationStatus do
           it { expect(access_mode.show_content? exercise2).to be false }
           it { expect(access_mode.show_discussion_element?).to be false }
           it { expect(access_mode.show_content_element?).to be false }
-          it { expect { access_mode.validate_active! }.to raise_error Mumuki::Domain::ForbiddenError }
+          it { expect { access_mode.validate_active! }.not_to raise_error }
+          it { expect { access_mode.validate_discuss_here! discussion }.to raise_error Mumuki::Domain::ForbiddenError }
           it { expect { access_mode.validate_content_here! exercise1 }.to raise_error Mumuki::Domain::ForbiddenError }
           it { expect { access_mode.validate_content_here! exercise2 }.to raise_error Mumuki::Domain::ForbiddenError }
-          it { expect { access_mode.validate_discuss_here! discussion }.to raise_error Mumuki::Domain::ForbiddenError }
         end
 
         context 'and user is outsider of organization' do
@@ -265,7 +265,7 @@ describe WithOrganizationStatus do
           it { expect { access_mode.validate_active! }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise1 }.to raise_error Mumuki::Domain::ForbiddenError }
           it { expect { access_mode.validate_content_here! exercise2 }.to raise_error Mumuki::Domain::ForbiddenError }
-          it { expect { access_mode.validate_discuss_here! discussion }.not_to raise_error }
+          it { expect { access_mode.validate_discuss_here! discussion }.to raise_error Mumuki::Domain::ForbiddenError }
         end
 
         context 'and user is outsider of organization' do
