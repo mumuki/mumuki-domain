@@ -84,7 +84,7 @@ describe WithOrganizationStatus do
           it { expect { access_mode.validate_discuss_here! discussion }.not_to raise_error }
 
           context 'during an exam' do
-            let(:exam_authorization) { create :exam_authorization, user: user }
+            let(:exam_authorization) { create :exam_authorization, user: user.reload }
             before { exam_authorization.exam.start! user }
 
             it { expect(access_mode.discuss_here?).to be false }
