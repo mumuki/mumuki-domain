@@ -186,8 +186,8 @@ class Assignment < Progress
                     language: {only: [:name]}},
                 },
                 exercise: {only: [:name, :number]},
-                submitter: {only: [:email, :social_id, :uid], methods: [:name, :profile_picture]}}).
-      deep_merge(
+                submitter: {only: [:email, :social_id, :uid], methods: [:name, :profile_picture]}})
+      .deep_merge(
         'organization' => Organization.current.name,
         'sid' => submission_id,
         'created_at' => submitted_at || updated_at,
@@ -202,6 +202,7 @@ class Assignment < Progress
           'position' => navigable_parent.try(:number),
           'chapter' => guide.chapter.as_json(only: [:id], methods: [:name])
         }})
+      .merge({'randomized_values' => randomized_values.presence}.compact)
   end
 
   def tips

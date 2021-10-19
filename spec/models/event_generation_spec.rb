@@ -77,9 +77,9 @@ describe '#to_resource_h', organization_workspace: :test do
       end
     end
     describe 'exam type' do
-      let!(:exam) { create(:exam, guide: create(:guide, exercises: [create(:exercise)])) }
+      let(:exercise) { create(:exercise) }
+      let!(:exam) { create(:exam, guide: create(:guide, exercises: [exercise])) }
       let(:guide) { exam.guide }
-      let(:exercise) { guide.exercises.first }
       before { reindex_current_organization! }
       let(:assignment) { create(:assignment,
                                 solution: 'x = 2',
@@ -88,46 +88,101 @@ describe '#to_resource_h', organization_workspace: :test do
                                 submitter: user,
                                 submission_id: 'abcd1234',
                                 exercise: exercise) }
-      it do
-        expect(assignment.to_resource_h).to json_like(
-                           status: :passed,
-                           result: nil,
-                           expectation_results: [],
-                           queries: [],
-                           query_results: [],
-                           feedback: nil,
-                           test_results: nil,
-                           submissions_count: 2,
-                           attemps_count: 0,
-                           manual_evaluation_comment: nil,
-                           exercise: {
-                             name: exercise.name,
-                             number: exercise.number,
-                             eid: exercise.bibliotheca_id},
-                           guide: {
-                             name: guide.name,
-                             slug: guide.slug,
-                             language: {
-                               name: guide.language.name
-                             },
-                             parent: {
-                               type: 'Exam',
+      context 'without randomizations' do
+        it do
+          expect(assignment.to_resource_h).to json_like(
+                             status: :passed,
+                             result: nil,
+                             expectation_results: [],
+                             queries: [],
+                             query_results: [],
+                             feedback: nil,
+                             test_results: nil,
+                             submissions_count: 2,
+                             attemps_count: 0,
+                             manual_evaluation_comment: nil,
+                             exercise: {
+                               name: exercise.name,
+                               number: exercise.number,
+                               eid: exercise.bibliotheca_id},
+                             guide: {
                                name: guide.name,
-                               position: nil,
-                               chapter: nil
-                             }
-                           },
-                           submitter: {
-                             social_id: 'github|gh1234',
-                             name: 'Homer Simpson',
-                             email: 'foo@bar.com',
-                             profile_picture: 'user_shape.png',
-                             uid: assignment.submitter.uid},
-                           sid: 'abcd1234',
-                           created_at: assignment.updated_at,
-                           content: 'x = 2',
-                           organization: 'test')
+                               slug: guide.slug,
+                               language: {
+                                 name: guide.language.name
+                               },
+                               parent: {
+                                 type: 'Exam',
+                                 name: guide.name,
+                                 position: nil,
+                                 chapter: nil
+                               }
+                             },
+                             submitter: {
+                               social_id: 'github|gh1234',
+                               name: 'Homer Simpson',
+                               email: 'foo@bar.com',
+                               profile_picture: 'user_shape.png',
+                               uid: assignment.submitter.uid},
+                             sid: 'abcd1234',
+                             created_at: assignment.updated_at,
+                             content: 'x = 2',
+                             organization: 'test')
 
+        end
+      end
+
+      context 'with randomizations' do
+        let(:exercise) do
+           create(:exercise, randomizations: {
+            some_word: { type: :one_of, value: %w(this) },
+            some_number: { type: :range, value: [1, 100] } })
+        end
+        it do
+          expect(assignment.to_resource_h).to json_like(
+                             status: :passed,
+                             result: nil,
+                             expectation_results: [],
+                             queries: [],
+                             query_results: [],
+                             feedback: nil,
+                             test_results: nil,
+                             submissions_count: 2,
+                             attemps_count: 0,
+                             manual_evaluation_comment: nil,
+                             randomized_values: {
+                               some_word: 'this',
+                               some_number: assignment.randomized_values['some_number'],
+                             },
+                             exercise: {
+                               name: exercise.name,
+                               number: exercise.number,
+                               eid: exercise.bibliotheca_id},
+                             guide: {
+                               name: guide.name,
+                               slug: guide.slug,
+                               language: {
+                                 name: guide.language.name
+                               },
+                               parent: {
+                                 type: 'Exam',
+                                 name: guide.name,
+                                 position: nil,
+                                 chapter: nil
+                               }
+                             },
+                             submitter: {
+                               social_id: 'github|gh1234',
+                               name: 'Homer Simpson',
+                               email: 'foo@bar.com',
+                               profile_picture: 'user_shape.png',
+                               uid: assignment.submitter.uid},
+                             sid: 'abcd1234',
+                             created_at: assignment.updated_at,
+                             content: 'x = 2',
+                             organization: 'test')
+
+        end
       end
     end
     describe 'complementary type' do
