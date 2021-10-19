@@ -368,6 +368,17 @@ describe Discussion, organization_workspace: :test do
     end
   end
 
+  describe 'by_recent scope' do
+    let(:user) { create(:user) }
+    let!(:discussion_1) { create(:indexed_exercise).discuss! user, title: 'SOS 1' }
+    let!(:discussion_2) { create(:indexed_exercise).discuss! user, title: 'SOS 2', created_at: Time.now - 1.year }
+    let!(:discussion_3) { create(:indexed_exercise).discuss! user, title: 'SOS 3', created_at: Time.now - 10.months }
+    let!(:discussion_4) { create(:indexed_exercise).discuss! user, title: 'SOS 4' }
+    let!(:discussion_5) { create(:indexed_exercise).discuss! user, title: 'SOS 5' }
+
+    it { expect(Discussion.by_recent(true)).to eq [discussion_1, discussion_4, discussion_5] }
+  end
+
   describe 'messages not being deleted' do
     let(:user) { create(:user) }
     let(:other_user) { create(:user) }
