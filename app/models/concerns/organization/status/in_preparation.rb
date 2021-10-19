@@ -9,7 +9,7 @@ class Organization::Status::InPreparation < Organization::Status::Base
   end
 
   def ex_student_access_mode(user)
-    OrganizationAccessMode::Forbidden.new user, organization
+    OrganizationAccessMode::ReadOnly.new user, organization, :faqs, :profile
   end
 
   def outsider_access_mode(user)
