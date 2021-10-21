@@ -757,11 +757,11 @@ describe User, organization_workspace: :test do
     before do
       organization_1.switch!
       assignment_1 = exercise_1.submit_solution!(user).tap(&:passed!)
-      create :message, sender: user, assignment: assignment_1
+      create :message, sender: user.uid, assignment: assignment_1
       organization_2.switch!
       assignment_2 = exercise_2.submit_solution!(user).tap(&:passed!)
-      create :message, sender: user, assignment: assignment_2
-      create :message, sender: user, discussion_id: 1
+      create :message, sender: user.uid, assignment: assignment_2
+      create :message, sender: user.uid, discussion_id: 1
     end
 
     it { expect(user.assignments.count).to eq 2 }

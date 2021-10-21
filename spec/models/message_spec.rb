@@ -46,7 +46,7 @@ describe Message, organization_workspace: :test do
   describe 'visible' do
     context 'non-direct messages' do
       before do
-        create_list(:message, 5, discussion: create(:discussion), sender: 'sender@mumuki.org', deletion_motive: motive)
+        create_list(:message, 5, discussion: create(:discussion), deletion_motive: motive)
       end
 
       context 'self-deleted' do
@@ -63,7 +63,7 @@ describe Message, organization_workspace: :test do
 
     context 'direct messages' do
       before do
-        create_list(:message, 5, assignment: create(:assignment), sender: 'sender@mumuki.org')
+        create_list(:message, 5, assignment: create(:assignment))
       end
 
       it { expect(Message.visible.count).to eq 0 }
@@ -114,6 +114,7 @@ describe Message, organization_workspace: :test do
 
   describe '.import_from_resource_h!' do
     let(:user) { create(:user) }
+    let!(:teacher) { create(:user, uid: 'teacher@mumuki.org') }
     let(:problem) { create(:problem) }
 
     context 'when last submission' do
