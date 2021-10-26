@@ -10,7 +10,7 @@ class Message < ApplicationRecord
   validates_presence_of :content, :sender
   validate :ensure_contextualized
 
-  after_create :mark_from_moderator!
+  before_create :mark_from_moderator!
   after_save :update_counters_cache!
 
   markdown_on :content
@@ -105,7 +105,7 @@ class Message < ApplicationRecord
   end
 
   def mark_from_moderator!
-    update! from_moderator: true if from_moderator?
+    self.from_moderator = from_moderator?
   end
 
   def update_counters_cache!
