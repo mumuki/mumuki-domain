@@ -94,5 +94,19 @@ describe Gamified, organization_workspace: :test do
         expect(exp).to eq Mumuki::Domain::Status::Submission::Passed.exp_given * 3
       end
     end
+
+    context 'during an exam' do
+      let(:exam) { create(:exam, start_time: 5.minutes.ago, end_time: 10.minutes.since, course: create(:course, slug: 'test/foo')) }
+
+      before do
+        exam.authorize! student
+        exam.start! student
+        submit_on!(exercise, :passed)
+      end
+
+      it 'does not award points' do
+        expect(exp).to eq 0
+      end
+    end
   end
 end

@@ -10,6 +10,6 @@ module Gamified
   end
 
   def net_experience
-    submission_status.exp_given - top_submission_status.exp_given
+    submitter.currently_in_exam? ? 0 : (submission_status.exp_given - top_submission_status.exp_given)
   end
 end
