@@ -7,6 +7,7 @@ describe Assignment, organization_workspace: :test do
 
   describe 'messages' do
     let(:student) { create(:user) }
+    let(:bot) { create(:user, uid: 'bot@mumuki.org') }
     let(:problem) { create(:problem, manual_evaluation: true) }
     let(:assignment) { problem.assignment_for(student) }
     let(:message) { assignment.messages.first }
@@ -29,7 +30,7 @@ describe Assignment, organization_workspace: :test do
 
     describe '#receive_answer!' do
       before { problem.submit_question! student, content: 'How can i solve this?' }
-      before { assignment.receive_answer! sender: 'bot@mumuki.org', content: 'Check this link' }
+      before { assignment.receive_answer! sender: bot.uid, content: 'Check this link' }
 
       it { expect(assignment.has_messages?).to be true }
       it { expect(assignment.messages.count).to eq 2 }

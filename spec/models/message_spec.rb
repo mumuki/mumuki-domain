@@ -46,7 +46,7 @@ describe Message, organization_workspace: :test do
   describe 'visible' do
     context 'non-direct messages' do
       before do
-        create_list(:message, 5, discussion: create(:discussion), sender: 'sender@mumuki.org', deletion_motive: motive)
+        create_list(:message, 5, discussion: create(:discussion), deletion_motive: motive)
       end
 
       context 'self-deleted' do
@@ -63,15 +63,58 @@ describe Message, organization_workspace: :test do
 
     context 'direct messages' do
       before do
-        create_list(:message, 5, assignment: create(:assignment), sender: 'sender@mumuki.org')
+        create_list(:message, 5, assignment: create(:assignment))
       end
 
       it { expect(Message.visible.count).to eq 0 }
     end
   end
 
+  describe 'from_moderator' do
+    let(:student) { create(:user) }
+    let(:moderator) { create(:user, permissions: { moderator: 'test/*' }) }
+    let(:problem) { create(:indexed_exercise) }
+    let(:discussion) { problem.discuss! student, title: 'Need help' }
+    let(:message) { discussion.messages.first }
+
+    context 'when the message is authored by a student' do
+      before { discussion.submit_message!({ content: 'Also...' }, student) }
+
+      it { expect(message.from_moderator).to be_falsey }
+      it { expect(message.from_moderator?).to eq false }
+    end
+
+    context 'when the message is authored by a moderator' do
+      before { discussion.submit_message!({ content: 'Here is some help...' }, moderator) }
+
+      it { expect(message.from_moderator).to be_truthy }
+      it { expect(message.from_moderator?).to eq true }
+    end
+
+    context 'when the message was authored by a moderator before the from_moderator field' do
+      before do
+        discussion.submit_message!({ content: 'Here is some help...' }, moderator)
+        message.update! from_moderator: false
+      end
+
+      it { expect(message.from_moderator).to be_falsey }
+      it { expect(message.from_moderator?).to eq true }
+    end
+
+    context 'when the message is authored by an ex-moderator' do
+      before do
+        discussion.submit_message!({ content: 'Here is some help...' }, moderator)
+        moderator.update! permissions: nil
+      end
+
+      it { expect(message.from_moderator).to be_truthy }
+      it { expect(message.from_moderator?).to eq true }
+    end
+  end
+
   describe '.import_from_resource_h!' do
     let(:user) { create(:user) }
+    let!(:teacher) { create(:user, uid: 'teacher@mumuki.org') }
     let(:problem) { create(:problem) }
 
     context 'when last submission' do

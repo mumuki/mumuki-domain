@@ -10,6 +10,7 @@ class Message < ApplicationRecord
   validates_presence_of :content, :sender
   validate :ensure_contextualized
 
+  before_create :mark_from_moderator!
   after_save :update_counters_cache!
 
   markdown_on :content
@@ -53,7 +54,7 @@ class Message < ApplicationRecord
   end
 
   def from_moderator?
-    sender_user.moderator_here?
+    from_moderator || sender_user.moderator_here?
   end
 
   def from_user?(user)
@@ -74,7 +75,7 @@ class Message < ApplicationRecord
 
   def to_resource_h
     as_json(except: [:id, :type, :discussion_id, :approved, :approved_at, :approved_by_id,
-                     :not_actually_a_question, :deletion_motive, :deleted_at, :deleted_by_id],
+                     :not_actually_a_question, :deletion_motive, :deleted_at, :deleted_by_id, :from_moderator],
             include: {exercise: {only: [:bibliotheca_id]}})
         .merge(organization: Organization.current.name)
   end
@@ -101,6 +102,10 @@ class Message < ApplicationRecord
 
   def validated?
     approved? || from_moderator?
+  end
+
+  def mark_from_moderator!
+    self.from_moderator = from_moderator?
   end
 
   def update_counters_cache!
