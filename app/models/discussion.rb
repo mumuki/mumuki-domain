@@ -22,14 +22,16 @@ class Discussion < ApplicationRecord
                                           .or(where(responsible_moderator_at: nil)) }
   scope :pending_review, -> { where(status: :pending_review) }
   scope :unread_first, -> { includes(:subscriptions).reorder('subscriptions.read', created_at: :desc) }
+  scope :by_recent, -> (_) { where('created_at > ?', Time.now - 6.months)}
 
   after_create :subscribe_initiator!
 
   markdown_on :description
 
   sortable :responses_count, :upvotes_count, :created_at, default: :created_at_desc
-  filterable :status, :language, :requires_attention
+  filterable :status, :language, :requires_attention, :recent
   pageable
+  limitable
 
   delegate :language, to: :item
   delegate :to_discussion_status, to: :status
