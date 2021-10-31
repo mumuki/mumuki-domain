@@ -1,4 +1,5 @@
-require "mumuki/domain/engine"
+require 'email_validator/strict'
+require 'mumuki/domain/engine'
 
 require 'mumukit/core'
 require 'mumukit/core/activemodel'

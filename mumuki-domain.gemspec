@@ -16,6 +16,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> 5.1.6"
 
+  s.add_dependency  'email_validator', '~> 1.6'
+
   s.add_dependency 'mumukit-auth', '~> 7.11'
   s.add_dependency 'mumukit-assistant', '~> 0.2'
   s.add_dependency 'mumukit-bridge', '~> 4.1'
@@ -34,4 +36,3 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pg', '~> 0.18.0'
   s.add_development_dependency 'bundler', '~> 2.0'
 end
-
