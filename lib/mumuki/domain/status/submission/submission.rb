@@ -31,10 +31,6 @@ module Mumuki::Domain::Status::Submission
     group.iconize
   end
 
-  def as_json(_options={})
-    to_s
-  end
-
   def completed?
     solved?
   end
@@ -49,9 +45,5 @@ module Mumuki::Domain::Status::Submission
 
   def exp_given
     0
-  end
-
-  def dup
-    self
   end
 end
