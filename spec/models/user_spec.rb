@@ -19,6 +19,43 @@ describe User, organization_workspace: :test do
     it { expect(student.never_submitted?).to be true }
   end
 
+  describe '#verify_name!' do
+    context 'when it has no verified name' do
+      let(:user) { build(:user, first_name: 'Marie', last_name: 'Curie') }
+      before { user.verify_name! }
+
+      it { expect(user).to be_persisted }
+      it { expect(user.verified_first_name).to eq 'Marie' }
+      it { expect(user.verified_last_name).to eq 'Curie' }
+    end
+
+    context 'when it has a verified name' do
+      let(:user) do
+        build(:user,
+          first_name: 'Mary',
+          last_name: 'C',
+          verified_first_name: 'Marie',
+          verified_last_name: 'Curie')
+      end
+
+      context 'when verification is not forced' do
+        before { user.verify_name! }
+
+        it { expect(user).to be_persisted }
+        it { expect(user.verified_first_name).to eq 'Marie' }
+        it { expect(user.verified_last_name).to eq 'Curie' }
+      end
+
+      context 'when verification is forced' do
+        before { user.verify_name! force: true }
+
+        it { expect(user).to be_persisted }
+        it { expect(user.verified_first_name).to eq 'Mary' }
+        it { expect(user.verified_last_name).to eq 'C' }
+      end
+    end
+  end
+
   describe '#transfer_progress_to!' do
 
     let(:codeorga) { build :organization, name: 'code.orga' }

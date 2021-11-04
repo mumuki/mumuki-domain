@@ -141,9 +141,14 @@ class User < ApplicationRecord
     super.merge(image_url: profile_picture)
   end
 
-  def verify_name!
-    self.verified_first_name ||= first_name
-    self.verified_last_name ||= last_name
+  def verify_name!(force: false)
+    if force
+      self.verified_first_name = first_name
+      self.verified_last_name = last_name
+    else
+      self.verified_first_name ||= first_name
+      self.verified_last_name ||= last_name
+    end
     save!
   end
 
