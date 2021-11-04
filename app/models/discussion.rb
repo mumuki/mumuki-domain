@@ -142,7 +142,7 @@ class Discussion < ApplicationRecord
   end
 
   def responses_count
-    visible_messages.where('sender <> ? OR sender_id <> ?', initiator.uid, initiator.id).count
+    visible_messages.where.not(sender: initiator).count
   end
 
   def has_responses?
