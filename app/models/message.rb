@@ -4,10 +4,11 @@ class Message < ApplicationRecord
   belongs_to :discussion, optional: true
   belongs_to :assignment, optional: true
   belongs_to :approved_by, class_name: 'User', optional: true
+  belongs_to :sender, class_name: 'User'
 
   has_one :exercise, through: :assignment
 
-  validates_presence_of :content, :sender
+  validates_presence_of :content
   validate :ensure_contextualized
 
   before_create :mark_from_moderator!
@@ -16,7 +17,7 @@ class Message < ApplicationRecord
   markdown_on :content
 
   # Visible messages are those that can be publicly seen
-  # in forums. non-direct messages are never visible.
+  # in forums. Direct messages are never visible.
   scope :visible, -> () do
     where.not(deletion_motive: :self_deleted)
       .or(where(deletion_motive: nil))
@@ -50,19 +51,15 @@ class Message < ApplicationRecord
   end
 
   def from_initiator?
-    sender_user == discussion&.initiator
+    sender == discussion&.initiator
   end
 
   def from_moderator?
-    from_moderator || sender_user.moderator_here?
+    from_moderator || sender.moderator_here?
   end
 
   def from_user?(user)
-    sender_user == user
-  end
-
-  def sender_user
-    User.find_by(uid: sender)
+    sender == user
   end
 
   def authorized?(user)
@@ -75,9 +72,10 @@ class Message < ApplicationRecord
 
   def to_resource_h
     as_json(except: [:id, :type, :discussion_id, :approved, :approved_at, :approved_by_id,
-                     :not_actually_a_question, :deletion_motive, :deleted_at, :deleted_by_id, :from_moderator],
+                     :not_actually_a_question, :deletion_motive, :deleted_at, :deleted_by_id,
+                     :from_moderator, :sender_id],
             include: {exercise: {only: [:bibliotheca_id]}})
-        .merge(organization: Organization.current.name)
+        .merge(organization: Organization.current.name, sender: sender.uid)
   end
 
   def read!
@@ -127,7 +125,7 @@ class Message < ApplicationRecord
   def self.import_from_resource_h!(resource_h)
     if resource_h['submission_id'].present?
       assignment = Assignment.find_by(submission_id: resource_h['submission_id'])
-      assignment&.receive_answer! sender: resource_h['message']['sender'],
+      assignment&.receive_answer! sender: User.locate!(resource_h['message']['sender']),
                                   content: resource_h['message']['content']
     end
   end
@@ -135,6 +133,10 @@ class Message < ApplicationRecord
   # TODO remove this once messages generate notifications
   def subject
     'message'
+  end
+
+  def sender
+    super || User.locate!(self[:sender])
   end
 
   private

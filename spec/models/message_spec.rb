@@ -1,10 +1,11 @@
 require 'spec_helper'
 
 describe Message, organization_workspace: :test do
+  let(:sender) { create :user, uid: 'sender@mumuki.org' }
 
   describe 'validations' do
     context 'when no context' do
-      let(:message) { Message.new content: 'content', sender: 'sender@mumuki.org' }
+      let(:message) { Message.new content: 'content', sender: sender }
       it { expect(message.contextualized?).to be false }
       it { expect(message.valid?).to be false }
     end
@@ -12,7 +13,7 @@ describe Message, organization_workspace: :test do
     context 'when improperly contextualized' do
       let(:message) do
         Message.new content: 'content',
-                    sender: 'sender@mumuki.org',
+                    sender: sender,
                     discussion: create(:discussion),
                     assignment: create(:assignment)
       end
@@ -24,7 +25,7 @@ describe Message, organization_workspace: :test do
     context 'when direct' do
       let(:message) do
         Message.new content: 'content',
-                    sender: 'sender@mumuki.org',
+                    sender: sender,
                     assignment: create(:assignment)
       end
 
@@ -35,7 +36,7 @@ describe Message, organization_workspace: :test do
     context 'when non-direct' do
       let(:message) do
         Message.new content: 'content',
-                    sender: 'sender@mumuki.org',
+                    sender: sender,
                     discussion: create(:discussion)
       end
       it { expect(message.contextualized?).to be true }
