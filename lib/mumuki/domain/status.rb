@@ -25,6 +25,14 @@ module Mumuki::Domain::Status
     self.equal? parent.to_mumuki_status(other) rescue false
   end
 
+  def as_json(_options={})
+    to_s
+  end
+
+  def dup
+    self
+  end
+
   class_methods do
     def load(i)
       cast(i)

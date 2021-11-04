@@ -33,8 +33,4 @@ module Mumuki::Domain::Status::Discussion
       reachable_statuses_for_initiator(discussion)
     end
   end
-
-  def as_json(_options={})
-    to_s
-  end
 end
