@@ -36,8 +36,7 @@ describe MassiveJob do
       context 'process uid works' do
         before { massive_job.process!(user2.uid) }
 
-        it { expect(target.users).to contain_exactly user1, user2 }
-        it { expect(target.notifications.count).to eq 2 }
+        it { expect(Notification.where(target: target).count).to eq 2 }
         it { expect(massive_job.failed_items).to be_empty }
         it { expect(massive_job.processed_count).to eq 2 }
         it { expect(massive_job.failed_count).to eq 0 }
@@ -49,8 +48,7 @@ describe MassiveJob do
       context 'process uid failed' do
         before { massive_job.process!('an_uid@mumuki.org') }
 
-        it { expect(target.users).to contain_exactly user1 }
-        it { expect(target.notifications.count).to eq 1 }
+        it { expect(Notification.where(target: target).count).to eq 1 }
         it { expect(massive_job.failed_items).not_to be_empty }
         it { expect(massive_job.failed_items.last.uid).to eq 'an_uid@mumuki.org' }
         it { expect(massive_job.failed_items.last.message).to eq "Couldn't find User with uid:  an_uid@mumuki.org" }

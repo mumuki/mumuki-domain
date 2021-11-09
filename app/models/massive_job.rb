@@ -3,16 +3,12 @@ class MassiveJob < ApplicationRecord
   belongs_to :target, polymorphic: true
   belongs_to :user
 
-  has_many :massive_job_failed_items
+  has_many :failed_items, foreign_key: :massive_job_id, class_name: 'MassiveJobFailedItem'
 
   delegate :organization, :description, to: :target
   delegate :uid, :email, :formal_full_name, to: :user
 
-  alias_attribute :failed_items, :massive_job_failed_items
-
-  def friendly
-    description
-  end
+  alias_method :friendly, :description
 
   def subject
     target_type.constantize.subject

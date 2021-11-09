@@ -137,13 +137,6 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.index ["organization_id"], name: "index_custom_notifications_on_organization_id"
   end
 
-  create_table "custom_notifications_users", id: false, force: :cascade do |t|
-    t.bigint "custom_notification_id", null: false
-    t.bigint "user_id", null: false
-    t.index ["custom_notification_id"], name: "index_custom_notifications_users_on_custom_notification_id"
-    t.index ["user_id"], name: "index_custom_notifications_users_on_user_id"
-  end
-
   create_table "discussions", force: :cascade do |t|
     t.integer "status", default: 0
     t.string "title"
