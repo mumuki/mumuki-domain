@@ -616,40 +616,47 @@ describe User, organization_workspace: :test do
     end
   end
 
-  describe 'disabling' do
+  describe '#destroy!' do
     let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
+    let(:deleted_user) { User.deleted_user }
 
-    context 'enabled' do
-      it { expect { user.ensure_enabled! }.to_not raise_error }
+    before do
+      discussion = create :discussion, initiator: user
+      assignment = create :assignment, submitter: user
+      create :message, discussion: discussion, sender: user
+      create :message, assignment: assignment, sender: user
     end
 
-    context 'disabled' do
-      shared_context "disabled and buried user" do
-        it { expect(user).to be_disabled }
-        it { expect(user.accepts_reminders).to be false }
-        it { expect(user.name).to eq 'shibi' }
-        it { expect(user.email).to eq 'shibi@mumuki.org' }
-        it { expect(user.gender).to be nil }
-        it { expect(user.birthdate).to be nil }
-        it { expect(user.reload.name).to eq 'shibi' }
-        it { expect(user.disabled_at).to_not be nil }
-        it { expect { user.ensure_enabled! }.to raise_error(Mumuki::Domain::DisabledError) }
-      end
+    context 'pre-destroy' do
+      it { expect(Message.count).to eq 2 }
+      it { expect(Discussion.count).to eq 1 }
+      it { expect(Assignment.count).to eq 1 }
 
-      describe '#disable!' do
-        before { user.disable! }
-        it_behaves_like "disabled and buried user"
-      end
+      it { expect(user.forum_messages.count).to eq 1 }
+      it { expect(user.direct_messages.count).to eq 1 }
+      it { expect(user.discussions.count).to eq 1 }
+      it { expect(user.assignments.count).to eq 1 }
 
-      describe '#destroy!' do
-        before { user.destroy! }
-        it_behaves_like "disabled and buried user"
-      end
+      it { expect(deleted_user.forum_messages.count).to eq 0 }
+      it { expect(deleted_user.direct_messages.count).to eq 0 }
+      it { expect(deleted_user.discussions.count).to eq 0 }
+      it { expect(deleted_user.assignments.count).to eq 0 }
+    end
 
-      describe '#destroy' do
-        before { user.destroy }
-        it_behaves_like "disabled and buried user"
-      end
+
+    context 'post-destroy' do
+      before { user.destroy! }
+
+      it { expect(Message.count).to eq 1 }
+      it { expect(Discussion.count).to eq 1 }
+      it { expect(Assignment.count).to eq 0 }
+
+      it { expect(deleted_user.forum_messages.count).to eq 1 }
+      it { expect(deleted_user.direct_messages.count).to eq 0 }
+      it { expect(deleted_user.discussions.count).to eq 1 }
+      it { expect(deleted_user.assignments.count).to eq 0 }
+
+      it { expect { user.reload }.to raise_error ActiveRecord::RecordNotFound }
     end
   end
 

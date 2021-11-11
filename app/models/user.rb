@@ -6,21 +6,30 @@ class User < ApplicationRecord
           WithNotifications,
           WithDiscussionCreation,
           Awardee,
-          Disabling,
           WithTermsAcceptance,
           WithPreferences,
           Onomastic,
           Mumuki::Domain::Helpers::User
 
+  prepend WithDeletedUser
+
   serialize :permissions, Mumukit::Auth::Permissions
   serialize :ignored_notifications, Array
 
-  has_many :notifications
-  has_many :assignments, foreign_key: :submitter_id
-  has_many :indicators
-  has_many :user_stats, class_name: 'UserStats'
+  before_destroy :clean_belongings!
+
+  has_many :api_clients,                             dependent: :delete_all
+  has_many :assignments, foreign_key: :submitter_id, dependent: :delete_all
+  has_many :certificates,                            dependent: :delete_all
+  has_many :exam_authorizations,                     dependent: :delete_all
+  has_many :exam_authorization_requests,             dependent: :delete_all
+  has_many :notifications,                           dependent: :delete_all
+  has_many :indicators,                              dependent: :delete_all
+  has_many :user_stats, class_name: 'UserStats',     dependent: :delete_all
+
+  has_many :discussions, foreign_key: :initiator_id
   has_many :forum_messages, -> { where.not(discussion_id: nil)  }, class_name: 'Message', foreign_key: :sender_id
-  has_many :direct_messages, -> { order(created_at: :desc) }, class_name: 'Message', source: :messages, through: :assignments
+  has_many :direct_messages, -> { order(created_at: :desc) }, through: :assignments, source: :messages
 
   has_many :submitted_exercises, through: :assignments, class_name: 'Exercise', source: :exercise
 
@@ -35,11 +44,7 @@ class User < ApplicationRecord
 
   has_one :last_guide, through: :last_exercise, source: :guide
 
-  has_many :exam_authorizations
-
   has_many :exams, through: :exam_authorizations
-
-  has_many :certificates
 
   enum gender: %i(female male other unspecified)
   belongs_to :avatar, polymorphic: true, optional: true
@@ -156,7 +161,6 @@ class User < ApplicationRecord
   def unsubscribe_from_reminders!
     update! accepts_reminders: false
   end
-
 
   def attach!(role, course)
     add_permission! role, course.slug
@@ -342,6 +346,12 @@ class User < ApplicationRecord
     ignored_notifications.include? notification.subject
   end
 
+  def clean_belongings!
+    discussions.update_all initiator_id: User.deleted_user.id
+    forum_messages.update_all sender_id: User.deleted_user.id
+    direct_messages.where(sender: self).delete_all
+  end
+
   private
 
   def welcome_to_new_organizations!
@@ -375,10 +385,6 @@ class User < ApplicationRecord
 
   def self.sync_key_id_field
     :uid
-  end
-
-  def self.unsubscription_verifier
-    Rails.application.message_verifier(:unsubscribe)
   end
 
   def self.create_if_necessary(user)
