@@ -19,6 +19,7 @@ class User < ApplicationRecord
   has_many :assignments, foreign_key: :submitter_id
   has_many :indicators
   has_many :user_stats, class_name: 'UserStats'
+  has_many :forum_messages, -> { where.not(discussion_id: nil)  }, class_name: 'Message', foreign_key: :sender_id
   has_many :direct_messages, -> { order(created_at: :desc) }, class_name: 'Message', source: :messages, through: :assignments
 
   has_many :submitted_exercises, through: :assignments, class_name: 'Exercise', source: :exercise
@@ -339,10 +340,6 @@ class User < ApplicationRecord
 
   def ignores_notification?(notification)
     ignored_notifications.include? notification.subject
-  end
-
-  def forum_messages
-    Message.where(sender: self).or(Message.where('sender = ?', uid)).where.not(discussion_id: nil)
   end
 
   private

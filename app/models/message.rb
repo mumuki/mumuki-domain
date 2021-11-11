@@ -135,10 +135,6 @@ class Message < ApplicationRecord
     'message'
   end
 
-  def sender
-    super || User.locate!(self[:sender])
-  end
-
   private
 
   def approve!(user)
