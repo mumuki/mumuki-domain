@@ -897,9 +897,14 @@ describe User, organization_workspace: :test do
       before { build(:indexed_exercise).submit_solution!(user, content: '').passed! }
       before { user.detach! :student, course }
 
+      it { expect(user.permissions).to json_eq student: 'test/all', ex_student: 'ex/all' }
+      it { expect(ex_orga.slug).to eq 'ex/_' }
+
       it { expect(user.student_of?(ex_orga)).to be_falsey }
       it { expect(user.ex_student_of?(ex_orga)).to be_truthy }
+
       it { expect(user.student_of?(test_orga)).to be_truthy }
+      it { expect(user.ex_student_of?(test_orga)).to be_truthy }
     end
 
     context 'removes student permission without add ex student of ex orga because user has exercises solved but avoid make_ex_student' do
