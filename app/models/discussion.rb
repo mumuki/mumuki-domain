@@ -8,7 +8,7 @@ class Discussion < ApplicationRecord
   belongs_to :responsible_moderator_by, class_name: 'User', optional: true
   belongs_to :status_updated_by, class_name: 'User', optional: true
 
-  belongs_to :exercise, foreign_type: :exercise, foreign_key: 'item_id'
+  belongs_to :exercise, foreign_key: 'item_id'
   belongs_to :organization
   has_many :subscriptions
   has_many :upvotes

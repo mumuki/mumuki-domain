@@ -14,7 +14,7 @@ module Mumuki::Domain::Status
   end
 
   def to_i
-    parent::STATUSES.index(self)
+    module_parent::STATUSES.index(self)
   end
 
   def to_sym
@@ -22,7 +22,7 @@ module Mumuki::Domain::Status
   end
 
   def ==(other)
-    self.equal? parent.to_mumuki_status(other) rescue false
+    self.equal? module_parent.to_mumuki_status(other) rescue false
   end
 
   def as_json(_options={})

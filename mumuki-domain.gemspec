@@ -14,25 +14,25 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,db,lib}/**/*", "LICENSE", "Rakefile", "README.md"]
 
-  s.add_dependency "rails", "~> 5.1.6"
+  s.add_dependency "rails", "~> 7.0.0"
 
   s.add_dependency  'email_validator', '~> 1.6'
 
   s.add_dependency 'mumukit-auth', '~> 7.11'
   s.add_dependency 'mumukit-assistant', '~> 0.2'
-  s.add_dependency 'mumukit-bridge', '~> 4.1'
+  s.add_dependency 'mumukit-bridge', '~> 4.3'
   s.add_dependency 'mumukit-content-type', '~> 1.11'
-  s.add_dependency 'mumukit-core', '~> 1.18'
+  s.add_dependency 'mumukit-core', '~> 1.20'
   s.add_dependency 'mumukit-directives', '~> 0.5'
   s.add_dependency 'mumukit-randomizer', '~> 1.2'
   s.add_dependency 'mumukit-platform', '~> 7.0'
   s.add_dependency 'mumukit-sync', '~> 1.0'
   s.add_dependency 'mumukit-login', '~> 7.0'
 
-  s.add_dependency 'mulang', '~> 6.0'
+  s.add_dependency 'mulang', '~> 6.12'
   s.add_dependency 'mumukit-inspection', '~> 6.0'
 
   s.add_development_dependency 'sprockets', '~> 3.7'
-  s.add_development_dependency 'pg', '~> 0.18.0'
+  s.add_development_dependency 'pg', '~> 1.0'
   s.add_development_dependency 'bundler', '~> 2.0'
 end

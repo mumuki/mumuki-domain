@@ -2,8 +2,6 @@ class Organization::Status::Base
 
   attr_reader :organization
 
-  implements :teacher_access_mode, :student_access_mode, :ex_student_access_mode, :outsider_access_mode, :validate!
-
   def initialize(organization)
     @organization = organization
   end
