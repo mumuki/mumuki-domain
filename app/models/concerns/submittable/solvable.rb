@@ -1,7 +1,7 @@
 module Solvable
   def submit_solution!(user, submission_attributes={})
     assignment, _ = find_assignment_and_submit! user, solution_for(submission_attributes)
-    try_solve_discussions!(user) if assignment.solved?
+    try_solve_discussions!(user) if assignment.solved? && assignment.organization.forum_enabled?
     assignment
   end
 
