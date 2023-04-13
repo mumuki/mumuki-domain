@@ -28,13 +28,13 @@ module Container
     navigable_content_in(organization).present?
   end
 
-  private
-
   # Generally we are calling progress_for for each sibling. That method needs the
   # content. With this includes call we're avoiding the N + 1 queries.
   def siblings
     super.includes(associated_content_name)
   end
+
+  private
 
   def destroy_usages!
     Usage.destroy_usages_for self

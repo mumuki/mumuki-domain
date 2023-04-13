@@ -130,7 +130,7 @@ module Mumuki::Domain
     end
 
     def pending_siblings_at(content)
-      []
+      content.next_siblings
     end
 
     # ============

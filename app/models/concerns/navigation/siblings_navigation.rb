@@ -12,6 +12,10 @@ module SiblingsNavigation
     structural_parent.structural_children
   end
 
+  def next_siblings
+    siblings.where('number > ?', number)
+  end
+
   def pending_siblings_for(user, organization=Organization.current)
     siblings.reject { |it| it.progress_for(user, organization).completed? }
   end
