@@ -35,4 +35,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'sprockets', '~> 3.7'
   s.add_development_dependency 'pg', '~> 1.0'
   s.add_development_dependency 'bundler', '~> 2.0'
+
+  s.required_ruby_version = '>= 3.0'
 end
