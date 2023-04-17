@@ -21,7 +21,7 @@ class ApiClient < ApplicationRecord
   private
 
   def set_encoded_token!
-    self.token = Mumukit::Auth::Token.encode user.uid, {}
+    self.token = Mumukit::Auth::Token.build(user.uid).encode
   end
 
   def self.invalid_token!(message)
