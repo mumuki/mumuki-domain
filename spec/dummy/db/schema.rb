@@ -2,16 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20211104182009) do
-
+ActiveRecord::Schema[7.0].define(version: 2021_11_04_182009) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,8 +18,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.string "description"
     t.string "token"
     t.bigint "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["user_id"], name: "index_api_clients_on_user_id"
   end
 
@@ -33,8 +32,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.text "expectation_results"
     t.text "feedback"
     t.text "test_results"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "submissions_count", default: 0, null: false
     t.string "submission_id"
     t.string "queries", default: [], array: true
@@ -42,7 +41,7 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.text "manual_evaluation_comment"
     t.integer "attemps_count", default: 0
     t.bigint "organization_id"
-    t.datetime "submitted_at"
+    t.datetime "submitted_at", precision: nil
     t.bigint "parent_id"
     t.integer "top_submission_status"
     t.boolean "misplaced"
@@ -61,8 +60,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
 
   create_table "books", id: :serial, force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "locale", default: "en"
     t.text "description"
     t.string "slug"
@@ -77,28 +76,28 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.text "description"
     t.string "background_image_url"
     t.bigint "organization_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "start_date"
-    t.datetime "end_date"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "start_date", precision: nil
+    t.datetime "end_date", precision: nil
     t.index ["organization_id"], name: "index_certificate_programs_on_organization_id"
   end
 
   create_table "certificates", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "certificate_program_id"
-    t.datetime "started_at"
-    t.datetime "ended_at"
+    t.datetime "started_at", precision: nil
+    t.datetime "ended_at", precision: nil
     t.string "code"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["certificate_program_id"], name: "index_certificates_on_certificate_program_id"
     t.index ["user_id"], name: "index_certificates_on_user_id"
   end
 
   create_table "chapters", id: :serial, force: :cascade do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "number", default: 0, null: false
     t.integer "book_id"
     t.integer "topic_id"
@@ -107,8 +106,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
   create_table "complements", id: :serial, force: :cascade do |t|
     t.integer "guide_id"
     t.integer "book_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["book_id"], name: "index_complements_on_book_id"
     t.index ["guide_id"], name: "index_complements_on_guide_id"
   end
@@ -121,10 +120,10 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.string "period"
     t.string "description"
     t.integer "organization_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "period_start"
-    t.datetime "period_end"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "period_start", precision: nil
+    t.datetime "period_end", precision: nil
   end
 
   create_table "discussions", force: :cascade do |t|
@@ -134,8 +133,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.bigint "initiator_id"
     t.string "item_type"
     t.bigint "item_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.text "solution"
     t.integer "submission_status", default: 0
     t.text "result"
@@ -152,9 +151,9 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.integer "validated_messages_count", default: 0
     t.boolean "requires_moderator_response", default: true
     t.string "responsible_moderator_by_id"
-    t.datetime "responsible_moderator_at"
+    t.datetime "responsible_moderator_at", precision: nil
     t.bigint "status_updated_by_id"
-    t.datetime "status_updated_at"
+    t.datetime "status_updated_at", precision: nil
     t.index ["initiator_id"], name: "index_discussions_on_initiator_id"
     t.index ["item_type", "item_id"], name: "index_discussions_on_item_type_and_item_id"
     t.index ["organization_id"], name: "index_discussions_on_organization_id"
@@ -167,32 +166,32 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.bigint "exam_registration_id"
     t.bigint "user_id"
     t.bigint "organization_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["exam_id"], name: "index_exam_authorization_requests_on_exam_id"
     t.index ["exam_registration_id"], name: "index_exam_authorization_requests_on_exam_registration_id"
     t.index ["organization_id"], name: "index_exam_authorization_requests_on_organization_id"
     t.index ["user_id"], name: "index_exam_authorization_requests_on_user_id"
   end
 
-  create_table "exam_authorizations", force: :cascade do |t|
+  create_table "exam_authorizations", id: :serial, force: :cascade do |t|
     t.integer "exam_id"
     t.integer "user_id"
     t.boolean "started", default: false
-    t.datetime "started_at"
+    t.datetime "started_at", precision: nil
     t.index ["exam_id"], name: "index_exam_authorizations_on_exam_id"
     t.index ["user_id"], name: "index_exam_authorizations_on_user_id"
   end
 
   create_table "exam_registrations", force: :cascade do |t|
     t.string "description"
-    t.datetime "start_time", null: false
-    t.datetime "end_time", null: false
+    t.datetime "start_time", precision: nil, null: false
+    t.datetime "end_time", precision: nil, null: false
     t.integer "authorization_criterion_type", default: 0
     t.integer "authorization_criterion_value"
     t.bigint "organization_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "processed", default: false
     t.integer "authorization_requests_limit"
     t.index ["organization_id"], name: "index_exam_registrations_on_organization_id"
@@ -215,10 +214,10 @@ ActiveRecord::Schema.define(version: 20211104182009) do
   create_table "exams", id: :serial, force: :cascade do |t|
     t.integer "organization_id"
     t.integer "guide_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.datetime "start_time", null: false
-    t.datetime "end_time", null: false
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
+    t.datetime "start_time", precision: nil, null: false
+    t.datetime "end_time", precision: nil, null: false
     t.string "classroom_id"
     t.integer "duration"
     t.integer "max_problem_submissions"
@@ -237,8 +236,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.string "name"
     t.text "description"
     t.text "test"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "language_id", default: 0
     t.integer "submissions_count"
     t.integer "guide_id"
@@ -272,8 +271,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
 
   create_table "guides", id: :serial, force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.text "description"
     t.string "locale", default: "en"
     t.integer "language_id"
@@ -303,8 +302,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.bigint "parent_id"
     t.string "content_type"
     t.bigint "content_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "dirty_by_content_change", default: false
     t.boolean "dirty_by_submission", default: false
     t.integer "children_passed_count"
@@ -318,7 +317,7 @@ ActiveRecord::Schema.define(version: 20211104182009) do
 
   create_table "invitations", id: :serial, force: :cascade do |t|
     t.string "code"
-    t.datetime "expiration_date"
+    t.datetime "expiration_date", precision: nil
     t.bigint "course_id"
     t.index ["code"], name: "index_invitations_on_code", unique: true
     t.index ["course_id"], name: "index_invitations_on_course_id"
@@ -327,8 +326,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
   create_table "languages", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "runner_url"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.boolean "visible_success_output", default: false
     t.integer "output_content_type", default: 0
     t.string "highlight_mode"
@@ -360,8 +359,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
   create_table "lessons", id: :serial, force: :cascade do |t|
     t.integer "guide_id"
     t.integer "number"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "topic_id"
   end
 
@@ -373,17 +372,17 @@ ActiveRecord::Schema.define(version: 20211104182009) do
   create_table "messages", id: :serial, force: :cascade do |t|
     t.string "submission_id"
     t.text "content"
-    t.datetime "date"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "date", precision: nil
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.boolean "read", default: false
     t.integer "discussion_id"
     t.boolean "approved", default: false
     t.boolean "not_actually_a_question", default: false
-    t.datetime "approved_at"
+    t.datetime "approved_at", precision: nil
     t.bigint "approved_by_id"
     t.integer "deletion_motive"
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.bigint "deleted_by_id"
     t.bigint "assignment_id"
     t.bigint "sender_id"
@@ -401,8 +400,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.bigint "target_id"
     t.bigint "user_id"
     t.bigint "organization_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "subject"
     t.text "custom_title"
     t.text "custom_content_plain_text"
@@ -415,8 +414,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
   create_table "organizations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.integer "book_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.text "settings", default: "{}", null: false
     t.text "theme", default: "{}", null: false
     t.text "profile", default: "{}", null: false
@@ -436,8 +435,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
   create_table "paths", id: :serial, force: :cascade do |t|
     t.integer "category_id"
     t.integer "language_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["category_id"], name: "index_paths_on_category_id"
     t.index ["language_id"], name: "index_paths_on_language_id"
   end
@@ -455,16 +454,16 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.string "scope"
     t.text "content"
     t.text "header"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "topics", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "locale"
     t.text "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.text "appendix"
     t.string "slug"
     t.boolean "private", default: false
@@ -486,8 +485,8 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.integer "item_id"
     t.string "parent_item_type"
     t.integer "parent_item_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["item_type", "item_id"], name: "index_usages_on_item_type_and_item_id"
     t.index ["organization_id"], name: "index_usages_on_organization_id"
     t.index ["parent_item_type", "parent_item_id"], name: "index_usages_on_parent_item_type_and_parent_item_id"
@@ -504,10 +503,10 @@ ActiveRecord::Schema.define(version: 20211104182009) do
   create_table "users", id: :serial, force: :cascade do |t|
     t.string "provider"
     t.string "social_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "email"
-    t.datetime "last_submission_date"
+    t.datetime "last_submission_date", precision: nil
     t.string "image_url"
     t.integer "last_exercise_id"
     t.integer "last_organization_id"
@@ -516,27 +515,27 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.string "first_name"
     t.string "last_name"
     t.boolean "accepts_reminders", default: true
-    t.datetime "last_reminded_date"
+    t.datetime "last_reminded_date", precision: nil
     t.date "birthdate"
     t.integer "gender"
     t.string "verified_first_name"
     t.string "verified_last_name"
     t.bigint "avatar_id"
-    t.datetime "disabled_at"
+    t.datetime "disabled_at", precision: nil
     t.boolean "trusted_for_forum"
     t.string "avatar_type", default: "Avatar"
-    t.datetime "headmaster_terms_accepted_at"
-    t.datetime "janitor_terms_accepted_at"
-    t.datetime "moderator_terms_accepted_at"
-    t.datetime "student_terms_accepted_at"
-    t.datetime "teacher_terms_accepted_at"
-    t.datetime "privacy_terms_accepted_at"
-    t.datetime "legal_terms_accepted_at"
-    t.datetime "forum_terms_accepted_at"
+    t.datetime "headmaster_terms_accepted_at", precision: nil
+    t.datetime "janitor_terms_accepted_at", precision: nil
+    t.datetime "moderator_terms_accepted_at", precision: nil
+    t.datetime "student_terms_accepted_at", precision: nil
+    t.datetime "teacher_terms_accepted_at", precision: nil
+    t.datetime "privacy_terms_accepted_at", precision: nil
+    t.datetime "legal_terms_accepted_at", precision: nil
+    t.datetime "forum_terms_accepted_at", precision: nil
     t.boolean "banned_from_forum"
     t.boolean "uppercase_mode"
     t.string "delete_account_token"
-    t.datetime "delete_account_token_expiration_date"
+    t.datetime "delete_account_token_expiration_date", precision: nil
     t.text "ignored_notifications"
     t.index ["avatar_type", "avatar_id"], name: "index_users_on_avatar_type_and_avatar_id"
     t.index ["disabled_at"], name: "index_users_on_disabled_at"
