@@ -44,4 +44,6 @@ Rails.application.configure do
 
   config.reminder_sender_email = 'support@mumuki.org'
   config.reminder_frequency = 7
+
+  config.active_record.yaml_column_permitted_classes = [ActiveSupport::HashWithIndifferentAccess, Symbol]
 end
