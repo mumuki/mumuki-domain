@@ -58,7 +58,7 @@ class Mumuki::Domain::Submission::Base
   def save_results!(results, assignment)
     assignment.assign_attributes results
     assignment.increment_attempts!
-    assignment.save! results
+    assignment.save!(**results)
   end
 
   def notify_results!(results, assignment)

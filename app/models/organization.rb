@@ -43,7 +43,7 @@ class Organization < ApplicationRecord
   resource_fields :name, :book, :profile, :settings, :theme
 
   defaults do
-    self.class.base.try do |base|
+    self.class.unscoped.base.try do |base|
       self.theme         = base.theme    if theme.empty?
       self.settings      = base.settings if settings.empty?
       self.contact_email ||= base.contact_email

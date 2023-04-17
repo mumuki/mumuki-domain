@@ -35,7 +35,7 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
-  def save(*)
+  def save(*, **)
     super
   rescue => e
     self.errors.add :base, e.message
