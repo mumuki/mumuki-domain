@@ -11,10 +11,6 @@ class OrganizationAccessMode::Forbidden < OrganizationAccessMode::Base
     false
   end
 
-  def discuss_here?
-    false
-  end
-
   def show_content?(_content)
     false
   end

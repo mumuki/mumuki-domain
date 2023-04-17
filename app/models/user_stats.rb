@@ -19,8 +19,7 @@ class UserStats < ApplicationRecord
                               .where(assignments: { top_submission_status: [:passed, :skipped], submitter: user, organization: organization }.merge(date_filter))
                               .count,
             count: organization_exercises.count
-        },
-        messages: messages_in_discussions_count(date_range)
+        }
     }
   end
 
@@ -29,18 +28,6 @@ class UserStats < ApplicationRecord
   end
 
   private
-
-  def messages_in_discussions_count(date_range = nil)
-    date_filter = { created_at: date_range }.compact
-    result = user.forum_messages.joins(:discussion)
-        .where({deletion_motive: nil, discussions: { organization: organization }}.merge(date_filter))
-        .group(:approved)
-        .count
-    unapproved = result[false] || 0
-    approved = result[true] || 0
-
-    { count: unapproved + approved, approved: approved }
-  end
 
   def organization_exercises
     @organization_exercises ||= organization.exercises

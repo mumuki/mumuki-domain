@@ -1,8 +1,4 @@
 module WithTermsAcceptance
-  def has_forum_terms_to_accept?
-    !has_accepted_all?(forum_terms)
-  end
-
   def has_profile_terms_to_accept?
     !has_accepted_all?(profile_terms)
   end
@@ -15,20 +11,12 @@ module WithTermsAcceptance
     @role_specific_terms ||= Term.role_specific_terms_for(self)
   end
 
-  def forum_terms
-    @forum_terms ||= Term.forum_related_terms
-  end
-
   def profile_terms
     @profile_terms ||= Term.profile_terms_for(self)
   end
 
   def accept_profile_terms!
     accept_terms! profile_terms
-  end
-
-  def accept_forum_terms!
-    accept_terms! forum_terms
   end
 
   def has_accepted?(term)

@@ -4,7 +4,6 @@ class User < ApplicationRecord
           WithUserNavigation,
           WithReminders,
           WithNotifications,
-          WithDiscussionCreation,
           Awardee,
           WithTermsAcceptance,
           WithPreferences,
@@ -27,8 +26,6 @@ class User < ApplicationRecord
   has_many :indicators,                              dependent: :delete_all
   has_many :user_stats, class_name: 'UserStats',     dependent: :delete_all
 
-  has_many :discussions, foreign_key: :initiator_id
-  has_many :forum_messages, -> { where.not(discussion_id: nil)  }, class_name: 'Message', foreign_key: :sender_id
   has_many :direct_messages, -> { order(created_at: :desc) }, through: :assignments, source: :messages
 
   has_many :submitted_exercises, through: :assignments, class_name: 'Exercise', source: :exercise
@@ -213,18 +210,6 @@ class User < ApplicationRecord
     sequence[0..count + lookahead - 1]
   end
 
-  def can_discuss_in?(organization)
-    organization.access_mode(self).discuss_here?
-  end
-
-  def trusted_as_discusser_in?(organization)
-    trusted_for_forum? || !organization.forum_only_for_trusted?
-  end
-
-  def can_discuss_here?
-    can_discuss_in? Organization.current
-  end
-
   def can_access_teacher_info_in?(organization)
     teacher_of?(organization) || organization.teacher_training?
   end
@@ -347,8 +332,6 @@ class User < ApplicationRecord
   end
 
   def clean_belongings!
-    discussions.update_all initiator_id: User.deleted_user.id
-    forum_messages.update_all sender_id: User.deleted_user.id
     direct_messages.where(sender: self).delete_all
   end
 

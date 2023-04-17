@@ -77,4 +77,3 @@ module Mumuki::Domain::Status
 end
 
 require_relative './status/submission/submission'
-require_relative './status/discussion/discussion'

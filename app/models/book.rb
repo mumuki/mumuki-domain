@@ -17,10 +17,6 @@ class Book < Content
     slug
   end
 
-  def discussions_in_organization(organization = Organization.current)
-    Discussion.where(organization: organization, item: organization.exercises).includes(exercise: [:language, :guide])
-  end
-
   def first_chapter
     chapters.first
   end

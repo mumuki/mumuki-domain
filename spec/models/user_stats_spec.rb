@@ -76,27 +76,5 @@ describe UserStats, organization_workspace: :test do
         it { expect(stats.activity[:exercises]).to eq(solved_count: 2, count: 4) }
       end
     end
-
-    context 'messages' do
-      let(:problem) { create(:indexed_exercise) }
-      let(:discussion) { problem.discuss! user, title: 'Need help' }
-
-      before { discussion.submit_message!({content: 'Same issue here'}, another_user) }
-      before { discussion.submit_message!({content: 'I forgot to say this', created_at: 2.days.until}, user) }
-      before { discussion.submit_message!({content: 'Oh, this is the answer!', approved: true}, user) }
-
-      context 'without date filter' do
-        it { expect(stats.activity[:messages]).to eq(count: 2, approved: 1) }
-      end
-
-      context 'with date filter' do
-        it { expect(stats.activity(3.day.until..1.day.until)[:messages]).to eq(count: 1, approved: 0) }
-      end
-
-      context 'with deleted message' do
-        before { discussion.messages.last.soft_delete! :self_deleted, user }
-        it { expect(stats.activity[:messages]).to eq(count: 1, approved: 0) }
-      end
-    end
   end
 end

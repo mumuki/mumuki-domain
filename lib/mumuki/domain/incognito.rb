@@ -48,18 +48,6 @@ module Mumuki::Domain
       false
     end
 
-    def moderator_here?
-      false
-    end
-
-    def can_discuss_here?
-      false
-    end
-
-    def can_discuss_in?(*)
-      false
-    end
-
     def can_access_teacher_info_in?(*)
       false
     end

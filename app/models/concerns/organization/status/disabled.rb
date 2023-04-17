@@ -5,7 +5,7 @@ class Organization::Status::Disabled < Organization::Status::Base
   end
 
   def student_access_mode(user)
-    OrganizationAccessMode::ReadOnly.new user, organization, :faqs, :profile, :exercises, :discussions
+    OrganizationAccessMode::ReadOnly.new user, organization, :faqs, :profile, :exercises
   end
 
   def ex_student_access_mode(user)
@@ -24,4 +24,3 @@ class Organization::Status::Disabled < Organization::Status::Base
     raise Mumuki::Domain::DisabledOrganizationError
   end
 end
-

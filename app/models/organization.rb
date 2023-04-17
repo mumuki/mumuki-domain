@@ -120,7 +120,7 @@ class Organization < ApplicationRecord
   #
   # Warning: this method does not strictly check user's permission
   def ask_for_help_enabled?(user)
-    report_issue_enabled? || community_link.present? || user.can_discuss_in?(self)
+    report_issue_enabled? || community_link.present?
   end
 
   def import_from_resource_h!(resource_h)
@@ -147,10 +147,6 @@ class Organization < ApplicationRecord
 
   def activity_start_date(default_date)
     [default_date, in_preparation_until&.to_date].compact.max
-  end
-
-  def discussions
-    book.discussions_in_organization(self)
   end
 
   # ==============

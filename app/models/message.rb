@@ -1,7 +1,6 @@
 class Message < ApplicationRecord
   include WithSoftDeletion
 
-  belongs_to :discussion, optional: true
   belongs_to :assignment, optional: true
   belongs_to :approved_by, class_name: 'User', optional: true
   belongs_to :sender, class_name: 'User'
@@ -11,25 +10,14 @@ class Message < ApplicationRecord
   validates_presence_of :content
   validate :ensure_contextualized
 
-  before_create :mark_from_moderator!
-  after_save :update_counters_cache!
-
   markdown_on :content
 
-  # Visible messages are those that can be publicly seen
-  # in forums. Direct messages are never visible.
-  scope :visible, -> () do
-    where.not(deletion_motive: :self_deleted)
-      .or(where(deletion_motive: nil))
-      .where(assignment_id: nil)
-  end
-
   def contextualization
-    direct? ? assignment : discussion
+    assignment
   end
 
   def contextualized?
-    assignment_id.present? ^ discussion_id.present?
+    assignment_id.present?
   end
 
   # Whether this message is stale, that is, it
@@ -40,8 +28,6 @@ class Message < ApplicationRecord
     direct? && assignment.submission_id != submission_id
   end
 
-  # Whether this message is direct, that is, whether it comes from rise-hand feature.
-  # Forum messages are non-direct.
   def direct?
     submission_id.present?
   end
@@ -50,20 +36,12 @@ class Message < ApplicationRecord
     Mumukit::Nuntius.notify! 'student-messages', to_resource_h unless Organization.silenced?
   end
 
-  def from_initiator?
-    sender == discussion&.initiator
-  end
-
-  def from_moderator?
-    from_moderator || sender.moderator_here?
-  end
-
   def from_user?(user)
     sender == user
   end
 
   def authorized?(user)
-    from_user?(user) || user&.moderator_here?
+    from_user?(user)
   end
 
   def authorize!(user)
@@ -71,9 +49,9 @@ class Message < ApplicationRecord
   end
 
   def to_resource_h
-    as_json(except: [:id, :type, :discussion_id, :approved, :approved_at, :approved_by_id,
+    as_json(except: [:id, :type, :approved, :approved_at, :approved_by_id,
                      :not_actually_a_question, :deletion_motive, :deleted_at, :deleted_by_id,
-                     :from_moderator, :sender_id],
+                     :sender_id],
             include: {exercise: {only: [:bibliotheca_id]}})
         .merge(organization: Organization.current.name, sender: sender.uid)
   end
@@ -99,15 +77,7 @@ class Message < ApplicationRecord
   end
 
   def validated?
-    approved? || from_moderator?
-  end
-
-  def mark_from_moderator!
-    self.from_moderator = from_moderator?
-  end
-
-  def update_counters_cache!
-    discussion&.update_counters!
+    approved?
   end
 
   def question?

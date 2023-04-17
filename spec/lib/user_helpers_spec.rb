@@ -93,53 +93,6 @@ describe Mumuki::Domain::Helpers::User do
     end
   end
 
-
-  describe 'discusser_here?' do
-    before { Mumukit::Platform::Organization.leave! }
-
-    context 'no organization selected' do
-      it { expect { user.discusser_here? }.to raise_error('organization not selected') }
-    end
-
-    context 'organization selected' do
-      before { Mumukit::Platform::Organization.switch! organization }
-      before { organization.forum_discussions_minimal_role = :student }
-
-      context 'when student is minimal discusser permission' do
-        context 'when in organization not as student' do
-          it { expect(user.discusser_here?).to be false }
-        end
-
-        context 'when in organization as student' do
-          before { user.make_student_of! organization }
-          it { expect(user.discusser_here?).to be true }
-        end
-      end
-
-      context 'when teacher is minimal discusser permission' do
-        before { organization.forum_discussions_minimal_role = :teacher }
-
-        context 'when in organization not as student' do
-          it { expect(user.discusser_here?).to be false }
-        end
-
-        context 'when in organization as student' do
-          before { user.make_student_of! organization }
-          it { expect(user.discusser_here?).to be false }
-        end
-
-        context 'when in organization as teacher' do
-          before { user.make_teacher_of! organization }
-          it { expect(user.discusser_here?).to be true }
-        end
-      end
-
-      context 'when not in organization' do
-        it { expect(user.discusser_here?).to be false }
-      end
-    end
-  end
-
   describe 'student_granted_organizations' do
     before { Mumukit::Platform.config.organization_class = class_double('UserSpecDemoOrganization') }
     after { Mumukit::Platform.config.organization_class = nil }

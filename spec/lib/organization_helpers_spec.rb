@@ -19,8 +19,6 @@ describe Mumukit::Platform::Organization do
       settings: {
         feedback_suggestions_enabled: true,
         raise_hand_enabled: true,
-        forum_enabled: true,
-        forum_only_for_trusted: true,
         report_issue_enabled: true,
         teacher_training: true,
         public: false,
@@ -90,12 +88,9 @@ describe Mumukit::Platform::Organization do
 
         it { expect(subject.login_methods).to eq %w{facebook twitter google} }
         it { expect(subject.login_provider).to eq 'google' }
-        it { expect(subject.forum_discussions_minimal_role).to be :ex_student }
         it { expect(subject.login_provider_settings).to eq(token: '123') }
         it { expect(subject.raise_hand_enabled?).to be true }
         it { expect(subject.report_issue_enabled?).to be true }
-        it { expect(subject.forum_enabled?).to be true }
-        it { expect(subject.forum_only_for_trusted?).to be true }
         it { expect(subject.feedback_suggestions_enabled?).to be true }
         it { expect(subject.public?).to eq false }
         it { expect(subject.gamification_enabled?).to be true }
@@ -116,9 +111,6 @@ describe Mumukit::Platform::Organization do
                             immersive: true,
                             raise_hand_enabled: false,
                             report_issue_enabled: false,
-                            forum_enabled: false,
-                            forum_only_for_trusted: false,
-                            forum_discussions_minimal_role: 'teacher',
                             gamification_enabled: false,
                             login_methods: [:google]) }
         let(:dump) { Mumuki::Domain::Organization::Settings.dump(settings) }
@@ -126,10 +118,7 @@ describe Mumukit::Platform::Organization do
         subject { Mumuki::Domain::Organization::Settings.load(dump) }
 
         it { expect(subject.login_methods).to eq %w{google} }
-        it { expect(subject.forum_discussions_minimal_role).to be :teacher }
         it { expect(subject.raise_hand_enabled?).to be false }
-        it { expect(subject.forum_enabled?).to be false }
-        it { expect(subject.forum_only_for_trusted?).to be false }
         it { expect(subject.report_issue_enabled?).to be false }
         it { expect(subject.feedback_suggestions_enabled?).to be false }
         it { expect(subject.public?).to eq true }

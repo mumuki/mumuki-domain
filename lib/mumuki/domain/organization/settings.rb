@@ -4,9 +4,6 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
   model_attr_accessor :disabled_from,
                       :embeddable?,
                       :feedback_suggestions_enabled?,
-                      :forum_discussions_minimal_role,
-                      :forum_enabled?,
-                      :forum_only_for_trusted?,
                       :gamification_enabled?,
                       :greet_new_users?,
                       :immersive?,
@@ -25,10 +22,6 @@ class Mumuki::Domain::Organization::Settings < Mumukit::Platform::Model
 
   def login_methods
     @login_methods ||= ['user_pass']
-  end
-
-  def forum_discussions_minimal_role
-    (@forum_discussions_minimal_role || 'ex_student').to_sym
   end
 
   def disabled_from=(disabled_from)

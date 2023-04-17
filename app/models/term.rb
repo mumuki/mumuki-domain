@@ -3,8 +3,7 @@ class Term < ApplicationRecord
   markdown_on :content
 
   GENERAL = %w(legal privacy student)
-  ROLE_SPECIFIC = %w(headmaster janitor teacher moderator)
-  FORUM_RELATED = %w(forum)
+  ROLE_SPECIFIC = %w(headmaster janitor teacher)
 
   validates :locale, uniqueness: { scope: :scope }
   validates :content, :scope, :header, presence: true
@@ -23,10 +22,6 @@ class Term < ApplicationRecord
 
   def self.general_terms(locale = I18n.locale)
     terms_for(GENERAL, locale)
-  end
-
-  def self.forum_related_terms(locale = I18n.locale)
-    terms_for(FORUM_RELATED, locale)
   end
 
   def self.current_role_terms_for(user)

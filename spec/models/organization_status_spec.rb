@@ -24,14 +24,13 @@ describe WithOrganizationStatus do
   end
 
   describe '#access_mode' do
-    let(:organization) { create :organization, forum_enabled: true, public: false, faqs: 'FAQs' }
+    let(:organization) { create :organization, public: false, faqs: 'FAQs' }
     let(:slug) { Mumukit::Auth::Slug.join_s organization.name, 'foo' }
     let(:course) { create :course, organization: organization, slug: slug }
     let(:user) { create :user }
     let(:access_mode) { organization.access_mode user }
     let(:exercise1) { create :exercise }
     let(:exercise2) { create :exercise }
-    let(:discussion) { build :discussion, initiator: user }
 
     before {
       create :assignment, submitter: user, organization: organization, exercise: exercise1
@@ -46,23 +45,12 @@ describe WithOrganizationStatus do
           it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::Full }
           it { expect(access_mode.faqs_here?).to be true }
           it { expect(access_mode.profile_here?).to be true }
-          it { expect(access_mode.discuss_here?).to be true }
           it { expect(access_mode.submit_solutions_here?).to be true }
-          it { expect(access_mode.resolve_discussions_here?).to be true }
           it { expect(access_mode.show_content? exercise1).to be true }
           it { expect(access_mode.show_content? exercise2).to be true }
-          it { expect(access_mode.show_discussion_element?).to be true }
           it { expect(access_mode.show_content_element?).to be true }
           it { expect { access_mode.validate_active! }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise1 }.not_to raise_error }
-          it { expect { access_mode.validate_discuss_here! discussion }.not_to raise_error }
-
-          context 'during an exam' do
-            let(:exam_authorization) { create :exam_authorization, user: user }
-            before { exam_authorization.exam.start! user }
-
-            it { expect(access_mode.discuss_here?).to be true }
-          end
         end
 
         context 'and user is student of organization' do
@@ -71,24 +59,13 @@ describe WithOrganizationStatus do
           it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::Full }
           it { expect(access_mode.faqs_here?).to be true }
           it { expect(access_mode.profile_here?).to be true }
-          it { expect(access_mode.discuss_here?).to be true }
           it { expect(access_mode.submit_solutions_here?).to be true }
-          it { expect(access_mode.resolve_discussions_here?).to be true }
           it { expect(access_mode.show_content? exercise1).to be true }
           it { expect(access_mode.show_content? exercise2).to be true }
-          it { expect(access_mode.show_discussion_element?).to be true }
           it { expect(access_mode.show_content_element?).to be true }
           it { expect { access_mode.validate_active! }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise1 }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise2 }.not_to raise_error }
-          it { expect { access_mode.validate_discuss_here! discussion }.not_to raise_error }
-
-          context 'during an exam' do
-            let(:exam_authorization) { create :exam_authorization, user: user.reload }
-            before { exam_authorization.exam.start! user }
-
-            it { expect(access_mode.discuss_here?).to be false }
-          end
         end
 
         context 'and user is ex student of organization' do
@@ -97,17 +74,13 @@ describe WithOrganizationStatus do
           it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::ReadOnly }
           it { expect(access_mode.faqs_here?).to be true }
           it { expect(access_mode.profile_here?).to be true }
-          it { expect(access_mode.discuss_here?).to be true }
           it { expect(access_mode.submit_solutions_here?).to be false }
-          it { expect(access_mode.resolve_discussions_here?).to be false }
           it { expect(access_mode.show_content? exercise1).to be true }
           it { expect(access_mode.show_content? exercise2).to be false }
-          it { expect(access_mode.show_discussion_element?).to be false }
           it { expect(access_mode.show_content_element?).to be false }
           it { expect { access_mode.validate_active! }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise1 }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise2 }.to raise_error Mumuki::Domain::ForbiddenError }
-          it { expect { access_mode.validate_discuss_here! discussion }.not_to raise_error }
         end
 
         context 'and user is outsider of organization' do
@@ -116,17 +89,13 @@ describe WithOrganizationStatus do
           it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::Forbidden }
           it { expect(access_mode.faqs_here?).to be false }
           it { expect(access_mode.profile_here?).to be false }
-          it { expect(access_mode.discuss_here?).to be false }
           it { expect(access_mode.submit_solutions_here?).to be false }
-          it { expect(access_mode.resolve_discussions_here?).to be false }
           it { expect(access_mode.show_content? exercise1).to be false }
           it { expect(access_mode.show_content? exercise2).to be false }
-          it { expect(access_mode.show_discussion_element?).to be false }
           it { expect(access_mode.show_content_element?).to be false }
           it { expect { access_mode.validate_active! }.to raise_error Mumuki::Domain::ForbiddenError }
           it { expect { access_mode.validate_content_here! exercise1 }.to raise_error Mumuki::Domain::ForbiddenError }
           it { expect { access_mode.validate_content_here! exercise2 }.to raise_error Mumuki::Domain::ForbiddenError }
-          it { expect { access_mode.validate_discuss_here! discussion }.to raise_error Mumuki::Domain::ForbiddenError }
         end
       end
 
@@ -139,16 +108,12 @@ describe WithOrganizationStatus do
           it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::Full }
           it { expect(access_mode.faqs_here?).to be true }
           it { expect(access_mode.profile_here?).to be true }
-          it { expect(access_mode.discuss_here?).to be true }
           it { expect(access_mode.submit_solutions_here?).to be true }
-          it { expect(access_mode.resolve_discussions_here?).to be true }
           it { expect(access_mode.show_content? exercise1).to be true }
           it { expect(access_mode.show_content? exercise2).to be true }
-          it { expect(access_mode.show_discussion_element?).to be true }
           it { expect(access_mode.show_content_element?).to be true }
           it { expect { access_mode.validate_active! }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise1 }.not_to raise_error }
-          it { expect { access_mode.validate_discuss_here! discussion }.not_to raise_error }
         end
 
         context 'and user is student of organization' do
@@ -157,17 +122,13 @@ describe WithOrganizationStatus do
           it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::ComingSoon }
           it { expect(access_mode.faqs_here?).to be false }
           it { expect(access_mode.profile_here?).to be false }
-          it { expect(access_mode.discuss_here?).to be false }
           it { expect(access_mode.submit_solutions_here?).to be false }
-          it { expect(access_mode.resolve_discussions_here?).to be false }
           it { expect(access_mode.show_content? exercise1).to be false }
           it { expect(access_mode.show_content? exercise2).to be false }
-          it { expect(access_mode.show_discussion_element?).to be false }
           it { expect(access_mode.show_content_element?).to be false }
           it { expect { access_mode.validate_active! }.to raise_error Mumuki::Domain::UnpreparedOrganizationError }
           it { expect { access_mode.validate_content_here! exercise1 }.to raise_error Mumuki::Domain::ForbiddenError }
           it { expect { access_mode.validate_content_here! exercise2 }.to raise_error Mumuki::Domain::ForbiddenError }
-          it { expect { access_mode.validate_discuss_here! discussion }.to raise_error Mumuki::Domain::ForbiddenError }
         end
 
         context 'and user is ex student of organization' do
@@ -176,15 +137,11 @@ describe WithOrganizationStatus do
           it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::ReadOnly }
           it { expect(access_mode.faqs_here?).to be true }
           it { expect(access_mode.profile_here?).to be true }
-          it { expect(access_mode.discuss_here?).to be false }
           it { expect(access_mode.submit_solutions_here?).to be false }
-          it { expect(access_mode.resolve_discussions_here?).to be false }
           it { expect(access_mode.show_content? exercise1).to be false }
           it { expect(access_mode.show_content? exercise2).to be false }
-          it { expect(access_mode.show_discussion_element?).to be false }
           it { expect(access_mode.show_content_element?).to be false }
           it { expect { access_mode.validate_active! }.not_to raise_error }
-          it { expect { access_mode.validate_discuss_here! discussion }.to raise_error Mumuki::Domain::ForbiddenError }
           it { expect { access_mode.validate_content_here! exercise1 }.to raise_error Mumuki::Domain::ForbiddenError }
           it { expect { access_mode.validate_content_here! exercise2 }.to raise_error Mumuki::Domain::ForbiddenError }
         end
@@ -195,17 +152,13 @@ describe WithOrganizationStatus do
           it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::Forbidden }
           it { expect(access_mode.faqs_here?).to be false }
           it { expect(access_mode.profile_here?).to be false }
-          it { expect(access_mode.discuss_here?).to be false }
           it { expect(access_mode.submit_solutions_here?).to be false }
-          it { expect(access_mode.resolve_discussions_here?).to be false }
           it { expect(access_mode.show_content? exercise1).to be false }
           it { expect(access_mode.show_content? exercise2).to be false }
-          it { expect(access_mode.show_discussion_element?).to be false }
           it { expect(access_mode.show_content_element?).to be false }
           it { expect { access_mode.validate_active! }.to raise_error Mumuki::Domain::ForbiddenError }
           it { expect { access_mode.validate_content_here! exercise1 }.to raise_error Mumuki::Domain::ForbiddenError }
           it { expect { access_mode.validate_content_here! exercise2 }.to raise_error Mumuki::Domain::ForbiddenError }
-          it { expect { access_mode.validate_discuss_here! discussion }.to raise_error Mumuki::Domain::ForbiddenError }
         end
       end
 
@@ -218,16 +171,12 @@ describe WithOrganizationStatus do
           it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::Full }
           it { expect(access_mode.faqs_here?).to be true }
           it { expect(access_mode.profile_here?).to be true }
-          it { expect(access_mode.discuss_here?).to be true }
           it { expect(access_mode.submit_solutions_here?).to be true }
-          it { expect(access_mode.resolve_discussions_here?).to be true }
           it { expect(access_mode.show_content? exercise1).to be true }
           it { expect(access_mode.show_content? exercise2).to be true }
-          it { expect(access_mode.show_discussion_element?).to be true }
           it { expect(access_mode.show_content_element?).to be true }
           it { expect { access_mode.validate_active! }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise1 }.not_to raise_error }
-          it { expect { access_mode.validate_discuss_here! discussion }.not_to raise_error }
         end
 
         context 'and user is student of organization' do
@@ -236,17 +185,13 @@ describe WithOrganizationStatus do
           it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::ReadOnly }
           it { expect(access_mode.faqs_here?).to be true }
           it { expect(access_mode.profile_here?).to be true }
-          it { expect(access_mode.discuss_here?).to be true }
           it { expect(access_mode.submit_solutions_here?).to be false }
-          it { expect(access_mode.resolve_discussions_here?).to be false }
           it { expect(access_mode.show_content? exercise1).to be true }
           it { expect(access_mode.show_content? exercise2).to be true }
-          it { expect(access_mode.show_discussion_element?).to be false }
           it { expect(access_mode.show_content_element?).to be false }
           it { expect { access_mode.validate_active! }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise1 }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise2 }.not_to raise_error }
-          it { expect { access_mode.validate_discuss_here! discussion }.not_to raise_error }
         end
 
         context 'and user is ex student of organization' do
@@ -255,17 +200,13 @@ describe WithOrganizationStatus do
           it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::ReadOnly }
           it { expect(access_mode.faqs_here?).to be true }
           it { expect(access_mode.profile_here?).to be true }
-          it { expect(access_mode.discuss_here?).to be false }
           it { expect(access_mode.submit_solutions_here?).to be false }
-          it { expect(access_mode.resolve_discussions_here?).to be false }
           it { expect(access_mode.show_content? exercise1).to be false }
           it { expect(access_mode.show_content? exercise2).to be false }
-          it { expect(access_mode.show_discussion_element?).to be false }
           it { expect(access_mode.show_content_element?).to be false }
           it { expect { access_mode.validate_active! }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise1 }.to raise_error Mumuki::Domain::ForbiddenError }
           it { expect { access_mode.validate_content_here! exercise2 }.to raise_error Mumuki::Domain::ForbiddenError }
-          it { expect { access_mode.validate_discuss_here! discussion }.to raise_error Mumuki::Domain::ForbiddenError }
         end
 
         context 'and user is outsider of organization' do
@@ -274,17 +215,13 @@ describe WithOrganizationStatus do
           it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::Forbidden }
           it { expect(access_mode.faqs_here?).to be false }
           it { expect(access_mode.profile_here?).to be false }
-          it { expect(access_mode.discuss_here?).to be false }
           it { expect(access_mode.submit_solutions_here?).to be false }
-          it { expect(access_mode.resolve_discussions_here?).to be false }
           it { expect(access_mode.show_content? exercise1).to be false }
           it { expect(access_mode.show_content? exercise2).to be false }
-          it { expect(access_mode.show_discussion_element?).to be false }
           it { expect(access_mode.show_content_element?).to be false }
           it { expect { access_mode.validate_active! }.to raise_error Mumuki::Domain::ForbiddenError }
           it { expect { access_mode.validate_content_here! exercise1 }.to raise_error Mumuki::Domain::ForbiddenError }
           it { expect { access_mode.validate_content_here! exercise2 }.to raise_error Mumuki::Domain::ForbiddenError }
-          it { expect { access_mode.validate_discuss_here! discussion }.to raise_error Mumuki::Domain::ForbiddenError }
         end
       end
     end
@@ -298,16 +235,12 @@ describe WithOrganizationStatus do
           it { expect(access_mode).to be_an_instance_of OrganizationAccessMode::Full }
           it { expect(access_mode.faqs_here?).to be false }
           it { expect(access_mode.profile_here?).to be true }
-          it { expect(access_mode.discuss_here?).to be false }
           it { expect(access_mode.submit_solutions_here?).to be true }
-          it { expect(access_mode.resolve_discussions_here?).to be false }
           it { expect(access_mode.show_content? exercise1).to be true }
           it { expect(access_mode.show_content? exercise2).to be true }
-          it { expect(access_mode.show_discussion_element?).to be true }
           it { expect(access_mode.show_content_element?).to be true }
           it { expect { access_mode.validate_active! }.not_to raise_error }
           it { expect { access_mode.validate_content_here! exercise1 }.not_to raise_error }
-          it { expect { access_mode.validate_discuss_here! discussion }.not_to raise_error }
         end
       end
     end

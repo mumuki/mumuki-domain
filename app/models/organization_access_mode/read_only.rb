@@ -12,14 +12,6 @@ class OrganizationAccessMode::ReadOnly < OrganizationAccessMode::Base
     has_scope(:profile)
   end
 
-  def discuss_here?
-    has_scope(:discussions) && super
-  end
-
-  def validate_discuss_here!(discussion)
-    super(discussion) unless discuss_here? && discussion&.initiator == user
-  end
-
   def show_content?(content)
     has_scope(:exercises) ||
       (has_scope(:exercises, :submitted) && content.has_progress_for?(user, organization))

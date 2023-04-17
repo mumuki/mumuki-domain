@@ -27,7 +27,7 @@ module Mumuki::Domain::Helpers::User
     self.permissions = permissions.merge(new_permissions)
   end
 
-  (Mumukit::Auth::Roles::ROLES - [:writer, :editor, :owner] + [:discusser]).each do |role|
+  (Mumukit::Auth::Roles::ROLES - [:writer, :editor, :owner]).each do |role|
     role_of = "#{role}_of?"
     role_here = "#{role}_here?"
 
@@ -42,12 +42,6 @@ module Mumuki::Domain::Helpers::User
     define_method role_here do
       send role_of, Mumukit::Platform::Organization.current
     end
-  end
-
-  # Tells whether this user has forum discusser permissions in
-  # the given organization
-  def discusser_of?(organization)
-    has_permission? organization.forum_discussions_minimal_role, organization.slug
   end
 
   (Mumukit::Auth::Roles::ROLES - [:owner]).each do |role|

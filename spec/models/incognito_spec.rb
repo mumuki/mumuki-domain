@@ -82,7 +82,6 @@ describe Mumuki::Domain::Incognito do
 
   describe 'terms context fooling' do
     let!(:legal_term) { create(:term, scope: :legal, locale: :en) }
-    let!(:moderator_term) { create(:term, scope: :moderator, locale: :en) }
 
     context 'no role terms to accept' do
       it { expect(user.has_role_terms_to_accept?).to eq false }

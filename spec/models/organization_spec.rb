@@ -41,19 +41,6 @@ describe Organization, organization_workspace: :test do
       before { organization.community_link = 'https://an-external-mumuki-forum.org' }
       it { expect(organization.ask_for_help_enabled? user).to be true }
     end
-
-    context 'when forum is enabled' do
-      before { organization.forum_enabled = true }
-
-      context 'when user does not meet minimal permissions' do
-        it { expect(organization.ask_for_help_enabled? user).to be false }
-      end
-
-      context 'when user meets minimal permissions' do
-        before { user.make_student_of! organization }
-        it { expect(organization.ask_for_help_enabled? user).to be true }
-      end
-    end
   end
 
   describe '.current' do
