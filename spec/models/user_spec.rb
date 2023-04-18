@@ -567,7 +567,7 @@ describe User, organization_workspace: :test do
     end
 
     context 'pre-destroy' do
-      it { expect(Message.count).to eq 2 }
+      it { expect(Message.count).to eq 1 }
       it { expect(Assignment.count).to eq 1 }
 
       it { expect(user.direct_messages.count).to eq 1 }
@@ -581,7 +581,7 @@ describe User, organization_workspace: :test do
     context 'post-destroy' do
       before { user.destroy! }
 
-      it { expect(Message.count).to eq 1 }
+      it { expect(Message.count).to eq 0 }
       it { expect(Assignment.count).to eq 0 }
 
       it { expect(deleted_user.direct_messages.count).to eq 0 }
@@ -741,7 +741,7 @@ describe User, organization_workspace: :test do
     it { expect(user.assignments.count).to eq 2 }
     it { expect(user.indicators.count).to eq 6 }
     it { expect(user.user_stats.count).to eq 2 }
-    it { expect(messages_count).to eq 3 }
+    it { expect(messages_count).to eq 2 }
 
     context 'on clearing progress for a specific organization' do
       before { user.clear_progress_for!(organization_1) }
@@ -749,7 +749,7 @@ describe User, organization_workspace: :test do
       it { expect(user.assignments.count).to eq 1 }
       it { expect(user.indicators.count).to eq 3 }
       it { expect(user.user_stats.count).to eq 1 }
-      it { expect(messages_count).to eq 2 }
+      it { expect(messages_count).to eq 1 }
     end
 
     context 'on general progress clear' do
@@ -758,7 +758,7 @@ describe User, organization_workspace: :test do
       it { expect(user.assignments.count).to eq 0 }
       it { expect(user.indicators.count).to eq 0 }
       it { expect(user.user_stats.count).to eq 0 }
-      it { expect(messages_count).to eq 1 }
+      it { expect(messages_count).to eq 0 }
     end
   end
 

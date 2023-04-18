@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2021_11_04_182009) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_17_211850) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -124,40 +124,6 @@ ActiveRecord::Schema[7.0].define(version: 2021_11_04_182009) do
     t.datetime "updated_at", precision: nil, null: false
     t.datetime "period_start", precision: nil
     t.datetime "period_end", precision: nil
-  end
-
-  create_table "discussions", force: :cascade do |t|
-    t.integer "status", default: 0
-    t.string "title"
-    t.text "description"
-    t.bigint "initiator_id"
-    t.string "item_type"
-    t.bigint "item_id"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.text "solution"
-    t.integer "submission_status", default: 0
-    t.text "result"
-    t.text "expectation_results"
-    t.text "feedback"
-    t.text "test_results"
-    t.string "submission_id"
-    t.string "queries", default: [], array: true
-    t.text "query_results"
-    t.text "manual_evaluation_comment"
-    t.integer "upvotes_count", default: 0
-    t.bigint "organization_id"
-    t.integer "messages_count", default: 0
-    t.integer "validated_messages_count", default: 0
-    t.boolean "requires_moderator_response", default: true
-    t.string "responsible_moderator_by_id"
-    t.datetime "responsible_moderator_at", precision: nil
-    t.bigint "status_updated_by_id"
-    t.datetime "status_updated_at", precision: nil
-    t.index ["initiator_id"], name: "index_discussions_on_initiator_id"
-    t.index ["item_type", "item_id"], name: "index_discussions_on_item_type_and_item_id"
-    t.index ["organization_id"], name: "index_discussions_on_organization_id"
-    t.index ["status_updated_by_id"], name: "index_discussions_on_status_updated_by_id"
   end
 
   create_table "exam_authorization_requests", force: :cascade do |t|
@@ -376,7 +342,6 @@ ActiveRecord::Schema[7.0].define(version: 2021_11_04_182009) do
     t.datetime "created_at", precision: nil
     t.datetime "updated_at", precision: nil
     t.boolean "read", default: false
-    t.integer "discussion_id"
     t.boolean "approved", default: false
     t.boolean "not_actually_a_question", default: false
     t.datetime "approved_at", precision: nil
@@ -386,7 +351,6 @@ ActiveRecord::Schema[7.0].define(version: 2021_11_04_182009) do
     t.bigint "deleted_by_id"
     t.bigint "assignment_id"
     t.bigint "sender_id"
-    t.boolean "from_moderator"
     t.index ["approved_by_id"], name: "index_messages_on_approved_by_id"
     t.index ["assignment_id"], name: "index_messages_on_assignment_id"
     t.index ["deleted_by_id"], name: "index_messages_on_deleted_by_id"
@@ -469,13 +433,6 @@ ActiveRecord::Schema[7.0].define(version: 2021_11_04_182009) do
     t.boolean "private", default: false
     t.bigint "medal_id"
     t.index ["slug"], name: "index_topics_on_slug", unique: true
-  end
-
-  create_table "upvotes", force: :cascade do |t|
-    t.bigint "user_id"
-    t.bigint "discussion_id"
-    t.index ["discussion_id"], name: "index_upvotes_on_discussion_id"
-    t.index ["user_id"], name: "index_upvotes_on_user_id"
   end
 
   create_table "usages", id: :serial, force: :cascade do |t|
