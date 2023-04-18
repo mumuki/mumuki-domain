@@ -68,13 +68,21 @@ class Organization < ApplicationRecord
     test?
   end
 
+  def examinable?
+    !base? && !incognito_mode_enabled?
+  end
+
   def reindex_usages!
     transaction do
       drop_usage_indices!
-      book.index_usage! self
-      exams.each { |exam| exam.index_usage! self }
+      index_usages!
     end
     reload
+  end
+
+  def index_usages!
+    book.index_usage! self
+    exams.each { |exam| exam.index_usage! self } if examinable?
   end
 
   def drop_usage_indices!
