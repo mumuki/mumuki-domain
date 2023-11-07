@@ -7,6 +7,8 @@ class Problem < QueriableChallenge
 
   validate :ensure_evaluation_criteria
 
+  serialize :offline_test, Hash
+
   name_model_as Exercise
 
   def save_query_submission!(_assignment, _submission)

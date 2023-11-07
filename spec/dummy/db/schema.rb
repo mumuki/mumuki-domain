@@ -266,6 +266,7 @@ ActiveRecord::Schema.define(version: 20211104182009) do
     t.text "choices"
     t.text "settings"
     t.text "custom_expectations"
+    t.text "offline_test"
     t.index ["guide_id"], name: "index_exercises_on_guide_id"
     t.index ["language_id"], name: "index_exercises_on_language_id"
   end
